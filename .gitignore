@@ -26,3 +26,5 @@ TestResults.xml
 /.pnp
 .pnp.js
 .env
+# Local Netlify folder
+.netlify
