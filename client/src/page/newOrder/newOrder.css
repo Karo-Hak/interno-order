@@ -1,0 +1,10 @@
+.divOrder {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.orderImg {
+    height: auto;
+    max-width: 500px;
+}

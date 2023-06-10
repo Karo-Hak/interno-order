@@ -1,0 +1,45 @@
+.log{
+    width: 400px;
+    margin-right: 100px;
+    background-color: rgb(30, 30, 30);
+    border-radius: 10px;
+    position: relative;
+    float: right;
+    height: 100%;
+    background-image: url(../../../public/Colorful-Curves-2560x1440.jpg);
+    background-repeat: no-repeat;
+    background-size: 100%;
+}
+
+.loginDiv {
+    width: 400px;
+    padding: 40px;
+    background-color: rgb(10, 10, 20);
+    gap: 10px;
+    color: #fff;
+    border-radius: 10px;
+    margin: 200px auto;
+
+
+}
+
+.loginInput {
+    padding: 5px;
+    border-radius: 10px;
+    width: 300px;
+}
+
+body {
+    height: 100%;
+    background-image: url(../../../public/login.jpg);
+    background-repeat: no-repeat;
+    background-size: 100%;
+}
+
+.buttonLogin {
+    margin-top: 10px;
+    position: relative;
+    float: right;
+    border-radius: 10px;
+    width: 100px;
+}
