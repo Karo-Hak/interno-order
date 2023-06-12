@@ -1,12 +1,14 @@
 import './order.css'
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectOrder } from '../../features/order/orderSlice';
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from "react-router-dom";
 import { useCookies } from 'react-cookie'
-import { findOrder, updateOrder, } from "../../features/order/orderApi";
+import { findOrder, updateOrder, updatePrepayment, } from "../../features/order/orderApi";
 import ImageUpload from '../uploadImg/uploadImg';
 import { selectUser } from '../../features/user/userSlice';
+import InputModal from '../../component/modal/Modal';
+
 
 
 export const Order: React.FC = (): JSX.Element => {
@@ -16,6 +18,7 @@ export const Order: React.FC = (): JSX.Element => {
     const [cookies, setCookie] = useCookies(['access_token']);
     const navigate = useNavigate();
     const params = useParams()
+    const [prepayment, setPrepayment] = useState<number>(0)
 
 
 
@@ -42,8 +45,20 @@ export const Order: React.FC = (): JSX.Element => {
             }
             window.location.reload()
         })
-
     }
+
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleOpenModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+    };
+
+  
 
     return (
         <div>
@@ -60,8 +75,6 @@ export const Order: React.FC = (): JSX.Element => {
                                             <th scope="col">Name</th>
                                             <th scope="col">Phone</th>
                                             <th scope="col">Adress</th>
-
-
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -69,8 +82,6 @@ export const Order: React.FC = (): JSX.Element => {
                                             <td>{order.order.buyer.name}</td>
                                             <td>{order.order.buyer.phone}</td>
                                             <td>{order.order.buyer.adress}</td>
-
-
                                         </tr>
                                     </tbody>
                                 </table>
@@ -85,8 +96,6 @@ export const Order: React.FC = (): JSX.Element => {
                                             <th scope="col">Prepayment</th>
                                             <th scope="col">Total</th>
                                             <th scope="col">Deadline</th>
-
-
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -106,6 +115,10 @@ export const Order: React.FC = (): JSX.Element => {
                                     <h5>Balance {order.order.groundTotal}</h5>
                                     <ImageUpload />
                                 </div>
+                                    <div>
+                                        <button onClick={handleOpenModal}>Открыть модальное окно</button>
+                                        <InputModal isOpen={isModalOpen} onClose={handleCloseModal}  />
+                                    </div>
                                 {
                                     user?.profile && user?.profile.role == "admin" ?
                                         <button className='btn' onClick={() => orderDone(order.order._id)}>DONE</button>
@@ -113,7 +126,7 @@ export const Order: React.FC = (): JSX.Element => {
                                         null
                                 }
                             </div>
-                            <div style={{border:"2px solid whight"}}>
+                            <div style={{ border: "2px solid whight" }}>
                                 <h6>{order.order.comment}</h6>
                             </div>
                             <div>

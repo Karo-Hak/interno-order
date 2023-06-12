@@ -74,8 +74,9 @@ export const UserProfile: React.FC = (): JSX.Element => {
     const [discount, setDiscount] = useState<number>(0)
     const [prepayment, setPrepayment] = useState<number>(0)
     const [price, setPrice] = useState(9000)
-    const [coopRate, setCoopRate] = useState()
-    const [coopTotal, setCoopTotal] = useState<number>()
+    const [coopRate, setCoopRate] = useState(0)
+    const [coopTotal, setCoopTotal] = useState<number>(0)
+    const [coop, setCoop] = useState<any>()
     const sq = (height / 100) * (weight / 100);
     const squer = +sq.toFixed(2);
     const totalOrder = parseInt(((squer * price) - ((squer * price) * discount) / 100).toString())
@@ -108,20 +109,39 @@ export const UserProfile: React.FC = (): JSX.Element => {
         setAddOrderForm(true)
     }
     function cooperateDiscount(event: ChangeEvent<HTMLSelectElement>): void {
-        const coop = cooperate.arrCooperate.find((e: Cooperate) => e._id == event.target.value)
-        if (coop) {
-            setCoopRate(coop.cooperateRate)
+        const coopPrice = cooperate.arrCooperate.find((e: Cooperate) => e._id === event.target.value)
+        if (coopPrice) {
+            setCoopRate(coopPrice?.cooperateRate)
+            setCoopTotal(((+coopPrice?.cooperateRate * totalOrder) / 100))
+            setCoop(coopPrice)
+        } else {
+            setCoopRate(0)
+            setCoopTotal(0)
+            setCoop("")
         }
-        setCoopTotal((+coop.cooperateRate * totalOrder) / 100)
     }
+    const [checked, setChecked] = useState(false);
 
+    function handleCheckboxChange(event: any) {
+        setChecked(event.target.checked);
+
+    };
+    useEffect(() => {
+        if (checked) {
+            if (coop && coop.name === "Sard") {
+                setPrice(6300);
+            }
+        } else {
+            setPrice(9000)
+        }
+    }, [checked]);
     const newOrder = (order: any) => {
         const buyer = { name: order.buyerName, phone: order.buyerPhone, adress: order.buyerAdress }
         if (order.cooperateId == "0") {
 
         }
         const newOrder = {
-            oldId: Math.floor(Math.random()*1000000000),
+            oldId: Math.floor(Math.random() * 1000000000),
             height: +order.height,
             weight: +order.weight,
             discount: +order.discount,
@@ -145,7 +165,7 @@ export const UserProfile: React.FC = (): JSX.Element => {
 
         if (newOrder.oldId) {
             console.log(newOrder.oldId);
-            
+
             navigate("/newOrder/" + newOrder.oldId)
         }
 
@@ -180,7 +200,7 @@ export const UserProfile: React.FC = (): JSX.Element => {
         navigate("/order/" + id)
 
     }
-    const search = () =>{
+    const search = () => {
         navigate("/searchOrder")
     }
 
@@ -288,6 +308,15 @@ export const UserProfile: React.FC = (): JSX.Element => {
                                     </div>
                                     <div>
                                         <input className="userInput" type="number" placeholder="Cooperate Totla" defaultValue={coopTotal} {...register("cooperateTotal")} />
+                                    </div>
+                                    <div>
+                                        <label>
+                                            <input
+                                                type="checkbox"
+                                                onChange={handleCheckboxChange}
+                                            />
+                                            Отметить меня
+                                        </label>
                                     </div>
                                 </div>
                             </div >

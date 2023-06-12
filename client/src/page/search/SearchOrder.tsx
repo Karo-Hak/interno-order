@@ -97,9 +97,6 @@ export const SearchOrder: React.FC = (): JSX.Element => {
 
     }
 
-    console.log(filteredOrder);
-
-
     return (
         <div >
             <div className="divMenu">

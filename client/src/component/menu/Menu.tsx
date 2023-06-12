@@ -1,8 +1,8 @@
 
 import { useNavigate } from "react-router-dom"
-import { selectUser } from "../features/user/userSlice";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { logoutUser, userProfile } from "../features/user/userApi";
+import { selectUser } from "../../features/user/userSlice";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { logoutUser, userProfile } from "../../features/user/userApi";
 import { useCookies } from 'react-cookie'
 import { useEffect } from "react";
 import './menu.css'

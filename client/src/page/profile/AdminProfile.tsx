@@ -13,7 +13,6 @@ import { addNewOrder, viewNewOrders } from "../../features/order/orderApi";
 import { getAllTexture, newTexture } from "../../features/texture/textureApi";
 import { selectTexture } from "../../features/texture/textureSlice";
 import { selectOrder } from "../../features/order/orderSlice";
-import { SearchOrder } from "../search/SearchOrder";
 
 export const AdminProfile: React.FC = (): JSX.Element => {
     const user = useAppSelector(selectUser);
@@ -217,7 +216,9 @@ export const AdminProfile: React.FC = (): JSX.Element => {
     const [prepayment, setPrepayment] = useState<number>(0)
     const [price, setPrice] = useState(9000)
     const [coopRate, setCoopRate] = useState<number>(0)
-    const [coopTotal, setCoopTotal] = useState<number>()
+    const [coopTotal, setCoopTotal] = useState<number>(0)
+    const [coop, setCoop] = useState<any>()
+
     const sq = (height / 100) * (weight / 100);
     const squer = +sq.toFixed(2);
     const totalOrder = parseInt(((squer * price) - ((squer * price) * discount) / 100).toString())
@@ -233,11 +234,14 @@ export const AdminProfile: React.FC = (): JSX.Element => {
 
     useEffect(() => {
         if (checked) {
-            setPrice(6300);
+            if (coop && coop.name === "Sard") {
+                setPrice(6300);
+            }
         } else {
             setPrice(9000)
         }
     }, [checked]);
+
 
     const openOrderForm = () => {
         if (addUserForm === true) {
@@ -273,14 +277,19 @@ export const AdminProfile: React.FC = (): JSX.Element => {
         setAddOrderForm(true)
     }
 
-
     function cooperateDiscount(event: ChangeEvent<HTMLSelectElement>): void {
-        const coop = cooperate.arrCooperate.find((e: Cooperate) => e._id === event.target.value)
-        if (coop) {
-            setCoopRate(coop?.cooperateRate)
+        const coopPrice = cooperate.arrCooperate.find((e: Cooperate) => e._id === event.target.value)
+        if (coopPrice) {
+            setCoopRate(coopPrice?.cooperateRate)
+            setCoopTotal(((+coopPrice?.cooperateRate * totalOrder) / 100))
+            setCoop(coopPrice)
+        } else {
+            setCoopRate(0)
+            setCoopTotal(0)
+            setCoop("")
         }
-        setCoopTotal(((+coop?.cooperateRate * totalOrder) / 100))
     }
+ 
 
     const newOrder = (order: any) => {
         const buyer = { name: order.buyerName, phone: order.buyerPhone, adress: order.buyerAdress }
@@ -291,7 +300,7 @@ export const AdminProfile: React.FC = (): JSX.Element => {
             height: +order.height,
             weight: +order.weight,
             discount: +order.discount,
-            price: +order.price,
+            price: price,
             prepayment: +order.prepayment,
             picCode: order.picCode,
             total: +totalOrder,
@@ -312,8 +321,6 @@ export const AdminProfile: React.FC = (): JSX.Element => {
             }
         })
         if (newOrder.oldId) {
-            console.log(newOrder.oldId);
-
             navigate("/newOrder/" + newOrder.oldId)
         }
 
@@ -554,8 +561,7 @@ export const AdminProfile: React.FC = (): JSX.Element => {
                                         </select>
                                     </div>
                                     <div>
-                                        <p>{coopRate}</p>
-                                        {/* <input className="userInput" type="number" placeholder="Cooperate Rate" value={coopRate} readOnly /> */}
+                                        <input className="userInput" type="number" placeholder="Cooperate Rate" value={coopRate} readOnly onChange={(e) => setCoopRate(+e.target.value)} />
                                     </div>
                                     <div>
                                         <input className="userInput" type="number" placeholder="Cooperate Totla" value={coopTotal} {...register("cooperateTotal")} />

@@ -25,23 +25,23 @@ export class OrderController {
 
         if (texture.name == "130KTAV") {
           if (obj.newOrder.height <= 133) {
-            metr = obj.newOrder.weight / 100 + 0.2
+            metr = +(obj.newOrder.weight / 100 + 0.2).toFixed(2)
           } else {
-            metr = (Math.ceil(obj.newOrder.weight / 133) * (obj.newOrder.height / 100) + 0.2 + Math.ceil(obj.newOrder.weight / 100) * 0.02)
+            metr = +((Math.ceil(obj.newOrder.weight / 133) * (obj.newOrder.height / 100) + 0.2 + Math.ceil(obj.newOrder.weight / 100) * 0.02)).toFixed(2)
           }
         }
         if (texture.name == "320ABOY") {
           if (obj.newOrder.height <= 320) {
-            metr = obj.newOrder.weight / 100 + 0.7
+            metr = +(obj.newOrder.weight / 100 + 0.7).toFixed(2)
           } else {
-            metr = obj.newOrder.height / 100 + 0.7
+            metr = +(obj.newOrder.height / 100 + 0.7).toFixed(2)
           }
         }
         if (texture.name !== "130KTAV" && texture.name !== "320ABOY") {
           if (obj.newOrder.height <= 100) {
-            metr = obj.newOrder.weight / 100 + 0.2
+            metr = +(obj.newOrder.weight / 100 + 0.2).toFixed(2)
           } else {
-            metr = (Math.ceil(obj.newOrder.weight / 100) * (obj.newOrder.height / 100) + 0.2 + Math.ceil(obj.newOrder.weight / 100) * 0.02)
+            metr = +((Math.ceil(obj.newOrder.weight / 100) * (obj.newOrder.height / 100) + 0.2 + Math.ceil(obj.newOrder.weight / 100) * 0.02)).toFixed(2)
           }
         }
       }

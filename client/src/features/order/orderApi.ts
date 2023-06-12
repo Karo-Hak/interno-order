@@ -21,6 +21,25 @@ export const addNewOrder = createAsyncThunk(
   }
 );
 
+export const updatePrepayment = createAsyncThunk(
+  'order/updatePrepayment/axios',
+  async (obj: any) => {
+    try {
+      const response = await axios.post(process.env.REACT_APP_SERVER_URL +"/order", { ...obj }, {
+        headers: {
+          Authorization: `Bearer ${obj.cookies.access_token}`
+        }
+      })
+
+      return response.data
+    } catch (e) {
+      return { error: "not found" }
+
+    }
+  }
+);
+
+
 
 export const viewNewOrders = createAsyncThunk(
   'order/newOrders/axios',

@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { Login } from "../page/login/Login"
-import { Menu } from "../component/Menu"
+import { Menu } from "../component/menu/Menu"
 import { AdminProfile } from "../page/profile/AdminProfile"
 import { UserProfile } from "../page/profile/UserProfile"
 import { Order } from "../page/order/Order"
