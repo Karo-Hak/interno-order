@@ -44,7 +44,7 @@ export class OrderService {
   }
 
   async findOne(id: string) {
-    return await this.orderModel.findById(id).populate("buyer").populate("texture");
+    return await this.orderModel.findById(id).populate("buyer").populate("texture").populate("cooperate");
   }
 
   async findOneBuoldID(id: number) {
@@ -53,6 +53,10 @@ export class OrderService {
 
   async updateStatus(id: string) {
     return await this.orderModel.findByIdAndUpdate(id, { status: "done" })
+  }
+
+  async updatePrepayment(id: string, prepayment: number, groundTotal: number) {
+    return await this.orderModel.findByIdAndUpdate(id, { prepayment, groundTotal })
   }
 
   async filterOrder(startDate: Date, endDate: Date) {

@@ -105,7 +105,25 @@ export class OrderController {
 
   @Get('updateOrder/:id')
   async updateStatus(@Param('id') id: string) {
-    return this.orderService.updateStatus(id);
+    return await this.orderService.updateStatus(id);
+  }
+
+  @Post('updatePrepayment')
+  async updatePrepayment(@Body() obj: any, @Res() res: Response) {
+    console.log(obj);
+    try {
+      const order = await this.orderService.findOne(obj.params.id);
+      if (order) {
+        const groundTotal = order.groundTotal - obj.inputValue;
+        const prepayment = order.prepayment + obj.inputValue;
+        const updatedOrder = await this.orderService.updatePrepayment(obj.params.id, prepayment, groundTotal);
+      }
+      return res.status(HttpStatus.OK).json("order updated");
+    } catch (e) {
+      return res.status(HttpStatus.OK).json({
+        error: e.message
+      })
+    }
   }
 
   @Post('search')

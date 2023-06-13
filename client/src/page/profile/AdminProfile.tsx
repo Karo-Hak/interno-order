@@ -289,7 +289,7 @@ export const AdminProfile: React.FC = (): JSX.Element => {
             setCoop("")
         }
     }
- 
+
 
     const newOrder = (order: any) => {
         const buyer = { name: order.buyerName, phone: order.buyerPhone, adress: order.buyerAdress }
@@ -390,15 +390,30 @@ export const AdminProfile: React.FC = (): JSX.Element => {
                 addUserForm ?
                     <div className="profile">
                         <form className="divBtn" onSubmit={handleSubmit(saveUser)}>
-                            <div>
-                                <input className="userInput" type="text" placeholder="Name" {...register("name", { required: true })} />
-                                <input className="userInput" type="text" placeholder="Surname" {...register("surname", { required: true })} />
-                                <input className="userInput" type="text" placeholder="User name" {...register("username", { required: true })} />
-                                <input className="userInput" type="text" placeholder="Password" {...register("password", { required: true })} />
-                                <select className="userInput" onChange={selectedRole}>
-                                    <option value={"user"}>User</option>
-                                    <option value={"admin"}>Admin</option>
-                                </select>
+                            <div style={{ display: "flex", gap: "5px" }}>
+                                <div style={{ display: "flex", flexDirection: "column" }}>
+                                    <label htmlFor="userName">Անուն</label>
+                                    <input id="userName" className="userInput" type="text" placeholder="Name" {...register("name", { required: true })} />
+                                </div>
+                                <div style={{ display: "flex", flexDirection: "column" }}>
+                                    <label htmlFor="userSւrname">Ազգանուն</label>
+                                    <input id="userSւrname" className="userInput" type="text" placeholder="Surname" {...register("surname", { required: true })} />
+                                </div>
+                                <div style={{ display: "flex", flexDirection: "column" }}>
+                                    <label htmlFor="login">Լոգին</label>
+                                    <input id="login" className="userInput" type="text" placeholder="User name" {...register("username", { required: true })} />
+                                </div>
+                                <div style={{ display: "flex", flexDirection: "column" }}>
+                                    <label htmlFor="password">Գաղտնաբառ</label>
+                                    <input id="password" className="userInput" type="text" placeholder="Password" {...register("password", { required: true })} />
+                                </div>
+                                <div style={{ display: "flex", flexDirection: "column" }}>
+                                    <label htmlFor="role">Տեսակ</label>
+                                    <select id="role" className="userInput" onChange={selectedRole}>
+                                        <option value={"user"}>User</option>
+                                        <option value={"admin"}>Admin</option>
+                                    </select>
+                                </div>
                             </div>
                             <button className="btn" >Save</button>
                         </form>

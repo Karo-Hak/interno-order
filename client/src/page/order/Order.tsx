@@ -58,7 +58,8 @@ export const Order: React.FC = (): JSX.Element => {
         setIsModalOpen(false);
     };
 
-  
+    console.log(order.order);
+
 
     return (
         <div>
@@ -69,12 +70,13 @@ export const Order: React.FC = (): JSX.Element => {
                         <div className='divOrder'>
                             <div>
                                 <h5 >Date - {parseDate(order.order.date)} | Status - {order.order.status}</h5>
+                                Գնորդ
                                 <table className="table" style={{ color: "white" }}>
                                     <thead>
                                         <tr>
-                                            <th scope="col">Name</th>
-                                            <th scope="col">Phone</th>
-                                            <th scope="col">Adress</th>
+                                            <th scope="col">Անուն</th>
+                                            <th scope="col">Հեռախոս</th>
+                                            <th scope="col">Հասցե</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -85,40 +87,66 @@ export const Order: React.FC = (): JSX.Element => {
                                         </tr>
                                     </tbody>
                                 </table>
+                                {
+                                    order?.order.cooperate ?
+                                        <div>
+                                            Գործընկեր
+                                            <table className="table" style={{ color: "white" }}>
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Անուն</th>
+                                                        <th scope="col">Հեռախոս</th>
+                                                        <th scope="col">Տոկոս</th>
+                                                        <th scope="col">Գումար</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr key={order.order._id}>
+                                                        <td>{order.order.cooperate.name} {order.order.cooperate.սւռնամե}</td>
+                                                        <td>{order.order.cooperate.phone}</td>
+                                                        <td>{order.order.cooperate.cooperateRate}</td>
+                                                        <td>{order.order.cooperateTotal}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        :
+                                        null
+                                }
                                 <table className="table" style={{ color: "white" }}>
                                     <thead>
                                         <tr>
-                                            <th scope="col">Weight/Height</th>
-                                            <th scope="col">Square</th>
-                                            <th scope="col">Price</th>
-                                            <th scope="col">Picture</th>
-                                            <th scope="col">Texture</th>
-                                            <th scope="col">Prepayment</th>
-                                            <th scope="col">Total</th>
-                                            <th scope="col">Deadline</th>
+                                            <th scope="col">Եր/Լա</th>
+                                            <th scope="col">Ք/Մ</th>
+                                            <th scope="col">Գ/Ծ</th>
+                                            <th scope="col">Գին</th>
+                                            <th scope="col">Զեղչ %</th>
+                                            <th scope="col">Գումար</th>
+                                            <th scope="col">Վճարված</th>
+                                            <th scope="col">Վերջնաժամկետ</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
                                             <td>{order.order.weight} x {order.order.height}</td>
                                             <td>{order.order.sqMetr}</td>
+                                            <td>{order.order.metr}</td>
                                             <td>{order.order.price}</td>
-                                            <td>{order.order.picCode}</td>
-                                            <td>{order.order.texture.name}</td>
-                                            <td>{order.order.prepayment}</td>
+                                            <td>{order.order.discount}</td>
                                             <td>{order.order.total}</td>
+                                            <td>{order.order.prepayment}</td>
                                             <td>{parseDate(order.order.deadline)}</td>
                                         </tr>
                                     </tbody>
                                 </table>
                                 <div className='divOrder'>
-                                    <h5>Balance {order.order.groundTotal}</h5>
+                                    <h5>Մնացորդ {order.order.groundTotal}</h5>
                                     <ImageUpload />
                                 </div>
-                                    <div>
-                                        <button onClick={handleOpenModal}>Открыть модальное окно</button>
-                                        <InputModal isOpen={isModalOpen} onClose={handleCloseModal}  />
-                                    </div>
+                                <div>
+                                    <button className='btn' onClick={handleOpenModal}>Կատարել Վճարում</button>
+                                    <InputModal isOpen={isModalOpen} onClose={handleCloseModal} />
+                                </div>
                                 {
                                     user?.profile && user?.profile.role == "admin" ?
                                         <button className='btn' onClick={() => orderDone(order.order._id)}>DONE</button>
