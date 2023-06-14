@@ -8,7 +8,6 @@ import { Cooperate, CooperateSchema } from 'src/cooperate/schema/cooperate.schem
 import { Buyer, BuyerSchema } from 'src/buyer/schema/buyer.schema';
 import { BuyerModule } from 'src/buyer/buyer.module';
 import { Texture, TextureSchema } from 'src/texture/schema/texture.schema';
-import { Upload, UploadModule, UploadSchema } from 'src/upload/upload.module';
 import { TextureModule } from 'src/texture/texture.module';
 
 @Module({

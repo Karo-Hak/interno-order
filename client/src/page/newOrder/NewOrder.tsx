@@ -33,6 +33,7 @@ export const NewOrder: React.FC = (): JSX.Element => {
         const dateObj = new Date(dateStr);
         return `${dateObj.getDate()} / ${dateObj.getMonth() + 1} / ${dateObj.getFullYear()} `;
     }
+console.log(order.order.texture.name);
 
     return (
         <div>

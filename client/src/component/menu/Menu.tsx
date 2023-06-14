@@ -28,12 +28,26 @@ export const Menu: React.FC = (): JSX.Element => {
     }, [])
 
     const btnHome = () => {
-        if(data.profile.role == "admin"){
+        if (data.profile.role == "admin") {
             navigate("/admine/profile")
         } else {
             navigate("/user/profile")
         }
-        
+    }
+    const addUser = () => {
+        if (data.profile.role == "admin") {
+            navigate("/addUser")
+        }
+    }
+    const addBuyer = () => {
+        if (data.profile.role == "admin") {
+            navigate("/addBuyer")
+        }
+    }
+    const addCooperate = () => {
+        if (data.profile.role == "admin") {
+            navigate("/addCooperate")
+        }
     }
 
     return (<>
@@ -42,7 +56,17 @@ export const Menu: React.FC = (): JSX.Element => {
                 <a className="navbar-brand" href="#">
                     <img src="/interno.png" alt="" height="30" />
                 </a>
-                <button className="btn" onClick={btnHome}>Home</button>
+                <button className="btn" onClick={btnHome}>Գլխավոր էջ</button>
+                {
+                    data?.profile && data.profile.role === "admin" ?
+                        <div>
+                            <button className="btn" onClick={addUser}>Ավելացնել Օգտատեր</button>
+                            <button className="btn" onClick={addBuyer}>Ավելացնել Գնորդ</button>
+                            <button className="btn" onClick={addCooperate}>Ավելացնել Գործընկեր</button>
+                        </div>
+                        :
+                        null
+                }
                 {
                     data.profile ?
                         <ul className="navbar-nav">

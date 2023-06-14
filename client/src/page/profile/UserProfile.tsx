@@ -154,7 +154,9 @@ export const UserProfile: React.FC = (): JSX.Element => {
             groundTotal: sum,
             user: user.profile.userId,
             cooperate: order.cooperateId,
-            texture: order.texture
+            texture: order.texture,
+            comment: order.comment
+
         }
         dispatch(addNewOrder({ buyer, newOrder, cookies })).unwrap().then(res => {
             if ("error" in res) {

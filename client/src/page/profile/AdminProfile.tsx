@@ -4,11 +4,10 @@ import { ChangeEvent, useEffect, useState } from 'react'
 import { useNavigate } from "react-router-dom";
 import { useCookies } from 'react-cookie'
 import { useForm } from "react-hook-form";
-import { newUser, userProfile } from "../../features/user/userApi";
+import { userProfile } from "../../features/user/userApi";
 import './adminProfile.css'
 import { getAllCooperate, getCoopSpher, newCooperate } from "../../features/cooperate/cooperateApi";
 import { Cooperate, selectCooperate } from "../../features/cooperate/cooperateSlice";
-import { newBuyer } from "../../features/buyer/buyerApi";
 import { addNewOrder, viewNewOrders } from "../../features/order/orderApi";
 import { getAllTexture, newTexture } from "../../features/texture/textureApi";
 import { selectTexture } from "../../features/texture/textureSlice";
@@ -35,77 +34,7 @@ export const AdminProfile: React.FC = (): JSX.Element => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm<any>()
 
 
-    ////// Add User///////
-    const [addUserForm, setAddUserForm] = useState(false)
-    const [role, setRole] = useState("user")
-    const selectedRole = (e: any) => {
-        setRole(e.target.value);
-    }
-    const openUserForm = () => {
-        if (addBuyerForm === true) {
-            setAddBuyerForm(false)
-        }
-        if (addCooperateForm === true) {
-            setAddCooperateForm(false)
-        }
-        if (addTextureForm === true) {
-            setAddTextureForm(false)
-        }
-        if (addOrderForm === true) {
-            setAddOrderForm(false)
-        }
-        if (newOrdersForm === true) {
-            setNewOrdersForm(false)
-        }
-        // if (addCoopSpherForm === true) {
-        //     setAddCoopSpherForm(false)
-        // }
-        setAddUserForm(true)
-    }
-    const saveUser = async (user: User) => {
-        user = { ...user, role: role, username: user.username.toLowerCase() }
-        dispatch(newUser({ user, cookies })).unwrap().then(res => {
-            if ("error" in res) {
-                alert(res.error)
-            }
-        });
-        window.location.reload()
-    }
-    ///////////////////////
-
-    ///////////Add Buyer////////
-    const [addBuyerForm, setAddBuyerForm] = useState(false)
-    const openBuyerForm = () => {
-        if (addUserForm === true) {
-            setAddUserForm(false)
-        }
-        if (addCooperateForm === true) {
-            setAddCooperateForm(false)
-        }
-        if (addTextureForm === true) {
-            setAddTextureForm(false)
-        }
-        if (addOrderForm === true) {
-            setAddOrderForm(false)
-        }
-        if (newOrdersForm === true) {
-            setNewOrdersForm(false)
-        }
-        // if (addCoopSpherForm === true) {
-        //     setAddCoopSpherForm(false)
-        // }
-        setAddBuyerForm(true)
-    }
-    const saveBuyer = (buyer: any) => {
-        buyer = { ...buyer, phone: buyer.phone.replace(/\s/g, "") }
-        dispatch(newBuyer({ buyer, cookies })).unwrap().then(res => {
-            if ("error" in res) {
-                alert(res.error)
-            }
-        });
-        window.location.reload()
-    }
-    ///////////////////////
+  
 
     ///////////Add Cooperate////////
     const [addCooperateForm, setAddCooperateForm] = useState(false)
@@ -117,12 +46,8 @@ export const AdminProfile: React.FC = (): JSX.Element => {
             }
         })
 
-        if (addUserForm === true) {
-            setAddUserForm(false)
-        }
-        if (addBuyerForm === true) {
-            setAddBuyerForm(false)
-        }
+       
+       
         if (addTextureForm === true) {
             setAddTextureForm(false)
         }
@@ -153,12 +78,8 @@ export const AdminProfile: React.FC = (): JSX.Element => {
     const [addTextureForm, setAddTextureForm] = useState(false)
 
     const openTextureForm = () => {
-        if (addUserForm === true) {
-            setAddUserForm(false)
-        }
-        if (addBuyerForm === true) {
-            setAddBuyerForm(false)
-        }
+      
+      
         if (addCooperateForm === true) {
             setAddCooperateForm(false)
         }
@@ -244,12 +165,8 @@ export const AdminProfile: React.FC = (): JSX.Element => {
 
 
     const openOrderForm = () => {
-        if (addUserForm === true) {
-            setAddUserForm(false)
-        }
-        if (addBuyerForm === true) {
-            setAddBuyerForm(false)
-        }
+      
+       
         if (addCooperateForm === true) {
             setAddCooperateForm(false)
         }
@@ -331,12 +248,8 @@ export const AdminProfile: React.FC = (): JSX.Element => {
     //////////////////// new Orders hashvetvutyun ////////////////
     const [newOrdersForm, setNewOrdersForm] = useState<boolean>(false)
     const openNewOrdersForm = () => {
-        if (addUserForm === true) {
-            setAddUserForm(false)
-        }
-        if (addBuyerForm === true) {
-            setAddBuyerForm(false)
-        }
+       
+       
         if (addCooperateForm === true) {
             setAddCooperateForm(false)
         }
@@ -375,8 +288,6 @@ export const AdminProfile: React.FC = (): JSX.Element => {
 
             <div className="profile">
                 <div className="divBtn">
-                    <button className="btn" onClick={openUserForm}>Ավելացնել Օգտատեր</button>
-                    <button className="btn" onClick={openBuyerForm}>Ավելացնել Գնորդ</button>
                     <button className="btn" onClick={openCooperateForm}>Ավելացնել Գործընկեր</button>
                     <button className="btn" onClick={openTextureForm}>Ավելացնել Տեսակ</button>
                     {/* <button className="btn" onClick={openCoopSpher}>Add cooperation sphere</button> */}
@@ -385,61 +296,8 @@ export const AdminProfile: React.FC = (): JSX.Element => {
                     <button className="btn" onClick={search}>Դիտել Պատվերները</button>
                 </div>
             </div>
-            {/* ////////// add User /////////// */}
-            {
-                addUserForm ?
-                    <div className="profile">
-                        <form className="divBtn" onSubmit={handleSubmit(saveUser)}>
-                            <div style={{ display: "flex", gap: "5px" }}>
-                                <div style={{ display: "flex", flexDirection: "column" }}>
-                                    <label htmlFor="userName">Անուն</label>
-                                    <input id="userName" className="userInput" type="text" placeholder="Name" {...register("name", { required: true })} />
-                                </div>
-                                <div style={{ display: "flex", flexDirection: "column" }}>
-                                    <label htmlFor="userSւrname">Ազգանուն</label>
-                                    <input id="userSւrname" className="userInput" type="text" placeholder="Surname" {...register("surname", { required: true })} />
-                                </div>
-                                <div style={{ display: "flex", flexDirection: "column" }}>
-                                    <label htmlFor="login">Լոգին</label>
-                                    <input id="login" className="userInput" type="text" placeholder="User name" {...register("username", { required: true })} />
-                                </div>
-                                <div style={{ display: "flex", flexDirection: "column" }}>
-                                    <label htmlFor="password">Գաղտնաբառ</label>
-                                    <input id="password" className="userInput" type="text" placeholder="Password" {...register("password", { required: true })} />
-                                </div>
-                                <div style={{ display: "flex", flexDirection: "column" }}>
-                                    <label htmlFor="role">Տեսակ</label>
-                                    <select id="role" className="userInput" onChange={selectedRole}>
-                                        <option value={"user"}>User</option>
-                                        <option value={"admin"}>Admin</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <button className="btn" >Save</button>
-                        </form>
-                        <button className="btn btn-lg" onClick={() => window.location.reload()} >X</button>
-                    </div>
-                    :
-                    null
-            }
-            {/* ////////// add Buyer /////////// */}
-            {
-                addBuyerForm ?
-                    <div className="profile">
-                        <form className="divBtn" onSubmit={handleSubmit(saveBuyer)}>
-                            <div>
-                                <input className="userInput" type="text" placeholder="Name" {...register("name", { required: true })} />
-                                <input className="userInput" type="text" placeholder="Phone" {...register("phone", { required: true })} />
-                                <input className="userInput" type="text" placeholder="Adress" {...register("adress", { required: true })} />
-                            </div>
-                            <button className="btn" >Save</button>
-                        </form>
-                        <button className="btn btn-lg" onClick={() => window.location.reload()} >X</button>
-                    </div>
-                    :
-                    null
-            }
-            {/* ////////// add Cooperate /////////// */}
+            
+           
             {
                 addCooperateForm ?
                     <div className="profile">
@@ -635,6 +493,7 @@ export const AdminProfile: React.FC = (): JSX.Element => {
                                             <th scope="col">Երկարություն/Լայնություն</th>
                                             <th scope="col">Ք/Մ</th>
                                             <th scope="col">Նկար</th>
+                                            <th scope="col">Տեսակ</th>
                                             <th scope="col">Կարգավիճակ</th>
                                             <th scope="col">Վեջնաժամկետ</th>
                                         </tr>
@@ -651,6 +510,7 @@ export const AdminProfile: React.FC = (): JSX.Element => {
                                                         <td>{e.weight} x {e.height}</td>
                                                         <td>{e.sqMetr}</td>
                                                         <td>{e.picCode}</td>
+                                                        <td>{e.texture.name}</td>
                                                         <td>{e.status}</td>
                                                         <td>{parseDate(e.deadline)}</td>
                                                         <td><button className="btn" onClick={() => viewOrder(e._id)}>View</button></td>

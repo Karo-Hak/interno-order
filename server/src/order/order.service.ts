@@ -32,7 +32,7 @@ export class OrderService {
     if (createOrderDto.cooperate !== null) {
       await this.cooperateModel.findByIdAndUpdate(createOrderDto.cooperate, { order: [...orderCooperaye.order, newOrder.id] })
     }
-    await this.buyerModel.findByIdAndUpdate(createOrderDto.buyer, { order: [...orderBuyer.order, newOrder.id] })
+    await this.buyerModel.findByIdAndUpdate(createOrderDto.buyer, { order: [...orderBuyer.order, newOrder.id]})
     await this.userModel.findByIdAndUpdate(createOrderDto.user, { order: [...orderUser.order, newOrder.id] })
     await this.textureModel.findByIdAndUpdate(createOrderDto.texture, { order: [...orderTexture.order, newOrder.id] })
 

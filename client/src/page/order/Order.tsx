@@ -58,8 +58,6 @@ export const Order: React.FC = (): JSX.Element => {
         setIsModalOpen(false);
     };
 
-    console.log(order.order);
-
 
     return (
         <div>
@@ -123,6 +121,7 @@ export const Order: React.FC = (): JSX.Element => {
                                             <th scope="col">Զեղչ %</th>
                                             <th scope="col">Գումար</th>
                                             <th scope="col">Վճարված</th>
+                                            <th scope="col">Տեսակ</th>
                                             <th scope="col">Վերջնաժամկետ</th>
                                         </tr>
                                     </thead>
@@ -135,6 +134,7 @@ export const Order: React.FC = (): JSX.Element => {
                                             <td>{order.order.discount}</td>
                                             <td>{order.order.total}</td>
                                             <td>{order.order.prepayment}</td>
+                                            <td>{order.order.texture.name}</td>
                                             <td>{parseDate(order.order.deadline)}</td>
                                         </tr>
                                     </tbody>

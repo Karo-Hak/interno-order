@@ -24,7 +24,6 @@ const InputModal: React.FC<InputModalProps> = ({ isOpen, onClose }) => {
   const [cookies, setCookie] = useCookies(['access_token']);
   const navigate = useNavigate();
   const params = useParams()
-
   const handleClose = () => {
     onClose();
   };

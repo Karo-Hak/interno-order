@@ -6,6 +6,9 @@ import { UserProfile } from "../page/profile/UserProfile"
 import { Order } from "../page/order/Order"
 import { SearchOrder } from "../page/search/SearchOrder"
 import { NewOrder } from "../page/newOrder/NewOrder"
+import { AddUser } from "../page/addUser/AddUser"
+import { AddBuyer } from "../page/addBuyer/AddBuyer"
+import { AddCooperate } from "../page/addCooperate/AddCooperate"
 
 // import { AllUser } from "../page/AllUser"
 
@@ -27,8 +30,11 @@ export const MyRouter: React.FC = (): JSX.Element => {
                 <Route path="/order/:id" element={<Order />}></Route>
                 <Route path="/newOrder/:id" element={<NewOrder />}></Route>
                 <Route path="/searchOrder" element={<SearchOrder />}></Route>
-                {/*    <Route path="/login" element={<LoginUser />}></Route>
-                <Route path="/order/:id" element={<Product />}></Route> */}
+                <Route path="/addUser" element={<AddUser />}></Route>
+                <Route path="/addBuyer" element={<AddBuyer />}></Route>
+                <Route path="/addCooperate" element={<AddCooperate />}></Route>
+
+                {/*    <Route path="/order/:id" element={<Product />}></Route> */}
             </Routes>
         </BrowserRouter>
     )
