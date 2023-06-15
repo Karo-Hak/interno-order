@@ -50,7 +50,7 @@ export const Menu: React.FC = (): JSX.Element => {
         navigate("/searchOrder")
     }
     return (<>
-        <nav className="navbar navbar-expand-sm bg-dark navbar-dark">
+        <nav className="navbar navbar-expand-sm bg-dark navbar-dark manu">
             <div className="container-fluid">
                 <div>
                     <a className="navbar-brand" href="#">

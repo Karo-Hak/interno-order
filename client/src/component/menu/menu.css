@@ -1,6 +1,13 @@
-.logount{
+.logount {
     margin-top: 10px;
 
     border-radius: 10px;
     width: 100px;
+}
+
+.manu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
 }
