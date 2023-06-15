@@ -21,6 +21,7 @@ export const AdminProfile: React.FC = (): JSX.Element => {
     const dispatch = useAppDispatch();
     const [cookies, setCookie] = useCookies(['access_token']);
     const navigate = useNavigate();
+    const { register, handleSubmit, reset, formState: { errors } } = useForm<any>()
 
     useEffect(() => {
         dispatch(userProfile(cookies)).unwrap().then(res => {
@@ -29,104 +30,17 @@ export const AdminProfile: React.FC = (): JSX.Element => {
                 navigate("/")
             }
         })
-    }, [])
-
-    const { register, handleSubmit, reset, formState: { errors } } = useForm<any>()
-
-
-  
-
-    ///////////Add Cooperate////////
-    const [addCooperateForm, setAddCooperateForm] = useState(false)
-    const openCooperateForm = () => {
-        dispatch(getCoopSpher(cookies)).unwrap().then(res => {
+   
+        dispatch(viewNewOrders(cookies)).unwrap().then(res => {
             if ("error" in res) {
                 setCookie("access_token", '', { path: '/' })
                 navigate('/')
             }
         })
 
-       
-       
-        if (addTextureForm === true) {
-            setAddTextureForm(false)
-        }
-        if (addOrderForm === true) {
-            setAddOrderForm(false)
-        }
-        if (newOrdersForm === true) {
-            setNewOrdersForm(false)
-        }
-        // if (addCoopSpherForm === true) {
-        //     setAddCoopSpherForm(false)
-        // }
-        setAddCooperateForm(true)
-    }
-    const saveCooperate = (cooperate: any) => {
-        cooperate = { ...cooperate, phone: cooperate.phone.replace(/\s/g, "") }
-        dispatch(newCooperate({ cooperate, cookies })).unwrap().then(res => {
-            if ("error" in res) {
-                alert(res.error)
-            }
-        });
-        window.location.reload()
+    }, [])
 
-    }
-    ///////////////////////
 
-    ///////////Add textur////////
-    const [addTextureForm, setAddTextureForm] = useState(false)
-
-    const openTextureForm = () => {
-      
-      
-        if (addCooperateForm === true) {
-            setAddCooperateForm(false)
-        }
-        if (addOrderForm === true) {
-            setAddOrderForm(false)
-        }
-        if (newOrdersForm === true) {
-            setNewOrdersForm(false)
-        }
-        // if (addCoopSpherForm === true) {
-        //     setAddCoopSpherForm(false)
-        // }
-
-        setAddTextureForm(true)
-    }
-    const saveTexture = (texture: any) => {
-        dispatch(newTexture({ texture, cookies })).unwrap().then(res => {
-            if ("error" in res) {
-                alert(res.error)
-            }
-        });
-        window.location.reload()
-    }
-
-    ///////////////////////
-
-    // ///////////Add Cooperate////////
-    // const [addCoopSpherForm, setAddCoopSpherForm] = useState(false)
-
-    // const openCoopSpher = () => {
-    //     if (addUserForm === true) {
-    //         setAddUserForm(false)
-    //     }
-    //     if (addBuyerForm === true) {
-    //         setAddBuyerForm(false)
-    //     }
-    //     if (addCooperateForm === true) {
-    //         setAddCooperateForm(false)
-    //     }
-    //     if (addTexturForm === true) {
-    //         setAddTexturForm(false)
-    //     }
-    //     setAddCoopSpherForm(true)
-    // }
-    // const saveCoopSpher = () => {
-    //     window.location.reload()
-    // }
 
     //////////////////// Add Order ////////////////
 
@@ -165,32 +79,18 @@ export const AdminProfile: React.FC = (): JSX.Element => {
 
 
     const openOrderForm = () => {
-      
-       
-        if (addCooperateForm === true) {
-            setAddCooperateForm(false)
-        }
-        if (addTextureForm === true) {
-            setAddTextureForm(false)
-        }
-        if (newOrdersForm === true) {
-            setNewOrdersForm(false)
-        }
-
         dispatch(getAllCooperate(cookies)).unwrap().then(res => {
             if ("error" in res) {
                 setCookie("access_token", '', { path: '/' })
                 navigate('/')
             }
         })
-
         dispatch(getAllTexture(cookies)).unwrap().then(res => {
             if ("error" in res) {
                 setCookie("access_token", '', { path: '/' })
-                navigate('/')
+                navigate("/")
             }
         })
-
         setAddOrderForm(true)
     }
 
@@ -233,44 +133,18 @@ export const AdminProfile: React.FC = (): JSX.Element => {
             if ("error" in res) {
                 // setCookie("access_token", '', { path: '/' })
                 // navigate('/')
-                console.log(errors);
-
+                alert(res)
             }
         })
         if (newOrder.oldId) {
             navigate("/newOrder/" + newOrder.oldId)
         }
-
-
     }
-    //////////////////////////////
 
     //////////////////// new Orders hashvetvutyun ////////////////
-    const [newOrdersForm, setNewOrdersForm] = useState<boolean>(false)
-    const openNewOrdersForm = () => {
-       
-       
-        if (addCooperateForm === true) {
-            setAddCooperateForm(false)
-        }
-        if (addTextureForm === true) {
-            setAddTextureForm(false)
-        }
-        if (addOrderForm === true) {
-            setAddOrderForm(false)
-        }
-        setNewOrdersForm(true)
-        dispatch(viewNewOrders(cookies)).unwrap().then(res => {
-            if ("error" in res) {
-                setCookie("access_token", '', { path: '/' })
-                navigate('/')
-            }
-        })
-
-    }
     const parseDate = (dateStr: string) => {
         const dateObj = new Date(dateStr);
-        return `${dateObj.getDate()} - ${dateObj.getMonth() + 1} - ${dateObj.getFullYear()} `;
+        return `${dateObj.getDate()} / ${dateObj.getMonth() + 1} / ${dateObj.getFullYear()} `;
     }
 
     const viewOrder = (id: any) => {
@@ -278,77 +152,16 @@ export const AdminProfile: React.FC = (): JSX.Element => {
 
     }
 
-    const search = () => {
-        navigate("/searchOrder")
-    }
-
-
     return (
         <>
 
             <div className="profile">
                 <div className="divBtn">
-                    <button className="btn" onClick={openCooperateForm}>Ավելացնել Գործընկեր</button>
-                    <button className="btn" onClick={openTextureForm}>Ավելացնել Տեսակ</button>
                     {/* <button className="btn" onClick={openCoopSpher}>Add cooperation sphere</button> */}
                     <button className="btn" onClick={openOrderForm}>Ավելացնել Պատվեր</button>
-                    <button className="btn" onClick={openNewOrdersForm}>Դիտել Նոր Պատվերներ</button>
-                    <button className="btn" onClick={search}>Դիտել Պատվերները</button>
                 </div>
             </div>
-            
-           
-            {
-                addCooperateForm ?
-                    <div className="profile">
-                        <form className="divBtn" onSubmit={handleSubmit(saveCooperate)}>
-                            <div>
-                                <input className="userInput" type="text" placeholder="Name" {...register("name", { required: true })} />
-                                <input className="userInput" type="text" placeholder="Surname" {...register("surname")} />
-                                <input className="userInput" type="text" placeholder="Phone" {...register("phone")} />
-                                <input className="userInput" type="text" placeholder="Cooperate Rate" {...register("cooperateRate", { required: true })} />
-                                {
-                                    cooperate?.cooperationSphere && cooperate.cooperationSphere.length > 0 ?
 
-                                        <select className="userInput form-select mt-3" aria-label="Default select example">
-                                            {
-                                                cooperate.cooperationSphere.map((e: any) => {
-                                                    return (
-                                                        <option key={e._id}
-                                                            value={e._id}
-                                                            {...register("cooperationSphere", { required: true })}>
-                                                            {e.name}
-                                                        </option>
-                                                    )
-                                                })
-                                            }
-                                        </select>
-                                        :
-                                        null
-                                }
-                            </div>
-                            <button className="btn" >Save</button>
-                        </form>
-                        <button className="btn btn-lg" onClick={() => window.location.reload()} >X</button>
-                    </div>
-                    :
-                    null
-            }
-            {/* ////////// add textur /////////// */}
-            {
-                addTextureForm ?
-                    <div className="profile">
-                        <form className="divBtn" onSubmit={handleSubmit(saveTexture)}>
-                            <div>
-                                <input className="userInput" type="text" placeholder="Name" {...register("name", { required: true })} />
-                            </div>
-                            <button className="btn" >Save</button>
-                        </form>
-                        <button className="btn btn-lg" onClick={() => window.location.reload()} >X</button>
-                    </div>
-                    :
-                    null
-            }
             {/* ////////// add Coop Spher /////////// */}
             {/* {
                 addCoopSpherForm ?
@@ -479,55 +292,52 @@ export const AdminProfile: React.FC = (): JSX.Element => {
 
             {/* /////////////// new Orders//////////////////////// */}
 
-            {
-                newOrdersForm ?
-                    <div className="profile">
-                        {
-                            newOrders?.arr && newOrders.arr.length > 0 ?
+            <div className="profile">
+                {
+                    newOrders?.arr && newOrders.arr.length > 0 ?
 
-                                <table className="table" style={{ color: "white" }}>
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Ամսաթիվ</th>
-                                            <th scope="col">Գնորդ</th>
-                                            <th scope="col">Երկարություն/Լայնություն</th>
-                                            <th scope="col">Ք/Մ</th>
-                                            <th scope="col">Նկար</th>
-                                            <th scope="col">Տեսակ</th>
-                                            <th scope="col">Կարգավիճակ</th>
-                                            <th scope="col">Վեջնաժամկետ</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {
-                                            newOrders.arr.map((e: any) => {
+                        <table className="table" style={{ color: "white" }}>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Ամսաթիվ</th>
+                                    <th scope="col">Գնորդ</th>
+                                    <th scope="col">Երկարություն/Լայնություն</th>
+                                    <th scope="col">Ք/Մ</th>
+                                    <th scope="col">Նկար</th>
+                                    <th scope="col">Տեսակ</th>
+                                    <th scope="col">Կարգավիճակ</th>
+                                    <th scope="col">Վեջնաժամկետ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    newOrders.arr.map((e: any) => {
 
 
-                                                return (
-                                                    <tr key={e._id}>
-                                                        <td >{parseDate(e.date)}</td>
-                                                        <td>{e.buyer.name}</td>
-                                                        <td>{e.weight} x {e.height}</td>
-                                                        <td>{e.sqMetr}</td>
-                                                        <td>{e.picCode}</td>
-                                                        <td>{e.texture.name}</td>
-                                                        <td>{e.status}</td>
-                                                        <td>{parseDate(e.deadline)}</td>
-                                                        <td><button className="btn" onClick={() => viewOrder(e._id)}>View</button></td>
+                                        return (
+                                            <tr key={e._id}>
+                                                <td >{parseDate(e.date)}</td>
+                                                <td>{e.buyer.name}</td>
+                                                <td>{e.weight} x {e.height}</td>
+                                                <td>{e.sqMetr}</td>
+                                                <td>{e.picCode}</td>
+                                                <td>{e.texture.name}</td>
+                                                <td>{e.status}</td>
+                                                <td>{parseDate(e.deadline)}</td>
+                                                <td><button className="btn" onClick={() => viewOrder(e._id)}>View</button></td>
 
-                                                    </tr>
-                                                )
-                                            })
-                                        }
-                                    </tbody>
-                                </table>
-                                :
-                                <p></p>
-                        }
-                    </div>
-                    :
-                    null
-            }
+                                            </tr>
+                                        )
+                                    })
+                                }
+                            </tbody>
+                        </table>
+                        :
+                        <p></p>
+                }
+            </div>
+
+
 
 
         </>

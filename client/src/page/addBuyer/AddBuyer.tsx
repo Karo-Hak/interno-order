@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { User, selectUser } from "../../features/user/userSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
@@ -47,11 +46,11 @@ console.log(buyer.arrBuyer);
                             <input id="buyerName" className="userInput" type="text" placeholder="Name" {...register("name", { required: true })} />
                         </div>
                         <div style={{ display: "flex", flexDirection: "column" }}>
-                            <label htmlFor="buyerPhone">Անուն</label>
+                            <label htmlFor="buyerPhone">Հեռախես</label>
                             <input id="buyerPhone" className="userInput" type="text" placeholder="Phone" {...register("phone", { required: true })} />
                         </div>
                         <div style={{ display: "flex", flexDirection: "column" }}>
-                            <label htmlFor="buyerAdress">Անուն</label>
+                            <label htmlFor="buyerAdress">Հասցե</label>
                             <input id="buyerAdress" className="userInput" type="text" placeholder="Adress" {...register("adress", { required: true })} />
                         </div>
                     </div>

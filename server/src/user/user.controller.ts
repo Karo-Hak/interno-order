@@ -32,7 +32,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('profile')
   async findOneLogin(@Request() req) {
-    return { user: req.user };
+    return await { user: req.user };
   }
 
   @Post()

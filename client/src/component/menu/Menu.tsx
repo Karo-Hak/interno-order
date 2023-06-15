@@ -15,60 +15,73 @@ export const Menu: React.FC = (): JSX.Element => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        setTimeout(() => {
+        dispatch(userProfile(cookies)).unwrap().then(res => {
+            if ("error" in res) {
+                setCookie("access_token", '', { path: '/' })
+                navigate("/")
+            }
+        })
 
-            dispatch(userProfile(cookies)).unwrap().then(res => {
-                if ("error" in res) {
-                    setCookie("access_token", '', { path: '/' })
-                    navigate("/")
-                }
-            })
-        }, 100)
 
     }, [])
 
     const btnHome = () => {
-        if (data.profile.role == "admin") {
-            navigate("/admine/profile")
-        } else {
-            navigate("/user/profile")
-        }
+        navigate("/admine/profile")
     }
     const addUser = () => {
-        if (data.profile.role == "admin") {
+        if (data.profile.role === "admin") {
             navigate("/addUser")
         }
     }
     const addBuyer = () => {
-        if (data.profile.role == "admin") {
-            navigate("/addBuyer")
-        }
+        navigate("/addBuyer")
     }
     const addCooperate = () => {
-        if (data.profile.role == "admin") {
+        if (data.profile.role === "admin") {
             navigate("/addCooperate")
         }
     }
-
+    const addTexture = () => {
+        if (data.profile.role === "admin") {
+            navigate("/addTexture")
+        }
+    }
+    const search = () => {
+        navigate("/searchOrder")
+    }
     return (<>
         <nav className="navbar navbar-expand-sm bg-dark navbar-dark">
             <div className="container-fluid">
-                <a className="navbar-brand" href="#">
-                    <img src="/interno.png" alt="" height="30" />
-                </a>
-                <button className="btn" onClick={btnHome}>Գլխավոր էջ</button>
+                <div>
+                    <a className="navbar-brand" href="#">
+                        <img src="/interno.png" alt="" height="30" />
+                    </a>
+                    <button className="btn" onClick={btnHome}>Գլխավոր էջ</button>
+                </div>
+                <div style={{ display: "flex" }}>
+
+                    {
+                        data?.profile && data.profile?.role === "admin" ?
+                            <div>
+                                <button className="btn" onClick={addUser}>Ավելացնել Օգտատեր</button>
+                                <button className="btn" onClick={addCooperate}>Ավելացնել Գործընկեր</button>
+                                <button className="btn" onClick={addTexture}>Ավելացնել Տեսակ</button>
+                            </div>
+                            :
+                            null
+                    }
+                    {
+                        data?.profile && data?.profile?.role === "admin" || data?.profile?.role === "user" ?
+                            <div>
+                                <button className="btn" onClick={addBuyer}>Ավելացնել Գնորդ</button>
+                                <button className="btn" onClick={search}>Դիտել Պատվերները</button>
+                            </div>
+                            :
+                            null
+                    }
+                </div>
                 {
-                    data?.profile && data.profile.role === "admin" ?
-                        <div>
-                            <button className="btn" onClick={addUser}>Ավելացնել Օգտատեր</button>
-                            <button className="btn" onClick={addBuyer}>Ավելացնել Գնորդ</button>
-                            <button className="btn" onClick={addCooperate}>Ավելացնել Գործընկեր</button>
-                        </div>
-                        :
-                        null
-                }
-                {
-                    data.profile ?
+                    data?.profile && data?.profile?.role === "admin" || data?.profile?.role === "user" ?
                         <ul className="navbar-nav">
                             <li className="nav-item">
                                 <a className="nav-link" >{data.profile.name}</a>
@@ -86,15 +99,14 @@ export const Menu: React.FC = (): JSX.Element => {
                                         navigate("/")
                                     })
                                 }}>
-                                    logout
+                                    Դուրս Գալ
                                 </button>
                             </li>
                         </ul>
                         :
-                        <p></p>
-
+                        null
                 }
             </div>
-
-        </nav></>)
+        </nav>
+    </>)
 }

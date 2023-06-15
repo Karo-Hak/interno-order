@@ -38,7 +38,7 @@ export const AddCooperate: React.FC = (): JSX.Element => {
                 alert(res.error)
             }
         });
-        // window.location.reload()
+        window.location.reload()
     }
 
     return (

@@ -110,7 +110,6 @@ export class OrderController {
 
   @Post('updatePrepayment')
   async updatePrepayment(@Body() obj: any, @Res() res: Response) {
-    console.log(obj);
     try {
       const order = await this.orderService.findOne(obj.params.id);
       if (order) {

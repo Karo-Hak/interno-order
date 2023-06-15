@@ -19,12 +19,7 @@ export const Login: React.FC = (): JSX.Element => {
         dispatch(loginUser(us)).unwrap().then(res => {
             if (res) {
                 setCookie("access_token", res.access_token, { path: '/' })
-                if (res.role === "user") {
-                    navigate('/user/profile')
-                }
-                else if (res.role === "admin") {
-                    navigate('/admine/profile')
-                }
+                navigate('/admine/profile')
             } else {
                 navigate('/')
             }
