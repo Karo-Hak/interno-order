@@ -24,11 +24,9 @@ export const SearchOrder: React.FC = (): JSX.Element => {
     const buyer = useAppSelector(selectBuyer);
     const cooperate = useAppSelector(selectCooperate);
     const texture = useAppSelector(selectTexture);
-
     const dispatch = useAppDispatch();
     const [cookies, setCookie] = useCookies(['access_token']);
     const navigate = useNavigate()
-
     const currentDate = new Date();
     const [startDate, setStartDate] = useState(new Date(currentDate.getFullYear(), currentDate.getMonth(), 2).toISOString().split('T')[0]);
     const [endDate, setEndDate] = useState(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 2).toISOString().split('T')[0]);
@@ -38,6 +36,7 @@ export const SearchOrder: React.FC = (): JSX.Element => {
     const [selectedCooperate, setSelectedCooperate] = useState("");
     const [selectedTexture, setSelectedTexture] = useState("");
     const [selectPaymentMethod, setSelectPaymentMethod] = useState("")
+console.log(searchOrderRes.arr);
 
     function selUser(event: ChangeEvent<HTMLSelectElement>): void {
         setSelectedUser(event.target.value);
@@ -183,7 +182,7 @@ export const SearchOrder: React.FC = (): JSX.Element => {
                     </div>
                     <div>
                         <label htmlFor="paymentMethod">Տեսակ</label>
-                        <select id="paymentMethod" className="selectCoop" onChange={selPaymentMethod}>
+                        <select id="paymentMethod" className="form-control selectFilter" onChange={selPaymentMethod}>
                             <option value={0}>Select</option>
                             <option className="selectCoop" value={"cash"} >Կանխիկ</option>
                             <option className="selectCoop" value={"transfer"}>Փոխանցում</option>
@@ -214,7 +213,7 @@ export const SearchOrder: React.FC = (): JSX.Element => {
                             <th scope="col">Մնացորդ</th>
                             <th scope="col">Գործ․ %</th>
                             <th scope="col">Գործ․ Գումար</th>
-                            <th scope="col">Վճարման եղանակ</th>
+                            <th scope="col">Վճ. եղանակ</th>
                             <th scope="col">ԱՎԵԼԻՆ</th>
                         </tr>
                     </thead>

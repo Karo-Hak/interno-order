@@ -40,7 +40,7 @@ export class OrderService {
   }
 
   async findNewOrders() {
-    return await this.orderModel.find({ status: "progress" }).populate("buyer").populate("texture")
+    return await this.orderModel.find({ status: "progress" }).populate("buyer").populate("texture").sort({ date: -1 })
   }
 
   async findOne(id: string) {
@@ -65,7 +65,7 @@ export class OrderService {
         $gte: startDate,
         $lte: endDate
       }
-    }).populate("texture").populate("buyer").populate("cooperate").populate("user")
+    }).populate("texture").populate("buyer").populate("cooperate").populate("user").sort({ date: -1 })
   }
 
   findAll() {
