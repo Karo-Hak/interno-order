@@ -15,7 +15,8 @@ export interface Order {
     picUrl: string;
     cooperateTotal: number;
     kontragent: string;
-    fuctur: string;
+    texture: string;
+    paymentMethod: string
 }
 
 export interface OrderState {

@@ -39,6 +39,8 @@ export class Order {
     picUrl: string;
     @Prop({ default: "progress" })
     status: string;
+    @Prop()
+    paymentMethod: string;
     @Prop({
         default: () => {
             const currentDate = new Date();

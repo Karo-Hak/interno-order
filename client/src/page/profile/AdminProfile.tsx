@@ -1,4 +1,4 @@
-import { selectUser, User } from "../../features/user/userSlice";
+import { selectUser } from "../../features/user/userSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { ChangeEvent, useEffect, useState } from 'react'
 import { useNavigate } from "react-router-dom";
@@ -6,10 +6,10 @@ import { useCookies } from 'react-cookie'
 import { useForm } from "react-hook-form";
 import { userProfile } from "../../features/user/userApi";
 import './adminProfile.css'
-import { getAllCooperate, getCoopSpher, newCooperate } from "../../features/cooperate/cooperateApi";
+import { getAllCooperate } from "../../features/cooperate/cooperateApi";
 import { Cooperate, selectCooperate } from "../../features/cooperate/cooperateSlice";
 import { addNewOrder, viewNewOrders } from "../../features/order/orderApi";
-import { getAllTexture, newTexture } from "../../features/texture/textureApi";
+import { getAllTexture } from "../../features/texture/textureApi";
 import { selectTexture } from "../../features/texture/textureSlice";
 import { selectOrder } from "../../features/order/orderSlice";
 
@@ -30,7 +30,7 @@ export const AdminProfile: React.FC = (): JSX.Element => {
                 navigate("/")
             }
         })
-   
+
         dispatch(viewNewOrders(cookies)).unwrap().then(res => {
             if ("error" in res) {
                 setCookie("access_token", '', { path: '/' })
@@ -53,12 +53,11 @@ export const AdminProfile: React.FC = (): JSX.Element => {
     const [coopRate, setCoopRate] = useState<number>(0)
     const [coopTotal, setCoopTotal] = useState<number>(0)
     const [coop, setCoop] = useState<any>()
-
     const sq = (height / 100) * (weight / 100);
     const squer = +sq.toFixed(2);
     const totalOrder = parseInt(((squer * price) - ((squer * price) * discount) / 100).toString())
     const sum = totalOrder - prepayment
-
+    const [paymentMethod, setPaymenthMetod] = useState("")
 
     const [checked, setChecked] = useState(false);
 
@@ -127,7 +126,8 @@ export const AdminProfile: React.FC = (): JSX.Element => {
             user: user.profile.userId,
             cooperate: order.cooperateId,
             texture: order.texture,
-            comment: order.comment
+            comment: order.comment,
+            paymentMethod: paymentMethod
         }
         dispatch(addNewOrder({ buyer, newOrder, cookies })).unwrap().then(res => {
             if ("error" in res) {
@@ -140,6 +140,7 @@ export const AdminProfile: React.FC = (): JSX.Element => {
             navigate("/newOrder/" + newOrder.oldId)
         }
     }
+    console.log(paymentMethod);
 
     //////////////////// new Orders hashvetvutyun ////////////////
     const parseDate = (dateStr: string) => {
@@ -269,6 +270,14 @@ export const AdminProfile: React.FC = (): JSX.Element => {
 
                         </div>
                         <div className="">
+                            <select className="selectCoop" onChange={(e) => setPaymenthMetod(e.target.value)}>
+                                <option className="selectCoop" value={"cash"} >Կանխիկ</option>
+                                <option className="selectCoop" value={"transfer"}>Փոխանցում</option>
+                                <option className="selectCoop" value={"pos"}>Պոս Տերմինալ</option>
+                                <option className="selectCoop" value={"credit"}>Ապառիկ</option>
+                                <option className="selectCoop" value={"inecoPay"}>Ինեկո Փեյ</option>
+                                <option className="selectCoop" value={"idram"}>Իդրամ</option>
+                            </select>
                             <select className="selectCoop" {...register("texture", { required: true })}  >
                                 {
                                     texture?.arrTexture && texture.arrTexture.length > 0 ?

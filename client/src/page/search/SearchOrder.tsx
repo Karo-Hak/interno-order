@@ -37,6 +37,7 @@ export const SearchOrder: React.FC = (): JSX.Element => {
     const [selectedBuyer, setSelectedBuyer] = useState("");
     const [selectedCooperate, setSelectedCooperate] = useState("");
     const [selectedTexture, setSelectedTexture] = useState("");
+    const [selectPaymentMethod, setSelectPaymentMethod] = useState("")
 
     function selUser(event: ChangeEvent<HTMLSelectElement>): void {
         setSelectedUser(event.target.value);
@@ -49,6 +50,9 @@ export const SearchOrder: React.FC = (): JSX.Element => {
     }
     function selTexture(event: ChangeEvent<HTMLSelectElement>): void {
         setSelectedTexture(event.target.value);
+    }
+    function selPaymentMethod(event: ChangeEvent<HTMLSelectElement>): void {
+        setSelectPaymentMethod(event.target.value)
     }
 
     useEffect(() => {
@@ -81,7 +85,7 @@ export const SearchOrder: React.FC = (): JSX.Element => {
     const searchRes = async () => {
         const dateFilter = { startDate, endDate }
         dispatch(searchOrder({ dateFilter, cookies })).unwrap().then(res => {
-            setFilteredOrder(searchFilter(res, selectedUser, selectedBuyer, selectedCooperate, selectedTexture))
+            setFilteredOrder(searchFilter(res, selectedUser, selectedBuyer, selectedCooperate, selectedTexture, selectPaymentMethod))
             if ("error" in res) {
                 alert(res.error)
             }
@@ -177,6 +181,19 @@ export const SearchOrder: React.FC = (): JSX.Element => {
                             }
                         </select>
                     </div>
+                    <div>
+                        <label htmlFor="paymentMethod">Տեսակ</label>
+                        <select id="paymentMethod" className="selectCoop" onChange={selPaymentMethod}>
+                            <option value={0}>Select</option>
+                            <option className="selectCoop" value={"cash"} >Կանխիկ</option>
+                            <option className="selectCoop" value={"transfer"}>Փոխանցում</option>
+                            <option className="selectCoop" value={"pos"}>Պոս Տերմինալ</option>
+                            <option className="selectCoop" value={"credit"}>Ապառիկ</option>
+                            <option className="selectCoop" value={"inecoPay"}>Ինեկո Փեյ</option>
+                            <option className="selectCoop" value={"idram"}>Իդրամ</option>
+                        </select>
+
+                    </div>
                 </div>
                 <button className="btn" onClick={searchRes}>Search</button>
             </div>
@@ -197,6 +214,7 @@ export const SearchOrder: React.FC = (): JSX.Element => {
                             <th scope="col">Մնացորդ</th>
                             <th scope="col">Գործ․ %</th>
                             <th scope="col">Գործ․ Գումար</th>
+                            <th scope="col">Վճարման եղանակ</th>
                             <th scope="col">ԱՎԵԼԻՆ</th>
                         </tr>
                     </thead>
@@ -230,6 +248,7 @@ export const SearchOrder: React.FC = (): JSX.Element => {
                                                 <td></td>
                                         }
                                         <td>{e.cooperateTotal}</td>
+                                        <td>{e.paymentMethod}</td>
                                         <td><button className="btn" onClick={() => viewOrder(e._id)}>Դիտել</button></td>
 
                                     </tr>
