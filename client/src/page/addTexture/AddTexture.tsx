@@ -40,6 +40,10 @@ export const AddTexture: React.FC = (): JSX.Element => {
                         <label htmlFor="addTexture">Անվանում</label>
                         <input id="addTexture" className="userInput" type="text" placeholder="Name" {...register("name", { required: true })} />
                     </div>
+                    <div style={{ display: "flex", flexDirection: "column" }}>
+                        <label htmlFor="addPrice">Գին</label>
+                        <input id="addPrice" className="userInput" type="number" placeholder="Price" {...register("price", { required: true })} />
+                    </div>
                     <button className="btn" >Գրանցել</button>
                 </form>
                 {

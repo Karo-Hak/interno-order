@@ -56,6 +56,7 @@ export const SearchOrder: React.FC = (): JSX.Element => {
     }
     function selGroundTotal(event: ChangeEvent<HTMLSelectElement>): void {
         setSelectGroundTotal(event.target.value)
+
     }
 
     useEffect(() => {
@@ -88,7 +89,7 @@ export const SearchOrder: React.FC = (): JSX.Element => {
     const searchRes = async () => {
         const dateFilter = { startDate, endDate }
         dispatch(searchOrder({ dateFilter, cookies })).unwrap().then(res => {
-            setFilteredOrder(searchFilter(res, selectedUser, selectedBuyer, selectedCooperate, selectedTexture, selectPaymentMethod))
+            setFilteredOrder(searchFilter(res, selectedUser, selectedBuyer, selectedCooperate, selectedTexture, selectPaymentMethod, selectGroundTotal))
             if ("error" in res) {
                 alert(res.error)
             }
@@ -117,6 +118,7 @@ export const SearchOrder: React.FC = (): JSX.Element => {
         selectGroundTotal
     ]);
 
+
     const searchReset = () => {
         // setSelectPaymentMethod("0");
         // setSelectedBuyer("0");
@@ -127,7 +129,6 @@ export const SearchOrder: React.FC = (): JSX.Element => {
         // setEndDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 2).toISOString().split('T')[0])
         window.location.reload()
     }
-console.log(filteredOrder);
 
     return (
         <div >

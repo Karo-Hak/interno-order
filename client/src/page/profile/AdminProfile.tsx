@@ -49,7 +49,7 @@ export const AdminProfile: React.FC = (): JSX.Element => {
     const [height, setHeight] = useState(0);
     const [discount, setDiscount] = useState<number>(0)
     const [prepayment, setPrepayment] = useState<number>(0)
-    const [price, setPrice] = useState(9000)
+    const [price, setPrice] = useState(0)
     const [coopRate, setCoopRate] = useState<number>(0)
     const [coopTotal, setCoopTotal] = useState<number>(0)
     const [coop, setCoop] = useState<any>()
@@ -58,13 +58,19 @@ export const AdminProfile: React.FC = (): JSX.Element => {
     const totalOrder = parseInt(((squer * price) - ((squer * price) * discount) / 100).toString())
     const sum = totalOrder - prepayment
     const [paymentMethod, setPaymenthMetod] = useState("")
-
     const [checked, setChecked] = useState(false);
+    const [texturePrice, setTexturePrice] = useState(0)
+
 
     function handleCheckboxChange(event: any) {
         setChecked(event.target.checked);
-
     };
+    function selectTexturePrice(event: ChangeEvent<HTMLSelectElement>): void {
+        const orderPrice = texture.arrTexture?.filter((e: any, i: any) => {
+            return e._id === event.target.value
+        })
+        setTexturePrice(orderPrice[0].price)
+    }
 
 
 
@@ -82,6 +88,7 @@ export const AdminProfile: React.FC = (): JSX.Element => {
                 navigate("/")
             }
         })
+
         setAddOrderForm(true)
     }
     function cooperateDiscount(event: ChangeEvent<HTMLSelectElement>): void {
@@ -99,22 +106,26 @@ export const AdminProfile: React.FC = (): JSX.Element => {
 
     useEffect(() => {
         if (checked) {
-            setPrice(9000 - (9000 * coopRate) / 100);
+            setPrice(texturePrice - (texturePrice * coopRate) / 100);
             setCoopTotal(0);
         } else {
-            setPrice(9000)
+            setPrice(texturePrice)
             if (coop) {
-
                 setCoopTotal(((coop?.cooperateRate * totalOrder) / 100))
             }
         }
-    }, [checked]);
+    }, [checked, price]);
+
+    useEffect(() => {
+        setPrice(texturePrice)
+    }, [texturePrice])
+
+
 
 
     const newOrder = (order: any) => {
         const buyer = { name: order.buyerName, phone: order.buyerPhone, adress: order.buyerAdress }
-        if (order.cooperateId === "0") {
-        }
+
         const newOrder = {
             oldId: Math.floor(Math.random() * 1000000000),
             height: +order.height,
@@ -253,7 +264,7 @@ export const AdminProfile: React.FC = (): JSX.Element => {
                                     <div>-------------</div>
                                     <div>
                                         <label htmlFor="selectCoop">Գործընկերոջ անվանում</label>
-                                        <select id="selectCoop" className="selectCoop form-control" {...register("cooperateId", { required: true })} onChange={cooperateDiscount} >
+                                        <select id="selectCoop" className="selectCoop form-control" {...register("cooperateId", { required: true })} onChange={cooperateDiscount}>
                                             <option className="selectCoop" key={0} value={0}>Select Cooperat</option>
                                             {
                                                 cooperate?.arrCooperate && cooperate.arrCooperate.length > 0 ?
@@ -303,7 +314,8 @@ export const AdminProfile: React.FC = (): JSX.Element => {
                             </div>
                             <div>
                                 <label htmlFor="texture">Ֆոտոպաստառ</label>
-                                <select id="texture" className="selectCoop form-control" {...register("texture", { required: true })}  >
+                                <select id="texture" className="selectCoop form-control" {...register("texture", { required: true })} onChange={selectTexturePrice}>
+                                    <option></option>
                                     {
                                         texture?.arrTexture && texture.arrTexture.length > 0 ?
                                             texture.arrTexture.map((e: any) => {

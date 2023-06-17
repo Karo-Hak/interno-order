@@ -1,6 +1,6 @@
 import { Value } from "sass";
 
-export const searchFilter = (orders: any, user: string, buyer: string, cooperate: string, texture: string, paymentMethod: string) => {
+export const searchFilter = (orders: any, user: string, buyer: string, cooperate: string, texture: string, paymentMethod: string, grTotal: string) => {
     if (user && user !== "0") {
         orders = orders.filter((e: any, i: any) => {
             return e.user._id === user
@@ -28,13 +28,18 @@ export const searchFilter = (orders: any, user: string, buyer: string, cooperate
             return e.paymentMethod === paymentMethod
         })
     }
-    // if (groundTotal && groundTotal !== "0") {
-    //     orders = orders.filter((e: any, i: any) => {
-    //         return e.groundTotal === groundTotal
-    //     })
-
-
-    // }
+    console.log(grTotal);
+    if (grTotal && grTotal !== "0") {
+        if (grTotal === "payed") {
+            orders = orders.filter((e: any, i: any) => {
+                return e.groundTotal === 0
+            })
+        } else {
+            orders = orders.filter((e: any, i: any) => {
+                return e.groundTotal !== 0
+            })
+        }
+    }
 
     return orders
 }

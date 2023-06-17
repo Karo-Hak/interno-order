@@ -9,6 +9,8 @@ export type TextureDocument = HydratedDocument<Texture>;
 export class Texture {
     @Prop()
     name: string;
+    @Prop()
+    price: number;
     @Prop({
         type: [
             { type: mongoose.Schema.Types.ObjectId, ref: "Order" }
