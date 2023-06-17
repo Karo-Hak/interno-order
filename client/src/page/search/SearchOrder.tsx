@@ -36,7 +36,7 @@ export const SearchOrder: React.FC = (): JSX.Element => {
     const [selectedCooperate, setSelectedCooperate] = useState("");
     const [selectedTexture, setSelectedTexture] = useState("");
     const [selectPaymentMethod, setSelectPaymentMethod] = useState("")
-console.log(searchOrderRes.arr);
+    const [selectGroundTotal, setSelectGroundTotal] = useState("")
 
     function selUser(event: ChangeEvent<HTMLSelectElement>): void {
         setSelectedUser(event.target.value);
@@ -44,6 +44,7 @@ console.log(searchOrderRes.arr);
     function selBuyer(event: ChangeEvent<HTMLSelectElement>): void {
         setSelectedBuyer(event.target.value);
     }
+
     function selCooperate(event: ChangeEvent<HTMLSelectElement>): void {
         setSelectedCooperate(event.target.value);
     }
@@ -52,6 +53,9 @@ console.log(searchOrderRes.arr);
     }
     function selPaymentMethod(event: ChangeEvent<HTMLSelectElement>): void {
         setSelectPaymentMethod(event.target.value)
+    }
+    function selGroundTotal(event: ChangeEvent<HTMLSelectElement>): void {
+        setSelectGroundTotal(event.target.value)
     }
 
     useEffect(() => {
@@ -100,17 +104,42 @@ console.log(searchOrderRes.arr);
 
     }
 
+    useEffect(() => {
+        searchRes()
+    }, [
+        selectedBuyer,
+        selectedUser,
+        selectedCooperate,
+        startDate,
+        endDate,
+        selectedTexture,
+        selectPaymentMethod,
+        selectGroundTotal
+    ]);
+
+    const searchReset = () => {
+        // setSelectPaymentMethod("0");
+        // setSelectedBuyer("0");
+        // setSelectedUser("0");
+        // setSelectedCooperate("0");
+        // setSelectedTexture("0");
+        // setStartDate(new Date(2000, 0, 1).toISOString());
+        // setEndDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 2).toISOString().split('T')[0])
+        window.location.reload()
+    }
+console.log(filteredOrder);
+
     return (
         <div >
             <div className="divMenu">
                 <div style={{ display: "flex", gap: "5px" }}>
                     <div>
                         <label htmlFor="startDate">Ամսատիվ սկիզբ</label>
-                        <input id="startDate" type="date" className="form-control selectFilter" defaultValue={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                        <input id="startDate" type="date" className="form-control selectFilter" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
                     </div>
                     <div>
                         <label htmlFor="endDate">Ամսաթիվ վերջ</label>
-                        <input id="endDate" type="date" className=" form-control selectFilter" defaultValue={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                        <input id="endDate" type="date" className=" form-control selectFilter" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
                     </div>
                     <div>
                         <label htmlFor="user">Օգտատեր</label>
@@ -129,40 +158,7 @@ console.log(searchOrderRes.arr);
                             }
                         </select>
                     </div>
-                    <div>
-                        <label htmlFor="buyer">Գնորդ</label>
-                        <select id="buyer" className="form-control selectFilter" onChange={selBuyer}>
-                            <option value={0}>Select</option>
 
-                            {
-                                buyer?.arrBuyer && buyer.arrBuyer.length > 0 ?
-                                    buyer.arrBuyer.map((e: any) => {
-                                        return (
-                                            <option key={e._id} value={e._id}>{e.name} {e.surname}</option>
-                                        )
-                                    })
-                                    :
-                                    null
-                            }
-                        </select>
-                    </div>
-                    <div>
-                        <label htmlFor="cooperate">Գործընկեր</label>
-                        <select id="cooperate" className="form-control selectFilter" onChange={selCooperate}>
-                            <option value={0}>Select</option>
-
-                            {
-                                cooperate?.arrCooperate && cooperate.arrCooperate.length > 0 ?
-                                    cooperate.arrCooperate.map((e: any) => {
-                                        return (
-                                            <option key={e._id} value={e._id}>{e.name} {e.surname}</option>
-                                        )
-                                    })
-                                    :
-                                    null
-                            }
-                        </select>
-                    </div>
                     <div>
                         <label htmlFor="texture">Տեսակ</label>
                         <select id="texture" className="form-control selectFilter" onChange={selTexture}>
@@ -180,29 +176,44 @@ console.log(searchOrderRes.arr);
                             }
                         </select>
                     </div>
-                    <div>
-                        <label htmlFor="paymentMethod">Տեսակ</label>
-                        <select id="paymentMethod" className="form-control selectFilter" onChange={selPaymentMethod}>
-                            <option value={0}>Select</option>
-                            <option className="selectCoop" value={"cash"} >Կանխիկ</option>
-                            <option className="selectCoop" value={"transfer"}>Փոխանցում</option>
-                            <option className="selectCoop" value={"pos"}>Պոս Տերմինալ</option>
-                            <option className="selectCoop" value={"credit"}>Ապառիկ</option>
-                            <option className="selectCoop" value={"inecoPay"}>Ինեկո Փեյ</option>
-                            <option className="selectCoop" value={"idram"}>Իդրամ</option>
-                        </select>
-
-                    </div>
                 </div>
-                <button className="btn" onClick={searchRes}>Search</button>
+                <button className="btn" onClick={searchReset}>Չեղարկել</button>
             </div>
             <div className="divTable">
                 <table className="table" style={{ color: "white" }}>
                     <thead>
                         <tr>
                             <th scope="col">Ամսաթիվ</th>
-                            <th scope="col">Գնորդ</th>
-                            <th scope="col">Գործընկեր</th>
+                            <th scope="col">
+                                <select id="buyer" className="seltype" onChange={selBuyer}>
+                                    <option value={0}>Գնորդ</option>
+                                    {
+                                        buyer?.arrBuyer && buyer.arrBuyer.length > 0 ?
+                                            buyer.arrBuyer.map((e: any) => {
+                                                return (
+                                                    <option key={e._id} value={e._id}>{e.name} {e.surname}</option>
+                                                )
+                                            })
+                                            :
+                                            null
+                                    }
+                                </select>
+                            </th>
+                            <th scope="col">
+                                <select id="cooperate" className="seltype" onChange={selCooperate}>
+                                    <option value={0}>Գործընկեր</option>
+                                    {
+                                        cooperate?.arrCooperate && cooperate.arrCooperate.length > 0 ?
+                                            cooperate.arrCooperate.map((e: any) => {
+                                                return (
+                                                    <option key={e._id} value={e._id}>{e.name} {e.surname}</option>
+                                                )
+                                            })
+                                            :
+                                            null
+                                    }
+                                </select>
+                            </th>
                             <th scope="col">Եր/Լա</th>
                             <th scope="col">Ք/Մ</th>
                             <th scope="col">Գ/Ծ</th>
@@ -210,10 +221,25 @@ console.log(searchOrderRes.arr);
                             <th scope="col">Զեղչ %</th>
                             <th scope="col">Գումար</th>
                             <th scope="col">Վճարված</th>
-                            <th scope="col">Մնացորդ</th>
+                            <th scope="col">
+                                <select className="seltype" onChange={selGroundTotal}>
+                                    <option value={0}>Մնացորդ</option>
+                                    <option className="selectCoop" value={"payed"} >Վճարված</option>
+                                    <option className="selectCoop" value={"credited"}>Պարտք</option>
+                                </select>
+                            </th>
                             <th scope="col">Գործ․ %</th>
                             <th scope="col">Գործ․ Գումար</th>
-                            <th scope="col">Վճ. եղանակ</th>
+                            <th scope="col">
+                                <select id="paymentMethod" className="seltype" onChange={selPaymentMethod}>
+                                    <option value={0}>Վճ. եղանակ</option>
+                                    <option className="selectCoop" value={"cash"} >Կանխիկ</option>
+                                    <option className="selectCoop" value={"transfer"}>Փոխանցում</option>
+                                    <option className="selectCoop" value={"pos"}>Պոս Տերմինալ</option>
+                                    <option className="selectCoop" value={"credit"}>Ապառիկ</option>
+                                    <option className="selectCoop" value={"inecoPay"}>Ինեկո Փեյ</option>
+                                    <option className="selectCoop" value={"idram"}>Իդրամ</option>
+                                </select></th>
                             <th scope="col">ԱՎԵԼԻՆ</th>
                         </tr>
                     </thead>
@@ -257,6 +283,6 @@ console.log(searchOrderRes.arr);
                     </tbody>
                 </table>
             </div>
-        </div>
+        </div >
     )
 }

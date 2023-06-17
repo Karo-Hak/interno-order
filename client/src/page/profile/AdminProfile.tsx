@@ -107,8 +107,6 @@ export const AdminProfile: React.FC = (): JSX.Element => {
 
                 setCoopTotal(((coop?.cooperateRate * totalOrder) / 100))
             }
-
-
         }
     }, [checked]);
 

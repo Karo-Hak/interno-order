@@ -115,8 +115,6 @@ export const updateOrder = createAsyncThunk(
 export const searchOrder = createAsyncThunk(
   'order/search/axios',
   async (obj: any) => {
-    console.log(obj);
-    
     try {
       const response = await axios.post(process.env.REACT_APP_SERVER_URL + "/order/search", { ...obj }, {
         headers: {
