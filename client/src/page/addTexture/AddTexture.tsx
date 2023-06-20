@@ -53,6 +53,7 @@ export const AddTexture: React.FC = (): JSX.Element => {
                                 <thead>
                                     <tr>
                                         <th>Անվանում</th>
+                                        <th>Գին</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -61,6 +62,7 @@ export const AddTexture: React.FC = (): JSX.Element => {
                                             return (
                                                 <tr key={e._id}>
                                                     <td>{e.name}</td>
+                                                    <td>{e.price}</td>
                                                 </tr>
                                             )
                                         })

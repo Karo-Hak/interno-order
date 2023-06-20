@@ -2,26 +2,54 @@
     background-color: rgb(10, 10, 20);
     color: rgba(255, 255, 255, .55);
     width: 95%;
-    height: 95%;
     margin: 5px auto;
     padding: 10px;
     opacity: 90%;
     border-radius: 10px;
     display: flex;
-    display: flex;
+    position: fixed;
+    top: 30;
+    left: 35px;
+    z-index: 100;
 }
+
 
 .divTable {
     background-color: rgb(10, 10, 20);
     color: rgba(255, 255, 255, .55);
     width: 95%;
-    height: 95%;
+    height: auto;
     margin: 5px auto;
     padding: 10px;
     opacity: 90%;
     border-radius: 10px;
     display: flex;
-    display: flex;
+    position: absolute;
+    left: 35px;
+    top: 185px;
+}
+
+.tableHead{
+    background-color: rgb(4, 4, 8);
+    color: rgba(255, 255, 255, .55);
+    width: 95%;
+    height: auto;
+    margin: 5px auto;
+    padding: 10px;
+    border-radius: 10px;
+    position: fixed;
+    left: 35px;
+    top: 185px;
+    z-index: 10;
+}
+.tableBody{
+ 
+    width: 95%;
+    margin: 5px auto;
+    padding: 10px;
+    border-radius: 10px;
+    position: relative;
+    top: 100px;
 }
 
 .selectFilter {

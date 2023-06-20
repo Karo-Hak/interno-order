@@ -5,6 +5,7 @@ import { getAllTexture, newTexture } from "./textureApi";
 export interface Texture {
     _id: string;
     name: string;
+    price: number;
 
 }
 

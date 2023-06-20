@@ -163,7 +163,7 @@ export const SearchOrder: React.FC = (): JSX.Element => {
 
     return (
         <div >
-            <div className="divMenu">
+            <div className="divMenu ">
                 <div style={{ display: "flex", gap: "5px" }}>
                     <div>
                         <label htmlFor="startDate">Ամսատիվ սկիզբ</label>
@@ -224,7 +224,7 @@ export const SearchOrder: React.FC = (): JSX.Element => {
             </div>
             <div className="divTable">
                 <table className="table" style={{ color: "white" }}>
-                    <thead>
+                    <thead className="tableHead">
                         <tr>
                             <th scope="col">Ամսաթիվ</th>
                             <th scope="col">
@@ -286,7 +286,7 @@ export const SearchOrder: React.FC = (): JSX.Element => {
                             <th scope="col">ԱՎԵԼԻՆ</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="tableBody">
                         {
                             filteredOrder.map((e: any) => {
 
