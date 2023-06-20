@@ -130,6 +130,37 @@ export const SearchOrder: React.FC = (): JSX.Element => {
         window.location.reload()
     }
 
+    let totalSqMetr = 0;
+    for (let i = 0; i < filteredOrder.length; i++) {
+        totalSqMetr += filteredOrder[i].sqMetr;
+    }
+    totalSqMetr = +totalSqMetr.toFixed(3)
+    let totalMetr = 0;
+    for (let i = 0; i < filteredOrder.length; i++) {
+        totalMetr += filteredOrder[i].metr;
+    }
+    totalMetr = +totalMetr.toFixed(3)
+    let totalTotal = 0;
+    for (let i = 0; i < filteredOrder.length; i++) {
+        totalTotal += filteredOrder[i].total;
+    }
+    totalTotal = +totalTotal.toFixed(3)
+    let totalPrepayment = 0;
+    for (let i = 0; i < filteredOrder.length; i++) {
+        totalPrepayment += filteredOrder[i].prepayment;
+    }
+    totalPrepayment = +totalPrepayment.toFixed(3)
+    let totalGroundTotal = 0;
+    for (let i = 0; i < filteredOrder.length; i++) {
+        totalGroundTotal += filteredOrder[i].groundTotal;
+    }
+    totalGroundTotal = +totalGroundTotal.toFixed(3)
+    let totalCooperateTotal = 0;
+    for (let i = 0; i < filteredOrder.length; i++) {
+        totalCooperateTotal += filteredOrder[i].cooperateTotal;
+    }
+    totalCooperateTotal = +totalCooperateTotal.toFixed(3)
+
     return (
         <div >
             <div className="divMenu">
@@ -159,7 +190,6 @@ export const SearchOrder: React.FC = (): JSX.Element => {
                             }
                         </select>
                     </div>
-
                     <div>
                         <label htmlFor="texture">Տեսակ</label>
                         <select id="texture" className="form-control selectFilter" onChange={selTexture}>
@@ -179,6 +209,18 @@ export const SearchOrder: React.FC = (): JSX.Element => {
                     </div>
                 </div>
                 <button className="btn" onClick={searchReset}>Չեղարկել</button>
+                <div className="divTotal">
+                    <div>
+                        <h6>Ք/Մ - {totalSqMetr}</h6>
+                        <h6>Գ/Ծ - {totalMetr}</h6>
+                        <h6>Գումար - {totalTotal}</h6>
+                    </div>
+                    <div>
+                        <h6>Վճարված - {totalPrepayment}</h6>
+                        <h6>Մնացորդ - {totalGroundTotal}</h6>
+                        <h6>Գործ․ Գումար - {totalCooperateTotal}</h6>
+                    </div>
+                </div>
             </div>
             <div className="divTable">
                 <table className="table" style={{ color: "white" }}>

@@ -57,7 +57,6 @@ export const AdminProfile: React.FC = (): JSX.Element => {
     const squer = +sq.toFixed(2);
     const totalOrder = parseInt(((squer * price) - ((squer * price) * discount) / 100).toString())
     const sum = totalOrder - prepayment
-    const [paymentMethod, setPaymenthMetod] = useState("")
     const [checked, setChecked] = useState(false);
     const [texturePrice, setTexturePrice] = useState(0)
 
@@ -142,7 +141,7 @@ export const AdminProfile: React.FC = (): JSX.Element => {
             cooperate: order.cooperateId,
             texture: order.texture,
             comment: order.comment,
-            paymentMethod: paymentMethod
+            paymentMethod: order.paymentMethod
         }
         dispatch(addNewOrder({ buyer, newOrder, cookies })).unwrap().then(res => {
             if ("error" in res) {
@@ -265,7 +264,6 @@ export const AdminProfile: React.FC = (): JSX.Element => {
                                     <div>
                                         <label htmlFor="selectCoop">Գործընկերոջ անվանում</label>
                                         <select id="selectCoop" className="selectCoop form-control" {...register("cooperateId", { required: true })} onChange={cooperateDiscount}>
-                                            <option className="selectCoop" key={0} value={0}>Select Cooperat</option>
                                             {
                                                 cooperate?.arrCooperate && cooperate.arrCooperate.length > 0 ?
                                                     cooperate.arrCooperate.map((e: any) => {
@@ -303,7 +301,7 @@ export const AdminProfile: React.FC = (): JSX.Element => {
                         <div className="profile">
                             <div>
                                 <label htmlFor="pey">Վճարման միջոց</label>
-                                <select id="pey" className="selectCoop form-control" onChange={(e) => setPaymenthMetod(e.target.value)}>
+                                <select id="pey" className="selectCoop form-control" {...register("paymentMethod", { required: true })}>
                                     <option className="selectCoop" value={"cash"} >Կանխիկ</option>
                                     <option className="selectCoop" value={"transfer"}>Փոխանցում</option>
                                     <option className="selectCoop" value={"pos"}>Պոս Տերմինալ</option>
@@ -374,7 +372,7 @@ export const AdminProfile: React.FC = (): JSX.Element => {
                                                 <td>{e.weight} x {e.height}</td>
                                                 <td>{e.sqMetr}</td>
                                                 <td>{e.picCode}</td>
-                                                <td>{e.texture.name}</td>
+                                                <td>{e.texture?.name}</td>
                                                 <td>{e.status}</td>
                                                 <td>{parseDate(e.deadline)}</td>
                                                 <td><button className="btn" onClick={() => viewOrder(e._id)}>View</button></td>

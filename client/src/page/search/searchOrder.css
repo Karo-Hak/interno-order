@@ -38,3 +38,12 @@
     opacity: 90%;
     border: 1px solid rgb(10, 10, 20);;
 }
+
+.divTotal{
+    border: 1px solid #fff;
+    border-radius: 5px;
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    padding: 5px;
+}
