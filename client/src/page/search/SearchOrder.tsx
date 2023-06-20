@@ -224,7 +224,7 @@ export const SearchOrder: React.FC = (): JSX.Element => {
             </div>
             <div className="divTable">
                 <table className="table" style={{ color: "white" }}>
-                    <thead className="tableHead">
+                    <thead >
                         <tr>
                             <th scope="col">Ամսաթիվ</th>
                             <th scope="col">
@@ -286,7 +286,7 @@ export const SearchOrder: React.FC = (): JSX.Element => {
                             <th scope="col">ԱՎԵԼԻՆ</th>
                         </tr>
                     </thead>
-                    <tbody className="tableBody">
+                    <tbody>
                         {
                             filteredOrder.map((e: any) => {
 
