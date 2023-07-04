@@ -23,7 +23,6 @@ export const Order: React.FC = (): JSX.Element => {
 
 
     useEffect(() => {
-
         dispatch(findOrder({ params, cookies })).unwrap().then(res => {
             if ("error" in res) {
                 setCookie("access_token", '', { path: '/' })
@@ -57,6 +56,10 @@ export const Order: React.FC = (): JSX.Element => {
     const handleCloseModal = () => {
         setIsModalOpen(false);
     };
+
+    const updateOrderInfo = (id: any) => {
+        navigate("/updateOrderInfo/" + params.id)
+    }
 
 
     return (
@@ -148,8 +151,11 @@ export const Order: React.FC = (): JSX.Element => {
                                     <InputModal isOpen={isModalOpen} onClose={handleCloseModal} />
                                 </div>
                                 {
-                                    user?.profile && user?.profile.role == "admin" ?
-                                        <button className='btn' onClick={() => orderDone(order.order._id)}>DONE</button>
+                                    user?.profile && user?.profile.role == "admin" && order?.order.status === "progress" ?
+                                        <div>
+                                            <button className='btn' onClick={() => orderDone(order.order._id)}>Ավարտված</button>
+                                            <button className='btn' onClick={()=>updateOrderInfo(order.order_id)}>Փոխել</button>
+                                        </div>
                                         :
                                         null
                                 }

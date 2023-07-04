@@ -101,9 +101,9 @@ export const SearchOrder: React.FC = (): JSX.Element => {
         return `${dateObj.getDate()} / ${dateObj.getMonth() + 1} / ${dateObj.getFullYear()} `;
     }
     const viewOrder = (id: any) => {
-        navigate("/order/" + id)
-
+        window.open('/order/' + id, '_blank');
     }
+
 
     useEffect(() => {
         searchRes()
@@ -190,23 +190,7 @@ export const SearchOrder: React.FC = (): JSX.Element => {
                             }
                         </select>
                     </div>
-                    <div>
-                        <label htmlFor="texture">Տեսակ</label>
-                        <select id="texture" className="form-control selectFilter" onChange={selTexture}>
-                            <option value={0}>Select</option>
-
-                            {
-                                texture?.arrTexture && texture.arrTexture.length > 0 ?
-                                    texture.arrTexture.map((e: any) => {
-                                        return (
-                                            <option key={e._id} value={e._id}>{e.name}</option>
-                                        )
-                                    })
-                                    :
-                                    null
-                            }
-                        </select>
-                    </div>
+                 
                 </div>
                 <button className="btn" onClick={searchReset}>Չեղարկել</button>
                 <div className="divTotal">
@@ -282,6 +266,22 @@ export const SearchOrder: React.FC = (): JSX.Element => {
                                     <option className="selectCoop" value={"credit"}>Ապառիկ</option>
                                     <option className="selectCoop" value={"inecoPay"}>Ինեկո Փեյ</option>
                                     <option className="selectCoop" value={"idram"}>Իդրամ</option>
+                                </select>
+                            </th>
+                            <th>
+                                <select id="texture" className="seltype" onChange={selTexture}>
+                                    <option value={0}>Տեսակ</option>
+
+                                    {
+                                        texture?.arrTexture && texture.arrTexture.length > 0 ?
+                                            texture.arrTexture.map((e: any) => {
+                                                return (
+                                                    <option key={e._id} value={e._id}>{e.name}</option>
+                                                )
+                                            })
+                                            :
+                                            null
+                                    }
                                 </select></th>
                             <th scope="col">ԱՎԵԼԻՆ</th>
                         </tr>
@@ -317,8 +317,14 @@ export const SearchOrder: React.FC = (): JSX.Element => {
                                         }
                                         <td>{e.cooperateTotal}</td>
                                         <td>{e.paymentMethod}</td>
-                                        <td><button className="btn" onClick={() => viewOrder(e._id)}>Դիտել</button></td>
+                                        {
+                                            e.texture ?
+                                                <td>{e.texture.name}</td>
+                                                :
+                                                null
 
+                                        }
+                                        <td><button className="btn" onClick={() => viewOrder(e._id)}>Դիտել</button></td>
                                     </tr>
                                 )
                             })

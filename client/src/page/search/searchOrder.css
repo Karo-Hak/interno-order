@@ -27,6 +27,7 @@
     position: absolute;
     left: 35px;
     top: 185px;
+    font-size: 15px;
 }
 
 .tableHead{
@@ -60,7 +61,7 @@
 }
 
 .seltype {
-    width: 120px;
+    width: 100px;
     background-color: rgb(10, 10, 20);
     color: white;
     opacity: 90%;

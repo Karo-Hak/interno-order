@@ -1,51 +1,31 @@
-import { selectUser } from "../../features/user/userSlice";
+import './order.css'
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { selectOrder } from '../../features/order/orderSlice';
 import { ChangeEvent, useEffect, useState } from 'react'
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useCookies } from 'react-cookie'
-import { useForm } from "react-hook-form";
-import { userProfile } from "../../features/user/userApi";
-import './adminProfile.css'
-import { getAllCooperate } from "../../features/cooperate/cooperateApi";
-import { Cooperate, selectCooperate } from "../../features/cooperate/cooperateSlice";
-import { addNewOrder, viewNewOrders } from "../../features/order/orderApi";
-import { getAllTexture } from "../../features/texture/textureApi";
-import { selectTexture } from "../../features/texture/textureSlice";
-import { selectOrder } from "../../features/order/orderSlice";
+import { findOrder } from "../../features/order/orderApi";
+import { selectUser } from '../../features/user/userSlice';
+import { useForm } from 'react-hook-form';
+import { getAllTexture } from '../../features/texture/textureApi';
+import { selectTexture } from '../../features/texture/textureSlice';
+import { getAllCooperate } from '../../features/cooperate/cooperateApi';
+import { Cooperate, selectCooperate } from '../../features/cooperate/cooperateSlice';
 
-export const AdminProfile: React.FC = (): JSX.Element => {
-    const user = useAppSelector(selectUser);
-    const cooperate = useAppSelector(selectCooperate);
+export const UpdateOrderInfo: React.FC = (): JSX.Element => {
+    const { register, handleSubmit, reset, formState: { errors } } = useForm<any>()
+    const user = useAppSelector(selectUser)
+    const order = useAppSelector(selectOrder);
     const texture = useAppSelector(selectTexture);
-    const newOrders = useAppSelector(selectOrder);
-    const dispatch = useAppDispatch();
+    const cooperate = useAppSelector(selectCooperate);
+
+    const dispatch = useAppDispatch()
     const [cookies, setCookie] = useCookies(['access_token']);
     const navigate = useNavigate();
-    const { register, handleSubmit, reset, formState: { errors } } = useForm<any>()
-
-    useEffect(() => {
-        dispatch(userProfile(cookies)).unwrap().then(res => {
-            if ("error" in res) {
-                setCookie("access_token", '', { path: '/' })
-                navigate("/")
-            }
-        })
-
-        dispatch(viewNewOrders(cookies)).unwrap().then(res => {
-            if ("error" in res) {
-                setCookie("access_token", '', { path: '/' })
-                navigate('/')
-            }
-        })
-
-    }, [])
-
-
-
-    //////////////////// Add Order ////////////////
+    const params = useParams()
 
     const [addOrderForm, setAddOrderForm] = useState(false)
-    const [weight, setWeight] = useState(0);
+    const [weight, setWeight] = useState(order.order.weight || 0);
     const [height, setHeight] = useState(0);
     const [discount, setDiscount] = useState<number>(0)
     const [prepayment, setPrepayment] = useState<number>(0)
@@ -61,6 +41,37 @@ export const AdminProfile: React.FC = (): JSX.Element => {
     const [texturePrice, setTexturePrice] = useState(0)
 
 
+
+
+
+
+    useEffect(() => {
+        dispatch(findOrder({ params, cookies })).unwrap().then(res => {
+            if ("error" in res) {
+                // setCookie("access_token", '', { path: '/' })
+                // navigate("/")
+                alert(res)
+            }
+        })
+        dispatch(getAllTexture(cookies)).unwrap().then(res => {
+            if ("error" in res) {
+                // setCookie("access_token", '', { path: '/' })
+                // navigate("/")
+            }
+        })
+        dispatch(getAllCooperate(cookies)).unwrap().then(res => {
+            if ("error" in res) {
+                // setCookie("access_token", '', { path: '/' })
+                // navigate('/')
+            }
+        })
+    }, [])
+
+
+
+
+
+
     function handleCheckboxChange(event: any) {
         setChecked(event.target.checked);
     };
@@ -71,25 +82,6 @@ export const AdminProfile: React.FC = (): JSX.Element => {
         setTexturePrice(orderPrice[0].price)
     }
 
-
-
-
-    const openOrderForm = () => {
-        dispatch(getAllCooperate(cookies)).unwrap().then(res => {
-            if ("error" in res) {
-                setCookie("access_token", '', { path: '/' })
-                navigate('/')
-            }
-        })
-        dispatch(getAllTexture(cookies)).unwrap().then(res => {
-            if ("error" in res) {
-                setCookie("access_token", '', { path: '/' })
-                navigate("/")
-            }
-        })
-
-        setAddOrderForm(true)
-    }
     function cooperateDiscount(event: ChangeEvent<HTMLSelectElement>): void {
         const coopPrice = cooperate.arrCooperate.find((e: Cooperate) => e._id === event.target.value)
         if (coopPrice) {
@@ -117,89 +109,63 @@ export const AdminProfile: React.FC = (): JSX.Element => {
 
     useEffect(() => {
         setPrice(texturePrice)
-
     }, [texturePrice])
     useEffect(() => {
         setTotalOrder(parseInt(((squer * price) - ((squer * price) * discount) / 100).toString()))
     }, [price])
 
+    useEffect(() => {
+        console.log(order.order._id);
 
+    })
 
-    const newOrder = (order: any) => {
-        const buyer = { name: order.buyerName, phone: order.buyerPhone, adress: order.buyerAdress }
+    const updateOrder = (order: any) => {
+        // const buyer = { name: order.buyerName, phone: order.buyerPhone, adress: order.buyerAdress }
+        console.log(order);
 
-        const newOrder = {
-            oldId: Math.floor(Math.random() * 1000000000),
-            height: +order.height,
-            weight: +order.weight,
-            discount: +order.discount,
-            price: price,
-            prepayment: +order.prepayment,
-            picCode: order.picCode,
-            total: +totalOrder,
-            sqMetr: +squer,
-            cooperateTotal: coopTotal,
-            groundTotal: sum,
-            user: user.profile.userId,
-            cooperate: order.cooperateId,
-            texture: order.texture,
-            comment: order.comment,
-            paymentMethod: order.paymentMethod
-        }
-        dispatch(addNewOrder({ buyer, newOrder, cookies })).unwrap().then(res => {
-            if ("error" in res) {
-                // setCookie("access_token", '', { path: '/' })
-                // navigate('/')
-                alert(res)
-            }
-        })
-        if (newOrder.oldId) {
-            navigate("/newOrder/" + newOrder.oldId)
-        }
+        // const newOrder = {
+        //     oldId: Math.floor(Math.random() * 1000000000),
+        //     height: +order.height,
+        //     weight: +order.weight,
+        //     discount: +order.discount,
+        //     price: price,
+        //     prepayment: +order.prepayment,
+        //     picCode: order.picCode,
+        //     total: +totalOrder,
+        //     sqMetr: +squer,
+        //     cooperateTotal: coopTotal,
+        //     groundTotal: sum,
+        //     user: user.profile.userId,
+        //     cooperate: order.cooperateId,
+        //     texture: order.texture,
+        //     comment: order.comment,
+        //     paymentMethod: order.paymentMethod
+        // }
+        // dispatch(addNewOrder({ buyer, newOrder, cookies })).unwrap().then(res => {
+        //     if ("error" in res) {
+        //         // setCookie("access_token", '', { path: '/' })
+        //         // navigate('/')
+        //         alert(res)
+        //     }
+        // })
+        // if (newOrder.oldId) {
+        //     navigate("/newOrder/" + newOrder.oldId)
+        // }
+    }
+    function loadeData(): void {
+        setWeight(order.order.weight)
+        console.log(weight, order.order.weight);
+        
     }
 
-    //////////////////// new Orders hashvetvutyun ////////////////
-    const parseDate = (dateStr: string) => {
-        const dateObj = new Date(dateStr);
-        return `${dateObj.getDate()} / ${dateObj.getMonth() + 1} / ${dateObj.getFullYear()} `;
-    }
-
-    const viewOrder = (id: any) => {
-        navigate("/order/" + id)
-
-    }
 
     return (
-        <>
-
-            <div className="profile">
-                <div className="divBtn">
-                    {/* <button className="btn" onClick={openCoopSpher}>Add cooperation sphere</button> */}
-                    <button className="btn" onClick={openOrderForm}>Ավելացնել Պատվեր</button>
-                </div>
-            </div>
-
-            {/* ////////// add Coop Spher /////////// */}
-            {/* {
-                addCoopSpherForm ?
-                    <div className="profile">
-                        <form className="divBtn" onSubmit={handleSubmit(saveCoopSpher)}>
-                            <div>
-                                <input className="userInput" type="text" placeholder="Name" {...register("name", { required: true })} />
-                            </div>
-                            <button className="btn" >Save</button>
-                        </form>
-                        <button className="btn btn-lg" onClick={() => window.location.reload()} >X</button>
-                    </div>
-                    :
-                    null
-            } */}
+        <div>
             {
-                addOrderForm ?
-                    <form className="orderDiv" onSubmit={handleSubmit(newOrder)}>
+                order.order._id ?
+                    <form className="orderDiv" onSubmit={handleSubmit(updateOrder)}>
                         <div className="formdiv">
                             <div className="formSelect">
-
                                 <div className="buyerDiv">
                                     Գնորդ
                                     <div>-------</div>
@@ -223,7 +189,7 @@ export const AdminProfile: React.FC = (): JSX.Element => {
                                         <div>
                                             <div>
                                                 <label htmlFor="weight">Երկարություն</label>
-                                                <input id="weight" className="userInput form-control" type="number" placeholder="Weight"  {...register("weight", { required: true })} onChange={(e) => setWeight(+e.target.value)} />
+                                                <input id="weight" className="userInput form-control" type="number" placeholder="Weight" defaultValue={weight} {...register("weight", { required: true })} onChange={(e) => setWeight(+e.target.value)} />
                                             </div>
                                             <div>
                                                 <label htmlFor="height">Բարձրություն</label>
@@ -297,7 +263,7 @@ export const AdminProfile: React.FC = (): JSX.Element => {
                                 </div>
                             </div >
                             <div>
-                                <button className="btn btn-lg" onClick={() => window.location.reload()} >X</button>
+                                <button className="btn btn-lg" onClick={loadeData} >Լրացնել տվյալները</button>
                             </div>
 
                         </div>
@@ -336,65 +302,11 @@ export const AdminProfile: React.FC = (): JSX.Element => {
                                 <input id="Sum" className="userInput form-control" type="number" placeholder="Sum" value={sum} {...register("groundTotal")} readOnly />
                             </div>
                         </div>
-
                         <div><button className="btn">Գրանցել</button></div>
-
                     </form>
                     :
                     null
             }
-
-            {/* /////////////// new Orders//////////////////////// */}
-
-            <div className="profile">
-                {
-                    newOrders?.arr && newOrders.arr.length > 0 ?
-
-                        <table className="table" style={{ color: "white" }}>
-                            <thead>
-                                <tr>
-                                    <th scope="col">Ամսաթիվ</th>
-                                    <th scope="col">Գնորդ</th>
-                                    <th scope="col">Երկարություն/Լայնություն</th>
-                                    <th scope="col">Ք/Մ</th>
-                                    <th scope="col">Նկար</th>
-                                    <th scope="col">Տեսակ</th>
-                                    <th scope="col">Կարգավիճակ</th>
-                                    <th scope="col">Վեջնաժամկետ</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {
-                                    newOrders.arr.map((e: any) => {
-
-
-                                        return (
-                                            <tr key={e._id}>
-                                                <td >{parseDate(e.date)}</td>
-                                                <td>{e.buyer.name}</td>
-                                                <td>{e.weight} x {e.height}</td>
-                                                <td>{e.sqMetr}</td>
-                                                <td>{e.picCode}</td>
-                                                <td>{e.texture?.name}</td>
-                                                <td>{e.status}</td>
-                                                <td>{parseDate(e.deadline)}</td>
-                                                <td><button className="btn" onClick={() => viewOrder(e._id)}>View</button></td>
-
-                                            </tr>
-                                        )
-                                    })
-                                }
-                            </tbody>
-                        </table>
-                        :
-                        <p></p>
-                }
-            </div>
-
-
-
-
-        </>
-    );
+        </div>
+    )
 }
-

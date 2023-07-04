@@ -2,7 +2,6 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Res } fr
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { CreateBuyerDto } from 'src/buyer/dto/create-buyer.dto';
 import { Response } from 'express';
 import { BuyerService } from 'src/buyer/buyer.service';
 import { TextureService } from 'src/texture/texture.service';
@@ -35,6 +34,13 @@ export class OrderController {
             metr = +(obj.newOrder.weight / 100 + 0.7).toFixed(2)
           } else {
             metr = +(obj.newOrder.height / 100 + 0.7).toFixed(2)
+          }
+        }
+        if (texture.name == "SAMAKLEY ABOY") {
+          if (obj.newOrder.height <= 150) {
+            metr = +(obj.newOrder.weight / 100 + 0.2).toFixed(2)
+          } else {
+            metr = +(obj.newOrder.height / 100 + 0.2).toFixed(2)
           }
         }
         if (texture.name !== "130KTAV" && texture.name !== "320ABOY") {

@@ -9,6 +9,7 @@ import { AddUser } from "../page/addUser/AddUser"
 import { AddBuyer } from "../page/addBuyer/AddBuyer"
 import { AddCooperate } from "../page/addCooperate/AddCooperate"
 import { AddTexture } from "../page/addTexture/AddTexture"
+import { UpdateOrderInfo } from "../page/order/UpdateOrder"
 
 // import { AllUser } from "../page/AllUser"
 
@@ -33,7 +34,7 @@ export const MyRouter: React.FC = (): JSX.Element => {
                 <Route path="/addBuyer" element={<AddBuyer />}></Route>
                 <Route path="/addCooperate" element={<AddCooperate />}></Route>
                 <Route path="/addTexture" element={<AddTexture />}></Route>
-
+                <Route path="/updateOrderInfo/:id" element={<UpdateOrderInfo />}></Route>
 
                 {/*    <Route path="/order/:id" element={<Product />}></Route> */}
             </Routes>
