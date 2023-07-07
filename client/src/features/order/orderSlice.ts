@@ -1,5 +1,5 @@
 import { createSlice, } from "@reduxjs/toolkit";
-import { addNewOrder, findNewOrder, findOrder, searchOrder, updateOrder, viewNewOrders } from "./orderApi";
+import { addNewOrder, findNewOrder, findOrder, searchOrder, updateStatus, viewNewOrders } from "./orderApi";
 
 
 
@@ -57,7 +57,7 @@ export const orderSlice = createSlice({
                     state.order = action.payload
                 }
             })
-            .addCase(updateOrder.fulfilled, (state, action) => {
+            .addCase(updateStatus.fulfilled, (state, action) => {
                 if ('error' in action.payload) {
                 } else {
                     state.arr = action.payload

@@ -109,7 +109,7 @@ export class OrderController {
     }
   }
 
-  @Get('updateOrder/:id')
+  @Get('updateStatus/:id')
   async updateStatus(@Param('id') id: string) {
     return await this.orderService.updateStatus(id);
   }
@@ -126,6 +126,21 @@ export class OrderController {
       return res.status(HttpStatus.OK).json("order updated");
     } catch (e) {
       return res.status(HttpStatus.OK).json({
+        error: e.message
+      })
+    }
+  }
+
+  @Post('updateWallpaper/:id')
+  async updateOrder(@Body() obj: any, @Res() res: Response, @Param('id') id: string) {
+    try {
+      console.log(obj);
+
+              
+      // const texture = this.textureService.findOne()
+
+    } catch (e) {
+      return res.status(HttpStatus.BAD_REQUEST).json({
         error: e.message
       })
     }

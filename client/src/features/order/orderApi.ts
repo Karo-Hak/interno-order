@@ -25,9 +25,9 @@ export const updatePrepayment = createAsyncThunk(
   'order/updatePrepayment/axios',
   async (obj: any) => {
     console.log(obj);
-    
+
     try {
-      const response = await axios.post(process.env.REACT_APP_SERVER_URL + "/order/updatePrepayment", {...obj},  {
+      const response = await axios.post(process.env.REACT_APP_SERVER_URL + "/order/updatePrepayment", { ...obj }, {
         headers: {
           Authorization: `Bearer ${obj.cookies.access_token}`
         }
@@ -95,11 +95,11 @@ export const findNewOrder = createAsyncThunk(
 
 
 
-export const updateOrder = createAsyncThunk(
-  'order/update/axios',
+export const updateStatus = createAsyncThunk(
+  'order/updateStatus/axios',
   async (obj: any) => {
     try {
-      const response = await axios.get(process.env.REACT_APP_SERVER_URL + "/order/updateOrder/" + obj.id, {
+      const response = await axios.get(process.env.REACT_APP_SERVER_URL + "/order/updateStatus/" + obj.id, {
         headers: {
           Authorization: `Bearer ${obj.cookies.access_token}`
         }
@@ -130,6 +130,21 @@ export const searchOrder = createAsyncThunk(
   }
 );
 
+export const updateOrderAll = createAsyncThunk(
+  'order/updateOrder/axios',
+  async (obj: any) => {
+    try {
+      const response = await axios.post(process.env.REACT_APP_SERVER_URL + "/order/updateWallpaper/" + obj.params.id, obj, {
+        headers: {
+          Authorization: `Bearer ${obj.cookies.access_token}`
+        }
+      })
+      return response.data
+    } catch (e) {
+      return { error: "not found" }
+    }
 
+  }
+)
 
 

@@ -4,7 +4,7 @@ import { selectOrder } from '../../features/order/orderSlice';
 import { useEffect } from 'react'
 import { useNavigate, useParams } from "react-router-dom";
 import { useCookies } from 'react-cookie'
-import { findNewOrder, findOrder, updateOrder, } from "../../features/order/orderApi";
+import { findNewOrder } from "../../features/order/orderApi";
 import ImageUpload from '../uploadImg/uploadImg';
 import { selectUser } from '../../features/user/userSlice';
 

@@ -4,7 +4,7 @@ import { selectOrder } from '../../features/order/orderSlice';
 import { ChangeEvent, useEffect, useState } from 'react'
 import { useNavigate, useParams } from "react-router-dom";
 import { useCookies } from 'react-cookie'
-import { findOrder } from "../../features/order/orderApi";
+import { findOrder, updateOrderAll } from "../../features/order/orderApi";
 import { selectUser } from '../../features/user/userSlice';
 import { useForm } from 'react-hook-form';
 import { getAllTexture } from '../../features/texture/textureApi';
@@ -24,25 +24,48 @@ export const UpdateOrderInfo: React.FC = (): JSX.Element => {
     const navigate = useNavigate();
     const params = useParams()
 
-    const [addOrderForm, setAddOrderForm] = useState(false)
-    const [weight, setWeight] = useState(order.order.weight || 0);
-    const [height, setHeight] = useState(0);
-    const [discount, setDiscount] = useState<number>(0)
-    const [prepayment, setPrepayment] = useState<number>(0)
-    const [price, setPrice] = useState(0)
-    const [coopRate, setCoopRate] = useState<number>(0)
-    const [coopTotal, setCoopTotal] = useState<number>(0)
-    const [coop, setCoop] = useState<any>()
-    const sq = (height / 100) * (weight / 100);
+    const [weight, setWeight] = useState<number>(() => order.order.weight || 0);
+    const [height, setHeight] = useState<number>(order.order.height || 0);
+    const [discount, setDiscount] = useState<number>(order.order.discount || 0)
+    const [prepayment, setPrepayment] = useState<number>(order.order.prepayment || 0)
+    const [price, setPrice] = useState<number>(order.order.price || 0)
+    const [coopRate, setCoopRate] = useState<number>(order.order.cooperate?.cooperateRate || 0)
+    const [coopTotal, setCoopTotal] = useState<number>(order.order.cooperateTotal || 0)
+    const sq = (height / 100) * (weight / 100) || 0;
     const squer = +sq.toFixed(2);
-    const [totalOrder, setTotalOrder] = useState(0)
+    const [totalOrder, setTotalOrder] = useState(order.order.total || 0)
     const sum = totalOrder - prepayment
     const [checked, setChecked] = useState(false);
+    const [buyerName, setBuyerName] = useState<string>(order.order.buyer?.name)
+    const [buyerPhone, setBuyerPhone] = useState(order.order.buyer?.phone)
+    const [buyerAdress, setBuyerAdress] = useState(order.order.buyer?.adress)
+    const [picCode, setPicCode] = useState(order.order.picCode)
+    const [comment, setComment] = useState(order.order.comment)
+    const [selectedCoop, setSelectedCoop] = useState(order.order.cooperate?._id);
+    const [selectedTexture, setSelectedTexture] = useState(order.order.texture?._id)
+    const [selectedPayment, setSelectedPayment] = useState(order.order.paymentMethod)
+    const [coop, setCoop] = useState<any>('')
     const [texturePrice, setTexturePrice] = useState(0)
 
 
-
-
+    function loadeData(): void {
+        setWeight(order.order.weight)
+        setHeight(order.order.height)
+        setDiscount(order.order.discount)
+        setPrepayment(order.order.prepayment)
+        setPrice(order.order.price)
+        setCoopRate(order.order.cooperate?.cooperateRate)
+        setCoopTotal(order.order.cooperateTotal)
+        setTotalOrder(order.order.total)
+        setBuyerName(order.order.buyer?.name)
+        setBuyerPhone(order.order.buyer?.phone)
+        setBuyerAdress(order.order.buyer?.adress)
+        setPicCode(order.order.picCode)
+        setComment(order.order.comment)
+        setSelectedCoop(order.order.cooperate?._id)
+        setSelectedTexture(order.order.texture?._id)
+        setSelectedPayment(order.order.paymentMethod)
+    }
 
 
     useEffect(() => {
@@ -67,22 +90,8 @@ export const UpdateOrderInfo: React.FC = (): JSX.Element => {
         })
     }, [])
 
-
-
-
-
-
-    function handleCheckboxChange(event: any) {
-        setChecked(event.target.checked);
-    };
-    function selectTexturePrice(event: ChangeEvent<HTMLSelectElement>): void {
-        const orderPrice = texture.arrTexture?.filter((e: any, i: any) => {
-            return e._id === event.target.value
-        })
-        setTexturePrice(orderPrice[0].price)
-    }
-
-    function cooperateDiscount(event: ChangeEvent<HTMLSelectElement>): void {
+    const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
+        setSelectedCoop(event.target.value);
         const coopPrice = cooperate.arrCooperate.find((e: Cooperate) => e._id === event.target.value)
         if (coopPrice) {
             setCoopRate(coopPrice?.cooperateRate)
@@ -93,77 +102,84 @@ export const UpdateOrderInfo: React.FC = (): JSX.Element => {
             setCoopTotal(0)
             setCoop("")
         }
+    };
+
+
+    function handleCheckboxChange(event: any) {
+        setChecked(event.target.checked);
+    };
+    function selectTexturePrice(event: ChangeEvent<HTMLSelectElement>): void {
+        setSelectedTexture(event.target.value)
+        const orderPrice = texture.arrTexture?.filter((e: any, i: any) => {
+            return e._id === event.target.value
+        })
+        setTexturePrice(orderPrice[0].price)
+
     }
+
+    // function cooperateDiscount(event: ChangeEvent<HTMLSelectElement>): void {
+
+    // }
 
     useEffect(() => {
         if (checked) {
-            setPrice(texturePrice - (texturePrice * coopRate) / 100);
+            setPrice(+(price - (price * coopRate) / 100).toFixed(0));
             setCoopTotal(0);
         } else {
-            setPrice(texturePrice)
-            if (coop) {
-                setCoopTotal(((coop?.cooperateRate * totalOrder) / 100))
+            setPrice(order.order.price)
+            if (order.order.cooperate) {
+                setCoopTotal(((coopRate * totalOrder) / 100))
             }
         }
-    }, [checked, price]);
+    }, [checked]);
 
     useEffect(() => {
         setPrice(texturePrice)
     }, [texturePrice])
+
     useEffect(() => {
         setTotalOrder(parseInt(((squer * price) - ((squer * price) * discount) / 100).toString()))
     }, [price])
 
-    useEffect(() => {
-        console.log(order.order._id);
 
-    })
+    const updateWallpaper = (order: any) => {
+        const buyer = { name: buyerName, phone: buyerPhone, adress: buyerAdress }
+        const updateingOrder = {
+            weight,
+            height,
+            discount,
+            price,
+            prepayment,
+            picCode,
+            total: +totalOrder,
+            sqMetr: +squer,
+            cooperateTotal: coopTotal,
+            groundTotal: sum,
+            user: user.profile.userId,
+            cooperate: selectedCoop,
+            texture: selectedTexture,
+            comment,
+            paymentMethod: selectedPayment
+        }
+        dispatch(updateOrderAll({ buyer, updateingOrder, cookies, params })).unwrap().then(res => {
+            if ("error" in res) {
+                // setCookie("access_token", '', { path: '/' })
+                // navigate('/')
+                alert(res)
+            }
+        })
 
-    const updateOrder = (order: any) => {
-        // const buyer = { name: order.buyerName, phone: order.buyerPhone, adress: order.buyerAdress }
-        console.log(order);
-
-        // const newOrder = {
-        //     oldId: Math.floor(Math.random() * 1000000000),
-        //     height: +order.height,
-        //     weight: +order.weight,
-        //     discount: +order.discount,
-        //     price: price,
-        //     prepayment: +order.prepayment,
-        //     picCode: order.picCode,
-        //     total: +totalOrder,
-        //     sqMetr: +squer,
-        //     cooperateTotal: coopTotal,
-        //     groundTotal: sum,
-        //     user: user.profile.userId,
-        //     cooperate: order.cooperateId,
-        //     texture: order.texture,
-        //     comment: order.comment,
-        //     paymentMethod: order.paymentMethod
-        // }
-        // dispatch(addNewOrder({ buyer, newOrder, cookies })).unwrap().then(res => {
-        //     if ("error" in res) {
-        //         // setCookie("access_token", '', { path: '/' })
-        //         // navigate('/')
-        //         alert(res)
-        //     }
-        // })
-        // if (newOrder.oldId) {
-        //     navigate("/newOrder/" + newOrder.oldId)
-        // }
     }
-    function loadeData(): void {
-        setWeight(order.order.weight)
-        console.log(weight, order.order.weight);
-        
-    }
+
 
 
     return (
         <div>
             {
                 order.order._id ?
-                    <form className="orderDiv" onSubmit={handleSubmit(updateOrder)}>
+                <div>
+
+                    <form className="orderDiv" onSubmit={handleSubmit(updateWallpaper)}>
                         <div className="formdiv">
                             <div className="formSelect">
                                 <div className="buyerDiv">
@@ -171,15 +187,15 @@ export const UpdateOrderInfo: React.FC = (): JSX.Element => {
                                     <div>-------</div>
                                     <div>
                                         <label htmlFor="buyerName">Անուն</label>
-                                        <input id="buyerName" className="userInput form-control" type="text" placeholder="Buyer Name" {...register("buyerName", { required: true })} />
+                                        <input id="buyerName" className="userInput form-control" type="text" placeholder="Buyer Name" value={buyerName}  {...register("buyerName")} onChange={(e) => setBuyerName(e.target.value)} />
                                     </div>
                                     <div>
                                         <label htmlFor="buyerPhone">Հեռախես</label>
-                                        <input id="buyerPhone" className="userInput form-control" type="text" placeholder=" Buyer Phone" {...register("buyerPhone", { required: true })} />
+                                        <input id="buyerPhone" className="userInput form-control" type="text" placeholder=" Buyer Phone" value={buyerPhone} {...register("buyerPhone")} onChange={(e) => setBuyerPhone(e.target.value)} />
                                     </div>
                                     <div>
                                         <label htmlFor="buyerAdress">Հասցե</label>
-                                        <input id="buyerAdress" className="userInput form-control" type="text" placeholder="Buyer Adress" {...register("buyerAdress", { required: true })} />
+                                        <input id="buyerAdress" className="userInput form-control" type="text" placeholder="Buyer Adress" value={buyerAdress} {...register("buyerAdress")} onChange={(e) => setBuyerAdress(e.target.value)} />
                                     </div>
                                 </div>
                                 <div className="buyerDiv">
@@ -189,39 +205,39 @@ export const UpdateOrderInfo: React.FC = (): JSX.Element => {
                                         <div>
                                             <div>
                                                 <label htmlFor="weight">Երկարություն</label>
-                                                <input id="weight" className="userInput form-control" type="number" placeholder="Weight" defaultValue={weight} {...register("weight", { required: true })} onChange={(e) => setWeight(+e.target.value)} />
+                                                <input id="weight" className="userInput form-control" type="number" placeholder="Weight" value={weight} {...register("weight")} onChange={(e) => setWeight(+e.target.value)} />
                                             </div>
                                             <div>
                                                 <label htmlFor="height">Բարձրություն</label>
-                                                <input id="height" className="userInput form-control" type="number" placeholder="Height" {...register("height", { required: true })} onChange={(e) => setHeight(+e.target.value)} />
+                                                <input id="height" className="userInput form-control" type="number" placeholder="Height" value={height} {...register("height")} onChange={(e) => setHeight(+e.target.value)} />
                                             </div>
                                             <div>
                                                 <label htmlFor="sqMetr">Քառակուսի մետր</label>
-                                                <input id="sqMetr" className="userInput form-control" type="number" placeholder="SQ/METR" value={squer} readOnly {...register("sqMetr", { required: true })} />
+                                                <input id="sqMetr" className="userInput form-control" type="number" placeholder="SQ/METR" value={squer} readOnly {...register("sqMetr")} />
                                             </div>
                                         </div>
                                         <div >
                                             <div>
                                                 <label htmlFor="price">Գին</label>
-                                                <input id="price" className="userInput form-control" type="number" placeholder="Price" value={price} {...register("price", { required: true })} onChange={(e) => setPrice(+e.target.value)} />
+                                                <input id="price" className="userInput form-control" type="number" placeholder="Price" value={price} {...register("price")} onChange={(e) => setPrice(+e.target.value)} />
                                             </div>
                                             <div>
                                                 <label htmlFor="discount">Զեղչ</label>
-                                                <input id="discount" className="userInput form-control" type="number" placeholder="discount" {...register("discount")} onChange={(e) => setDiscount(+e.target.value)} />
+                                                <input id="discount" className="userInput form-control" type="number" placeholder="discount" value={discount} {...register("discount")} onChange={(e) => setDiscount(+e.target.value)} />
                                             </div>
                                             <div>
                                                 <label htmlFor="total">Գումար</label>
-                                                <input id="total" className="userInput form-control" type="number" placeholder="total" value={totalOrder}  {...register("total", { required: true })} onChange={(e) => setTotalOrder(+e.target.value)} />
+                                                <input id="total" className="userInput form-control" type="number" placeholder="total" value={totalOrder}  {...register("total")} onChange={(e) => setTotalOrder(+e.target.value)} />
                                             </div>
                                         </div>
                                         <div >
                                             <div>
                                                 <label htmlFor="picCode">Նկարի կոդ</label>
-                                                <input id="picCode" className="userInput form-control" type="text" placeholder="Picture Code" {...register("picCode")} />
+                                                <input id="picCode" className="userInput form-control" type="text" placeholder="Picture Code" value={picCode} {...register("picCode")} onChange={(e) => setPicCode(e.target.value)} />
                                             </div>
                                             <div>
                                                 <label htmlFor="comment">Նկարագրություն</label>
-                                                <textarea id="comment" className="userInput form-control" placeholder="Comment" {...register("comment")}></textarea>
+                                                <textarea id="comment" className="userInput form-control" placeholder="Comment" value={comment} {...register("comment")} onChange={(e) => setComment(e.target.value)}></textarea>
                                             </div>
 
                                         </div>
@@ -232,7 +248,9 @@ export const UpdateOrderInfo: React.FC = (): JSX.Element => {
                                     <div>-------------</div>
                                     <div>
                                         <label htmlFor="selectCoop">Գործընկերոջ անվանում</label>
-                                        <select id="selectCoop" className="selectCoop form-control" {...register("cooperateId", { required: true })} onChange={cooperateDiscount}>
+                                        <select id="selectCoop" className="selectCoop form-control" value={selectedCoop} {...register("cooperateId")}
+                                            onChange={handleChange}
+                                        >
                                             {
                                                 cooperate?.arrCooperate && cooperate.arrCooperate.length > 0 ?
                                                     cooperate.arrCooperate.map((e: any) => {
@@ -245,7 +263,7 @@ export const UpdateOrderInfo: React.FC = (): JSX.Element => {
                                     </div>
                                     <div>
                                         <label htmlFor="coopRate">Գործընկերոջ տոկոս</label>
-                                        <input id="coopRate" className="userInput form-control" type="number" placeholder="Cooperate Rate" value={coopRate} readOnly onChange={(e) => setCoopRate(+e.target.value)} />
+                                        <input id="coopRate" className="userInput form-control" type="number" placeholder="Cooperate Rate" value={coopRate} onChange={(e) => setCoopRate(+e.target.value)} />
                                     </div>
                                     <div>
                                         <label htmlFor="coopTotal">Գործընկերոջ գումար</label>
@@ -262,15 +280,13 @@ export const UpdateOrderInfo: React.FC = (): JSX.Element => {
                                     </div>
                                 </div>
                             </div >
-                            <div>
-                                <button className="btn btn-lg" onClick={loadeData} >Լրացնել տվյալները</button>
-                            </div>
+
 
                         </div>
                         <div className="profile">
                             <div>
                                 <label htmlFor="pey">Վճարման միջոց</label>
-                                <select id="pey" className="selectCoop form-control" {...register("paymentMethod", { required: true })}>
+                                <select id="pey" className="selectCoop form-control" value={selectedPayment} {...register("paymentMethod")}>
                                     <option className="selectCoop" value={"cash"} >Կանխիկ</option>
                                     <option className="selectCoop" value={"transfer"}>Փոխանցում</option>
                                     <option className="selectCoop" value={"pos"}>Պոս Տերմինալ</option>
@@ -281,7 +297,9 @@ export const UpdateOrderInfo: React.FC = (): JSX.Element => {
                             </div>
                             <div>
                                 <label htmlFor="texture">Ֆոտոպաստառ</label>
-                                <select id="texture" className="selectCoop form-control" {...register("texture", { required: true })} onChange={selectTexturePrice}>
+                                <select id="texture" className="selectCoop form-control" value={selectedTexture} {...register("texture")}
+                                    onChange={selectTexturePrice}
+                                >
                                     <option></option>
                                     {
                                         texture?.arrTexture && texture.arrTexture.length > 0 ?
@@ -295,7 +313,7 @@ export const UpdateOrderInfo: React.FC = (): JSX.Element => {
                             </div>
                             <div>
                                 <label htmlFor="prepayment">Կանխավճար</label>
-                                <input id="prepayment" className="userInput form-control" type="number" placeholder="prepayment"  {...register("prepayment")} onChange={(e) => setPrepayment(+e.target.value)} />
+                                <input id="prepayment" className="userInput form-control" type="number" placeholder="prepayment" value={prepayment}  {...register("prepayment")} onChange={(e) => setPrepayment(+e.target.value)} />
                             </div>
                             <div>
                                 <label htmlFor="Sum">Մնացորդ</label>
@@ -304,9 +322,14 @@ export const UpdateOrderInfo: React.FC = (): JSX.Element => {
                         </div>
                         <div><button className="btn">Գրանցել</button></div>
                     </form>
+                </div>
+
                     :
                     null
             }
+            <div>
+                <button className="btn" style={{fontSize:"20px", backgroundColor:"#0a1020", margin:"10px"}} onClick={loadeData} >Լրացնել տվյալները</button>
+            </div>
         </div>
     )
 }

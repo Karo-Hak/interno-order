@@ -4,7 +4,7 @@ import { selectOrder } from '../../features/order/orderSlice';
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from "react-router-dom";
 import { useCookies } from 'react-cookie'
-import { findOrder, updateOrder, updatePrepayment, } from "../../features/order/orderApi";
+import { findOrder, updateStatus } from "../../features/order/orderApi";
 import ImageUpload from '../uploadImg/uploadImg';
 import { selectUser } from '../../features/user/userSlice';
 import InputModal from '../../component/modal/Modal';
@@ -18,8 +18,6 @@ export const Order: React.FC = (): JSX.Element => {
     const [cookies, setCookie] = useCookies(['access_token']);
     const navigate = useNavigate();
     const params = useParams()
-    const [prepayment, setPrepayment] = useState<number>(0)
-
 
 
     useEffect(() => {
@@ -37,7 +35,7 @@ export const Order: React.FC = (): JSX.Element => {
     }
 
     const orderDone = (id: string) => {
-        dispatch(updateOrder({ id, cookies })).unwrap().then(res => {
+        dispatch(updateStatus({ id, cookies })).unwrap().then(res => {
             if ("error" in res) {
                 setCookie("access_token", '', { path: '/' })
                 navigate("/")
@@ -154,11 +152,11 @@ export const Order: React.FC = (): JSX.Element => {
                                     user?.profile && user?.profile.role == "admin" && order?.order.status === "progress" ?
                                         <div>
                                             <button className='btn' onClick={() => orderDone(order.order._id)}>Ավարտված</button>
-                                            <button className='btn' onClick={()=>updateOrderInfo(order.order_id)}>Փոխել</button>
                                         </div>
                                         :
                                         null
-                                }
+                                    }
+                                    <button className='btn' onClick={() => updateOrderInfo(order.order_id)}>Փոխել</button>
                             </div>
                             <div style={{ border: "2px solid whight" }}>
                                 <h6>{order.order.comment}</h6>
