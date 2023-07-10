@@ -40,7 +40,7 @@ export class CooperateController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.cooperateService.findOne(+id);
+    return this.cooperateService.findOne(id);
   }
 
   @Patch(':id')

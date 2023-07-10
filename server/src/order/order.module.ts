@@ -9,6 +9,7 @@ import { Buyer, BuyerSchema } from 'src/buyer/schema/buyer.schema';
 import { BuyerModule } from 'src/buyer/buyer.module';
 import { Texture, TextureSchema } from 'src/texture/schema/texture.schema';
 import { TextureModule } from 'src/texture/texture.module';
+import { CooperateModule } from 'src/cooperate/cooperate.module';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { TextureModule } from 'src/texture/texture.module';
       { name: Buyer.name, schema: BuyerSchema },
       { name: Texture.name, schema: TextureSchema },
     ]),
-    BuyerModule, TextureModule],
+    BuyerModule, TextureModule, CooperateModule],
   controllers: [OrderController],
   providers: [OrderService],
   exports: [OrderService]

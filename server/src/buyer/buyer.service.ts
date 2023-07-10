@@ -3,7 +3,7 @@ import { CreateBuyerDto } from './dto/create-buyer.dto';
 import { UpdateBuyerDto } from './dto/update-buyer.dto';
 import { Buyer } from './schema/buyer.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 @Injectable()
 export class BuyerService {
@@ -13,7 +13,7 @@ export class BuyerService {
     const { phone } = createBuyerDto;
     const buyer = await this.buyerModel.findOne({ phone });
     if (buyer) {
-      throw new NotFoundException('buyer already exists');
+      return buyer
     }
     const createdBuyer = new this.buyerModel(createBuyerDto);
     return createdBuyer.save();
@@ -31,7 +31,13 @@ export class BuyerService {
     return `This action returns a #${id} buyer`;
   }
 
-
+  async deleteFromArray(id: string, deleteId: string) {
+    await this.buyerModel.findByIdAndUpdate(
+      id,
+      { $pull: { order: new Types.ObjectId(deleteId) } },
+      { new: true }
+    );
+  }
 
   update(id: number, updateBuyerDto: UpdateBuyerDto) {
     return `This action updates a #${id} buyer`;

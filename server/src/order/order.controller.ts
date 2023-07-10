@@ -1,10 +1,10 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Res } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
 import { Response } from 'express';
 import { BuyerService } from 'src/buyer/buyer.service';
 import { TextureService } from 'src/texture/texture.service';
+import { CooperateService } from 'src/cooperate/cooperate.service';
 
 
 @Controller('order')
@@ -13,6 +13,7 @@ export class OrderController {
     private readonly orderService: OrderService,
     private readonly buyerService: BuyerService,
     private readonly textureService: TextureService,
+    private readonly cooperateService: CooperateService
   ) { }
 
   @Post()
@@ -134,11 +135,33 @@ export class OrderController {
   @Post('updateWallpaper/:id')
   async updateOrder(@Body() obj: any, @Res() res: Response, @Param('id') id: string) {
     try {
-      console.log(obj);
+      const wallpaper = await this.orderService.findWallpaper(obj.params.id)
+      const checkbuyer = await this.buyerService.create(obj.buyer)
+      const checkTexture = await this.textureService.findOne(obj.updateingOrder.texture)
+      const checkCooperate = await this.cooperateService.findOne(obj.updateingOrder.cooperate)
 
-              
-      // const texture = this.textureService.findOne()
-
+      if (checkbuyer && checkbuyer._id.toString() !== wallpaper.buyer.toString()) {
+        await this.buyerService.deleteFromArray(wallpaper.buyer.toString(), wallpaper.id)
+      }
+      if (checkTexture && checkTexture._id.toString() !== wallpaper.texture.toString()) {
+        await this.textureService.deleteFromArray(wallpaper.texture.toString(), wallpaper.id)
+      }
+      if (checkCooperate && checkCooperate._id.toString() !== wallpaper.cooperate.toString()) {
+        await this.cooperateService.deleteFromArray(wallpaper.cooperate.toString(), wallpaper.id)
+      }
+      if (wallpaper) {
+        const updateOrderDto = await this.orderService.update(obj.params.id,
+          {
+            ...obj.updateingOrder,
+            buyer: checkbuyer.id,
+            texture: checkTexture.id,
+            cooperate: checkCooperate.id
+          },
+          checkbuyer,
+          checkTexture,
+          checkCooperate)
+      }
+      return res.status(HttpStatus.OK).json("order updated");
     } catch (e) {
       return res.status(HttpStatus.BAD_REQUEST).json({
         error: e.message
@@ -160,10 +183,7 @@ export class OrderController {
     }
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-    return this.orderService.update(+id, updateOrderDto);
-  }
+
 
   @Delete(':id')
   remove(@Param('id') id: string) {

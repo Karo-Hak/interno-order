@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCooperateDto } from './dto/create-cooperate.dto';
 import { UpdateCooperateDto } from './dto/update-cooperate.dto';
 import { Cooperate } from './schema/cooperate.schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CooperationSphere } from 'src/cooperation-sphere/shema/cooperation-sphere.schema';
 
@@ -34,8 +34,16 @@ export class CooperateService {
     return await this.cooperateModel.find().populate("cooperationSphere")
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} cooperate`;
+  async findOne(id: string) {
+    return await this.cooperateModel.findById(id)
+  }
+
+  async deleteFromArray(id: string, deleteId: string) {
+    await this.cooperateModel.findByIdAndUpdate(
+      id,
+      { $pull: { order: new Types.ObjectId(deleteId) } },
+      { new: true }
+    );
   }
 
   update(id: number, updateCooperateDto: UpdateCooperateDto) {

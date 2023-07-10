@@ -23,7 +23,6 @@ export class OrderService {
     if (createOrderDto.cooperate == "0") {
       createOrderDto = { ...createOrderDto, cooperate: null }
     }
-
     const orderBuyer = await this.buyerModel.findById(createOrderDto.buyer);
     const orderCooperaye = await this.cooperateModel.findById(createOrderDto.cooperate);
     const orderUser = await this.userModel.findById(createOrderDto.user);
@@ -32,7 +31,7 @@ export class OrderService {
     if (createOrderDto.cooperate !== null) {
       await this.cooperateModel.findByIdAndUpdate(createOrderDto.cooperate, { order: [...orderCooperaye.order, newOrder.id] })
     }
-    await this.buyerModel.findByIdAndUpdate(createOrderDto.buyer, { order: [...orderBuyer.order, newOrder.id]})
+    await this.buyerModel.findByIdAndUpdate(createOrderDto.buyer, { order: [...orderBuyer.order, newOrder.id] })
     await this.userModel.findByIdAndUpdate(createOrderDto.user, { order: [...orderUser.order, newOrder.id] })
     await this.textureModel.findByIdAndUpdate(createOrderDto.texture, { order: [...orderTexture.order, newOrder.id] })
 
@@ -45,6 +44,9 @@ export class OrderService {
 
   async findOne(id: string) {
     return await this.orderModel.findById(id).populate("buyer").populate("texture").populate("cooperate");
+  }
+  async findWallpaper(id: string) {
+    return await this.orderModel.findById(id)
   }
 
   async findOneBuoldID(id: number) {
@@ -71,8 +73,20 @@ export class OrderService {
   findAll() {
     return `This action returns all order`;
   }
-  update(id: number, updateOrderDto: UpdateOrderDto) {
-    return `This action updates a #${id} order`;
+
+  async update(id: string, updateOrderDto: UpdateOrderDto, buyer: any, texture: any, cooperate: any) {
+    const upWallpaper = await this.orderModel.findByIdAndUpdate(id, updateOrderDto)
+    if (!buyer.order.includes(upWallpaper._id)) {
+      await this.buyerModel.findByIdAndUpdate(buyer.id, { order: [...buyer.order, upWallpaper.id] })
+    }
+    if (!texture.order.includes(upWallpaper._id)) {
+      await this.textureModel.findByIdAndUpdate(texture.id, { order: [...texture.order, upWallpaper.id] })
+    }
+    if (!cooperate.order.includes(upWallpaper._id)) {
+      await this.cooperateModel.findByIdAndUpdate(cooperate.id, { order: [...cooperate.order, upWallpaper.id] })
+    }
+
+    return upWallpaper
   }
 
   remove(id: number) {

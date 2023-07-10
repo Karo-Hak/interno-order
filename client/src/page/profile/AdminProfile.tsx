@@ -121,7 +121,7 @@ export const AdminProfile: React.FC = (): JSX.Element => {
     }, [texturePrice])
     useEffect(() => {
         setTotalOrder(parseInt(((squer * price) - ((squer * price) * discount) / 100).toString()))
-    }, [price])
+    }, [price, discount])
 
 
 

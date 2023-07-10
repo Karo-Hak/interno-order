@@ -3,7 +3,7 @@ import { CreateTextureDto } from './dto/create-texture.dto';
 import { UpdateTextureDto } from './dto/update-texture.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Texture } from './schema/texture.schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 @Injectable()
 export class TextureService {
@@ -20,6 +20,14 @@ export class TextureService {
 
   async findOne(id: string) {
     return await this.textureModel.findById(id)
+  }
+
+  async deleteFromArray(id: string, deleteId: string) {
+    await this.textureModel.findByIdAndUpdate(
+      id,
+      { $pull: { order: new Types.ObjectId(deleteId) } },
+      { new: true }
+    );
   }
 
   update(id: number, updateTextureDto: UpdateTextureDto) {
