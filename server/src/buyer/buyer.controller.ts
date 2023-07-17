@@ -18,7 +18,7 @@ export class BuyerController {
         data
       })
     } catch (e) {
-      return res.status(HttpStatus.OK).json({
+      return res.status(HttpStatus.BAD_REQUEST).json({
         error: e.message
       })
     }

@@ -26,15 +26,17 @@ export const AdminProfile: React.FC = (): JSX.Element => {
     useEffect(() => {
         dispatch(userProfile(cookies)).unwrap().then(res => {
             if ("error" in res) {
-                setCookie("access_token", '', { path: '/' })
-                navigate("/")
+                // setCookie("access_token", '', { path: '/' })
+                // navigate("/")
+                alert(res)
             }
         })
 
         dispatch(viewNewOrders(cookies)).unwrap().then(res => {
             if ("error" in res) {
-                setCookie("access_token", '', { path: '/' })
-                navigate('/')
+                // setCookie("access_token", '', { path: '/' })
+                // navigate('/')
+                alert(res)
             }
         })
 
@@ -77,14 +79,16 @@ export const AdminProfile: React.FC = (): JSX.Element => {
     const openOrderForm = () => {
         dispatch(getAllCooperate(cookies)).unwrap().then(res => {
             if ("error" in res) {
-                setCookie("access_token", '', { path: '/' })
-                navigate('/')
+                // setCookie("access_token", '', { path: '/' })
+                // navigate('/')
+                alert(res)
             }
         })
         dispatch(getAllTexture(cookies)).unwrap().then(res => {
             if ("error" in res) {
-                setCookie("access_token", '', { path: '/' })
-                navigate("/")
+                // setCookie("access_token", '', { path: '/' })
+                // navigate("/")
+                alert(res)
             }
         })
 
@@ -165,9 +169,28 @@ export const AdminProfile: React.FC = (): JSX.Element => {
     }
 
     const viewOrder = (id: any) => {
-        navigate("/order/" + id)
+        window.open("/order/" + id)
 
     }
+    const addBuyer = () => {
+        window.open('/addBuyer');
+    }
+    const addCooperate = () => {
+        if (user.profile.role === "admin") {
+            window.open("/addCooperate")
+        }
+    }
+    const addTexture = () => {
+        if (user.profile.role === "admin") {
+            window.open("/addTexture")
+        }
+    }
+    const search = () => {
+        window.open("/searchOrder")
+    }
+    console.log(user.profile
+    );
+
 
     return (
         <>
@@ -176,6 +199,21 @@ export const AdminProfile: React.FC = (): JSX.Element => {
                 <div className="divBtn">
                     {/* <button className="btn" onClick={openCoopSpher}>Add cooperation sphere</button> */}
                     <button className="btn" onClick={openOrderForm}>Ավելացնել Պատվեր</button>
+                    <button className="btn" onClick={addBuyer} >Ավելացնել Գնորդ</button>
+                    {
+                        user.profile && user.profile.role === "admin" ?
+                            <>
+                                <button className="btn" onClick={addCooperate} >Ավելացնել Գործընկեր</button>
+                                <button className="btn" onClick={addTexture} >Ավելացնել Տեսակ</button>
+                            </>
+                            :
+                            null
+
+
+
+
+                    }
+                    <button className="btn" onClick={search} >Դիտել Պատվերները</button>
                 </div>
             </div>
 

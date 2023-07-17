@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import {  allUser, userProfile } from "./userApi";
+import { allUser, userProfile } from "./userApi";
 
 export interface Role {
     name: string;
@@ -12,6 +12,7 @@ export interface User {
     username: string;
     password: string;
     role: string;
+    sphere: Array<string>
 }
 
 export interface UserState {

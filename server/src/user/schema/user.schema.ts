@@ -19,6 +19,8 @@ export class User {
     role: Role;
     @Prop()
     access_token: string;
+    @Prop()
+    sphere: Array<string>;
     @Prop({
         type: [
             { type: mongoose.Schema.Types.ObjectId, ref: Order.name }

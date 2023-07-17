@@ -28,13 +28,13 @@ export const Menu: React.FC = (): JSX.Element => {
     const btnHome = () => {
         navigate("/admine/profile")
     }
-    const addUser = () => {
-        if (data.profile.role === "admin") {
-            navigate("/addUser")
-        }
+    const wallpaper = () => {
+            navigate("/wallpaper")
     }
-    const addBuyer = () => {
-        navigate("/addBuyer")
+    const coopStrechCeiling = () => {
+        if (data.profile.sphere.includes("Stretch Ceiling Coop")) {
+            navigate("/stretchceilingcoop")
+        }
     }
     const addCooperate = () => {
         if (data.profile.role === "admin") {
@@ -49,10 +49,16 @@ export const Menu: React.FC = (): JSX.Element => {
     const search = () => {
         navigate("/searchOrder")
     }
+    const addUser = () => {
+        if (data.profile.role === "admin") {
+            window.open("/addUser")
+        }
+    }
+
     return (<>
-    <div className="divmenu">
-        <p className="divP">Hello</p>
-    </div>
+        <div className="divmenu">
+            <p className="divP">Hello</p>
+        </div>
         <nav className="navbar navbar-expand-sm bg-dark navbar-dark manu">
             <div className="container-fluid">
                 <div>
@@ -66,9 +72,7 @@ export const Menu: React.FC = (): JSX.Element => {
                     {
                         data?.profile && data.profile?.role === "admin" ?
                             <div>
-                                <button className="btn" onClick={addUser}>Ավելացնել Օգտատեր</button>
-                                <button className="btn" onClick={addCooperate}>Ավելացնել Գործընկեր</button>
-                                <button className="btn" onClick={addTexture}>Ավելացնել Տեսակ</button>
+                                <button className="btn" onClick={addUser}>Օգտատեր</button>
                             </div>
                             :
                             null
@@ -76,8 +80,13 @@ export const Menu: React.FC = (): JSX.Element => {
                     {
                         data?.profile && data?.profile?.role === "admin" || data?.profile?.role === "user" ?
                             <div>
-                                <button className="btn" onClick={addBuyer}>Ավելացնել Գնորդ</button>
-                                <button className="btn" onClick={search}>Դիտել Պատվերները</button>
+                                <button className="btn" onClick={wallpaper}>Ֆոտոպաստառ</button>
+                                {
+                                    data.profile.sphere.includes("Stretch Ceiling Coop") ?
+                                        <button className="btn" onClick={coopStrechCeiling}>Համ․ Ձգվող առաստաղ</button>
+                                        :
+                                        null
+                                }
                             </div>
                             :
                             null

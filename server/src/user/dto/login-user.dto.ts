@@ -7,7 +7,8 @@ export class LoginUserDto {
     readonly role: string;
     readonly password: string;
     readonly access_token: string;
-    readonly _id: string
+    readonly _id: string;
+    readonly sphere: Array<string>;
     constructor(user: any) {
         this.name = user.name
         this.surname = user.surname
@@ -15,5 +16,6 @@ export class LoginUserDto {
         this.role = user.role
         this.access_token = user.access_token
         this._id = user._id
+        this.sphere = user.sphere
     }
 }

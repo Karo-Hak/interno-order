@@ -23,7 +23,7 @@ export class UserController {
         message: 'Logged out successfully',
       })
     } catch (e) {
-      return res.status(HttpStatus.OK).json({
+      return res.status(HttpStatus.BAD_REQUEST).json({
         error: e.message
       })
     }
@@ -32,7 +32,10 @@ export class UserController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('profile')
   async findOneLogin(@Request() req) {
-    return await { user: req.user };
+    
+      return await { user: req.user };
+    
+    
   }
 
   @Post()
@@ -45,7 +48,7 @@ export class UserController {
         data
       })
     } catch (e) {
-      return res.status(HttpStatus.OK).json({
+      return res.status(HttpStatus.BAD_REQUEST).json({
         error: e.message
       })
     }
@@ -57,7 +60,7 @@ export class UserController {
       const user = await this.userService.findAll();
       return res.status(HttpStatus.OK).json(user);
     } catch (e) {
-      return res.status(HttpStatus.OK).json({
+      return res.status(HttpStatus.BAD_REQUEST).json({
         error: e.message
       })
     }

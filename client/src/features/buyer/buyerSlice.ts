@@ -9,11 +9,11 @@ export interface Buyer {
     adress: string;
 }
 
-export interface UserState {
+export interface BuyerState {
     arrBuyer: Array<Buyer>;
     buyer: Buyer
 }
-export const initialState: UserState = {
+export const initialState: BuyerState = {
     arrBuyer: [],
     buyer: {} as Buyer
 }

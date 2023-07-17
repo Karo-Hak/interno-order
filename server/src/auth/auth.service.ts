@@ -29,7 +29,8 @@ export class AuthService {
         sub: user._id,
         role: user.role,
         name: user.name,
-        surname: user.surname
+        surname: user.surname,
+        sphere: user.sphere
       };
       const access_token = this.jwtService.sign(payload)
       await this.userService.findAndUpdat(user._id, access_token)
@@ -38,7 +39,8 @@ export class AuthService {
         role: user.role,
         username: user.username,
         name: user.name,
-        surname: user.surname
+        surname: user.surname,
+        sphere: user.sphere
       };
     } catch (e) {
       return { message: e.message }

@@ -1,20 +1,25 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { allUser, newUser } from "../../features/user/userApi";
 import { User, selectUser } from "../../features/user/userSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import { useForm } from "react-hook-form";
+import { getUserSphere } from "../../features/userSphere/userSphereApi";
+import { useSelector } from "react-redux";
+import { UserSphere, selectUserSphere } from "../../features/userSphere/userSphereSlice";
 
 
 
 export const AddUser: React.FC = (): JSX.Element => {
     const dispatch = useAppDispatch();
     const user = useAppSelector(selectUser);
+    const userSphere = useSelector(selectUserSphere)
     const navigate = useNavigate();
     const [cookies, setCookie] = useCookies(['access_token']);
     const { register, handleSubmit, reset, formState: { errors } } = useForm<any>()
     const [role, setRole] = useState("user")
+    const [sphere, setSphere] = useState<Array<string>>([])
 
     useEffect(() => {
 
@@ -24,14 +29,34 @@ export const AddUser: React.FC = (): JSX.Element => {
                 navigate("/")
             }
         })
+        dispatch(getUserSphere(cookies)).unwrap().then(res => {
+            if ("error" in res) {
+                // setCookie("access_token", '', { path: '/' })
+                // navigate("/")
+            }
+        })
     }, [])
 
-    const selectedRole = (e: any) => {
-        setRole(e.target.value);
+    function selectedRole(event: ChangeEvent<HTMLSelectElement>): void {
+        setRole(event.target.value);
+    }
+    function chooseSphere(event: any): void {
+
+        if (sphere.includes(event.target.value)) {
+            const idx = sphere.indexOf(event.target.value);
+            if (idx > -1) {
+                sphere.splice(idx, 1);
+            }
+        } else {
+            sphere.push(event.target.value);
+        }
+
     }
 
+
+
     const saveUser = async (user: User) => {
-        user = { ...user, role: role, username: user.username.toLowerCase() }
+        user = { ...user, role: role, username: user.username.toLowerCase(), sphere: sphere }
         dispatch(newUser({ user, cookies })).unwrap().then(res => {
             if ("error" in res) {
                 alert(res.error)
@@ -67,6 +92,20 @@ export const AddUser: React.FC = (): JSX.Element => {
                                 <option value={"user"}>User</option>
                                 <option value={"admin"}>Admin</option>
                             </select>
+                        </div>
+                        <div style={{ display: "flex", flexDirection: "column" }}>
+                            <label htmlFor="role">Ոլորտ</label>
+
+                            {
+                                userSphere?.arrUserSphere && userSphere?.arrUserSphere.length > 0 ?
+                                    userSphere?.arrUserSphere.map((e: any, i: any) => {
+                                        return (
+                                            <label htmlFor="role" key={e._id} > <input type="checkbox" value={e.name} key={i} onChange={chooseSphere} />{e.name}</label>
+                                        )
+                                    })
+                                    : null
+                            }
+
                         </div>
                     </div>
                     <button className="btn" >Գրանցել</button>
