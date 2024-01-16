@@ -163,19 +163,19 @@ export const SearchOrder: React.FC = (): JSX.Element => {
 
     return (
         <div >
-            <div className="divMenu ">
+            <div className="profile ">
                 <div style={{ display: "flex", gap: "5px" }}>
-                    <div>
+                    <div className="inputDiv">
                         <label htmlFor="startDate">Ամսատիվ սկիզբ</label>
-                        <input id="startDate" type="date" className="form-control selectFilter" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                        <input id="startDate" type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
                     </div>
-                    <div>
+                    <div className="inputDiv">
                         <label htmlFor="endDate">Ամսաթիվ վերջ</label>
-                        <input id="endDate" type="date" className=" form-control selectFilter" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                        <input id="endDate" type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
                     </div>
-                    <div>
+                    <div className="inputDiv">
                         <label htmlFor="user">Օգտատեր</label>
-                        <select id="user" className="form-control selectFilter" onChange={selUser}>
+                        <select id="user" onChange={selUser}>
                             <option value={0}>Select</option>
 
                             {

@@ -1,20 +1,37 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus } from '@nestjs/common';
 import { ProfilService } from './profil.service';
 import { CreateProfilDto } from './dto/create-profil.dto';
 import { UpdateProfilDto } from './dto/update-profil.dto';
+import { Response } from 'express';
 
-@Controller('profil')
+@Controller('stretchProfil')
 export class ProfilController {
-  constructor(private readonly profilService: ProfilService) {}
+  constructor(private readonly profilService: ProfilService) { }
 
   @Post()
-  create(@Body() createProfilDto: CreateProfilDto) {
-    return this.profilService.create(createProfilDto);
+  async create(@Body() createProfilDto: CreateProfilDto, @Res() res: Response) {
+    try {
+      return await this.profilService.create(createProfilDto);
+    } catch (e) {
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        error: e.message
+      })
+    }
   }
 
   @Get()
-  findAll() {
-    return this.profilService.findAll();
+  async findAll(@Res() res: Response) {
+    try {
+      const stretchProfil = await this.profilService.findAll()
+      return res.status(HttpStatus.OK).json({
+        messege: "ok",
+        stretchProfil
+      })
+    } catch (e) {
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        error: e.message
+      })
+    }
   }
 
   @Get(':id')

@@ -14,8 +14,8 @@ export class CoopStretchBuyerService {
     return createdBuyer.save();
   }
 
-  findAll() {
-    return `This action returns all coopStretchBuyer`;
+async  findAll() {
+    return await this.coopStretchBuyerModel.find()
   }
 
   async findByPhone(phone: number) {

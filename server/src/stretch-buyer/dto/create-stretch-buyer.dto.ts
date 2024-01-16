@@ -1,3 +1,3 @@
 export class CreateStretchBuyerDto {
-    phone: number
+    phone: string;
 }

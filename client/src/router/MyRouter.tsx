@@ -14,6 +14,15 @@ import { CoopStretchCeiling } from "../strechCeining/pages/coopStretchCeiling/Co
 import { StretchTexture } from "../strechCeining/pages/addStretchCeilingTexture/StretchTexture"
 import { StretchBuyer } from "../strechCeining/pages/addStretchBuyer/AddStretchBuyer"
 import { CoopStretchBuyer } from "../strechCeining/pages/addCoopStretchBuyer/AddCoopStretchBuyer"
+import { StretchBardutyun } from "../strechCeining/pages/addStretchCeilingBardutyun/StretchBardutyun"
+import { StretchProfil } from "../strechCeining/pages/addStretchCeilingProfil/StretchProfil"
+import { StretchLightPlatform } from "../strechCeining/pages/addStretchLightPlatform/StretchLightPlatform"
+import { StretchLightRing } from "../strechCeining/pages/addStretchLightRing/StretchLightRing"
+import { CoopStretchOrder } from "../strechCeining/pages/addCoopStretchCeilingOrder/coopStretchCeilingOrder"
+import { TagStretchCeiling } from "../strechCeining/pages/tagStretchCeiling/TagStretchCeiling"
+import { TagStretchOrderx } from "../strechCeining/pages/addTagStretchCeilingOrder/TagStretchOrder"
+import { StretchAdditional } from "../strechCeining/pages/addStretchCeilingAdditional/StretchAdditional"
+import { EditTagStretchOrderx } from "../strechCeining/pages/editTagStretchCeilingOrder/EditTagStretchOrder"
 
 // import { AllUser } from "../page/AllUser"
 
@@ -31,6 +40,7 @@ export const MyRouter: React.FC = (): JSX.Element => {
                 </div>
                 <Routes>
                     <Route path="/" element={<Login />}></Route>
+                    {/* <Route path="/home" element={<Login />}></Route> */}
                     <Route path="/wallpaper" element={<AdminProfile />}></Route>
                     <Route path="/order/:id" element={<Order />}></Route>
                     <Route path="/newOrder/:id" element={<NewOrder />}></Route>
@@ -42,8 +52,17 @@ export const MyRouter: React.FC = (): JSX.Element => {
                     <Route path="/updateOrderInfo/:id" element={<UpdateOrderInfo />}></Route>
                     <Route path="/stretchceilingcoop" element={<CoopStretchCeiling />}></Route>
                     <Route path="/stretchTexture" element={<StretchTexture />}></Route>
-                    <Route path="/stretchceiling/addStretchBuyer" element={<StretchBuyer />}></Route>
+                    <Route path="/stretchceiling" element={<TagStretchCeiling />}></Route>
+                    <Route path="/stretchceiling/addTagStretchOrder" element={<TagStretchOrderx />}></Route>
+                    <Route path="/tagstretchceiling/addTagStretchBuyer" element={<StretchBuyer />}></Route>
                     <Route path="/coopstretchceiling/addCoopStretchBuyer" element={<CoopStretchBuyer />}></Route>
+                    <Route path="/stretchceiling/addStretchBardutyun" element={<StretchBardutyun />}></Route>
+                    <Route path="/stretchceiling/addStretchAdditional" element={<StretchAdditional />}></Route>
+                    <Route path="/stretchceiling/addStretchProfil" element={<StretchProfil />}></Route>
+                    <Route path="/stretchceiling/addStretchLightPlatform" element={<StretchLightPlatform />}></Route>
+                    <Route path="/stretchceiling/addStretchLightRing" element={<StretchLightRing />}></Route>
+                    <Route path="/stretchceiling/editStretchOrder/:id" element={<EditTagStretchOrderx />}></Route>
+                    <Route path="/coopStretchceiling/addCoopStretchOrder" element={<CoopStretchOrder />}></Route>
 
                 </Routes>
             </BrowserRouter>

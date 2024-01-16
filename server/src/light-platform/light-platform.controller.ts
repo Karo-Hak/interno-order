@@ -1,20 +1,37 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus } from '@nestjs/common';
 import { LightPlatformService } from './light-platform.service';
 import { CreateLightPlatformDto } from './dto/create-light-platform.dto';
 import { UpdateLightPlatformDto } from './dto/update-light-platform.dto';
+import { Response } from 'express';
 
-@Controller('light-platform')
+@Controller('stretchLightPlatform')
 export class LightPlatformController {
-  constructor(private readonly lightPlatformService: LightPlatformService) {}
+  constructor(private readonly lightPlatformService: LightPlatformService) { }
 
   @Post()
-  create(@Body() createLightPlatformDto: CreateLightPlatformDto) {
-    return this.lightPlatformService.create(createLightPlatformDto);
+  async create(@Body() createLightPlatformDto: CreateLightPlatformDto, @Res() res: Response) {
+    try {
+      return await this.lightPlatformService.create(createLightPlatformDto);
+    } catch (e) {
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        error: e.message
+      })
+    }
   }
 
   @Get()
-  findAll() {
-    return this.lightPlatformService.findAll();
+  async findAll(@Res() res: Response) {
+    try {
+      const lightPlatform = await this.lightPlatformService.findAll()
+      return res.status(HttpStatus.OK).json({
+        messege: "ok",
+        lightPlatform
+      })
+    } catch (e) {
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        error: e.message
+      })
+    }
   }
 
   @Get(':id')

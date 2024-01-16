@@ -9,21 +9,21 @@ import { StretchBuyer } from './schema/stretch-buyer.schema';
 export class StretchBuyerService {
   constructor(@InjectModel(StretchBuyer.name) private stretchBuyerModel: Model<StretchBuyer>) { }
 
-  create(createStretchBuyerDto: CreateStretchBuyerDto) {
+  create(createStretchBuyerDto: any) {
     const createdBuyer = new this.stretchBuyerModel(createStretchBuyerDto);
     return createdBuyer.save();
   }
 
-  findAll() {
-    return `This action returns all stretchBuyer`;
+  async findAll() {
+    return await this.stretchBuyerModel.find()
   }
 
-  async findByPhone(phone: number) {
-    return await this.stretchBuyerModel.findOne({ phone })
+  async findByPhone(phone: string) {
+    return await this.stretchBuyerModel.findOne({ buyerPhone: phone })
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} stretchBuyer`;
+ async findOne(id: string) {
+    return await this.stretchBuyerModel.findById(id);
   }
 
   update(id: number, updateStretchBuyerDto: UpdateStretchBuyerDto) {

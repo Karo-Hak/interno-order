@@ -3,11 +3,11 @@ import axios from "axios";
 
 
 
-export const addNewStrechOrder = createAsyncThunk(
-  'strechOrder/new/axios',
+export const addNewStretchOrder = createAsyncThunk(
+  'stretchOrder/new/axios',
   async (obj: any) => {
     try {
-      const response = await axios.post(process.env.REACT_APP_SERVER_URL + "/StrechOrder", { ...obj }, {
+      const response = await axios.post(process.env.REACT_APP_SERVER_URL + "/stretch-ceiling-order", { ...obj }, {
         headers: {
           Authorization: `Bearer ${obj.cookies.access_token}`
         }
@@ -22,12 +22,10 @@ export const addNewStrechOrder = createAsyncThunk(
 );
 
 export const updatePrepayment = createAsyncThunk(
-  'order/updateStrechOrderPrepayment/axios',
+  'stretchOrder/updateStretchOrderPrepayment/axios',
   async (obj: any) => {
-    console.log(obj);
-
     try {
-      const response = await axios.post(process.env.REACT_APP_SERVER_URL + "/StrechOrder/updateStrechOrderPrepayment", { ...obj }, {
+      const response = await axios.post(process.env.REACT_APP_SERVER_URL + "/stretchOrder/updateStretchOrderPrepayment", { ...obj }, {
         headers: {
           Authorization: `Bearer ${obj.cookies.access_token}`
         }
@@ -43,11 +41,11 @@ export const updatePrepayment = createAsyncThunk(
 
 
 
-export const viewNewStrechOrder = createAsyncThunk(
-  'strechOrder/viewNewStrechOrder/axios',
+export const viewNewOrders = createAsyncThunk(
+  'stretchOrder/viewNewStretchOrder/axios',
   async (cookies: any) => {
     try {
-      const response = await axios.get(process.env.REACT_APP_SERVER_URL + "/strechOrder/findNewStrechOrder", {
+      const response = await axios.get(process.env.REACT_APP_SERVER_URL + "/stretch-ceiling-order/findNew", {
         headers: {
           Authorization: `Bearer ${cookies.access_token}`
         }
@@ -61,11 +59,11 @@ export const viewNewStrechOrder = createAsyncThunk(
   }
 );
 
-export const findStrechOrder = createAsyncThunk(
-  'strechOrder/findStrechOrder/axios',
+export const findStretchOrder = createAsyncThunk(
+  'stretchOrder/findStretchOrder/axios',
   async (obj: any) => {
     try {
-      const response = await axios.get(process.env.REACT_APP_SERVER_URL + "/strechOrder/findStrechOrder/" + obj.params.id, {
+      const response = await axios.get(process.env.REACT_APP_SERVER_URL + "/stretch-ceiling-order/findStretchOrder/" + obj.params.id, {
         headers: {
           Authorization: `Bearer ${obj.cookies.access_token}`
         }
@@ -76,11 +74,11 @@ export const findStrechOrder = createAsyncThunk(
     }
   }
 )
-export const findNewStrechOrder = createAsyncThunk(
-  'strechOrder/findNewStrechOrder/axios',
+export const findNewStretchOrder = createAsyncThunk(
+  'stretchOrder/findNewStretchOrder/axios',
   async (obj: any) => {
     try {
-      const response = await axios.get(process.env.REACT_APP_SERVER_URL + "/strechOrder/findNewStrechOrder/" + obj.params.id, {
+      const response = await axios.get(process.env.REACT_APP_SERVER_URL + "/stretchOrder/findNewStretchOrder/" + obj.params.id, {
         headers: {
           Authorization: `Bearer ${obj.cookies.access_token}`
         }
@@ -112,11 +110,11 @@ export const findNewStrechOrder = createAsyncThunk(
 //   }
 // )
 
-export const searchStrechOrder = createAsyncThunk(
-  'strechOrder/search/axios',
+export const searchStretchOrder = createAsyncThunk(
+  'stretchOrder/search/axios',
   async (obj: any) => {
     try {
-      const response = await axios.post(process.env.REACT_APP_SERVER_URL + "/strechOrder/search", { ...obj }, {
+      const response = await axios.post(process.env.REACT_APP_SERVER_URL + "/stretchOrder/search", { ...obj }, {
         headers: {
           Authorization: `Bearer ${obj.cookies.access_token}`
         }
@@ -130,11 +128,11 @@ export const searchStrechOrder = createAsyncThunk(
   }
 );
 
-export const updateStrechOrderAll = createAsyncThunk(
-  'strechOrder/updateStrechOrder/axios',
+export const updateStretchOrderAll = createAsyncThunk(
+  'stretchOrder/updateStretchOrder/axios',
   async (obj: any) => {
     try {
-      const response = await axios.post(process.env.REACT_APP_SERVER_URL + "/order/updateStrechOrder/" + obj.params.id, obj, {
+      const response = await axios.post(process.env.REACT_APP_SERVER_URL + "/stretchOrder/updateStretchOrder/" + obj.params.id, obj, {
         headers: {
           Authorization: `Bearer ${obj.cookies.access_token}`
         }

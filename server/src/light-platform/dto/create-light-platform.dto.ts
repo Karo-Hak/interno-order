@@ -1,1 +1,3 @@
-export class CreateLightPlatformDto {}
+export class CreateLightPlatformDto {
+    name:string
+}

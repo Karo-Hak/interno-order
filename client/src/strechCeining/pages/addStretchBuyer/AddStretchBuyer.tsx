@@ -6,11 +6,13 @@ import { useCookies } from 'react-cookie'
 import { userProfile } from "../../../features/user/userApi";
 import './addStretchBuyer.css'
 import { useForm } from "react-hook-form";
-import { newStretchBuyer } from "../../StrechBuyer/strechBuyerApi";
+import { allStretchBuyer, newStretchBuyer } from "../../StrechBuyer/strechBuyerApi";
+import { selectStretchBuyer } from "../../StrechBuyer/strechBuyerSlice";
 
 export const StretchBuyer: React.FC = (): JSX.Element => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm<any>()
     const user = useAppSelector(selectUser);
+    const buyer = useAppSelector(selectStretchBuyer)
     const dispatch = useAppDispatch();
     const [cookies, setCookie] = useCookies(['access_token']);
     const navigate = useNavigate();
@@ -23,7 +25,13 @@ export const StretchBuyer: React.FC = (): JSX.Element => {
                 navigate("/")
             }
         })
-      
+        dispatch(allStretchBuyer(cookies)).unwrap().then(res => {
+            if ("error" in res) {
+                setCookie("access_token", '', { path: '/' })
+                navigate("/")
+            }
+        })
+
     }, [])
 
     const addStretchBuyer = (stretchBuyer: any) => {
@@ -36,6 +44,8 @@ export const StretchBuyer: React.FC = (): JSX.Element => {
 
     }
 
+    console.log(buyer.arrStretchBuyer
+    );
 
     return (
         <>
@@ -46,48 +56,43 @@ export const StretchBuyer: React.FC = (): JSX.Element => {
 
                         <div>
                             <label htmlFor="name">Անուն</label>
-                            <input id="name" className="userInput form-control" type="text" placeholder="Name"  {...register("name", { required: true })} />
+                            <input id="name" type="text" placeholder="Name"  {...register("buyerName", { required: true })} />
                         </div>
                         <div>
-                            <label htmlFor="weight">Հեռախոս</label>
-                            <input id="phone" className="userInput form-control" type="number" placeholder="Phone"  {...register("phone", { required: true })} />
+                            <label htmlFor="phone">Հեռախոս</label>
+                            <input id="phone" type="number" placeholder="Phone"  {...register("buyerPhone", { required: true })} />
                         </div>
                         <div>
-                            <button className="btn">Գրանցել</button>
+                            <label htmlFor="adress">Հասցե</label>
+                            <input id="adress" type="text" placeholder="Address"  {...register("buyerAddress", { required: true })} />
                         </div>
+
+                    </div>
+                    <div>
+                        <button className="btn">Գրանցել</button>
                     </div>
 
 
-
                 </form>
-                {/* {
-                    stretchTexture.arrStretchTexture && stretchTexture.arrStretchTexture.length > 0 ?
-                        <div className="profile" style={{fontSize:"12px"}}>
+                {
+                    buyer.arrStretchBuyer && buyer.arrStretchBuyer.length > 0 ?
+                        <div className="profile" >
                             <table className="table" style={{ color: "white" }}>
                                 <thead>
                                     <tr>
-                                        <th scope="col">Անվանում</th>
-                                        <th scope="col">Լայնություն</th>
-                                        <th scope="col">Չ/Մ</th>
-                                        <th scope="col">Գին Գարպուն</th>
-                                        <th scope="col">Գին Ատրեզ</th>
-                                        <th scope="col">Համ Գին Գարպուն </th>
-                                        <th scope="col">Համ Գին Ատրեզ</th>
-
+                                        <th scope="col">Անուն</th>
+                                        <th scope="col">Հեռախոս</th>
+                                        <th scope="col">Հասցե</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {
-                                        stretchTexture.arrStretchTexture.map((e: any) => {
+                                        buyer.arrStretchBuyer.map((e: any) => {
                                             return (
                                                 <tr key={e._id}>
-                                                    <td>{e.name}</td>
-                                                    <td>{e.weight}</td>
-                                                    <td>{e.unyt}</td>
-                                                    <td>{e.priceGarpun}</td>
-                                                    <td>{e.priceOtrez}</td>
-                                                    <td>{e.priceCoopGarpun}</td>
-                                                    <td>{e.priceCoopOtrez}</td>
+                                                    <td>{e.buyerName}</td>
+                                                    <td>{e.buyerPhone}</td>
+                                                    <td>{e.buyerAddress}</td>
                                                 </tr>
                                             )
                                         })
@@ -97,7 +102,8 @@ export const StretchBuyer: React.FC = (): JSX.Element => {
                         </div>
                         :
                         null
-                } */}
+                }
+
 
 
 

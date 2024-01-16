@@ -1,1 +1,3 @@
-export class CreateLightRingDto {}
+export class CreateLightRingDto {
+    name:string
+}

@@ -30,13 +30,23 @@ export class StretchBuyerController {
   }
 
   @Get()
-  findAll() {
-    return this.stretchBuyerService.findAll();
+ async findAll( @Res() res: Response) {
+    try {
+      const buyer = await this.stretchBuyerService.findAll()
+      return res.status(HttpStatus.OK).json({
+        messege: "ok",
+        buyer
+      })
+    } catch (e) {
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        error: e.message
+      })
+    }
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.stretchBuyerService.findOne(+id);
+    return this.stretchBuyerService.findOne(id);
   }
 
   @Patch(':id')

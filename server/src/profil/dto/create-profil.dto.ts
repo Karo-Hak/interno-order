@@ -1,1 +1,3 @@
-export class CreateProfilDto {}
+export class CreateProfilDto {
+    name:string
+}

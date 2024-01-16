@@ -6,11 +6,13 @@ import { useCookies } from 'react-cookie'
 import { userProfile } from "../../../features/user/userApi";
 import './addCoopStretchBuyer.css'
 import { useForm } from "react-hook-form";
-import { newCoopStretchBuyer } from "../../CoopStrechBuyer/coopStrechBuyerApi";
+import { allCoopStretchBuyer, newCoopStretchBuyer } from "../../coopStrechBuyer/coopStrechBuyerApi";
+import { selectCoopStretchBuyer } from "../../coopStrechBuyer/coopStrechBuyerSlice";
 
 export const CoopStretchBuyer: React.FC = (): JSX.Element => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm<any>()
     const user = useAppSelector(selectUser);
+    const buyer = useAppSelector(selectCoopStretchBuyer)
     const dispatch = useAppDispatch();
     const [cookies, setCookie] = useCookies(['access_token']);
     const navigate = useNavigate();
@@ -23,11 +25,17 @@ export const CoopStretchBuyer: React.FC = (): JSX.Element => {
                 navigate("/")
             }
         })
+        dispatch(allCoopStretchBuyer(cookies)).unwrap().then(res => {
+            if ("error" in res) {
+                setCookie("access_token", '', { path: '/' })
+                navigate("/")
+            }
+        })
 
     }, [])
 
-    const addCoopStretchBuyer = (stretchBuyer: any) => {
-        dispatch(newCoopStretchBuyer({ stretchBuyer, cookies })).unwrap().then(res => {
+    const addCoopStretchBuyer = (coopStretchBuyer: any) => {
+        dispatch(newCoopStretchBuyer({ coopStretchBuyer, cookies })).unwrap().then(res => {
             if ("error" in res) {
                 alert(res.error)
             }
@@ -36,6 +44,7 @@ export const CoopStretchBuyer: React.FC = (): JSX.Element => {
 
     }
 
+    console.log(buyer.arrCoopStretchBuyer);
 
     return (
         <>
@@ -53,41 +62,33 @@ export const CoopStretchBuyer: React.FC = (): JSX.Element => {
                             <input id="phone" className="userInput form-control" type="number" placeholder="Phone"  {...register("phone", { required: true })} />
                         </div>
                         <div>
-                            <button className="btn">Գրանցել</button>
+                            <label htmlFor="adress">Հասցե</label>
+                            <input id="adress" className="userInput form-control" type="text" placeholder="Adress"  {...register("adress", { required: true })} />
                         </div>
                     </div>
-
-
-
+                        <div>
+                            <button className="btn">Գրանցել</button>
+                        </div>
                 </form>
-                {/* {
-                    stretchTexture.arrStretchTexture && stretchTexture.arrStretchTexture.length > 0 ?
-                        <div className="profile" style={{fontSize:"12px"}}>
+                {
+                    buyer.arrCoopStretchBuyer && buyer.arrCoopStretchBuyer.length > 0 ?
+                        <div className="profile" >
                             <table className="table" style={{ color: "white" }}>
                                 <thead>
                                     <tr>
-                                        <th scope="col">Անվանում</th>
-                                        <th scope="col">Լայնություն</th>
-                                        <th scope="col">Չ/Մ</th>
-                                        <th scope="col">Գին Գարպուն</th>
-                                        <th scope="col">Գին Ատրեզ</th>
-                                        <th scope="col">Համ Գին Գարպուն </th>
-                                        <th scope="col">Համ Գին Ատրեզ</th>
-
+                                        <th scope="col">Անուն</th>
+                                        <th scope="col">Հեռախոս</th>
+                                        <th scope="col">Հասցե</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {
-                                        stretchTexture.arrStretchTexture.map((e: any) => {
+                                        buyer.arrCoopStretchBuyer.map((e: any) => {
                                             return (
                                                 <tr key={e._id}>
                                                     <td>{e.name}</td>
-                                                    <td>{e.weight}</td>
-                                                    <td>{e.unyt}</td>
-                                                    <td>{e.priceGarpun}</td>
-                                                    <td>{e.priceOtrez}</td>
-                                                    <td>{e.priceCoopGarpun}</td>
-                                                    <td>{e.priceCoopOtrez}</td>
+                                                    <td>{e.phone}</td>
+                                                    <td>{e.adress}</td>
                                                 </tr>
                                             )
                                         })
@@ -97,7 +98,7 @@ export const CoopStretchBuyer: React.FC = (): JSX.Element => {
                         </div>
                         :
                         null
-                } */}
+                }
 
 
 

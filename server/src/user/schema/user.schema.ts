@@ -2,6 +2,7 @@ import { SchemaFactory, Schema, Prop } from "@nestjs/mongoose";
 import mongoose, { HydratedDocument } from "mongoose";
 import { Role } from "../role/role";
 import { Order } from "src/order/schema/order.schema";
+import { CoopCeilingOrder } from "src/coop-ceiling-order/schema/coop-ceiling-order.schema";
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -27,6 +28,12 @@ export class User {
         ]
     })
     order: Order[];
+    @Prop({
+        type: [
+            { type: mongoose.Schema.Types.ObjectId, ref: CoopCeilingOrder.name }
+        ]
+    })
+    coopCeilingOrder: CoopCeilingOrder[];
 };
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -7,9 +7,10 @@ export type LightRingDocument = HydratedDocument<LightRing>;
 export class LightRing {
     @Prop()
     name: string;
-
-
-
+    @Prop()
+    price: number;
+    @Prop()
+    unyt: string;
 }
 
 export const LightRingSchema = SchemaFactory.createForClass(LightRing);

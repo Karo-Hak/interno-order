@@ -67,7 +67,7 @@ export const AddCooperate: React.FC = (): JSX.Element => {
 
                                 <div style={{ display: "flex", flexDirection: "column" }}>
                                     <label htmlFor="cooperateSpher">Գործընկերոջ ոլորտ</label>
-                                    <select id="cooperateSpher" className="userInput form-select" aria-label="Default select example" {...register("cooperationSphere", { required: true })}>
+                                    <select id="cooperateSpher"  aria-label="Default select example" {...register("cooperationSphere", { required: true })}>
                                         <option value={0}>Select</option>
                                         {
                                             cooperate.cooperationSphere.map((e: any) => {

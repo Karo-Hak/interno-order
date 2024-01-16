@@ -22,6 +22,8 @@ import { UserSphereModule } from './user-sphere/user-sphere.module';
 import { StretchTextureModule } from './stretch-texture/stretch-texture.module';
 import { StretchBuyerModule } from './stretch-buyer/stretch-buyer.module';
 import { CoopStretchBuyerModule } from './coop-stretch-buyer/coop-stretch-buyer.module';
+import { AdditionalModule } from './additional/additional.module';
+import { StretchCeilingOrderModule } from './stretch-ceiling-order/stretch-ceiling-order.module';
 
 @Module({
   imports: [
@@ -48,6 +50,8 @@ import { CoopStretchBuyerModule } from './coop-stretch-buyer/coop-stretch-buyer.
     StretchTextureModule,
     StretchBuyerModule,
     CoopStretchBuyerModule,
+    AdditionalModule,
+    StretchCeilingOrderModule,
   ],
   controllers: [AppController],
   providers: [AppService],

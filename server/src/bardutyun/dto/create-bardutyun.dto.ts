@@ -1,1 +1,3 @@
-export class CreateBardutyunDto {}
+export class CreateBardutyunDto {
+    name: string
+}

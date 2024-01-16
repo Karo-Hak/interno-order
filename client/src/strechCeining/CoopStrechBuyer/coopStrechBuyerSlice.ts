@@ -5,7 +5,8 @@ import { newCoopStretchBuyer, allCoopStretchBuyer } from "./coopStrechBuyerApi";
 export interface CoopStretchBuyer {
     id: number;
     name: string;
-    phone: string;
+    phone: number;
+    adress: string;
 }
 
 export interface CoopStretchBuyerState {
@@ -33,13 +34,13 @@ export const coopStretchBuyerSlice = createSlice({
             .addCase(allCoopStretchBuyer.fulfilled, (state, action) => {
                 if ('error' in action.payload) {
                 } else {
-                    state.arrCoopStretchBuyer = action.payload
+                    state.arrCoopStretchBuyer = action.payload.coopBuyer
                 }
             })
     }
 })
 
 
-export const selectCoopStretchBuyer = (state: any) => state.cooptretchBuyer;
+export const selectCoopStretchBuyer = (state: any) => state.coopStretchBuyer;
 
 export default coopStretchBuyerSlice.reducer;

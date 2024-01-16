@@ -9,8 +9,8 @@
     background-image: url(../../../public/Colorful-Curves-2560x1440.jpg);
     background-repeat: no-repeat;
     background-size: 100%;
-}
 
+}
 .loginDiv {
     width: 400px;
     padding: 40px;
@@ -29,15 +29,7 @@
     width: 300px;
 }
 
-body {
 
-    background-image: url(../../../public/login.jpg);
-    background-size: cover;
-    background-position: center;
-    width: 100vw; 
-    height: 100vh;
-
-}
 
 .buttonLogin {
     margin-top: 10px;
@@ -45,4 +37,4 @@ body {
     float: right;
     border-radius: 10px;
     width: 100px;
-}
+} 

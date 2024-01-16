@@ -10,10 +10,10 @@ export const myLink = (url: string) => {
 
 
 export const newCoopStretchBuyer = createAsyncThunk(
-  'CoopStetchBuyer/axios',
+  'coopStetchBuyer/axios',
   async (obj: any) => {
     try {
-      const response = await axios.post(process.env.REACT_APP_SERVER_URL + "/coopStretchBuyer", { ...obj.stretchBuyer }, {
+      const response = await axios.post(process.env.REACT_APP_SERVER_URL + "/coopstretchbuyer", { ...obj.coopStretchBuyer }, {
         headers: {
           Authorization: `Bearer ${obj.cookies.access_token}`
         }
@@ -29,7 +29,7 @@ export const allCoopStretchBuyer = createAsyncThunk(
   'coopStretchBuyer/allCoopStretchBuyer/axios',
   async (cookie: any) => {
     try {
-      const response = await axios.get(process.env.REACT_APP_SERVER_URL +"/coopStretchBuyer", {
+      const response = await axios.get(process.env.REACT_APP_SERVER_URL +"/coopstretchbuyer", {
         headers: {
           Authorization: `Bearer ${cookie.access_token}`
         }

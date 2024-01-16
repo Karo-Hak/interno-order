@@ -13,16 +13,40 @@ import { getAllCooperate } from '../../features/cooperate/cooperateApi';
 import { Cooperate, selectCooperate } from '../../features/cooperate/cooperateSlice';
 
 export const UpdateOrderInfo: React.FC = (): JSX.Element => {
+    const dispatch = useAppDispatch()
+    const [cookies, setCookie] = useCookies(['access_token']);
+    const params = useParams()
+
+    useEffect(() => {
+        dispatch(findOrder({ params, cookies })).unwrap().then(res => {
+            if ("error" in res) {
+                // setCookie("access_token", '', { path: '/' })
+                // navigate("/")
+                alert(res)
+            }
+        })
+        dispatch(getAllTexture(cookies)).unwrap().then(res => {
+            if ("error" in res) {
+                // setCookie("access_token", '', { path: '/' })
+                // navigate("/")
+            }
+        })
+        dispatch(getAllCooperate(cookies)).unwrap().then(res => {
+            if ("error" in res) {
+                // setCookie("access_token", '', { path: '/' })
+                // navigate('/')
+            }
+        })
+    }, [])
+
     const { register, handleSubmit, reset, formState: { errors } } = useForm<any>()
     const user = useAppSelector(selectUser)
     const order = useAppSelector(selectOrder);
     const texture = useAppSelector(selectTexture);
     const cooperate = useAppSelector(selectCooperate);
 
-    const dispatch = useAppDispatch()
-    const [cookies, setCookie] = useCookies(['access_token']);
+
     const navigate = useNavigate();
-    const params = useParams()
 
     const [weight, setWeight] = useState<number>(() => order.order.weight || 0);
     const [height, setHeight] = useState<number>(order.order.height || 0);
@@ -67,27 +91,7 @@ export const UpdateOrderInfo: React.FC = (): JSX.Element => {
         setSelectedPayment(order.order.paymentMethod)
     }
 
-    useEffect(() => {
-        dispatch(findOrder({ params, cookies })).unwrap().then(res => {
-            if ("error" in res) {
-                // setCookie("access_token", '', { path: '/' })
-                // navigate("/")
-                alert(res)
-            }
-        })
-        dispatch(getAllTexture(cookies)).unwrap().then(res => {
-            if ("error" in res) {
-                // setCookie("access_token", '', { path: '/' })
-                // navigate("/")
-            }
-        })
-        dispatch(getAllCooperate(cookies)).unwrap().then(res => {
-            if ("error" in res) {
-                // setCookie("access_token", '', { path: '/' })
-                // navigate('/')
-            }
-        })
-    }, [])
+
 
     const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
         setSelectedCoop(event.target.value);
@@ -166,7 +170,7 @@ export const UpdateOrderInfo: React.FC = (): JSX.Element => {
                 alert(res)
             }
         })
-
+        navigate("/searchOrder")
     }
 
 

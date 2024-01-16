@@ -7,9 +7,10 @@ export type BardutyunDocument = HydratedDocument<Bardutyun>;
 export class Bardutyun {
     @Prop()
     name: string;
-
-
-
+    @Prop()
+    price: number;
+    @Prop()
+    unyt: string;
 }
 
 export const BardutyunSchema = SchemaFactory.createForClass(Bardutyun);

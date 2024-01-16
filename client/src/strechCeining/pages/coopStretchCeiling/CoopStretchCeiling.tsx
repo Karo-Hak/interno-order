@@ -1,6 +1,6 @@
 import { selectUser } from "../../../features/user/userSlice";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { useEffect } from 'react'
+import { ChangeEvent, useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
 import { useCookies } from 'react-cookie'
 import { userProfile } from "../../../features/user/userApi";
@@ -24,29 +24,35 @@ export const CoopStretchCeiling: React.FC = (): JSX.Element => {
 
     }, [])
 
-    const stretchTexture = () => {
-        window.open('/stretchTexture')
-    }
     const coopStretchBuyer = () => {
         window.open("/coopstretchceiling/addCoopStretchBuyer")
     }
+    function goTo(event: ChangeEvent<HTMLSelectElement>): void {
+        window.open(event.target.value)
+
+    }
+    const newCoopStretchOrder = () => {
+        window.open("/coopStretchceiling/addCoopStretchOrder")
+    }
     return (
         <>
-
             <div className="profile">
                 <div className="divBtn">
-                    <button className="btn" >Նոր Պատվեր</button>
-                    <button className="btn" onClick={stretchTexture} >Ավելացնել Ձգվող Առաստաղ</button>
+                    <button className="btn" onClick={newCoopStretchOrder} >Նոր Պատվեր</button>
+                    <select onChange={(e) => goTo(e)} className="btn selectCoop form-control">
+                        <option>Ապրանք</option>
+                        <option value={"/stretchTexture"}>Ձգվող Առաստաղ</option>
+                        <option value={"/stretchceiling/addStretchBardutyun"}>Բարդություն</option>
+                        <option value={"/stretchceiling/addStretchProfil"}>Պրոֆիլ</option>
+                        <option value={"/stretchceiling/addStretchLightPlatform"}>Լույսի Պլատֆորմ</option>
+                        <option value={"/stretchceiling/addStretchLightRing"}>Լույսի Օղակ</option>
+                    </select>
                     <button className="btn" onClick={coopStretchBuyer}>Ավելացնել Գործընկեր</button>
                     <button className="btn">Դիտել Պատվերները</button>
                 </div>
-
             </div>
-
             <div className="divBtn">
-
             </div>
-
         </>
     );
 }

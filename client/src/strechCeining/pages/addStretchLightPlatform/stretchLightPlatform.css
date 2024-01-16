@@ -1,0 +1,22 @@
+/* .profile {
+    background-color: rgb(10, 10, 20);
+    color: rgba(255, 255, 255, .55);
+    width: 98%;
+    height: 95%;
+    margin: 5px auto;
+    padding: 10px;
+    opacity: 90%;
+    border-radius: 10px;
+    display: flex;
+}
+.stretchDiv{
+    border: 3px solid rgba(255, 255, 255, .55);
+    padding: 5px;
+    border-radius: 10px;
+    color: rgba(255, 255, 255, .55);
+}
+.divAllStrech{
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+} */

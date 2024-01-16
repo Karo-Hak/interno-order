@@ -33,7 +33,7 @@ export const stretchBuyerSlice = createSlice({
             .addCase(allStretchBuyer.fulfilled, (state, action) => {
                 if ('error' in action.payload) {
                 } else {
-                    state.arrStretchBuyer = action.payload
+                    state.arrStretchBuyer = action.payload.buyer
                 }
             })
     }

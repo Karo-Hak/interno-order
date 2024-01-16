@@ -29,26 +29,19 @@ export const Menu: React.FC = (): JSX.Element => {
         navigate("/admine/profile")
     }
     const wallpaper = () => {
-            navigate("/wallpaper")
+        navigate("/wallpaper")
     }
     const coopStrechCeiling = () => {
         if (data.profile.sphere.includes("Stretch Ceiling Coop")) {
             navigate("/stretchceilingcoop")
         }
     }
-    const addCooperate = () => {
-        if (data.profile.role === "admin") {
-            navigate("/addCooperate")
+    const tagStretchCeiling = () => {
+        if (data.profile.sphere.includes("Stretch Ceiling")) {
+            navigate("/stretchceiling")
         }
     }
-    const addTexture = () => {
-        if (data.profile.role === "admin") {
-            navigate("/addTexture")
-        }
-    }
-    const search = () => {
-        navigate("/searchOrder")
-    }
+
     const addUser = () => {
         if (data.profile.role === "admin") {
             window.open("/addUser")
@@ -73,20 +66,37 @@ export const Menu: React.FC = (): JSX.Element => {
                         data?.profile && data.profile?.role === "admin" ?
                             <div>
                                 <button className="btn" onClick={addUser}>Օգտատեր</button>
+                                <button className="btn" onClick={wallpaper}>Ֆոտոպաստառ</button>
+                                <button className="btn" onClick={tagStretchCeiling}>Ձգվող առաստաղ</button>
+                                <button className="btn" onClick={coopStrechCeiling}>Համ․ Ձգվող առաստաղ</button>
                             </div>
                             :
                             null
                     }
                     {
-                        data?.profile && data?.profile?.role === "admin" || data?.profile?.role === "user" ?
+                        data?.profile?.role === "user" ?
                             <div>
-                                <button className="btn" onClick={wallpaper}>Ֆոտոպաստառ</button>
+                                {
+                                    data.profile.sphere.includes("Wallpaper") ?
+                                        <button className="btn" onClick={wallpaper}>Ֆոտոպաստառ</button>
+                                        :
+                                        null
+                                }
+
+                                {
+                                    data.profile.sphere.includes("Stretch Ceiling") ?
+                                        <button className="btn" onClick={tagStretchCeiling}>Ձգվող առաստաղ</button>
+                                        :
+                                        null
+                                }
+                                
                                 {
                                     data.profile.sphere.includes("Stretch Ceiling Coop") ?
                                         <button className="btn" onClick={coopStrechCeiling}>Համ․ Ձգվող առաստաղ</button>
                                         :
                                         null
                                 }
+
                             </div>
                             :
                             null

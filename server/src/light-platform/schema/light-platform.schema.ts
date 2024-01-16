@@ -7,9 +7,10 @@ export type LightPlatformDocument = HydratedDocument<LightPlatform>;
 export class LightPlatform {
     @Prop()
     name: string;
-
-
-
+    @Prop()
+    price: number;
+    @Prop()
+    unyt: string;
 }
 
 export const LightPlatformSchema = SchemaFactory.createForClass(LightPlatform);

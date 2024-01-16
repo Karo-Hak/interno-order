@@ -6,10 +6,16 @@ import buyerReducer from '../features/buyer/buyerSlice'
 import textureReducer from '../features/texture/textureSlice';
 import stretchBuyerReducer from '../strechCeining/StrechBuyer/strechBuyerSlice';
 import stretchTextureReducer from '../strechCeining/strechTexture/strechTextureSlice';
-import strechOrderReducer from '../strechCeining/strechOrder/strechOrderSlice'
+import coopStrechOrderReducer from '../strechCeining/coopStrechOrder/coopStretchOrderSlice'
 import userSphereReducer from '../features/userSphere/userSphereSlice'
 import unytReducer from '../strechCeining/unyt/unytSlice'
-import coopStretchBuyerReducer from '../strechCeining/CoopStrechBuyer/coopStrechBuyerSlice'
+import coopStretchBuyerReducer from '../strechCeining/coopStrechBuyer/coopStrechBuyerSlice'
+import strechBardutyunReducer from '../strechCeining/strechBardutyun/strechBardutyunSlice';
+import stretchProfilReducer from '../strechCeining/strechProfil/strechProfilSlice'
+import LightPlatformReducer from '../strechCeining/strechLightPlatform/strechLightPlatformSlice'
+import LightRingReducer from '../strechCeining/strechLightRing/strechLightRingSlice'
+import stretchAdditional from '../strechCeining/strechAdditional/strechAdditionalSlice'
+import stretchOrderReducer from '../strechCeining/stretchCeilingOrder/stretchOrderSlice'
 
 
 export const store = configureStore({
@@ -21,10 +27,17 @@ export const store = configureStore({
     texture: textureReducer,
     stretchBuyer: stretchBuyerReducer,
     stretchTexture: stretchTextureReducer,
-    strechOrder: strechOrderReducer,
+    coopStrechOrder: coopStrechOrderReducer,
     userSphere: userSphereReducer,
     unyt: unytReducer,
-    coopStretchBuyer: coopStretchBuyerReducer
+    coopStretchBuyer: coopStretchBuyerReducer,
+    stretchBardutyun: strechBardutyunReducer,
+    stretchProfil: stretchProfilReducer,
+    stretchLightPlatform: LightPlatformReducer,
+    stretchLightRing: LightRingReducer,
+    stretchAdditional: stretchAdditional,
+    stretchOrder: stretchOrderReducer,
+
   },
 });
 

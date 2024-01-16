@@ -1,20 +1,37 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus } from '@nestjs/common';
 import { BardutyunService } from './bardutyun.service';
 import { CreateBardutyunDto } from './dto/create-bardutyun.dto';
 import { UpdateBardutyunDto } from './dto/update-bardutyun.dto';
+import { Response } from 'express';
 
-@Controller('bardutyun')
+@Controller('stretchBardutyun')
 export class BardutyunController {
-  constructor(private readonly bardutyunService: BardutyunService) {}
+  constructor(private readonly bardutyunService: BardutyunService) { }
 
   @Post()
-  create(@Body() createBardutyunDto: CreateBardutyunDto) {
-    return this.bardutyunService.create(createBardutyunDto);
+  async create(@Body() createBardutyunDto: CreateBardutyunDto, @Res() res: Response) {
+    try {
+      return await this.bardutyunService.create(createBardutyunDto);
+    } catch (e) {
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        error: e.message
+      })
+    }
   }
 
   @Get()
-  findAll() {
-    return this.bardutyunService.findAll();
+  async findAll(@Res() res: Response) {
+    try {
+      const stretchBardutyun = await this.bardutyunService.findAll()
+      return res.status(HttpStatus.OK).json({
+        messege: "ok",
+        stretchBardutyun
+      })
+    } catch (e) {
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        error: e.message
+      })
+    }
   }
 
   @Get(':id')

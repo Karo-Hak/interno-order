@@ -28,7 +28,7 @@ export const unytSlice = createSlice({
             .addCase(getAllUnyt.fulfilled, (state, action) => {
                 if ('error' in action.payload) {
                 } else {
-                    state.arrUnyt = action.payload
+                    state.arrUnyt = action.payload.stretchUnyt
                 }
             })
     }

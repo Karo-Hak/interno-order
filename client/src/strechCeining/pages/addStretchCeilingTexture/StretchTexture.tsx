@@ -44,18 +44,15 @@ export const StretchTexture: React.FC = (): JSX.Element => {
     }, [])
 
     const newStretchTexture = (stretchTexture: any) => {
-        console.log(stretchTexture);
-        dispatch(addStretchTexture({ stretchTexture, cookies })).unwrap().then(res => {
+         dispatch(addStretchTexture({ stretchTexture, cookies })).unwrap().then(res => {
             if ("error" in res) {
                 alert(res.error)
             }
         });
-
+        window.location.reload()
     }
 
-    console.log(stretchTexture.arrStretchTexture
-    );
-
+console.log( unyt.arrUnyt);
 
     return (
         <>
@@ -66,18 +63,18 @@ export const StretchTexture: React.FC = (): JSX.Element => {
                         <div className="stretchDiv">
                             <div>
                                 <label htmlFor="name">Անվանում</label>
-                                <input id="name" className="userInput form-control" type="text" placeholder="Name"  {...register("name", { required: true })} />
+                                <input id="name" type="text" placeholder="Name"  {...register("name", { required: true })} />
                             </div>
                             <div>
                                 <label htmlFor="weight">Լայնություն</label>
-                                <input id="weight" className="userInput form-control" type="number" placeholder="Weight"  {...register("weight", { required: true })} />
+                                <input id="weight" type="number" placeholder="Weight"  {...register("weight", { required: true })} />
                             </div>
                             <div>
                                 <label htmlFor="unyt">Չ/Մ</label>
-                                <select id="unyt" className="userInput form-select"  {...register("unyt", { required: true })}>
+                                <select id="unyt" {...register("unyt", { required: true })}>
                                     {
-                                        unyt.arrUnyt?.stretchTextureUnyt && unyt.arrUnyt.stretchTextureUnyt.length > 0 ?
-                                            unyt.arrUnyt.stretchTextureUnyt.map((e: any, i: any) => {
+                                        unyt.arrUnyt && unyt.arrUnyt.length > 0 ?
+                                            unyt.arrUnyt.map((e: any, i: any) => {
                                                 return (
                                                     <option key={e._id} value={e.name}>{e.name}</option>
                                                 )
@@ -92,12 +89,16 @@ export const StretchTexture: React.FC = (): JSX.Element => {
                             <label>Վաճառքի գին</label>
                             <p>________________</p>
                             <div>
+                                <label htmlFor="price">Գին</label>
+                                <input id="price" type="number" placeholder="Price"  {...register("price", { required: true })} />
+                            </div>
+                            <div>
                                 <label htmlFor="priceGarpun">Գին Գարպուն</label>
-                                <input id="priceGarpun" className="userInput form-control" type="number" placeholder="Price Garpun"  {...register("priceGarpun", { required: true })} />
+                                <input id="priceGarpun" type="number" placeholder="Price Garpun"  {...register("priceGarpun", { required: true })} />
                             </div>
                             <div>
                                 <label htmlFor="priceOtrez">Գին Կտրվածք</label>
-                                <input id="priceOtrez" className="userInput form-control" type="number" placeholder="Price Otrez"  {...register("priceOtrez", { required: true })} />
+                                <input id="priceOtrez" type="number" placeholder="Price Otrez"  {...register("priceOtrez", { required: true })} />
                             </div>
                         </div>
                         <div className="stretchDiv">
@@ -105,11 +106,11 @@ export const StretchTexture: React.FC = (): JSX.Element => {
                             <p>_______________________________</p>
                             <div>
                                 <label htmlFor="priceCoopGarpun">Գին Գարպուն</label>
-                                <input id="priceCoopGarpun" className="userInput form-control" type="number" placeholder="Price Garpun"  {...register("priceCoopGarpun", { required: true })} />
+                                <input id="priceCoopGarpun" type="number" placeholder="Price Garpun"  {...register("priceCoopGarpun", { required: true })} />
                             </div>
                             <div>
                                 <label htmlFor="priceCoopOtrez">Գին Կտրվածք</label>
-                                <input id="priceCoopOtrez" className="userInput form-control" type="number" placeholder="Price Otrez"  {...register("priceCoopOtrez", { required: true })} />
+                                <input id="priceCoopOtrez" type="number" placeholder="Price Otrez"  {...register("priceCoopOtrez", { required: true })} />
                             </div>
                         </div>
                     </div>

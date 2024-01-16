@@ -188,8 +188,6 @@ export const AdminProfile: React.FC = (): JSX.Element => {
     const search = () => {
         window.open("/searchOrder")
     }
-    console.log(user.profile
-    );
 
 
     return (
@@ -208,88 +206,69 @@ export const AdminProfile: React.FC = (): JSX.Element => {
                             </>
                             :
                             null
-
-
-
-
                     }
                     <button className="btn" onClick={search} >Դիտել Պատվերները</button>
                 </div>
             </div>
 
-            {/* ////////// add Coop Spher /////////// */}
-            {/* {
-                addCoopSpherForm ?
-                    <div className="profile">
-                        <form className="divBtn" onSubmit={handleSubmit(saveCoopSpher)}>
-                            <div>
-                                <input className="userInput" type="text" placeholder="Name" {...register("name", { required: true })} />
-                            </div>
-                            <button className="btn" >Save</button>
-                        </form>
-                        <button className="btn btn-lg" onClick={() => window.location.reload()} >X</button>
-                    </div>
-                    :
-                    null
-            } */}
             {
                 addOrderForm ?
                     <form className="orderDiv" onSubmit={handleSubmit(newOrder)}>
                         <div className="formdiv">
-                            <div className="formSelect">
+                            <div className="orderForm">
 
                                 <div className="buyerDiv">
                                     Գնորդ
                                     <div>-------</div>
-                                    <div>
+                                    <div className="inputDiv">
                                         <label htmlFor="buyerName">Անուն</label>
-                                        <input id="buyerName" className="userInput form-control" type="text" placeholder="Buyer Name" {...register("buyerName", { required: true })} />
+                                        <input id="buyerName" type="text" placeholder="Buyer Name" {...register("buyerName", { required: true })} />
                                     </div>
-                                    <div>
+                                    <div className="inputDiv">
                                         <label htmlFor="buyerPhone">Հեռախես</label>
-                                        <input id="buyerPhone" className="userInput form-control" type="text" placeholder=" Buyer Phone" {...register("buyerPhone", { required: true })} />
+                                        <input id="buyerPhone" type="text" placeholder=" Buyer Phone" {...register("buyerPhone", { required: true })} />
                                     </div>
-                                    <div>
+                                    <div className="inputDiv">
                                         <label htmlFor="buyerAdress">Հասցե</label>
-                                        <input id="buyerAdress" className="userInput form-control" type="text" placeholder="Buyer Adress" {...register("buyerAdress", { required: true })} />
+                                        <input id="buyerAdress" type="text" placeholder="Buyer Adress" {...register("buyerAdress", { required: true })} />
                                     </div>
                                 </div>
-                                <div className="buyerDiv">
+                                <div className="wallaperDiv">
                                     Ֆոտոպաստառ
                                     <div>------------------</div>
-                                    <div className="wallpaperDiv">
-                                        <div>
-                                            <div>
+                                    <div className="wallaperForm">
+                                        <div style={{ padding: "0 5px" }}>
+                                            <div className="inputDiv">
                                                 <label htmlFor="weight">Երկարություն</label>
-                                                <input id="weight" className="userInput form-control" type="number" placeholder="Weight"  {...register("weight", { required: true })} onChange={(e) => setWeight(+e.target.value)} />
+                                                <input id="weight" className="inputNumber" type="number" placeholder="Width"  {...register("weight", { required: true })} onChange={(e) => setWeight(+e.target.value)} />
                                             </div>
-                                            <div>
+                                            <div className="inputDiv">
                                                 <label htmlFor="height">Բարձրություն</label>
-                                                <input id="height" className="userInput form-control" type="number" placeholder="Height" {...register("height", { required: true })} onChange={(e) => setHeight(+e.target.value)} />
+                                                <input id="height" className="inputNumber" type="number" placeholder="Height" {...register("height", { required: true })} onChange={(e) => setHeight(+e.target.value)} />
                                             </div>
-                                            <div>
-                                                <label htmlFor="sqMetr">Քառակուսի մետր</label>
-                                                <input id="sqMetr" className="userInput form-control" type="number" placeholder="SQ/METR" value={squer} readOnly {...register("sqMetr", { required: true })} />
+                                            <div className="inputDiv">
+                                                <label htmlFor="sqMetr">Ք/Մ</label>
+                                                <input id="sqMetr" className="inputNumber" type="number" placeholder="SQ/METR" value={squer} readOnly {...register("sqMetr", { required: true })} />
                                             </div>
                                         </div>
                                         <div >
-                                            <div>
+                                            <div className="inputDiv">
                                                 <label htmlFor="price">Գին</label>
-                                                <input id="price" className="userInput form-control" type="number" placeholder="Price" value={price} {...register("price", { required: true })} onChange={(e) => setPrice(+e.target.value)} />
+                                                <input id="price" className="inputNumber" type="number" placeholder="Price" value={price} {...register("price", { required: true })} onChange={(e) => setPrice(+e.target.value)} />
                                             </div>
-                                            <div>
+                                            <div className="inputDiv">
                                                 <label htmlFor="discount">Զեղչ</label>
-                                                <input id="discount" className="userInput form-control" type="number" placeholder="discount" {...register("discount")} onChange={(e) => setDiscount(+e.target.value)} />
+                                                <input id="discount" className="inputNumber" type="number" placeholder="discount" {...register("discount")} onChange={(e) => setDiscount(+e.target.value)} />
                                             </div>
-                                            <div>
+                                            <div className="inputDiv">
                                                 <label htmlFor="total">Գումար</label>
-                                                <input id="total" className="userInput form-control" type="number" placeholder="total" value={totalOrder}  {...register("total", { required: true })} onChange={(e) => setTotalOrder(+e.target.value)} />
+                                                <input id="total" className="inputNumber" type="number" placeholder="total" value={totalOrder}  {...register("total", { required: true })} onChange={(e) => setTotalOrder(+e.target.value)} />
                                             </div>
                                         </div>
-                                        <div >
-                                            <div>
+                                        <div style={{ padding: "0 5px" }} >
+                                            <div className="inputDiv">
                                                 <label htmlFor="picCode">Նկարի կոդ</label>
-                                                <input id="picCode" className="userInput form-control" type="text" placeholder="Picture Code" {...register("picCode")} />
+                                                <input id="picCode" className="inputNumber" type="text" placeholder="Picture Code" {...register("picCode")} />
                                             </div>
                                             <div>
                                                 <label htmlFor="comment">Նկարագրություն</label>
@@ -302,9 +281,9 @@ export const AdminProfile: React.FC = (): JSX.Element => {
                                 <div className="buyerDiv">
                                     Գործընկեր
                                     <div>-------------</div>
-                                    <div>
+                                    <div className="inputDiv">
                                         <label htmlFor="selectCoop">Գործընկերոջ անվանում</label>
-                                        <select id="selectCoop" className="selectCoop form-control" {...register("cooperateId", { required: true })} onChange={cooperateDiscount}>
+                                        <select id="selectCoop"  {...register("cooperateId", { required: true })} onChange={cooperateDiscount}>
                                             {
                                                 cooperate?.arrCooperate && cooperate.arrCooperate.length > 0 ?
                                                     cooperate.arrCooperate.map((e: any) => {
@@ -315,13 +294,13 @@ export const AdminProfile: React.FC = (): JSX.Element => {
                                             }
                                         </select>
                                     </div>
-                                    <div>
+                                    <div className="inputDiv">
                                         <label htmlFor="coopRate">Գործընկերոջ տոկոս</label>
-                                        <input id="coopRate" className="userInput form-control" type="number" placeholder="Cooperate Rate" value={coopRate} readOnly onChange={(e) => setCoopRate(+e.target.value)} />
+                                        <input id="coopRate" className="inputNumber" type="number" placeholder="Cooperate Rate" value={coopRate} readOnly onChange={(e) => setCoopRate(+e.target.value)} />
                                     </div>
-                                    <div>
+                                    <div className="inputDiv">
                                         <label htmlFor="coopTotal">Գործընկերոջ գումար</label>
-                                        <input id="coopTotal" className="userInput form-control" type="number" placeholder="Cooperate Totla" value={coopTotal} {...register("cooperateTotal")} />
+                                        <input id="coopTotal" className="inputNumber" type="number" placeholder="Cooperate Totla" value={coopTotal} {...register("cooperateTotal")} />
                                     </div>
                                     <div>
                                         <label>
@@ -334,15 +313,13 @@ export const AdminProfile: React.FC = (): JSX.Element => {
                                     </div>
                                 </div>
                             </div >
-                            <div>
-                                <button className="btn btn-lg" onClick={() => window.location.reload()} >X</button>
-                            </div>
+
 
                         </div>
                         <div className="profile">
-                            <div>
+                            <div className="inputDiv">
                                 <label htmlFor="pey">Վճարման միջոց</label>
-                                <select id="pey" className="selectCoop form-control" {...register("paymentMethod", { required: true })}>
+                                <select id="pey" {...register("paymentMethod", { required: true })}>
                                     <option className="selectCoop" value={"cash"} >Կանխիկ</option>
                                     <option className="selectCoop" value={"transfer"}>Փոխանցում</option>
                                     <option className="selectCoop" value={"pos"}>Պոս Տերմինալ</option>
@@ -351,9 +328,9 @@ export const AdminProfile: React.FC = (): JSX.Element => {
                                     <option className="selectCoop" value={"idram"}>Իդրամ</option>
                                 </select>
                             </div>
-                            <div>
+                            <div className="inputDiv" style={{margin: "0 5px"}}>
                                 <label htmlFor="texture">Ֆոտոպաստառ</label>
-                                <select id="texture" className="selectCoop form-control" {...register("texture", { required: true })} onChange={selectTexturePrice}>
+                                <select id="texture"  {...register("texture", { required: true })} onChange={selectTexturePrice}>
                                     <option></option>
                                     {
                                         texture?.arrTexture && texture.arrTexture.length > 0 ?
@@ -365,18 +342,19 @@ export const AdminProfile: React.FC = (): JSX.Element => {
                                     }
                                 </select>
                             </div>
-                            <div>
+                            <div className="inputDiv">
                                 <label htmlFor="prepayment">Կանխավճար</label>
-                                <input id="prepayment" className="userInput form-control" type="number" placeholder="prepayment"  {...register("prepayment")} onChange={(e) => setPrepayment(+e.target.value)} />
+                                <input id="prepayment" className="inputNumber" type="number" placeholder="prepayment"  {...register("prepayment")} onChange={(e) => setPrepayment(+e.target.value)} />
                             </div>
-                            <div>
+                            <div className="inputDiv" style={{margin: "0 5px"}}>
                                 <label htmlFor="Sum">Մնացորդ</label>
-                                <input id="Sum" className="userInput form-control" type="number" placeholder="Sum" value={sum} {...register("groundTotal")} readOnly />
+                                <input id="Sum" className="inputNumber" type="number" placeholder="Sum" value={sum} {...register("groundTotal")} readOnly />
                             </div>
                         </div>
-
-                        <div><button className="btn">Գրանցել</button></div>
-
+                        <div>
+                            <button className="btn btn-lg" onClick={() => window.location.reload()} >Չեղարկել</button>
+                            <button className="btn">Գրանցել</button>
+                        </div>
                     </form>
                     :
                     null

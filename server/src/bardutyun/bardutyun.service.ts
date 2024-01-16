@@ -1,15 +1,25 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBardutyunDto } from './dto/create-bardutyun.dto';
 import { UpdateBardutyunDto } from './dto/update-bardutyun.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Bardutyun } from './schema/bardutyun.schema';
 
 @Injectable()
 export class BardutyunService {
-  create(createBardutyunDto: CreateBardutyunDto) {
-    return 'This action adds a new bardutyun';
+  constructor(@InjectModel(Bardutyun.name) private bardutyunModel: Model<Bardutyun>) { }
+
+  async create(createBardutyunDto: CreateBardutyunDto) {
+    const existingStretchBardutyun = await this.bardutyunModel.findOne({ name: createBardutyunDto.name });
+    if (existingStretchBardutyun) {
+      throw new NotFoundException('Bardutyun already exists');
+    }
+    const stretchBardutyun = new this.bardutyunModel(createBardutyunDto);
+    return stretchBardutyun.save();
   }
 
-  findAll() {
-    return `This action returns all bardutyun`;
+  async findAll() {
+    return await this.bardutyunModel.find()
   }
 
   findOne(id: number) {

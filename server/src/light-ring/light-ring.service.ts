@@ -1,15 +1,25 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateLightRingDto } from './dto/create-light-ring.dto';
 import { UpdateLightRingDto } from './dto/update-light-ring.dto';
+import { Model } from 'mongoose';
+import { LightRing } from './schema/light-ring.schema';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class LightRingService {
-  create(createLightRingDto: CreateLightRingDto) {
-    return 'This action adds a new lightRing';
+  constructor(@InjectModel(LightRing.name) private lightRingModel: Model<LightRing>) { }
+
+ async create(createLightRingDto: CreateLightRingDto) {
+    const existingLightRing = await this.lightRingModel.findOne({ name: createLightRingDto.name });
+    if (existingLightRing) {
+      throw new NotFoundException('Bardutyun already exists');
+    }
+    const LightRing = new this.lightRingModel(createLightRingDto);
+    return LightRing.save();
   }
 
-  findAll() {
-    return `This action returns all lightRing`;
+ async findAll() {
+    return await this.lightRingModel.find()
   }
 
   findOne(id: number) {

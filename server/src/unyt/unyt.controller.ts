@@ -17,10 +17,10 @@ export class UnytController {
   @Get()
   async findAll(@Res() res: Response) {
     try {
-      const stretchTextureUnyt = await this.unytService.findAll()
+      const stretchUnyt = await this.unytService.findAll()
       return res.status(HttpStatus.OK).json({
         message: "ok",
-        stretchTextureUnyt
+        stretchUnyt
       })
     } catch (e) {
       return res.status(HttpStatus.BAD_REQUEST).json({

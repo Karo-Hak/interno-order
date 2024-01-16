@@ -6,10 +6,10 @@ import { Response } from 'express';
 
 @Controller('coopstretchbuyer')
 export class CoopStretchBuyerController {
-  constructor(private readonly coopStretchBuyerService: CoopStretchBuyerService) {}
+  constructor(private readonly coopStretchBuyerService: CoopStretchBuyerService) { }
 
   @Post()
-  async create(@Body() createCoopStretchBuyerDto: CreateCoopStretchBuyerDto, @Res() res:Response) {
+  async create(@Body() createCoopStretchBuyerDto: CreateCoopStretchBuyerDto, @Res() res: Response) {
     try {
       const existingCoopStretchBuyer = await this.coopStretchBuyerService.findByPhone(createCoopStretchBuyerDto.phone)
       if (existingCoopStretchBuyer) {
@@ -27,12 +27,21 @@ export class CoopStretchBuyerController {
         error: e.message
       })
     }
-    return this.coopStretchBuyerService.create(createCoopStretchBuyerDto);
   }
 
   @Get()
-  findAll() {
-    return this.coopStretchBuyerService.findAll();
+  async findAll(@Res() res: Response) {
+    try {
+      const coopBuyer = await this.coopStretchBuyerService.findAll()
+      return res.status(HttpStatus.OK).json({
+        messege: "ok",
+        coopBuyer
+      })
+    } catch (e) {
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        error: e.message
+      })
+    }
   }
 
   @Get(':id')

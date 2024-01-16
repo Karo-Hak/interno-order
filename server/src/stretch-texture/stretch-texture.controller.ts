@@ -10,9 +10,9 @@ export class StretchTextureController {
   constructor(private readonly stretchTextureService: StretchTextureService) { }
 
   @Post()
-  create(@Body() createStretchTextureDto: CreateStretchTextureDto, @Res() res: Response) {
+  async create(@Body() createStretchTextureDto: CreateStretchTextureDto, @Res() res: Response) {
     try {
-      return this.stretchTextureService.create(createStretchTextureDto);
+      return await this.stretchTextureService.create(createStretchTextureDto);
     } catch (e) {
       return res.status(HttpStatus.BAD_REQUEST).json({
         error: e.message

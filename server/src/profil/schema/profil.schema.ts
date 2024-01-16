@@ -7,9 +7,10 @@ export type ProfilDocument = HydratedDocument<Profil>;
 export class Profil {
     @Prop()
     name: string;
-
-
-
+    @Prop()
+    price: number;
+    @Prop()
+    unyt: string;
 }
 
 export const ProfilSchema = SchemaFactory.createForClass(Profil);
