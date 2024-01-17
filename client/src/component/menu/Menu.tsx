@@ -49,9 +49,7 @@ export const Menu: React.FC = (): JSX.Element => {
     }
 
     return (<>
-        <div className="divmenu">
-            <p className="divP">Hello</p>
-        </div>
+      
         <nav className="navbar navbar-expand-sm bg-dark navbar-dark manu">
             <div className="container-fluid">
                 <div>
@@ -60,11 +58,11 @@ export const Menu: React.FC = (): JSX.Element => {
                     </a>
                     <button className="btn" onClick={btnHome}>Գլխավոր էջ</button>
                 </div>
-                <div style={{ display: "flex" }}>
+                <div>
 
                     {
                         data?.profile && data.profile?.role === "admin" ?
-                            <div>
+                            <div className="menu_head">
                                 <button className="btn" onClick={addUser}>Օգտատեր</button>
                                 <button className="btn" onClick={wallpaper}>Ֆոտոպաստառ</button>
                                 <button className="btn" onClick={tagStretchCeiling}>Ձգվող առաստաղ</button>

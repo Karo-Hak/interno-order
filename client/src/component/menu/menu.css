@@ -4,20 +4,19 @@
     width: 100px;
 }
 
-.manu {
-    position: fixed;
-    top: 0;
-    left: 0;
+
+
+/* .divmenu{
+    width: 100px;
+} */
+
+
+.navbar_menu{   
     width: 100%;
-    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    
 }
-
-.divmenu{
-    width: 100px;
-}
-
-.divP{
-    opacity: 100%;
-    width: 100px;
-    font-size: 30px;
+.navbar_menu :hover{
+    color:blueviolet;
 }

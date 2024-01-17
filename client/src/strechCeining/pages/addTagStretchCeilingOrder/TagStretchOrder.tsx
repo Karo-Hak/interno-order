@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 import { useForm } from 'react-hook-form';
 import { userProfile } from '../../../features/user/userApi';
-import './tagStretchCeilingOrder.css';
+import './tagStretchOrder.css';
 import BuyerSection from './BuyerSection';
 import StretchTexturesSection from './StretchTexturesSection';
 import PaymentSection from './PaymentSection';
@@ -85,20 +85,19 @@ export const TagStretchOrderx: React.FC = (): JSX.Element => {
 
 
     return (
-        <>
+        <div className='strech'>
             <form onSubmit={handleSubmit(qountTotal)}>
                 <BuyerSection register={register} setValue={setValue} />
-                <div className="formdivStretch" style={{ display: "flex" }}>
-                    <div >
-                        <StretchTexturesSection register={register} reset={reset} setValue={setValue} />
-                        <ProfilSection register={register} />
-                        <LightPlatformSection register={register} />
-                        <LightRingSection register={register} />
-                    </div>
-                    <div >
-                        <AdditionalSection register={register} reset={reset} setValue={setValue} />
-                    </div>
+
+                <div className='streachOrder' >
+                    <StretchTexturesSection register={register} reset={reset} setValue={setValue} />
+                    <ProfilSection register={register} />
+                    <LightPlatformSection register={register} />
+                    <LightRingSection register={register} />
+                    <AdditionalSection register={register} reset={reset} setValue={setValue} />
                 </div>
+
+
                 <div className="formdivStretch" style={{ display: "flex" }}>
                     <PaymentSection register={register} />
                     <div className="inputDiv">
@@ -113,6 +112,6 @@ export const TagStretchOrderx: React.FC = (): JSX.Element => {
                     <button className="btn" type='button' onClick={newOrder}>Գրանցել</button>
                 </div>
             </form>
-        </>
+        </div>
     );
 };

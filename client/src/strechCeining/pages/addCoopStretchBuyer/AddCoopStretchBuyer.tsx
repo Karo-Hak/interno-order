@@ -6,8 +6,8 @@ import { useCookies } from 'react-cookie'
 import { userProfile } from "../../../features/user/userApi";
 import './addCoopStretchBuyer.css'
 import { useForm } from "react-hook-form";
-import { allCoopStretchBuyer, newCoopStretchBuyer } from "../../coopStrechBuyer/coopStrechBuyerApi";
-import { selectCoopStretchBuyer } from "../../coopStrechBuyer/coopStrechBuyerSlice";
+import { allCoopStretchBuyer, newCoopStretchBuyer } from "../../CoopStrechBuyer/coopStrechBuyerApi";
+import { selectCoopStretchBuyer } from "../../CoopStrechBuyer/coopStrechBuyerSlice";
 
 export const CoopStretchBuyer: React.FC = (): JSX.Element => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm<any>()

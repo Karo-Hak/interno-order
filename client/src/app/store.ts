@@ -9,7 +9,8 @@ import stretchTextureReducer from '../strechCeining/strechTexture/strechTextureS
 import coopStrechOrderReducer from '../strechCeining/coopStrechOrder/coopStretchOrderSlice'
 import userSphereReducer from '../features/userSphere/userSphereSlice'
 import unytReducer from '../strechCeining/unyt/unytSlice'
-import coopStretchBuyerReducer from '../strechCeining/coopStrechBuyer/coopStrechBuyerSlice'
+import coopStretchBuyerReducer from '../strechCeining/CoopStrechBuyer/coopStrechBuyerSlice'
+// '../strechCeining/coopStrechBuyer/coopStrechBuyerSlice'
 import strechBardutyunReducer from '../strechCeining/strechBardutyun/strechBardutyunSlice';
 import stretchProfilReducer from '../strechCeining/strechProfil/strechProfilSlice'
 import LightPlatformReducer from '../strechCeining/strechLightPlatform/strechLightPlatformSlice'

@@ -7,9 +7,9 @@ import { useForm } from "react-hook-form";
 import { userProfile } from "../../../features/user/userApi";
 import './coopStretchCeilingOrder.css'
 import { selectStretchTexture } from "../../strechTexture/strechTextureSlice";
-import { selectCoopStretchBuyer } from "../../coopStrechBuyer/coopStrechBuyerSlice";
+import { selectCoopStretchBuyer } from "../../CoopStrechBuyer/coopStrechBuyerSlice";
 import { addNewCoopStretchOrder } from "../../coopStrechOrder/coopStretchOrderApi"
-import { allCoopStretchBuyer } from "../../coopStrechBuyer/coopStrechBuyerApi";
+import { allCoopStretchBuyer } from "../../CoopStrechBuyer/coopStrechBuyerApi";
 import { getAllStretchTexture } from "../../strechTexture/strechTextureApi";
 import { selectStretchBardutyun } from "../../strechBardutyun/strechBardutyunSlice";
 import { getAllStretchBardutyun } from "../../strechBardutyun/strechBardutyunApi";

@@ -8,10 +8,10 @@ import { Response } from 'express';
 export class LightPlatformController {
   constructor(private readonly lightPlatformService: LightPlatformService) { }
 
-  @Post()
+  @Post() /// Price add
   async create(@Body() createLightPlatformDto: CreateLightPlatformDto, @Res() res: Response) {
     try {
-      return await this.lightPlatformService.create(createLightPlatformDto);
+      return await this.lightPlatformService.createPrice(createLightPlatformDto);
     } catch (e) {
       return res.status(HttpStatus.BAD_REQUEST).json({
         error: e.message

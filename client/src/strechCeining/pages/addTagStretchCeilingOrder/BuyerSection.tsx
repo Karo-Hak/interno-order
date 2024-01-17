@@ -4,7 +4,7 @@ import { allStretchBuyer } from '../../StrechBuyer/strechBuyerApi';
 import { selectStretchBuyer } from '../../StrechBuyer/strechBuyerSlice';
 import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
-
+import './tagStretchCeilingOrder.css'
 
 const BuyerSection: React.FC<any> = ({ register, setValue }: any) => {
     const dispatch = useAppDispatch();
@@ -28,7 +28,7 @@ const BuyerSection: React.FC<any> = ({ register, setValue }: any) => {
         if (checkedBuyer === false) {
             setValue("buyerId", "")
         }
-    },[checkedBuyer])
+    }, [checkedBuyer])
 
 
     function selectedBuyer(e: any) {
@@ -39,61 +39,76 @@ const BuyerSection: React.FC<any> = ({ register, setValue }: any) => {
     }
 
     return (
-        <div className="formdivStretch">
-            <div>
-                Գնորդ---
-                <label>
+        <div className="buyerStrech">
+           
+            <div className='buyer_Strech' >
+                <div className='buyer_first_section'>
+                <div className='buyer_head'>
+                <div>
+                    Գնորդ---
+                </div>
+
+                <div className='buyer_checkbox'>
                     <input type="checkbox" onChange={handleCheckboxBuyer} />
-                    Լռացնել Ձեռքով
-                </label>
+                    Ընտրել ցանկից
+                </div>
+
+                
             </div>
-            <div style={{ display: "flex" }} >
-                {!checkedBuyer ? (
-                    <div className="">
+                    <div className='buyer_name_surname'>
+                        {!checkedBuyer ? (
+                            <div className="">
+                                <div className="inputDiv">
+                                    <label htmlFor="buyerPhone">Անուն Ազգանուն</label>
+                                    <input id="buyerName" type="text" placeholder=" Buyer Name" {...register('buyerName', { required: true })} />
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="">
+                                <div className="inputDiv">
+                                    <label htmlFor="selectCoop">Անուն Ազգանուն</label>
+                                    <select id="selectCoop" {...register('buyerId', { required: true })} onChange={(event) => selectedBuyer(event)}>
+                                        {stretchBuyer.arrStretchBuyer &&
+                                            stretchBuyer.arrStretchBuyer.length > 0 ? (
+                                            stretchBuyer.arrStretchBuyer.map((e: any) => {
+                                                return (
+                                                    <option key={e._id} value={e._id}>
+                                                        {e.buyerName}
+                                                    </option>
+                                                );
+                                            })
+                                        ) : null}
+                                    </select>
+                                </div>
+                            </div>
+                        )}
                         <div className="inputDiv">
-                            <label htmlFor="buyerPhone">Անուն Ազգանուն</label>
-                            <input id="buyerName" type="text" placeholder=" Buyer Name" {...register('buyerName', { required: true })} />
+                            <label htmlFor="buyerPhone">Հեռախես</label>
+                            <input id="buyerPhone" className="inputNumber" type="string" placeholder=" Buyer Phone" name="buyerPhone"  {...register('buyerPhone', { required: true })} />
                         </div>
-                    </div>
-                ) : (
-                    <div className="">
                         <div className="inputDiv">
-                            <label htmlFor="selectCoop">Անուն</label>
-                            <select id="selectCoop" {...register('buyerId', { required: true })} onChange={(event) => selectedBuyer(event)}>
-                                {stretchBuyer.arrStretchBuyer &&
-                                    stretchBuyer.arrStretchBuyer.length > 0 ? (
-                                    stretchBuyer.arrStretchBuyer.map((e: any) => {
-                                        return (
-                                            <option key={e._id} value={e._id}>
-                                                {e.buyerName}
-                                            </option>
-                                        );
-                                    })
-                                ) : null}
-                            </select>
+                            <label htmlFor="buyerAddress">Հասցե</label>
+                            <input style={{ width: "300px" }} id="buyerAddress" type="text" placeholder="Buyer Address" {...register('buyerAddress', { required: true })} />
                         </div>
                     </div>
-                )}
-                <div className="inputDiv">
-                    <label htmlFor="buyerPhone">Հեռախես</label>
-                    <input id="buyerPhone" className="inputNumber" type="string" placeholder=" Buyer Phone" name="buyerPhone"  {...register('buyerPhone', { required: true })} />
-                </div>
-                <div className="inputDiv">
-                    <label htmlFor="buyerAddress">Հասցե</label>
-                    <input style={{ width: "300px" }} id="buyerAddress" type="text" placeholder="Buyer Address" {...register('buyerAddress', { required: true })} />
-                </div>
-                <div className="inputDiv">
-                    <label htmlFor="commentOrder" style={{ margin: "0 0 0 30px" }}>Նկարագրություն</label>
-                    <textarea id="commentOrder" className="orderComment" placeholder="Buyer Comment" {...register('buyerComment')} />
-                </div>
-                <section className="container">
-                    <label htmlFor="date" className="col-1 col-form-label">Չափագրում</label>
-                    <div className="col-5">
-                        <div className="input-group date" id="datepicker">
-                            <input type="date" className="form-control" id="date" {...register('measureDate')} />
+
+                    <section className="">
+                        <div >Չափագրում</div>
+                        <div className="">
+                            <div className="input-group date" id="datepicker">
+                                <input  type="date" className="buyer_date" id="date" {...register('measureDate')} />
+                            </div>
                         </div>
-                    </div>
-                </section>
+                    </section>
+                </div>
+
+
+
+                <div className="buyer_comment">
+                    <div>Նկարագրություն</div>
+                    <textarea className="buyercomment" placeholder="Buyer Comment" {...register('buyerComment')} />
+                </div>
+
             </div>
         </div>
     );

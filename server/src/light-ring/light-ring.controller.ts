@@ -8,10 +8,10 @@ import { Response } from 'express';
 export class LightRingController {
   constructor(private readonly lightRingService: LightRingService) {}
 
-  @Post()
+  @Post() ///Price add
   async create(@Body() createLightRingDto: CreateLightRingDto, @Res() res:Response) {
     try {
-      return await this.lightRingService.create(createLightRingDto);
+      return await this.lightRingService.createPrice(createLightRingDto);
     } catch (e) {
       return res.status(HttpStatus.BAD_REQUEST).json({
         error: e.message
