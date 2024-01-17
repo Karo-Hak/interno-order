@@ -6,10 +6,10 @@ import { Response } from 'express';
 
 @Controller('stretchLightRing')
 export class LightRingController {
-  constructor(private readonly lightRingService: LightRingService) {}
+  constructor(private readonly lightRingService: LightRingService) { }
 
   @Post() ///Price add
-  async create(@Body() createLightRingDto: CreateLightRingDto, @Res() res:Response) {
+  async create(@Body() createLightRingDto: CreateLightRingDto, @Res() res: Response) {
     try {
       return await this.lightRingService.createPrice(createLightRingDto);
     } catch (e) {
@@ -20,7 +20,7 @@ export class LightRingController {
   }
 
   @Get()
-  async findAll(@Res() res:Response) {
+  async findAll(@Res() res: Response) {
     try {
       const lightRing = await this.lightRingService.findAll()
       return res.status(HttpStatus.OK).json({

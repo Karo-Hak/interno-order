@@ -53,26 +53,26 @@ export const Login: React.FC = (): JSX.Element => {
 
         })
     }
-    return (<div className="log">
+    return (<div className="loginPage">
 
-        <div className="loginDiv">
+        <div className="login">
 
-            <form onSubmit={handleSubmit(save)}>
-                <div>
+            <form onSubmit={handleSubmit(save)} className="login_form">
+                <div className="loginLine">
                     <label>User Name</label>
-                    <input className="loginInput" {...register("username", { required: true })} placeholder="User Name" />
+                    <input  {...register("username", { required: true })} placeholder="User Name" />
                     {errors.username && <p>User Name</p>}
                 </div>
-                <div>
+                <div className="loginLine">
                     <label>Password</label>
-                    <input className="loginInput" {...register("password", { required: true })} placeholder="Password" />
+                    <input  {...register("password", { required: true })} placeholder="Password" />
                     {errors.password && <p>Password</p>}
                 </div>
-                <div>
+                <div className="loginLine">
                     <label>Sphere</label>
                     {
                         userSphere?.arrUserSphere && userSphere.arrUserSphere?.length > 0 ?
-                            <select className="loginInput" onChange={selectedSphere}>
+                            <select className="" onChange={selectedSphere}>
                                 {
                                     userSphere.arrUserSphere.map((e: any, i: any) => {
                                         return (
@@ -84,7 +84,7 @@ export const Login: React.FC = (): JSX.Element => {
                             : null
                     }
                 </div>
-                <button className="buttonLogin" >Login</button>
+                <button className="btn" >Login</button>
             </form>
         </div>
     </div>)

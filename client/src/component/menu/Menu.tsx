@@ -48,85 +48,101 @@ export const Menu: React.FC = (): JSX.Element => {
         }
     }
 
-    return (<>
-      
-        <nav className="navbar navbar-expand-sm bg-dark navbar-dark manu">
-            <div className="container-fluid">
-                <div>
-                    <a className="navbar-brand" href="#">
-                        <img src="/interno.png" alt="" height="30" />
-                    </a>
+    return (<div>
+
+        <nav className="navbar_head">
+            <div className="navbar_container">
+                <div className="navbar_logo">
+
                     <button className="btn" onClick={btnHome}>Գլխավոր էջ</button>
+                    <a className="" href="#">
+                        <img src="/interno.png" alt="" height="50px" />
+                    </a>
                 </div>
-                <div>
+                <div className="menu_search">
+                    <div className="menu_search_item">
+                        {
+                            data?.profile && data.profile?.role === "admin" ?
 
-                    {
-                        data?.profile && data.profile?.role === "admin" ?
-                            <div className="menu_head">
-                                <button className="btn" onClick={addUser}>Օգտատեր</button>
-                                <button className="btn" onClick={wallpaper}>Ֆոտոպաստառ</button>
-                                <button className="btn" onClick={tagStretchCeiling}>Ձգվող առաստաղ</button>
-                                <button className="btn" onClick={coopStrechCeiling}>Համ․ Ձգվող առաստաղ</button>
-                            </div>
-                            :
-                            null
-                    }
-                    {
-                        data?.profile?.role === "user" ?
-                            <div>
-                                {
-                                    data.profile.sphere.includes("Wallpaper") ?
-                                        <button className="btn" onClick={wallpaper}>Ֆոտոպաստառ</button>
-                                        :
-                                        null
-                                }
+                                <div className="menu_head">
+                                    <button className="btn" onClick={addUser}>Օգտատեր</button>
+                                    <button className="btn" onClick={wallpaper}>Ֆոտոպաստառ</button>
+                                    <button className="btn" onClick={tagStretchCeiling}>Ձգվող առաստաղ</button>
+                                    <button className="btn" onClick={coopStrechCeiling}>Համ․ Ձգվող առաստաղ</button>
+                                </div>
+                                :
+                                null
+                        }
+                        {
+                            data?.profile?.role === "user" ?
+                                <div>
+                                    {
+                                        data.profile.sphere.includes("Wallpaper") ?
+                                            <button className="btn" onClick={wallpaper}>Ֆոտոպաստառ</button>
+                                            :
+                                            null
+                                    }
 
-                                {
-                                    data.profile.sphere.includes("Stretch Ceiling") ?
-                                        <button className="btn" onClick={tagStretchCeiling}>Ձգվող առաստաղ</button>
-                                        :
-                                        null
-                                }
-                                
-                                {
-                                    data.profile.sphere.includes("Stretch Ceiling Coop") ?
-                                        <button className="btn" onClick={coopStrechCeiling}>Համ․ Ձգվող առաստաղ</button>
-                                        :
-                                        null
-                                }
+                                    {
+                                        data.profile.sphere.includes("Stretch Ceiling") ?
+                                            <button className="btn" onClick={tagStretchCeiling}>Ձգվող առաստաղ</button>
+                                            :
+                                            null
+                                    }
 
-                            </div>
-                            :
-                            null
-                    }
+                                    {
+                                        data.profile.sphere.includes("Stretch Ceiling Coop") ?
+                                            <button className="btn" onClick={coopStrechCeiling}>Համ․ Ձգվող առաստաղ</button>
+                                            :
+                                            null
+                                    }
+
+                                </div>
+                                :
+                                null
+                        }
+                        <div>
+                            {
+                                data?.profile && data?.profile?.role === "admin" || data?.profile?.role === "user" ?
+
+
+                                    <div className="user_name_surname">
+                                        <div className="userNameSurname">
+                                            <div >
+                                                {data.profile.name}
+                                            </div>
+                                            <div>
+                                                {data.profile.surname}
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <button className="btn" onClick={() => {
+                                                dispatch(logoutUser(cookies)).unwrap().then(res => {
+                                                    if ("error" in res) {
+                                                        alert(res.error)
+                                                    }
+                                                    setCookie("access_token", '', { path: '/' })
+                                                    navigate("/")
+                                                })
+                                            }}>
+                                                Դուրս Գալ
+                                            </button>
+                                        </div>
+                                    </div>
+                                    :
+                                    null
+                            }
+                        </div>
+                    </div>
+
+
+                    <div>
+
+                    </div>
                 </div>
-                {
-                    data?.profile && data?.profile?.role === "admin" || data?.profile?.role === "user" ?
-                        <ul className="navbar-nav">
-                            <li className="nav-item">
-                                <a className="nav-link" >{data.profile.name}</a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link">{data.profile.surname}</a>
-                            </li>
-                            <li>
-                                <button className="logount, btn" onClick={() => {
-                                    dispatch(logoutUser(cookies)).unwrap().then(res => {
-                                        if ("error" in res) {
-                                            alert(res.error)
-                                        }
-                                        setCookie("access_token", '', { path: '/' })
-                                        navigate("/")
-                                    })
-                                }}>
-                                    Դուրս Գալ
-                                </button>
-                            </li>
-                        </ul>
-                        :
-                        null
-                }
+
             </div>
         </nav>
-    </>)
+    </div>)
 }

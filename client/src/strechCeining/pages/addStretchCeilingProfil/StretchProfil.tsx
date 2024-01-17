@@ -29,13 +29,6 @@ export const StretchProfil: React.FC = (): JSX.Element => {
                 alert(res)
             }
         })
-        dispatch(getAllUnyt(cookies)).unwrap().then(res => {
-            if ("error" in res) {
-                // setCookie("access_token", '', { path: '/' })
-                // navigate("/")
-                alert(res)
-            }
-        })
         dispatch(getAllStretchProfil(cookies)).unwrap().then(res => {
             if ("error" in res) {
                 // setCookie("access_token", '', { path: '/' })
@@ -60,19 +53,15 @@ export const StretchProfil: React.FC = (): JSX.Element => {
             <div className="profile">
                 <form onSubmit={handleSubmit(newStretchProfil)} >
                     <div className="divAllStrech">
-
                         <div>
-                            <label htmlFor="name">Անվանում</label>
-                            <input id="name"  type="text" placeholder="Name"  {...register("name", { required: true })} />
-                        </div>
-                        <div>
-                            <label htmlFor="unyt">Չ/Մ</label>
-                            <select id="unyt" {...register("unyt", { required: true })}>
+                            <label htmlFor="id">Անվանում</label>
+                            <select id="id" {...register("id", { required: true })}>
+                                <option></option>
                                 {
-                                    unyt.arrUnyt && unyt.arrUnyt.length > 0 ?
-                                        unyt.arrUnyt.map((e: any, i: any) => {
+                                    stretchProfil.arrStretchProfil && stretchProfil.arrStretchProfil.length > 0 ?
+                                        stretchProfil.arrStretchProfil.map((e: any, i: any) => {
                                             return (
-                                                <option key={e._id} value={e.name}>{e.name}</option>
+                                                <option key={e._id} value={e._id}>{e.name}</option>
                                             )
                                         })
                                         :

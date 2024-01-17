@@ -8,7 +8,7 @@ import { Response } from 'express';
 export class ProfilController {
   constructor(private readonly profilService: ProfilService) { }
 
-  @Post()
+  @Post() /// Price add
   async create(@Body() createProfilDto: CreateProfilDto, @Res() res: Response) {
     try {
       return await this.profilService.create(createProfilDto);

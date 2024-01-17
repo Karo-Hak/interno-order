@@ -193,8 +193,8 @@ export const AdminProfile: React.FC = (): JSX.Element => {
     return (
         <>
 
-            <div className="profile">
-                <div className="divBtn">
+            <div className="admin_profile">
+                <div >
                     {/* <button className="btn" onClick={openCoopSpher}>Add cooperation sphere</button> */}
                     <button className="btn" onClick={openOrderForm}>Ավելացնել Պատվեր</button>
                     <button className="btn" onClick={addBuyer} >Ավելացնել Գնորդ</button>
@@ -328,7 +328,7 @@ export const AdminProfile: React.FC = (): JSX.Element => {
                                     <option className="selectCoop" value={"idram"}>Իդրամ</option>
                                 </select>
                             </div>
-                            <div className="inputDiv" style={{margin: "0 5px"}}>
+                            <div className="inputDiv" style={{ margin: "0 5px" }}>
                                 <label htmlFor="texture">Ֆոտոպաստառ</label>
                                 <select id="texture"  {...register("texture", { required: true })} onChange={selectTexturePrice}>
                                     <option></option>
@@ -346,7 +346,7 @@ export const AdminProfile: React.FC = (): JSX.Element => {
                                 <label htmlFor="prepayment">Կանխավճար</label>
                                 <input id="prepayment" className="inputNumber" type="number" placeholder="prepayment"  {...register("prepayment")} onChange={(e) => setPrepayment(+e.target.value)} />
                             </div>
-                            <div className="inputDiv" style={{margin: "0 5px"}}>
+                            <div className="inputDiv" style={{ margin: "0 5px" }}>
                                 <label htmlFor="Sum">Մնացորդ</label>
                                 <input id="Sum" className="inputNumber" type="number" placeholder="Sum" value={sum} {...register("groundTotal")} readOnly />
                             </div>
@@ -362,12 +362,12 @@ export const AdminProfile: React.FC = (): JSX.Element => {
 
             {/* /////////////// new Orders//////////////////////// */}
 
-            <div className="profile">
+            <div className="admin_profile_list">
                 {
                     newOrders?.arr && newOrders.arr.length > 0 ?
 
-                        <table className="table" style={{ color: "white" }}>
-                            <thead>
+                        <table className="admin_profile_table" >
+                            <thead className="">
                                 <tr>
                                     <th scope="col">Ամսաթիվ</th>
                                     <th scope="col">Գնորդ</th>

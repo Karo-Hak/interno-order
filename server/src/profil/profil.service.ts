@@ -4,20 +4,32 @@ import { UpdateProfilDto } from './dto/update-profil.dto';
 import { Profil } from './schema/profil.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+import { ObjectId } from 'mongodb';
 const { MongoClient } = require('mongodb');
+
 
 
 @Injectable()
 export class ProfilService {
   constructor(@InjectModel(Profil.name) private profilModel: Model<Profil>) { }
 
-  async create(createProfilDto: CreateProfilDto) {
-    const existingProfil = await this.profilModel.findOne({ name: createProfilDto.name });
-    if (existingProfil) {
-      throw new NotFoundException('Bardutyun already exists');
+  async create(profil) {
+    const profilId = profil.id
+    const newPrice = profil.price
+    const stockUrl = 'mongodb://localhost:27017';
+    const stockClient = new MongoClient(stockUrl);
+    try {
+      await stockClient.connect();
+      const stockDb = stockClient.db('stock');
+      const stockCollection = stockDb.collection('products');
+      const result = await stockCollection.updateOne(
+        { _id: new ObjectId(profilId) },
+        { $set: { price: newPrice } }
+      );
+      return result;
+    } finally {
+      await stockClient.close();
     }
-    const Profil = new this.profilModel(createProfilDto);
-    return Profil.save();
   }
 
   async findAll() {

@@ -29,8 +29,8 @@ export class LightRingService {
     } finally {
       await stockClient.close();
     }
-
   }
+  
   async findAll() {
     const stockUrl = 'mongodb://localhost:27017';
     const stockClient = new MongoClient(stockUrl);

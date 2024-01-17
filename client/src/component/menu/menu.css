@@ -1,22 +1,45 @@
-.logount {
-    margin-top: 10px;
-    border-radius: 10px;
-    width: 100px;
+.navbar_head {
+   width: 100%;
+   background-color: black;
+   padding: 10px;
+
 }
 
+.navbar_logo {
+   width: 55%;
+   display: flex;
+   justify-content: space-between;
 
 
-/* .divmenu{
-    width: 100px;
+}
+
+/* .navbar_container {
+ 
+
 } */
 
 
-.navbar_menu{   
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    
+
+.menu_search_item {
+
+   display: flex;
+   justify-content: space-between;
 }
-.navbar_menu :hover{
-    color:blueviolet;
+
+
+
+.user_name_surname {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   gap: 20px;
+   color: aliceblue;
+
+}
+
+.userNameSurname {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   gap: 10px;
 }
