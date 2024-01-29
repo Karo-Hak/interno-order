@@ -1,22 +1,36 @@
-/* .strech{
-    display: flex;
-    border: 2px solid green;
+.paymentSection {
     width: 100%;
+    border: 1px solid black;
+    text-align: center;
 }
 
+.paymentSection th {
+    border: 1px solid black;
+}
 
+.paymentSection td {
+    border: 1px solid black;
+}
 
-.streachOrder{
-    
-    background-color: #0a0a14;
-    color: rgba(255, 255, 255, .55);
+.buyerCommentBuyerSection {
+    min-width: 300px;
+}
+
+.buyerSectionName {
+    width: 100%;
+    text-align: center;
+}
+
+.buyerSectionName th {
+    border: 1px solid black;
+}
+
+.buyerSectionName td {
+    border: 1px solid black;
+}
+
+.buyerPhone1_2{
     display: flex;
-    flex-direction: column;
-    gap: 10px;
-    flex-wrap: nowrap;
-    width: 95%;
-    padding: 10px;
-    margin: auto;
-    border-radius: 5px;
-    border: 2px solid red;
-} */
+    gap: 5px;
+    justify-content: center;
+}

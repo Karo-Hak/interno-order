@@ -43,8 +43,8 @@
 
  .loginLine,
  input {
-     border-radius: 6px;
-     border: none;
+     border-radius: 5px;
+     /* border: none; */
 
 
  }

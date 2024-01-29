@@ -1,4 +1,4 @@
-/* .divOrder {
+.divOrder {
     display: flex;
     justify-content: space-between;
     width: 100%;
@@ -7,4 +7,39 @@
 .orderImg {
     height: auto;
     max-width: 500px;
-} */
+}
+
+.bt1 {
+    color: black;
+}
+
+/* ???????????????????????? */
+.oreder_profile {
+    height: 87vh;
+}
+
+.order_profile_pay {
+    display: flex;
+}
+
+.order_profile_comment {
+    display: flex;
+    flex-direction: column;
+    
+    width: 250;
+    
+}
+
+.order_profile_comment_pic {
+
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+
+
+
+}
+
+
+/* -------------updateOrder */
+

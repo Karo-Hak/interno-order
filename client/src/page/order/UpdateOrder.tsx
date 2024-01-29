@@ -1,4 +1,4 @@
-import './order.css'
+import '../profile/adminProfile.css'
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectOrder } from '../../features/order/orderSlice';
 import { ChangeEvent, useEffect, useState } from 'react'
@@ -176,153 +176,166 @@ export const UpdateOrderInfo: React.FC = (): JSX.Element => {
 
 
     return (
+
         <div>
             {
                 order.order._id ?
-                    <div>
+                    <div className='hahaha'>
 
-                        <form className="orderDiv" onSubmit={handleSubmit(updateWallpaper)}>
-                            <div className="formdiv">
-                                <div className="formSelect">
-                                    <div className="buyerDiv">
-                                        Գնորդ
-                                        <div>-------</div>
-                                        <div>
-                                            <label htmlFor="buyerName">Անուն</label>
-                                            <input id="buyerName" className="userInput form-control" type="text" placeholder="Buyer Name" value={buyerName}  {...register("buyerName")} onChange={(e) => setBuyerName(e.target.value)} />
-                                        </div>
-                                        <div>
-                                            <label htmlFor="buyerPhone">Հեռախես</label>
-                                            <input id="buyerPhone" className="userInput form-control" type="text" placeholder=" Buyer Phone" value={buyerPhone} {...register("buyerPhone")} onChange={(e) => setBuyerPhone(e.target.value)} />
-                                        </div>
-                                        <div>
-                                            <label htmlFor="buyerAdress">Հասցե</label>
-                                            <input id="buyerAdress" className="userInput form-control" type="text" placeholder="Buyer Adress" value={buyerAdress} {...register("buyerAdress")} onChange={(e) => setBuyerAdress(e.target.value)} />
+                        <form className="" onSubmit={handleSubmit(updateWallpaper)}>
+                            <div className="">
+                                <div className="">
+                                    <div>
+                                        <div className="buyer_head">
+                                            <div className='buyer_name_cheack'>
+                                                <div className='buyer_head_name'>Գնորդ</div>
+                                            </div>
+                                            <div className='buyer_info'>
+
+                                                <div className='buyer_label'>
+                                                    <label htmlFor="buyerName">Անուն</label>
+                                                    <input id="buyerName" className="" type="text" placeholder="Buyer Name" value={buyerName}  {...register("buyerName")} onChange={(e) => setBuyerName(e.target.value)} />
+                                                </div>
+                                                <div className='buyer_label'>
+                                                    <label htmlFor="buyerPhone">Հեռախես</label>
+                                                    <input id="buyerPhone" className="" type="text" placeholder=" Buyer Phone" value={buyerPhone} {...register("buyerPhone")} onChange={(e) => setBuyerPhone(e.target.value)} />
+                                                </div>
+                                                <div className='buyer_label'>
+                                                    <label htmlFor="buyerAdress">Հասցե</label>
+                                                    <input id="buyerAdress" className="" type="text" placeholder="Buyer Adress" value={buyerAdress} {...register("buyerAdress")} onChange={(e) => setBuyerAdress(e.target.value)} />
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="buyerDiv">
-                                        Ֆոտոպաստառ
-                                        <div>------------------</div>
-                                        <div className="wallpaperDiv">
-                                            <div>
-                                                <div>
+                                    <div className="photopastar">
+
+                                        <div className='photopastar_name'>Ֆոտոպաստառ</div>
+
+                                        <div className="photopastar_label">
+                                            <div className='photopastar_wh'>
+                                                <div className='buyer_label'>
                                                     <label htmlFor="weight">Երկարություն</label>
-                                                    <input id="weight" className="userInput form-control" type="number" placeholder="Weight" value={weight} {...register("weight")} onChange={(e) => setWeight(+e.target.value)} />
+                                                    <input id="weight" className="" type="number" placeholder="Weight" value={weight} {...register("weight")} onChange={(e) => setWeight(+e.target.value)} />
                                                 </div>
-                                                <div>
+                                                <div className='buyer_label'>
                                                     <label htmlFor="height">Բարձրություն</label>
-                                                    <input id="height" className="userInput form-control" type="number" placeholder="Height" value={height} {...register("height")} onChange={(e) => setHeight(+e.target.value)} />
+                                                    <input id="height" className="" type="number" placeholder="Height" value={height} {...register("height")} onChange={(e) => setHeight(+e.target.value)} />
                                                 </div>
-                                                <div>
-                                                    <label htmlFor="sqMetr">Քառակուսի մետր</label>
-                                                    <input id="sqMetr" className="userInput form-control" type="number" placeholder="SQ/METR" value={squer} readOnly {...register("sqMetr")} />
+                                                <div className='buyer_label'>
+                                                    <label htmlFor="sqMetr">Ք/Մ</label>
+                                                    <input id="sqMetr" className="" type="number" placeholder="SQ/METR" value={squer} readOnly {...register("sqMetr")} />
                                                 </div>
                                             </div>
-                                            <div >
-                                                <div>
+                                            <div className='photopastar_ps'>
+                                                <div className='buyer_label'>
                                                     <label htmlFor="price">Գին</label>
-                                                    <input id="price" className="userInput form-control" type="number" placeholder="Price" value={price} {...register("price")} onChange={(e) => setPrice(+e.target.value)} />
+                                                    <input id="price" className="inputNumber" type="number" placeholder="Price" value={price} {...register("price")} onChange={(e) => setPrice(+e.target.value)} />
                                                 </div>
-                                                <div>
+                                                <div className='buyer_label'>
                                                     <label htmlFor="discount">Զեղչ</label>
-                                                    <input id="discount" className="userInput form-control" type="number" placeholder="discount" value={discount} {...register("discount")} onChange={(e) => setDiscount(+e.target.value)} />
+                                                    <input id="discount" className="inputNumber" type="number" placeholder="discount" value={discount} {...register("discount")} onChange={(e) => setDiscount(+e.target.value)} />
                                                 </div>
-                                                <div>
+                                                <div >
                                                     <label htmlFor="total">Գումար</label>
-                                                    <input id="total" className="userInput form-control" type="number" placeholder="total" value={totalOrder}  {...register("total")} onChange={(e) => setTotalOrder(+e.target.value)} />
+                                                    <input id="total" className="inputNumber" type="number" placeholder="total" value={totalOrder}  {...register("total")} onChange={(e) => setTotalOrder(+e.target.value)} />
                                                 </div>
                                             </div>
-                                            <div >
-                                                <div>
+                                            <div className='photopastar_comm'>
+                                                <div className='buyer_label'>
                                                     <label htmlFor="picCode">Նկարի կոդ</label>
-                                                    <input id="picCode" className="userInput form-control" type="text" placeholder="Picture Code" value={picCode} {...register("picCode")} onChange={(e) => setPicCode(e.target.value)} />
+                                                    <input id="picCode" className="inputNumber" type="text" placeholder="Picture Code" value={picCode} {...register("picCode")} onChange={(e) => setPicCode(e.target.value)} />
                                                 </div>
-                                                <div>
+                                                <div className='buyer_label'>
                                                     <label htmlFor="comment">Նկարագրություն</label>
-                                                    <textarea id="comment" className="userInput form-control" placeholder="Comment" value={comment} {...register("comment")} onChange={(e) => setComment(e.target.value)}></textarea>
+                                                    <textarea id="comment" className="wallpaperComm" placeholder="Comment" value={comment} {...register("comment")} onChange={(e) => setComment(e.target.value)}></textarea>
                                                 </div>
 
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="buyerDiv">
-                                        Գործընկեր
-                                        <div>-------------</div>
-                                        <div>
-                                            <label htmlFor="selectCoop">Գործընկերոջ անվանում</label>
-                                            <select id="selectCoop" className="selectCoop form-control" value={selectedCoop} {...register("cooperateId")}
-                                                onChange={handleChange}
-                                            >
-                                                {
-                                                    cooperate?.arrCooperate && cooperate.arrCooperate.length > 0 ?
-                                                        cooperate.arrCooperate.map((e: any) => {
-                                                            return <option key={e._id} value={e._id}
-                                                            >{e.name} {e.surname}</option>
-                                                        })
-                                                        : null
-                                                }
-                                            </select>
+                                    <div className="gorcnker ">
+                                        <div className='gorcnker_name'>
+                                            <div> Գործընկեր</div>
+                                            <div className='gorcnker_cheak'>
+                                                <input id="coopCheckbox" type="checkbox" onChange={handleCheckboxChange} />
+                                                <label htmlFor="coopCheckbox"> Փոխել գինը</label>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <label htmlFor="coopRate">Գործընկերոջ տոկոս</label>
-                                            <input id="coopRate" className="userInput form-control" type="number" placeholder="Cooperate Rate" value={coopRate} onChange={(e) => setCoopRate(+e.target.value)} />
+                                        <div className='gorcnker_info'>
+                                            <div className='buyer_label '>
+                                                <label htmlFor="selectCoop">Անվանում</label>
+                                                <select id="selectCoop" value={selectedCoop} {...register("cooperateId")}
+                                                    onChange={handleChange}
+                                                >
+                                                    {
+                                                        cooperate?.arrCooperate && cooperate.arrCooperate.length > 0 ?
+                                                            cooperate.arrCooperate.map((e: any) => {
+                                                                return <option key={e._id} value={e._id}
+                                                                >{e.name} {e.surname}</option>
+                                                            })
+                                                            : null
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div className='buyer_label'>
+                                                <label htmlFor="coopRate">Տոկոս</label>
+                                                <input id="coopRate" className="inputNumber" type="number" placeholder="Cooperate Rate" value={coopRate} onChange={(e) => setCoopRate(+e.target.value)} />
+                                            </div>
+                                            <div className='buyer_label'>
+                                                <label htmlFor="coopTotal">Գումար</label>
+                                                <input id="coopTotal" className="inputNumber" type="number" placeholder="Cooperate Totla" value={coopTotal} {...register("cooperateTotal")} />
+                                            </div>
                                         </div>
-                                        <div>
-                                            <label htmlFor="coopTotal">Գործընկերոջ գումար</label>
-                                            <input id="coopTotal" className="userInput form-control" type="number" placeholder="Cooperate Totla" value={coopTotal} {...register("cooperateTotal")} />
-                                        </div>
-                                        <div>
-                                            <label>
-                                                <input
-                                                    type="checkbox"
-                                                    onChange={handleCheckboxChange}
-                                                />
-                                                Փոխել գինը
-                                            </label>
-                                        </div>
+
                                     </div>
                                 </div >
 
 
                             </div>
-                            <div className="profile">
-                                <div>
-                                    <label htmlFor="pey">Վճարման միջոց</label>
-                                    <select id="pey" className="selectCoop form-control" value={selectedPayment} {...register("paymentMethod")} onChange={(e) => setSelectedPayment(e.target.value)}>
-                                        <option className="selectCoop" value={"cash"} >Կանխիկ</option>
-                                        <option className="selectCoop" value={"transfer"}>Փոխանցում</option>
-                                        <option className="selectCoop" value={"pos"}>Պոս Տերմինալ</option>
-                                        <option className="selectCoop" value={"credit"}>Ապառիկ</option>
-                                        <option className="selectCoop" value={"inecoPay"}>Ինեկո Փեյ</option>
-                                        <option className="selectCoop" value={"idram"}>Իդրամ</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label htmlFor="texture">Ֆոտոպաստառ</label>
-                                    <select id="texture" className="selectCoop form-control" value={selectedTexture} {...register("texture")}
-                                        onChange={selectTexturePrice}
-                                    >
-                                        <option></option>
-                                        {
-                                            texture?.arrTexture && texture.arrTexture.length > 0 ?
-                                                texture.arrTexture.map((e: any) => {
-                                                    return <option key={e._id} value={e._id}
-                                                    >{e.name}</option>
-                                                })
-                                                : null
-                                        }
-                                    </select>
-                                </div>
-                                <div>
-                                    <label htmlFor="prepayment">Կանխավճար</label>
-                                    <input id="prepayment" className="userInput form-control" type="number" placeholder="prepayment" value={prepayment}  {...register("prepayment")} onChange={(e) => setPrepayment(+e.target.value)} />
-                                </div>
-                                <div>
-                                    <label htmlFor="Sum">Մնացորդ</label>
-                                    <input id="Sum" className="userInput form-control" type="number" placeholder="Sum" value={sum} {...register("groundTotal")} readOnly />
+                            <div className="payment">
+                                <div className="paymnet_name"> Վճարում</div>
+                                <div className="payment_info">
+
+                                    <div className='buyer_label'>
+                                        <label htmlFor="pey">Վճարման միջոց</label>
+                                        <select id="pey" value={selectedPayment} {...register("paymentMethod")} onChange={(e) => setSelectedPayment(e.target.value)}>
+                                            <option className="selectCoop" value={"cash"} >Կանխիկ</option>
+                                            <option className="selectCoop" value={"transfer"}>Փոխանցում</option>
+                                            <option className="selectCoop" value={"pos"}>Պոս Տերմինալ</option>
+                                            <option className="selectCoop" value={"credit"}>Ապառիկ</option>
+                                            <option className="selectCoop" value={"inecoPay"}>Ինեկո Փեյ</option>
+                                            <option className="selectCoop" value={"idram"}>Իդրամ</option>
+                                        </select>
+                                    </div>
+                                    <div className="buyer_label">
+                                        <label htmlFor="texture">Ֆոտոպաստառ</label>
+                                        <select id="texture" value={selectedTexture} {...register("texture")}
+                                            onChange={selectTexturePrice}>
+                                            <option></option>
+                                            {
+                                                texture?.arrTexture && texture.arrTexture.length > 0 ?
+                                                    texture.arrTexture.map((e: any) => {
+                                                        return <option key={e._id} value={e._id}
+                                                        >{e.name}</option>
+                                                    })
+                                                    : null
+                                            }
+                                        </select>
+                                    </div>
+                                    <div className="buyer_label">
+                                        <label htmlFor="prepayment">Կանխավճար</label>
+                                        <input id="prepayment" className="inputNumber" type="number" placeholder="prepayment" value={prepayment}  {...register("prepayment")} onChange={(e) => setPrepayment(+e.target.value)} />
+                                    </div>
+                                    <div className="buyer_label">
+                                        <label htmlFor="Sum">Մնացորդ</label>
+                                        <input id="Sum" className="inputNumber" type="number" placeholder="Sum" value={sum} {...register("groundTotal")} readOnly />
+                                    </div>
                                 </div>
                             </div>
-                            <div><button className="btn">Գրանցել</button></div>
+
+                            <div className="save">
+                                <button className="btn">Գրանցել</button>
+                            </div>
                         </form>
                     </div>
 
@@ -330,7 +343,7 @@ export const UpdateOrderInfo: React.FC = (): JSX.Element => {
                     null
             }
             <div>
-                <button className="btn" style={{ fontSize: "20px", backgroundColor: "#0a1020", margin: "10px" }} onClick={loadeData} >Լրացնել տվյալները</button>
+                <button className="btn1" style={{ fontSize: "20px", margin: "10px" }} onClick={loadeData} >Լրացնել տվյալները</button>
             </div>
         </div>
     )

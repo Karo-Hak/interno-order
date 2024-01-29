@@ -1,6 +1,5 @@
 .admin_profile {
     background-color: rgb(65, 62, 62);
-
     display: flex;
     justify-content: center;
     align-items: center;
@@ -12,8 +11,16 @@
     color: rgb(80, 78, 78);
     background-color: rgb(245, 245, 245);
     width: 100%;
+font-size: 12px;
+    
 
 }
+/* th{
+    padding-left: 15px;
+}
+td{
+    padding-left: 15px; 
+} */
 
 .profile_table_head {
     color: black;
@@ -26,4 +33,189 @@ tr {
     border: 1px solid rgb(202, 187, 187);
     height: 50px;
 
+}
+
+
+
+/* ------- Buyer----------- */
+
+.buyer_label select{
+    
+    border: 1px solid black;
+    width: 55%;
+}
+.buyer_head {
+  
+    display: flex;
+    flex-direction: column;
+
+}
+
+.buyer_name_cheack {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    background-color: rgb(162, 167, 189);
+
+}
+
+.buyer_info {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 5px;
+
+}
+
+.buyer_info select {
+    color: black;
+}
+
+.buyer_label {
+    display: flex;
+    justify-content: space-between;
+    width: 300px;
+}
+
+.buyer_label input {
+    border: 1px solid rgb(95, 91, 91);
+    box-sizing: border-box;
+
+}
+
+
+
+
+/* ------photopastar------ */
+
+.photopastar_name {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+   
+    background-color: rgb(162, 167, 189);
+
+
+}
+
+.photopastar_label {
+    display: flex;
+    justify-content: space-around;
+
+
+}
+
+.photopastar_wh {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+
+
+}
+
+.photopastar_ps {
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.photopastar_comm {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    gap: 5px;
+}
+
+.wallpaperComm{
+    width: 200px;
+}
+
+/* ------gorcnker---- */
+
+
+.gorcnker {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.gorcnker_name {  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    background-color: rgb(162, 167, 189);
+    width: 100%;
+    gap: 5px;
+    
+}
+
+
+.gorcnker_info {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    padding: 5px;
+}
+
+
+
+.gorcnker input {
+    border: 1px solid rgb(95, 91, 91);
+}
+
+.gorcnker select {
+    border: 1px solid rgb(95, 91, 91);
+}
+
+.gorcnker_cheak {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.gorcnker_label {
+    display: flex;
+    justify-content: space-around;
+    width: 350px;
+}
+
+
+
+
+
+/* -------payment--------- */
+.payment{    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;  
+}
+.paymnet_name{
+    background-color: rgb(162, 167, 189);
+    width: 100%;
+    margin: auto;
+    text-align: center;
+}
+
+.payment_info{
+  
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px;
+}
+.payment_info select{
+    border: 1px solid black;
+}
+.save{    
+    display: flex;
+    justify-content: center;
+    background-color: rgb(97, 96, 96);
 }

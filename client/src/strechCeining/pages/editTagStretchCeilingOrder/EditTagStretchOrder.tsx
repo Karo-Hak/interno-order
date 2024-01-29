@@ -4,6 +4,7 @@ import { useCookies } from 'react-cookie';
 import { useForm } from 'react-hook-form';
 import { userProfile } from '../../../features/user/userApi';
 import './editTagStretchCeilingOrder.css';
+import '../addTagStretchCeilingOrder/tagStretchOrder.css';
 import BuyerSection from './EditBuyerSection';
 import StretchTexturesSection from './EditStretchTexturesSection';
 import PaymentSection from './EditPaymentSection';
@@ -14,7 +15,7 @@ import { filterOrder } from './editLogic';
 import AdditionalSection from './EditAdditionalSection';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { selectUser } from '../../../features/user/userSlice';
-import { addNewStretchOrder, findStretchOrder, viewNewOrders } from '../../stretchCeilingOrder/stretchOrderApi';
+import { addNewStretchOrder, findStretchOrder, updateStretchOrderAll, viewNewOrders } from '../../stretchCeilingOrder/stretchOrderApi';
 import { selectStretchOrder } from '../../stretchCeilingOrder/stretchOrderSlice';
 
 
@@ -105,47 +106,66 @@ export const EditTagStretchOrderx: React.FC = (): JSX.Element => {
 
 
     const newOrder = () => {
-        dispatch(addNewStretchOrder({ addOrder, cookies, user: user.profile })).unwrap().then(res => {
+        dispatch(updateStretchOrderAll({ addOrder, cookies, user: user.profile })).unwrap().then(res => {
             if ("error" in res) {
                 alert(res.error)
             }
         });
-        // window.location.reload()
+        window.location.reload()
     };
 
     return (
-        <>
+        <div className='strech'>
             <form onSubmit={handleSubmit(qountTotal)}>
                 <BuyerSection register={register} setValue={setValue} />
-                <div className="formdivStretch" style={{ display: "flex" }}>
-                    <div >
-                        <StretchTexturesSection register={register} reset={reset} setValue={setValue} editingStretchTexture={editingOrder.stretchOrder.groupedStretchCeilings} />
-                        <ProfilSection register={register} reset={reset} setValue={setValue} editingProfils={editingOrder.stretchOrder.groupedProfils} />
-                        <LightPlatformSection register={register} reset={reset} setValue={setValue} editingLightPlatforms={editingOrder.stretchOrder.groupedlightPlatforms} />
-                        <LightRingSection register={register} reset={reset} setValue={setValue} editingLightRings={editingOrder.stretchOrder.groupedlightRings} />
-                    </div>
-                    <div >
-                        <AdditionalSection register={register} reset={reset} setValue={setValue} editingAdditionals={editingOrder.stretchOrder.groupedAdditionals} orderComment={editingOrder.stretchOrder.orderComment} />
+                <div className="streachOrder" >
+                    <div className='patver_name'>Patver</div>
+                    <div className='patver_info'>
+                        <div className='patver_arastax'>
+                            <StretchTexturesSection register={register} reset={reset} setValue={setValue} editingStretchTexture={editingOrder.stretchOrder.groupedStretchCeilings} />
+                            <AdditionalSection register={register} reset={reset} setValue={setValue} editingAdditionals={editingOrder.stretchOrder.groupedAdditionals} orderComment={editingOrder.stretchOrder.orderComment} />
+                        </div>
+                        <div className='patver_arastax_profil'>
+                            <ProfilSection register={register} reset={reset} setValue={setValue} editingProfils={editingOrder.stretchOrder.groupedProfils} />
+                            <LightPlatformSection register={register} reset={reset} setValue={setValue} editingLightPlatforms={editingOrder.stretchOrder.groupedLightPlatforms} />
+                            <LightRingSection register={register} reset={reset} setValue={setValue} editingLightRings={editingOrder.stretchOrder.groupedLightRings} />
+
+                        </div>
                     </div>
                 </div>
-                <div className="formdivStretch" style={{ display: "flex" }}>
+                <div className="formdivStretch_1">
+                    <div className='formdivStretch_1_name'>Վճարման միջոց</div>
                     <PaymentSection register={register} setValue={setValue}
                         paymentMethod={editingOrder.stretchOrder.paymentMethod}
                         prepayment={editingOrder.stretchOrder.prepayment}
                         installDate={editingOrder.stretchOrder.installDate}
                     />
-                    <div className="inputDiv">
-                        <label htmlFor="Sum">Ընդամենը</label>
-                        <input id="balance" type="number" placeholder="Balance" {...register('balance')} onChange={(e) => setOrderBalance(+e.target.value)} />
+
+                    <div className='formdivStretch_1_info'>
+                        <div className='formdivStretch_1_info_1'>
+                            <div className="buyer_label_1">
+                                <label htmlFor="Sum">Ընդամենը</label>
+                                <input id="balance" type="number" placeholder="Balance" {...register('balance')} onChange={(e) => setOrderBalance(+e.target.value)} />
+                            </div>
+                            <div className="buyer_label_1">
+                                <label htmlFor="Sum">Մնացորդ</label>
+                                <input id="Sum" type="number" placeholder="Sum" {...register('groundTotal')} onChange={(e) => setOrderSum(+e.target.value)} />
+                            </div>
+
+                        </div>
+                        <div>
+                            <div className="buyer_label_1">
+                                <button className="btn btn1" type='button' onClick={newOrder}>Գրանցել</button>
+                                <button className='btn btn1' type='submit'>Հաշվարկել</button>
+                            </div>
+                        </div>
+
+
                     </div>
-                    <div className="inputDiv">
-                        <label htmlFor="Sum">Մնացորդ</label>
-                        <input id="Sum" type="number" placeholder="Sum" {...register('groundTotal')} onChange={(e) => setOrderSum(+e.target.value)} />
-                    </div>
-                    <button className='btn' type='submit'>Հաշվարկել</button>
-                    <button className="btn" type='button' onClick={newOrder}>Գրանցել</button>
+
                 </div>
             </form>
-        </>
+        </div>
+
     );
 };

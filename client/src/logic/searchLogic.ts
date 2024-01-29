@@ -10,6 +10,8 @@ export const searchFilter = (orders: any, user: string, buyer: string, cooperate
             return e.buyer._id === buyer
         })
     }
+    console.log(buyer);
+    
     if (cooperate && cooperate !== "0") {
         orders = orders.filter((e: any, i: any) => {
             if (e.cooperate !== null) {
@@ -27,7 +29,6 @@ export const searchFilter = (orders: any, user: string, buyer: string, cooperate
             return e.paymentMethod === paymentMethod
         })
     }
-    console.log(grTotal);
     if (grTotal && grTotal !== "0") {
         if (grTotal === "payed") {
             orders = orders.filter((e: any, i: any) => {

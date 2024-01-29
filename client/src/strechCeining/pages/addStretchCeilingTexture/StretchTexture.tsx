@@ -44,7 +44,7 @@ export const StretchTexture: React.FC = (): JSX.Element => {
     }, [])
 
     const newStretchTexture = (stretchTexture: any) => {
-         dispatch(addStretchTexture({ stretchTexture, cookies })).unwrap().then(res => {
+        dispatch(addStretchTexture({ stretchTexture, cookies })).unwrap().then(res => {
             if ("error" in res) {
                 alert(res.error)
             }
@@ -52,20 +52,22 @@ export const StretchTexture: React.FC = (): JSX.Element => {
         window.location.reload()
     }
 
-console.log( unyt.arrUnyt);
+    console.log(unyt.arrUnyt);
 
     return (
         <>
 
-            <div className="profile">
+            <div className="addStretchBuyer_head">
+                <div className="addStretchBuyer_head_name">Gnordi tvyalner</div>
+
                 <form onSubmit={handleSubmit(newStretchTexture)} >
-                    <div className="divAllStrech">
-                        <div className="stretchDiv">
-                            <div>
+       
+                        <div className="addStrerchBuyer_info">
+                            <div className="addStrerchBuyer_info_section">
                                 <label htmlFor="name">Անվանում</label>
                                 <input id="name" type="text" placeholder="Name"  {...register("name", { required: true })} />
                             </div>
-                            <div>
+                            <div className="addStrerchBuyer_info_section">
                                 <label htmlFor="weight">Լայնություն</label>
                                 <input id="weight" type="number" placeholder="Weight"  {...register("weight", { required: true })} />
                             </div>
@@ -85,46 +87,47 @@ console.log( unyt.arrUnyt);
                                 </select>
                             </div>
                         </div>
-                        <div className="stretchDiv">
-                            <label>Վաճառքի գին</label>
-                            <p>________________</p>
-                            <div>
+                        <div className="addStrerchBuyer_info_section">
+                        <div className="addStretchBuyer_head_name">vacharqi gin</div>
+                            <div className="addStrerchBuyer_info_section">
                                 <label htmlFor="price">Գին</label>
                                 <input id="price" type="number" placeholder="Price"  {...register("price", { required: true })} />
                             </div>
-                            <div>
+                            <div className="addStrerchBuyer_info_section">
                                 <label htmlFor="priceGarpun">Գին Գարպուն</label>
                                 <input id="priceGarpun" type="number" placeholder="Price Garpun"  {...register("priceGarpun", { required: true })} />
                             </div>
-                            <div>
+                            <div className="addStrerchBuyer_info_section">
                                 <label htmlFor="priceOtrez">Գին Կտրվածք</label>
                                 <input id="priceOtrez" type="number" placeholder="Price Otrez"  {...register("priceOtrez", { required: true })} />
                             </div>
                         </div>
-                        <div className="stretchDiv">
+                        <div className="addStrerchBuyer_info_section">
                             <label>Համագործակցության գին</label>
                             <p>_______________________________</p>
-                            <div>
+                            <div className="addStrerchBuyer_info_section">
                                 <label htmlFor="priceCoopGarpun">Գին Գարպուն</label>
                                 <input id="priceCoopGarpun" type="number" placeholder="Price Garpun"  {...register("priceCoopGarpun", { required: true })} />
                             </div>
-                            <div>
+                            <div className="addStrerchBuyer_info_section">
                                 <label htmlFor="priceCoopOtrez">Գին Կտրվածք</label>
                                 <input id="priceCoopOtrez" type="number" placeholder="Price Otrez"  {...register("priceCoopOtrez", { required: true })} />
                             </div>
+                            <div className="addStrerchBuyer_info_section">
+                                <button className="btn btn1">Գրանցել</button>
+                            </div>
                         </div>
-                    </div>
+                    
 
-                    <div>
-                        <button className="btn">Գրանցել</button>
-                    </div>
 
 
                 </form>
                 {
                     stretchTexture.arrStretchTexture && stretchTexture.arrStretchTexture.length > 0 ?
-                        <div className="profile" style={{fontSize:"12px"}}>
-                            <table className="table" style={{ color: "white" }}>
+                        <div className="addStretchBuyer_table" >
+                            <div className="addStretchBuyer_head_name">Gnordneri cucak</div>
+
+                            <table className="table" >
                                 <thead>
                                     <tr>
                                         <th scope="col">Անվանում</th>

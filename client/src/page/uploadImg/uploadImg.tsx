@@ -35,8 +35,8 @@ function ImageUpload() {
     return (
         <div style={{ display: "flex" }}>
             <input type="file" onChange={handleFileChange} className='form-control form-control-sm'
-                style={{ backgroundColor: "rgba(255, 255, 255, .55)" }} />
-            <button onClick={handleUpload} className='btn'>Загрузить</button>
+                 />
+            <button onClick={handleUpload} className='btn btn1'>Загрузить</button>
         </div>
     );
 }

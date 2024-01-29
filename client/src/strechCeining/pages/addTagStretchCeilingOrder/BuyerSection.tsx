@@ -39,78 +39,74 @@ const BuyerSection: React.FC<any> = ({ register, setValue }: any) => {
     }
 
     return (
-        <div className="buyerStrech">
-           
-            <div className='buyer_Strech' >
-                <div className='buyer_first_section'>
-                <div className='buyer_head'>
-                <div>
-                    Գնորդ---
-                </div>
-
-                <div className='buyer_checkbox'>
-                    <input type="checkbox" onChange={handleCheckboxBuyer} />
-                    Ընտրել ցանկից
-                </div>
-
-                
-            </div>
-                    <div className='buyer_name_surname'>
-                        {!checkedBuyer ? (
-                            <div className="">
-                                <div className="inputDiv">
-                                    <label htmlFor="buyerPhone">Անուն Ազգանուն</label>
-                                    <input id="buyerName" type="text" placeholder=" Buyer Name" {...register('buyerName', { required: true })} />
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="">
-                                <div className="inputDiv">
-                                    <label htmlFor="selectCoop">Անուն Ազգանուն</label>
-                                    <select id="selectCoop" {...register('buyerId', { required: true })} onChange={(event) => selectedBuyer(event)}>
-                                        {stretchBuyer.arrStretchBuyer &&
-                                            stretchBuyer.arrStretchBuyer.length > 0 ? (
-                                            stretchBuyer.arrStretchBuyer.map((e: any) => {
-                                                return (
-                                                    <option key={e._id} value={e._id}>
-                                                        {e.buyerName}
-                                                    </option>
-                                                );
-                                            })
-                                        ) : null}
-                                    </select>
-                                </div>
-                            </div>
-                        )}
-                        <div className="inputDiv">
-                            <label htmlFor="buyerPhone">Հեռախես</label>
-                            <input id="buyerPhone" className="inputNumber" type="string" placeholder=" Buyer Phone" name="buyerPhone"  {...register('buyerPhone', { required: true })} />
-                        </div>
-                        <div className="inputDiv">
-                            <label htmlFor="buyerAddress">Հասցե</label>
+        <div >
+            <table className='buyerSectionName'>
+                <thead>
+                    <tr style={{ background: "#dfdce0" }}>
+                        <th>Կոդ</th>
+                        <th>ԱԱ/սկիզբ</th>
+                        <th>ԱԱ/ավարտ</th>
+                        <th>Անուն Ազգանուն/ <input id="buyerCheckbox" type="checkbox" onChange={handleCheckboxBuyer} /></th>
+                        <th>Մարզ</th>
+                        <th>Հասցե</th>
+                        <th>Հեռախես</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <select>
+                                <option>INT</option>
+                                <option>TAG</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="date" id="date" {...register('measureDate')} />
+                        </td>
+                        <td>
+                            <input type="date" id="date" {...register('installDate')} />
+                        </td>
+                        <td>
+                            {!checkedBuyer ? (
+                                <input id="buyerName" type="text" placeholder=" Buyer Name" {...register('buyerName', { required: true })} />
+                            ) : (
+                                <select id="selectCoop" {...register('buyerId', { required: true })} onChange={(event) => selectedBuyer(event)}>
+                                    {stretchBuyer.arrStretchBuyer &&
+                                        stretchBuyer.arrStretchBuyer.length > 0 ? (
+                                        stretchBuyer.arrStretchBuyer.map((e: any) => {
+                                            return (
+                                                <option key={e._id} value={e._id}>
+                                                    {e.buyerName}
+                                                </option>
+                                            );
+                                        })
+                                    ) : null}
+                                </select>
+                            )}
+                        </td>
+                        <td>
+                            <input id="buyerRegion" type="text" placeholder=" Buyer Region" {...register('buyerRegion', { required: true })} />
+                        </td>
+                        <td>
                             <input style={{ width: "300px" }} id="buyerAddress" type="text" placeholder="Buyer Address" {...register('buyerAddress', { required: true })} />
-                        </div>
-                    </div>
-
-                    <section className="">
-                        <div >Չափագրում</div>
-                        <div className="">
-                            <div className="input-group date" id="datepicker">
-                                <input  type="date" className="buyer_date" id="date" {...register('measureDate')} />
+                        </td>
+                        <td>
+                            <div className='buyerPhone1_2'>
+                                <input id="buyerPhone1" type="string" placeholder=" Buyer Phone" name="buyerPhone"  {...register('buyerPhone1', { required: true })} />
+                                <input id="buyerPhone2" type="string" placeholder=" Buyer Phone" name="buyerPhone"  {...register('buyerPhone2')} />
                             </div>
-                        </div>
-                    </section>
-                </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
 
 
 
-                <div className="buyer_comment">
-                    <div>Նկարագրություն</div>
-                    <textarea className="buyercomment" placeholder="Buyer Comment" {...register('buyerComment')} />
-                </div>
 
-            </div>
+
+
         </div>
+
     );
 };
 

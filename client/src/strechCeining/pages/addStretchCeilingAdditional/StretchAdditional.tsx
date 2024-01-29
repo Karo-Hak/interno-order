@@ -53,26 +53,30 @@ export const StretchAdditional: React.FC = (): JSX.Element => {
 
     return (
         <>
-            <div className="profile">
+            <div className="addStretchBuyer_head">
+            <div className="addStretchBuyer_head_name">Gnordi tvyalner</div>
                 <form onSubmit={handleSubmit(newStretchAdditional)} >
-                    <div className="divAllStrech">
-                        <div>
+                    <div className="addStrerchBuyer_info">
+                        <div className="addStrerchBuyer_info_section">
                             <label htmlFor="name">Անվանում</label>
                             <input id="name" type="text" placeholder="Name"  {...register("name", { required: true })} />
                         </div>
-                        <div>
+                        <div className="addStrerchBuyer_info_section">
                             <label htmlFor="price">Գին</label>
                             <input id="price" type="number" placeholder="Price"  {...register("price", { required: true })} />
                         </div>
+                        <div className="addStrerchBuyer_info_section">
+                        <button className="btn btn1">Գրանցել</button>
                     </div>
-                    <div>
-                        <button className="btn">Գրանցել</button>
                     </div>
+                  
                 </form>
                 {
                     stretchAdditional.arrStretchAdditional && stretchAdditional.arrStretchAdditional.length > 0 ?
-                        <div className="profile">
-                            <table className="table" style={{ color: "white" }}>
+                        <div className="addStretchBuyer_table">
+                            <div className="addStretchBuyer_head_name">Gnordneri cucak</div>
+
+                            <table className="table" >
                                 <thead>
                                     <tr>
                                         <th scope="col">Անվանում</th>

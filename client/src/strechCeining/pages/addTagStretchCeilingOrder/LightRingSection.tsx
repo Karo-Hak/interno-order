@@ -36,17 +36,17 @@ const LightRingSection: React.FC<any> = ({ register }: any) => {
   }
 
   return (
-    <div className="formdivStretch">
-      Լույսի Օղակ
+    <div className="dzgvox_arastax_material">
+    
       {
         rowId.map((el: any, index: any) => {
           return (
-            <div className="divStretchInput" key={Math.random()}>
+            <div className="divStretchInput1" key={Math.random()}>
               <select id="selectCoop" key={Math.random()} {...register("lightRing_" + el)}>
 
                 {
                   stretchLightRing.arrStretchLightRing && stretchLightRing.arrStretchLightRing.length > 0 ?
-                  stretchLightRing.arrStretchLightRing.map((e: any) => {
+                    stretchLightRing.arrStretchLightRing.map((e: any) => {
                       return (
                         <option key={e._id} value={e._id}>{e.name}</option>
                       )
@@ -55,13 +55,13 @@ const LightRingSection: React.FC<any> = ({ register }: any) => {
                     null
                 }
               </select>
-              <input id="quantity" key={Math.random()} type="number" className="inputNumber" placeholder="Quantity"  {...register("lightRingQuantity_" + el)} />
-              <button className='btn' type="button" onClick={(e) => removeRow(index)} >Հեռացնել</button>
+              <input id="quantity" key={Math.random()} type="number" className="dzgvox_arastax_quantity" placeholder="Quantity"  {...register("lightRingQuantity_" + el)} />
+              <button className='btn btn1' type="button" onClick={(e) => removeRow(index)} >Հեռացնել</button>
             </div>
           )
         })
       }
-      <button type="button" className='btn' onClick={addRow}>Ավելացնել տող</button>
+      <button type="button" className='btn btn1' onClick={addRow}>Լույսի Օղակ</button>
     </div>
   );
 };

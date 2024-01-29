@@ -76,3 +76,62 @@
     gap: 10px;
     padding: 5px;
 } */
+
+
+.admin_tbl_select1 {
+    width: 50%;
+    background-color: rgb(245, 245, 245);
+}
+
+.admin_tbl_select2 {
+    width: 50%;
+    background-color: rgb(245, 245, 245);
+}
+
+.admin_tbl_select3 {
+    
+    background-color: rgb(245, 245, 245);
+}
+
+.admin_tbl_select4 {
+    background-color: rgb(245, 245, 245);
+
+}
+.profile{
+    display: flex;  
+    padding: 5px;
+ 
+    background-color: rgb(218, 212, 212);
+
+}
+.profile_info {  
+    display: flex;
+   
+    
+}
+.profile_date div{
+    padding: 5px;
+    
+}
+.profile_buyer_name div{
+    padding: 5px;
+}
+
+.profile_info_1{  
+    width: 100%;
+
+}
+.profile_info_1_1{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.profile_info_1_1 h6{
+    padding: 5px;
+}
+.profile_buyer_name button{   
+    width: 100%;    
+}
+.btn1{
+    color: black;
+}

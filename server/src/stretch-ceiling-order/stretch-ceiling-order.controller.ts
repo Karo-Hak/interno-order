@@ -4,6 +4,7 @@ import { CreateStretchCeilingOrderDto } from './dto/create-stretch-ceiling-order
 import { UpdateStretchCeilingOrderDto } from './dto/update-stretch-ceiling-order.dto';
 import { Response } from 'express';
 import { StretchBuyerService } from 'src/stretch-buyer/stretch-buyer.service';
+import { log } from 'console';
 
 
 @Controller('stretch-ceiling-order')
@@ -15,6 +16,7 @@ export class StretchCeilingOrderController {
 
   @Post()
   async create(@Body() obj: any, @Res() res: Response) {
+    
     try {
       let orderBuyer
       if (obj.addOrder.buyer.buyerId) {

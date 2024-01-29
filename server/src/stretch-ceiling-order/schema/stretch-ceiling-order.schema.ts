@@ -42,6 +42,8 @@ export class StretchCeilingOrder {
     buyer: StretchBuyer;
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "User" })
     user: User;
+    @Prop()
+    code: string;
 }
 
 

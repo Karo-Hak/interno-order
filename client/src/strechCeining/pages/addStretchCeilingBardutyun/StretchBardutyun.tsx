@@ -57,14 +57,16 @@ export const StretchBardutyun: React.FC = (): JSX.Element => {
 
     return (
         <>
-            <div className="profile">
+            <div className="addStretchBuyer_head">
+                <div className="addStretchBuyer_head_name">Gnordi tvyalner</div>
+
                 <form onSubmit={handleSubmit(newStretchBardutyun)} >
-                    <div className="divAllStrech">
-                        <div>
+                    <div className="addStrerchBuyer_info">
+                        <div className="addStrerchBuyer_info_section">
                             <label htmlFor="name">Անվանում</label>
-                            <input id="name"  type="text" placeholder="Name"  {...register("name", { required: true })} />
+                            <input id="name" type="text" placeholder="Name"  {...register("name", { required: true })} />
                         </div>
-                        <div>
+                        <div className="addStrerchBuyer_info_section">
                             <label htmlFor="unyt">Չ/Մ</label>
                             <select id="unyt" {...register("unyt", { required: true })}>
                                 {
@@ -78,20 +80,20 @@ export const StretchBardutyun: React.FC = (): JSX.Element => {
                                         null
                                 }
                             </select>
+
                         </div>
-                        <div>
-                            <label htmlFor="price">Գին</label>
-                            <input id="price"  type="number" placeholder="Price"  {...register("price", { required: true })} />
+
+                        <div className="addStrerchBuyer_info_section">
+                            <button className="btn btn1">Գրանցել</button>
                         </div>
-                    </div>
-                    <div>
-                        <button className="btn">Գրանցել</button>
                     </div>
                 </form>
                 {
                     stretchBardutyun.arrStretchBardutyun && stretchBardutyun.arrStretchBardutyun.length > 0 ?
-                        <div className="profile">
-                            <table className="table" style={{ color: "white" }}>
+                        <div className="addStretchBuyer_table">
+                            <div className="addStretchBuyer_head_name">Gnordneri cucak</div>
+
+                            <table className="table" >
                                 <thead>
                                     <tr>
                                         <th scope="col">Անվանում</th>

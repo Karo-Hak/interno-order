@@ -63,64 +63,75 @@ const AdditionalSection: React.FC<any> = ({ register, reset, setValue }: any) =>
   };
 
   return (
-    <div className="formdivStretch">
-      Լռացուցիչ
-      {rowId.map((el: any, index: any) => (
-        <div className="divStretchInput" key={el}>
-          <select id={`selectCoop_${el}`} {...register(`additional_${el}`)} onChange={(e) => selectAdditionalPrice(e, el)}>
-            <option>Լռացուցիչ</option>
-            {stretchAdditional.arrStretchAdditional && stretchAdditional.arrStretchAdditional.length > 0
-              ? stretchAdditional.arrStretchAdditional.map((e: any) => (
-                <option key={e._id} value={e._id}>
-                  {e.name}
-                </option>
-              ))
-              : null}
-          </select>
-          <input
-            id={`price_${el}`}
-            type="number"
-            className="inputNumber"
-            placeholder="Price"
-            value={priceValues[el] || 0}
-            {...register(`additionalPrice_${el}`)}
-            onChange={(e) => {
-              setPriceValues(prevValues => ({ ...prevValues, [el]: parseFloat(e.target.value) }));
-              handleQuantityChange(e, el);
-            }}
-          />
-          <input
-            id={`quantity_${el}`}
-            type="number"
-            className="inputNumber"
-            placeholder="Quantity"
-            {...register(`additionalQuantity_${el}`)}
-            onChange={(e) => {
-              handleQuantityChange(e, el);
-            }}
-          />
-          <input
-            id={`total_${el}`}
-            type="number"
-            className="inputNumber"
-            placeholder="Total"
-            {...register(`additionalTotal_${el}`)}
-          />
-          <button className="btn" type="button" onClick={(e) => removeRow(index, e, el)}>
-            Հեռացնել
+    <div className="formdivStretch1">
+      <div className='additionalDiv'>
+
+        {rowId.map((el: any, index: any) => (
+          <div className="divStretchInput1" key={el}>
+            <select id={`selectCoop_${el}`} {...register(`additional_${el}`)} onChange={(e) => selectAdditionalPrice(e, el)}>
+              <option>Լռացուցիչ</option>
+              {stretchAdditional.arrStretchAdditional && stretchAdditional.arrStretchAdditional.length > 0
+                ? stretchAdditional.arrStretchAdditional.map((e: any) => (
+                  <option key={e._id} value={e._id}>
+                    {e.name}
+                  </option>
+                ))
+                : null}
+            </select>
+            <input
+              id={`price_${el}`}
+              type="number"
+              className='stretchInput'
+              placeholder="Price"
+              value={priceValues[el] || 0}
+              {...register(`additionalPrice_${el}`)}
+              onChange={(e) => {
+                setPriceValues(prevValues => ({ ...prevValues, [el]: parseFloat(e.target.value) }));
+                handleQuantityChange(e, el);
+              }}
+            />
+            <input
+              id={`quantity_${el}`}
+              type="number"
+              className='stretchInput'
+              placeholder="Quantity"
+              {...register(`additionalQuantity_${el}`)}
+              onChange={(e) => {
+                handleQuantityChange(e, el);
+              }}
+            />
+            <input
+              id={`total_${el}`}
+              type="number"
+              className='stretchInput'
+              placeholder="Total"
+              {...register(`additionalTotal_${el}`)}
+            />
+            <button className="btn btn1" type="button" onClick={(e) => removeRow(index, e, el)}>
+              Հեռացնել
+            </button>
+          </div>
+        ))}
+        <div>
+
+          <button type="button" className="btn btn1" onClick={addRow}>
+            Լռացուցիչ
           </button>
         </div>
-      ))}
-      <div>
-        <button type="button" className="btn" onClick={addRow}>
-          Ավելացնել տող
-        </button>
-        <textarea style={{ width: "100%", height: "250px", margin: "5px" }}
+        <div>
+
+
+        </div>
+      </div>
+      <div className='dzgvox_arastax_nkaragrutyun'>
+
+        <textarea
           placeholder='Նկարագրություն'
           {...register(`orderComment`)}
         ></textarea>
       </div>
     </div>
+
   );
 };
 

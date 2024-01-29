@@ -6,9 +6,12 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { getAllTexture, newTexture } from "../../features/texture/textureApi";
 import { Texture, selectTexture } from "../../features/texture/textureSlice";
 import "./addTexture.css"
+import { selectUser } from "../../features/user/userSlice";
+import { userProfile } from "../../features/user/userApi";
 
 export const AddTexture: React.FC = (): JSX.Element => {
     const dispatch = useAppDispatch();
+    const user = useAppSelector(selectUser);
     const texture = useAppSelector(selectTexture);
     const navigate = useNavigate();
     const [cookies, setCookie] = useCookies(['access_token']);
@@ -19,6 +22,13 @@ export const AddTexture: React.FC = (): JSX.Element => {
             if ("error" in res) {
                 setCookie("access_token", '', { path: '/' })
                 navigate("/")
+            }
+        })
+        dispatch(userProfile(cookies)).unwrap().then(res => {
+            if ("error" in res) {
+                // setCookie("access_token", '', { path: '/' })
+                // navigate("/")
+                alert(res)
             }
         })
     }, [])
@@ -32,8 +42,45 @@ export const AddTexture: React.FC = (): JSX.Element => {
         window.location.reload()
     }
 
+    const addBuyer = () => {
+        navigate('/wallpaper/addBuyer');
+    }
+    const addCooperate = () => {
+        if (user.profile.role === "admin") {
+            navigate("/wallpaper/addCooperate")
+        }
+    }
+    const addTexture = () => {
+        if (user.profile.role === "admin") {
+            navigate("/wallpaper/addTexture")
+        }
+    }
+    const search = () => {
+        navigate("/wallpaper/searchOrder")
+    }
+    const openOrderForm = () => {
+        navigate("/wallpaper")
+    }
+
     return (
         <div>
+            <div className="admin_profile">
+                <div >
+                    {/* <button className="btn" onClick={openCoopSpher}>Add cooperation sphere</button> */}
+                    <button className="btn" onClick={openOrderForm}>Ավելացնել Պատվեր</button>
+                    <button className="btn" onClick={addBuyer} >Ավելացնել Գնորդ</button>
+                    {
+                        user.profile && user.profile.role === "admin" ?
+                            <>
+                                <button className="btn" onClick={addCooperate} >Ավելացնել Գործընկեր</button>
+                                <button className="btn" onClick={addTexture} >Ավելացնել Տեսակ</button>
+                            </>
+                            :
+                            null
+                    }
+                    <button className="btn" onClick={search} >Դիտել Պատվերները</button>
+                </div>
+            </div>
             <div className="divTexture">
                 <form className="divBtn" onSubmit={handleSubmit(saveTexture)}>
                     <div style={{ display: "flex", flexDirection: "column" }}>

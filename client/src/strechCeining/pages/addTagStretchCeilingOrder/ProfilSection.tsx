@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { useCookies } from 'react-cookie';
 import { selectStretchProfil } from '../../strechProfil/strechProfilSlice';
 import { getAllStretchProfil } from '../../strechProfil/strechProfilApi';
-
+import './tagStretchOrder.css'
 const ProfilSection: React.FC<any> = ({ register }: any) => {
 
   const dispatch = useAppDispatch();
@@ -34,12 +34,11 @@ const ProfilSection: React.FC<any> = ({ register }: any) => {
   }
 
   return (
-    <div className="formdivStretch">
-      Պրոֆիլ
+    <div className="dzgvox_arastax_material">
       {
         rowId.map((el: any, index: any) => {
           return (
-            <div className="divStretchInput" key={Math.random()}>
+            <div className="divStretchInput1" key={Math.random()}>
               <select id="selectCoop" key={Math.random()} {...register("profil_" + el)}>
                 {
                   stretchProfil.arrStretchProfil && stretchProfil.arrStretchProfil.length > 0 ?
@@ -56,12 +55,12 @@ const ProfilSection: React.FC<any> = ({ register }: any) => {
                 id="quantity"
                 key={Math.random()}
                 type="number"
-                className="inputNumber"
+                className="dzgvox_arastax_quantity"
                 placeholder="Quantity"
                 {...register("profilQuantity_" + el)}
               />
               <button
-                className='btn'
+                className='btn btn1'
                 type="button"
                 onClick={(e) => removeRow(index)}
               >
@@ -71,7 +70,7 @@ const ProfilSection: React.FC<any> = ({ register }: any) => {
           )
         })
       }
-      <button type="button" className='btn' onClick={addRow}>Ավելացնել տող</button>
+      <button type="button" className='btn btn1' onClick={addRow}>Պրոֆիլ</button>
     </div>
   );
 };

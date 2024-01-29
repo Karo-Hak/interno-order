@@ -93,80 +93,80 @@ const StretchTexturesSection: React.FC<any> = ({ register, reset, setValue, edit
 
     return (
         <div className="formdivStretch">
-            Ձգվող Առաստաղ
-            {rowId.map((el: any, index: any) => (
-                <div key={el}>
-                    <select
-                        key={el}
-                        {...register("stretchTexture_" + el)}
-                        onChange={(e) => selectTexturePrice(e, el)}
-                    >
-                        <option>Ձգվող Առաստաղ</option>
 
-                        {stretchTexture.arrStretchTexture && stretchTexture.arrStretchTexture.length > 0
-                            ? stretchTexture.arrStretchTexture.map((e: any) => (
-                                <option key={e._id} value={e._id}>{e.name}</option>
-                            ))
-                            : null}
-                    </select>
-                    <input
-                        id={`price_${el}`}
-                        type="number"
-                        className="inputNumber"
-                        placeholder="Price"
-                        value={priceValues[el] || 0}
-                        {...register(`stretchPrice_${el}`)}
-                        onChange={(e) => {
-                            setPriceValues(prevValues => ({ ...prevValues, [el]: parseFloat(e.target.value) }));
-                            selectedSquerValues(e, el);
-                            selectedTotalValues(e, el)
-                        }}
-                    />
-                    <input
-                        key={Math.random()}
-                        className="inputNumber"
-                        type='number'
-                        id={`width_${el}`}
-                        placeholder="Width"
-                        {...register("stretchWidth_" + el)}
-                        onChange={(e) => {
-                            selectedSquerValues(e, el);
-                            selectedTotalValues(e, el)
-                        }}
-                    />
-                    <input
-                        key={Math.random()}
-                        className="inputNumber"
-                        type='number'
-                        id={`height_${el}`}
-                        placeholder="Height"
-                        {...register("stretchHeight_" + el)}
-                        onChange={(e) => {
-                            selectedSquerValues(e, el)
-                            selectedTotalValues(e, el)
-                        }}
-                    />
-                    <input
-                        key={Math.random()}
-                        className="inputNumber"
-                        id={`squer_${el}`}
-                        placeholder="Squer"
-                        {...register("stretchSquer_" + el)}
-                        onChange={(e) => selectedTotalValues(e, el)}
-                    />
-                    <input
-                        key={Math.random()}
-                        className="inputNumber"
-                        type='number'
-                        id={`total_${el}`}
-                        placeholder="Total"
-                        {...register("stretchTotal_" + el)}
-                    />
-                    <button className='btn' type="button" onClick={(e) => removeRow(index, e, el)} >Հեռացնել</button>
-                </div>
-            ))}
-            <button type="button" className='btn' onClick={addRow}>Ավելացնել տող</button>
-        </div>
+        {rowId.map((el: any, index: any) => (
+            <div key={el} className='dzgvox_arastax_chap'>
+                <select
+                    key={el}
+                    {...register("stretchTexture_" + el)}
+                    onChange={(e) => selectTexturePrice(e, el)}
+                >
+                    <option>Ձգվող Առաստաղ</option>
+
+                    {stretchTexture.arrStretchTexture && stretchTexture.arrStretchTexture.length > 0
+                        ? stretchTexture.arrStretchTexture.map((e: any) => (
+                            <option key={e._id} value={e._id}>{e.name}</option>
+                        ))
+                        : null}
+                </select>
+                <input
+                    className='stretchInput'
+                    id={`price_${el}`}
+                    type="number"
+                    placeholder="Price"
+                    value={priceValues[el] || 0}
+                    {...register(`stretchPrice_${el}`)}
+                    onChange={(e) => {
+                        setPriceValues(prevValues => ({ ...prevValues, [el]: parseFloat(e.target.value) }));
+                        selectedSquerValues(e, el);
+                        selectedTotalValues(e, el)
+                    }}
+                />
+                <input
+                    className='stretchInput'
+                    key={Math.random()}
+                    type='number'
+                    id={`width_${el}`}
+                    placeholder="Width"
+                    {...register("stretchWidth_" + el)}
+                    onChange={(e) => {
+                        selectedSquerValues(e, el);
+                        selectedTotalValues(e, el)
+                    }}
+                />
+                <input
+                    className='stretchInput'
+                    key={Math.random()}
+                    type='number'
+                    id={`height_${el}`}
+                    placeholder="Height"
+                    {...register("stretchHeight_" + el)}
+                    onChange={(e) => {
+                        selectedSquerValues(e, el)
+                        selectedTotalValues(e, el)
+                    }}
+                />
+                <input
+                    className='stretchInput'
+                    key={Math.random()}
+                    id={`squer_${el}`}
+                    placeholder="Squer"
+                    {...register("stretchSquer_" + el)}
+                    onChange={(e) => selectedTotalValues(e, el)}
+                />
+                <input
+                    className='stretchInput'
+                    key={Math.random()}
+                    type='number'
+                    id={`total_${el}`}
+                    placeholder="Total"
+                    {...register("stretchTotal_" + el)}
+                />
+                <button className='btn btn1' type="button" onClick={(e) => removeRow(index, e, el)} >Հեռացնել</button>
+            </div>
+        ))}
+        <button type="button" className='btn btn1' onClick={addRow}>Ձգվող Առաստաղ</button>
+    </div>
     );
 };
 

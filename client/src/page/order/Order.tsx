@@ -62,15 +62,15 @@ export const Order: React.FC = (): JSX.Element => {
 
     return (
         <div>
-            <div className="profile">
+            <div className="profile oreder_profile">
 
                 {
                     order?.order._id ?
                         <div className='divOrder'>
                             <div>
                                 <h5 >Date - {parseDate(order.order.date)} | Status - {order.order.status}</h5>
-                                Գնորդ
-                                <table className="table" style={{ color: "white" }}>
+                                <h6> Գնորդ</h6>
+                                <table className="table">
                                     <thead>
                                         <tr>
                                             <th scope="col">Անուն</th>
@@ -89,8 +89,9 @@ export const Order: React.FC = (): JSX.Element => {
                                 {
                                     order?.order.cooperate ?
                                         <div>
-                                            Գործընկեր
-                                            <table className="table" style={{ color: "white" }}>
+                                            <h6>   Գործընկեր</h6>
+
+                                            <table className="table" >
                                                 <thead>
                                                     <tr>
                                                         <th scope="col">Անուն</th>
@@ -112,7 +113,11 @@ export const Order: React.FC = (): JSX.Element => {
                                         :
                                         null
                                 }
-                                <table className="table" style={{ color: "white" }}>
+                                <div>
+                                    <h6>Ֆոտոպաստառ</h6>
+
+                                </div>
+                                <table className="table" >
                                     <thead>
                                         <tr>
                                             <th scope="col">Եր/Լա</th>
@@ -144,25 +149,32 @@ export const Order: React.FC = (): JSX.Element => {
                                     <h5>Մնացորդ {order.order.groundTotal}</h5>
                                     <ImageUpload />
                                 </div>
-                                <div>
-                                    <button className='btn' onClick={handleOpenModal}>Կատարել Վճարում</button>
-                                    <InputModal isOpen={isModalOpen} onClose={handleCloseModal} />
-                                </div>
-                                {
-                                    user?.profile && user?.profile.role == "admin" && order?.order.status === "progress" ?
-                                        <div>
-                                            <button className='btn' onClick={() => orderDone(order.order._id)}>Ավարտված</button>
-                                        </div>
-                                        :
-                                        null
+                                <div className='order_profile_pay'>
+
+                                    <div>
+                                        <button className='btn btn1' onClick={handleOpenModal}>Կատարել Վճարում</button>
+                                        <InputModal isOpen={isModalOpen} onClose={handleCloseModal} />
+                                    </div>
+                                    {
+                                        user?.profile && user?.profile.role == "admin" && order?.order.status === "progress" ?
+                                            <div>
+                                                <button className='btn btn1' onClick={() => orderDone(order.order._id)}>Ավարտված</button>
+                                            </div>
+                                            :
+                                            null
                                     }
-                                    <button className='btn' onClick={() => updateOrderInfo(order.order_id)}>Փոխել</button>
+                                    <button className='btn bt1' onClick={() => updateOrderInfo(order.order_id)}>Փոխել</button>
+                                </div>
                             </div>
-                            <div style={{ border: "2px solid whight" }}>
-                                <h6>{order.order.comment}</h6>
-                            </div>
-                            <div>
-                                <img src={order.order.picUrl} className='rounded float-end orderImg'></img>
+                            <div className='order_profile_comment_pic'>
+
+                                <div className='order_profile_comment'>
+                                    <h6>Comment</h6>
+                                    <div className='comment'>{order.order.comment}</div>
+                                </div>
+                                <div>
+                                    <img src={order.order.picUrl} className='rounded float-end orderImg'></img>
+                                </div>
                             </div>
                         </div>
                         :

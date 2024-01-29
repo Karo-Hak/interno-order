@@ -7,18 +7,28 @@ import { StretchBuyer, StretchBuyerSchema } from 'src/stretch-buyer/schema/stret
 import { StretchBuyerModule } from 'src/stretch-buyer/stretch-buyer.module';
 import { User, UserSchema } from 'src/user/schema/user.schema';
 import { UserModule } from 'src/user/user.module';
+import { StretchTexture, StretchTextureSchema } from 'src/stretch-texture/schema/stretch-texture.schema';
+import { Additional, AdditionalSchema } from 'src/additional/schema/additional.schema';
+import { Profil, ProfilSchema } from 'src/profil/schema/profil.schema';
+import { ProfilService } from 'src/profil/profil.service';
+import { LightRingService } from 'src/light-ring/light-ring.service';
+import { LightRing, LightRingSchema } from 'src/light-ring/schema/light-ring.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: StretchCeilingOrder.name, schema: StretchCeilingOrderSchema },
       { name: StretchBuyer.name, schema: StretchBuyerSchema },
+      { name: StretchTexture.name, schema: StretchTextureSchema },
+      { name: Additional.name, schema: AdditionalSchema },
+      { name: Profil.name, schema: ProfilSchema },
+      { name: LightRing.name, schema: LightRingSchema },
       { name: User.name, schema: UserSchema },
     ]),
     StretchBuyerModule, UserModule
   ],
   controllers: [StretchCeilingOrderController],
-  providers: [StretchCeilingOrderService],
+  providers: [StretchCeilingOrderService, ProfilService, LightRingService],
   exports: [StretchCeilingOrderService]
 })
 export class StretchCeilingOrderModule { }

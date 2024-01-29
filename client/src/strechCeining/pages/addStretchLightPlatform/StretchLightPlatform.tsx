@@ -50,10 +50,12 @@ export const StretchLightPlatform: React.FC = (): JSX.Element => {
 
     return (
         <>
-            <div className="profile">
+            <div className="addStretchBuyer_head">
+            <div className="addStretchBuyer_head_name">Gnordi tvyalner</div>
+
                 <form onSubmit={handleSubmit(newLightPlatform)} >
-                    <div className="divAllStrech">
-                        <div>
+                    <div className="addStrerchBuyer_info">
+                        <div className="addStrerchBuyer_info_section">
                             <label htmlFor="name">Անվանում</label>
                             <select id="id"  {...register("id", { required: true })}>
                                 <option></option>
@@ -69,19 +71,21 @@ export const StretchLightPlatform: React.FC = (): JSX.Element => {
                                 }
                             </select>
                         </div>
-                        <div>
+                        <div className="addStrerchBuyer_info_section">
                             <label htmlFor="price">Գին</label>
                             <input id="price" type="number" placeholder="Price"  {...register("price", { required: true })} />
                         </div>
+                    <div className="addStrerchBuyer_info_section">
+                        <button className="btn btn1">Գրանցել</button>
                     </div>
-                    <div>
-                        <button className="btn">Գրանցել</button>
                     </div>
                 </form>
                 {
                     stretchLightPlatform.arrStretchLightPlatform && stretchLightPlatform.arrStretchLightPlatform.length > 0 ?
-                        <div className="profile">
-                            <table className="table" style={{ color: "white" }}>
+                        <div className="addStretchBuyer_table">
+                            <div className="addStretchBuyer_head_name">Gnordneri cucak</div>
+
+                            <table className="table">
                                 <thead>
                                     <tr>
                                         <th scope="col">Անվանում</th>

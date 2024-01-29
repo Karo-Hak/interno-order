@@ -27,6 +27,7 @@ const LightRingSection: React.FC<any> = ({ register, reset, setValue, editingLig
   function addRow() {
     setRowId(prevRowId => [...prevRowId, prevRowId.length + 1]);
   }
+
   useEffect(() => {
     if (editingLightRings) {
       const newRows = Object.values(editingLightRings).map((el: any, index: number) => {
@@ -45,17 +46,17 @@ const LightRingSection: React.FC<any> = ({ register, reset, setValue, editingLig
     setRowId(prevRowId => prevRowId.filter((_, i) => i !== index));
   }
   return (
-    <div className="formdivStretch">
-      Լույսի Օղակ
+    <div className="dzgvox_arastax_material">
+
       {
         rowId.map((el: any, index: any) => {
           return (
-            <div className="divStretchInput" key={Math.random()}>
+            <div className="divStretchInput1" key={Math.random()}>
               <select id="selectCoop" key={Math.random()} {...register("lightRing_" + el)}>
 
                 {
                   stretchLightRing.arrStretchLightRing && stretchLightRing.arrStretchLightRing.length > 0 ?
-                  stretchLightRing.arrStretchLightRing.map((e: any) => {
+                    stretchLightRing.arrStretchLightRing.map((e: any) => {
                       return (
                         <option key={e._id} value={e._id}>{e.name}</option>
                       )
@@ -64,13 +65,13 @@ const LightRingSection: React.FC<any> = ({ register, reset, setValue, editingLig
                     null
                 }
               </select>
-              <input id="quantity" key={Math.random()} type="number" className="inputNumber" placeholder="Quantity"  {...register("lightRingQuantity_" + el)} />
-              <button className='btn' type="button" onClick={(e) => removeRow(index, e, el)} >Հեռացնել</button>
+              <input id="quantity" key={Math.random()} type="number" className="dzgvox_arastax_quantity" placeholder="Quantity"  {...register("lightRingQuantity_" + el)} />
+              <button className='btn btn1' type="button" onClick={(e) => removeRow(index, e, el)} >Հեռացնել</button>
             </div>
           )
         })
       }
-      <button type="button" className='btn' onClick={addRow}>Ավելացնել տող</button>
+      <button type="button" className='btn btn1' onClick={addRow}>Լույսի օղակ</button>
     </div>
   );
 };

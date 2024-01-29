@@ -37,7 +37,7 @@ export const TagStretchCeiling: React.FC = (): JSX.Element => {
     }
     return (
         <>
-            <div className="profile">
+            <div className="admin_profile_Strech">
                 <div >
                     <button className="btn" onClick={newTagStretchOrder} >Նոր Պատվեր</button>
                     <select onChange={(e) => goTo(e)} className="btn" style={{ height: "35px" }}>
@@ -53,7 +53,7 @@ export const TagStretchCeiling: React.FC = (): JSX.Element => {
                     <button className="btn">Դիտել Պատվերները</button>
                 </div>
             </div>
-            <div className="profile">
+            <div className="newStretchOrderSection">
                 <NewStretchOrderSection />
             </div>
         </>

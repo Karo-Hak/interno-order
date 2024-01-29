@@ -161,64 +161,127 @@ export const SearchOrder: React.FC = (): JSX.Element => {
     }
     totalCooperateTotal = +totalCooperateTotal.toFixed(3)
 
+   
+
+    const filteredBuyer = searchOrderRes.arr.filter((obj: any, index: any, self: any) =>
+        index === self.findIndex((t: any) => (t.buyer._id === obj.buyer._id))
+    );
+
+    const filteredCoop = searchOrderRes.arr.filter((obj: any, index: any, self: any) =>
+        index === self.findIndex((t: any) => (t.cooperate._id === obj.cooperate._id))
+    );
+
+    const addBuyer = () => {
+        navigate('/wallpaper/addBuyer');
+    }
+    const addCooperate = () => {
+        if (user.profile.role === "admin") {
+            navigate("/wallpaper/addCooperate")
+        }
+    }
+    const addTexture = () => {
+        if (user.profile.role === "admin") {
+            navigate("/wallpaper/addTexture")
+        }
+    }
+    const search = () => {
+       navigate("/wallpaper/searchOrder")
+    }
+    const openOrderForm = ()=>{
+        navigate("/wallpaper")
+    }
+
+
+ 
     return (
         <div >
-            <div className="profile ">
-                <div style={{ display: "flex", gap: "5px" }}>
-                    <div className="inputDiv">
-                        <label htmlFor="startDate">Ամսատիվ սկիզբ</label>
-                        <input id="startDate" type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-                    </div>
-                    <div className="inputDiv">
-                        <label htmlFor="endDate">Ամսաթիվ վերջ</label>
-                        <input id="endDate" type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-                    </div>
-                    <div className="inputDiv">
-                        <label htmlFor="user">Օգտատեր</label>
-                        <select id="user" onChange={selUser}>
-                            <option value={0}>Select</option>
-
-                            {
-                                user?.arrUser && user.arrUser.length > 0 ?
-                                    user.arrUser.map((e: any) => {
-                                        return (
-                                            <option key={e._id} value={e._id}>{e.name} {e.surname}</option>
-                                        )
-                                    })
-                                    :
-                                    null
-                            }
-                        </select>
-                    </div>
-                 
+              <div className="admin_profile">
+                <div >
+                    {/* <button className="btn" onClick={openCoopSpher}>Add cooperation sphere</button> */}
+                    <button className="btn" onClick={openOrderForm}>Ավելացնել Պատվեր</button>
+                    <button className="btn" onClick={addBuyer} >Ավելացնել Գնորդ</button>
+                    {
+                        user.profile && user.profile.role === "admin" ?
+                            <>
+                                <button className="btn" onClick={addCooperate} >Ավելացնել Գործընկեր</button>
+                                <button className="btn" onClick={addTexture} >Ավելացնել Տեսակ</button>
+                            </>
+                            :
+                            null
+                    }
+                    <button className="btn" onClick={search} >Դիտել Պատվերները</button>
                 </div>
-                <button className="btn" onClick={searchReset}>Չեղարկել</button>
-                <div className="divTotal">
-                    <div>
-                        <h6>Ք/Մ - {totalSqMetr}</h6>
-                        <h6>Գ/Ծ - {totalMetr}</h6>
-                        <h6>Գումար - {totalTotal}</h6>
+            </div>
+            <div className="profile ">
+                <div className="profile_info">
+
+                    <div className="profile_date">
+                        <div className="buyer_label">
+                            <label htmlFor="startDate">Ամսատիվ սկիզբ</label>
+                            <input id="startDate" type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                        </div>
+                        <div className="buyer_label">
+                            <label htmlFor="endDate">Ամսաթիվ վերջ</label>
+                            <input id="endDate" type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                        </div>
+
                     </div>
-                    <div>
-                        <h6>Վճարված - {totalPrepayment}</h6>
-                        <h6>Մնացորդ - {totalGroundTotal}</h6>
-                        <h6>Գործ․ Գումար - {totalCooperateTotal}</h6>
+                    <div className="profile_buyer_name">
+
+                        <div className="buyer_label">
+                            <label htmlFor="user">Օգտատեր</label>
+                            <select id="user" onChange={selUser}>
+                                <option value={0}>Select</option>
+
+                                {
+                                    user?.arrUser && user.arrUser.length > 0 ?
+                                        user.arrUser.map((e: any) => {
+                                            return (
+                                                <option key={e._id} value={e._id}>{e.name} {e.surname}</option>
+                                            )
+                                        })
+                                        :
+                                        null
+                                }
+                            </select>
+                        </div>
+                        <button className="btn btn1" onClick={searchReset}>Չեղարկել</button>
+                    </div>
+                </div>
+
+                <div className="profile_info_1">
+
+                    <div className="profile_info_1_1">
+                        <div>
+                            <h6>Ք/Մ - {totalSqMetr}</h6>
+                            <h6>Գ/Ծ - {totalMetr}</h6>
+
+                        </div>
+                        <div>
+                            <h6>Գումար - {totalTotal}</h6>
+                            <h6>Վճարված - {totalPrepayment}</h6>
+                        </div>
+                        <div>
+
+                            <h6>Մնացորդ - {totalGroundTotal}</h6>
+                            <h6>Գործ․ Գումար - {totalCooperateTotal}</h6>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div className="divTable">
-                <table className="table" style={{ color: "white" }}>
+            <div className="admin_profile_list">
+                <table className="admin_profile_table" >
                     <thead >
                         <tr>
                             <th scope="col">Ամսաթիվ</th>
                             <th scope="col">
-                                <select id="buyer" className="seltype" onChange={selBuyer}>
+                                <select id="buyer" className="admin_tbl_select1" onChange={selBuyer}>
                                     <option value={0}>Գնորդ</option>
                                     {
-                                        buyer?.arrBuyer && buyer.arrBuyer.length > 0 ?
-                                            buyer.arrBuyer.map((e: any) => {
+                                        filteredBuyer && filteredBuyer.length > 0 ?
+                                            filteredBuyer.map((e: any) => {
                                                 return (
-                                                    <option key={e._id} value={e._id}>{e.name} {e.surname}</option>
+                                                    <option key={e._id} value={e.buyer._id}>{e.buyer.name} {e.buyer.surname}</option>
                                                 )
                                             })
                                             :
@@ -227,13 +290,13 @@ export const SearchOrder: React.FC = (): JSX.Element => {
                                 </select>
                             </th>
                             <th scope="col">
-                                <select id="cooperate" className="seltype" onChange={selCooperate}>
+                                <select id="cooperate" className="admin_tbl_select2" onChange={selCooperate}>
                                     <option value={0}>Գործընկեր</option>
                                     {
-                                        cooperate?.arrCooperate && cooperate.arrCooperate.length > 0 ?
-                                            cooperate.arrCooperate.map((e: any) => {
+                                        filteredCoop && filteredCoop.length > 0 ?
+                                            filteredCoop.map((e: any) => {
                                                 return (
-                                                    <option key={e._id} value={e._id}>{e.name} {e.surname}</option>
+                                                    <option key={e._id} value={e.cooperate._id}>{e.cooperate.name} {e.cooperate.surname}</option>
                                                 )
                                             })
                                             :
@@ -249,7 +312,7 @@ export const SearchOrder: React.FC = (): JSX.Element => {
                             <th scope="col">Գումար</th>
                             <th scope="col">Վճարված</th>
                             <th scope="col">
-                                <select className="seltype" onChange={selGroundTotal}>
+                                <select className="admin_tbl_select4" onChange={selGroundTotal}>
                                     <option value={0}>Մնացորդ</option>
                                     <option className="selectCoop" value={"payed"} >Վճարված</option>
                                     <option className="selectCoop" value={"credited"}>Պարտք</option>
@@ -258,7 +321,7 @@ export const SearchOrder: React.FC = (): JSX.Element => {
                             <th scope="col">Գործ․ %</th>
                             <th scope="col">Գործ․ Գումար</th>
                             <th scope="col">
-                                <select id="paymentMethod" className="seltype" onChange={selPaymentMethod}>
+                                <select id="paymentMethod" className="admin_tbl_select4" onChange={selPaymentMethod}>
                                     <option value={0}>Վճ. եղանակ</option>
                                     <option className="selectCoop" value={"cash"} >Կանխիկ</option>
                                     <option className="selectCoop" value={"transfer"}>Փոխանցում</option>
@@ -269,7 +332,7 @@ export const SearchOrder: React.FC = (): JSX.Element => {
                                 </select>
                             </th>
                             <th>
-                                <select id="texture" className="seltype" onChange={selTexture}>
+                                <select id="texture" className="admin_tbl_select3" onChange={selTexture}>
                                     <option value={0}>Տեսակ</option>
 
                                     {
@@ -324,7 +387,7 @@ export const SearchOrder: React.FC = (): JSX.Element => {
                                                 null
 
                                         }
-                                        <td><button className="btn" onClick={() => viewOrder(e._id)}>Դիտել</button></td>
+                                        <td><button className="btn btn1" onClick={() => viewOrder(e._id)}>Դիտել</button></td>
                                     </tr>
                                 )
                             })

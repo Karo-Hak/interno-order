@@ -44,40 +44,43 @@ export const StretchBuyer: React.FC = (): JSX.Element => {
 
     }
 
-    console.log(buyer.arrStretchBuyer
-    );
+
 
     return (
         <>
 
-            <div className="profile">
+            <div className="addStretchBuyer_head">
+                <div className="addStretchBuyer_head_name">Gnordi tvyalner</div>
                 <form onSubmit={handleSubmit(addStretchBuyer)} >
-                    <div className="divAllStrech">
+                    <div className="addStrerchBuyer_info">
 
-                        <div>
+                        <div className="addStrerchBuyer_info_section">
                             <label htmlFor="name">Անուն</label>
                             <input id="name" type="text" placeholder="Name"  {...register("buyerName", { required: true })} />
                         </div>
-                        <div>
+                        <div className="addStrerchBuyer_info_section">
                             <label htmlFor="phone">Հեռախոս</label>
                             <input id="phone" type="number" placeholder="Phone"  {...register("buyerPhone", { required: true })} />
                         </div>
-                        <div>
+                        <div className="addStrerchBuyer_info_section">
                             <label htmlFor="adress">Հասցե</label>
                             <input id="adress" type="text" placeholder="Address"  {...register("buyerAddress", { required: true })} />
                         </div>
+                        <div className="addStrerchBuyer_info_section">
+                            <button className="btn btn1 ">Գրանցել</button>
+                        </div>
+                    </div>
 
-                    </div>
-                    <div>
-                        <button className="btn">Գրանցել</button>
-                    </div>
 
 
                 </form>
                 {
                     buyer.arrStretchBuyer && buyer.arrStretchBuyer.length > 0 ?
-                        <div className="profile" >
-                            <table className="table" style={{ color: "white" }}>
+
+                        <div className="addStretchBuyer_table" >
+                            <div className="addStretchBuyer_head_name">Gnordneri cucak</div>
+
+                            <table className="table " >
                                 <thead>
                                     <tr>
                                         <th scope="col">Անուն</th>

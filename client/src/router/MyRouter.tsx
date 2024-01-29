@@ -23,6 +23,7 @@ import { TagStretchCeiling } from "../strechCeining/pages/tagStretchCeiling/TagS
 import { TagStretchOrderx } from "../strechCeining/pages/addTagStretchCeilingOrder/TagStretchOrder"
 import { StretchAdditional } from "../strechCeining/pages/addStretchCeilingAdditional/StretchAdditional"
 import { EditTagStretchOrderx } from "../strechCeining/pages/editTagStretchCeilingOrder/EditTagStretchOrder"
+import { ViewStretchOrder } from "../strechCeining/pages/viewStretchOrder/ViewStretchOrder"
 
 // import { AllUser } from "../page/AllUser"
 
@@ -44,11 +45,11 @@ export const MyRouter: React.FC = (): JSX.Element => {
                     <Route path="/wallpaper" element={<AdminProfile />}></Route>
                     <Route path="/order/:id" element={<Order />}></Route>
                     <Route path="/newOrder/:id" element={<NewOrder />}></Route>
-                    <Route path="/searchOrder" element={<SearchOrder />}></Route>
+                    <Route path="/wallpaper/searchOrder" element={<SearchOrder />}></Route>
                     <Route path="/addUser" element={<AddUser />}></Route>
-                    <Route path="/addBuyer" element={<AddBuyer />}></Route>
-                    <Route path="/addCooperate" element={<AddCooperate />}></Route>
-                    <Route path="/addTexture" element={<AddTexture />}></Route>
+                    <Route path="/wallpaper/addBuyer" element={<AddBuyer />}></Route>
+                    <Route path="/wallpaper/addCooperate" element={<AddCooperate />}></Route>
+                    <Route path="/wallpaper/addTexture" element={<AddTexture />}></Route>
                     <Route path="/updateOrderInfo/:id" element={<UpdateOrderInfo />}></Route>
                     <Route path="/stretchceilingcoop" element={<CoopStretchCeiling />}></Route>
                     <Route path="/stretchTexture" element={<StretchTexture />}></Route>
@@ -62,6 +63,7 @@ export const MyRouter: React.FC = (): JSX.Element => {
                     <Route path="/stretchceiling/addStretchLightPlatform" element={<StretchLightPlatform />}></Route>
                     <Route path="/stretchceiling/addStretchLightRing" element={<StretchLightRing />}></Route>
                     <Route path="/stretchceiling/editStretchOrder/:id" element={<EditTagStretchOrderx />}></Route>
+                    <Route path="/stretchceiling/viewStretchOrder/:id" element={<ViewStretchOrder />}></Route>
                     <Route path="/coopStretchceiling/addCoopStretchOrder" element={<CoopStretchOrder />}></Route>
 
                 </Routes>

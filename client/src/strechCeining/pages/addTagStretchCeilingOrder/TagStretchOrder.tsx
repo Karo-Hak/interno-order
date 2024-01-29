@@ -79,37 +79,39 @@ export const TagStretchOrderx: React.FC = (): JSX.Element => {
                 alert(res.error)
             }
         });
-        // window.location.reload()
+        window.location.reload()
     };
 
 
 
     return (
-        <div className='strech'>
+        <div className=''>
             <form onSubmit={handleSubmit(qountTotal)}>
-                <BuyerSection register={register} setValue={setValue} />
-
-                <div className='streachOrder' >
-                    <StretchTexturesSection register={register} reset={reset} setValue={setValue} />
-                    <ProfilSection register={register} />
-                    <LightPlatformSection register={register} />
-                    <LightRingSection register={register} />
-                    <AdditionalSection register={register} reset={reset} setValue={setValue} />
+                <div className=''>
+                    <BuyerSection register={register} setValue={setValue} />
                 </div>
-
-
-                <div className="formdivStretch" style={{ display: "flex" }}>
-                    <PaymentSection register={register} />
-                    <div className="inputDiv">
-                        <label htmlFor="Sum">Ընդամենը</label>
-                        <input id="balance" type="number" placeholder="Balance" {...register('balance')} onChange={(e) => setOrderBalance(+e.target.value)} />
+                <div>
+                    <PaymentSection register={register} setOrderBalance={setOrderBalance} setOrderSum={setOrderSum} />
+                </div>
+                <div className='streachOrder' >
+                    <div className='patver_name'>Patver</div>
+                    <div className='patver_info'>
+                        <div className='patver_arastax'>
+                            <StretchTexturesSection register={register} reset={reset} setValue={setValue} />
+                            <AdditionalSection register={register} reset={reset} setValue={setValue} />
+                        </div>
+                        <div className='patver_arastax_profil'>
+                            <ProfilSection register={register} />
+                            <LightPlatformSection register={register} />
+                            <LightRingSection register={register} />
+                        </div>
                     </div>
-                    <div className="inputDiv">
-                        <label htmlFor="Sum">Մնացորդ</label>
-                        <input id="Sum" type="number" placeholder="Sum" {...register('groundTotal')} onChange={(e) => setOrderSum(+e.target.value)} />
+                </div>
+                <div className="formdivStretch_1" >
+                    <div className="buyer_label_1">
+                        <button className="btn btn1" type='button' onClick={newOrder}>Գրանցել</button>
+                        <button className='btn btn1' type='submit'>Հաշվարկել</button>
                     </div>
-                    <button className='btn' type='submit'>Հաշվարկել</button>
-                    <button className="btn" type='button' onClick={newOrder}>Գրանցել</button>
                 </div>
             </form>
         </div>

@@ -13,8 +13,8 @@ const PaymentSection: React.FC<any> = ({ register, setValue, paymentMethod, prep
   }, [paymentMethod, prepayment, installDate]);
 
   return (
-    <div className="profile">
-      <div className="inputDiv">
+    <div className="profile_arastax">
+      <div className="buyer_label_1">
         <label htmlFor="pey">Վճարման միջոց</label>
         <select id="pey" {...register("paymentMethod", { required: true })}>
           <option className="selectCoop" value={"cash"} >Կանխիկ</option>
@@ -25,13 +25,13 @@ const PaymentSection: React.FC<any> = ({ register, setValue, paymentMethod, prep
           <option className="selectCoop" value={"idram"}>Իդրամ</option>
         </select>
       </div>
-      <div className="inputDiv">
+      <div className="buyer_label_1">
         <label htmlFor="prepayment">Կանխավճար</label>
         <input id="prepayment" type="number" placeholder="prepayment" {...register('prepayment')} />
       </div>
-      <div className="inputDiv">
+      <div className="buyer_label_1">
         <label htmlFor="prepayment">Տեղադրում</label>
-        <input type="date" className="form-control" id="date" {...register('installDate')} />
+        <input type="date" id="date" {...register('installDate')} />
       </div>
 
     </div>
