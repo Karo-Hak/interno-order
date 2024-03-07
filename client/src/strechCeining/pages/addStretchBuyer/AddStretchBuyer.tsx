@@ -49,68 +49,95 @@ export const StretchBuyer: React.FC = (): JSX.Element => {
     return (
         <>
 
-            <div className="addStretchBuyer_head">
-                <div className="addStretchBuyer_head_name">Gnordi tvyalner</div>
-                <form onSubmit={handleSubmit(addStretchBuyer)} >
-                    <div className="addStrerchBuyer_info">
 
-                        <div className="addStrerchBuyer_info_section">
-                            <label htmlFor="name">Անուն</label>
-                            <input id="name" type="text" placeholder="Name"  {...register("buyerName", { required: true })} />
-                        </div>
-                        <div className="addStrerchBuyer_info_section">
-                            <label htmlFor="phone">Հեռախոս</label>
-                            <input id="phone" type="number" placeholder="Phone"  {...register("buyerPhone", { required: true })} />
-                        </div>
-                        <div className="addStrerchBuyer_info_section">
-                            <label htmlFor="adress">Հասցե</label>
-                            <input id="adress" type="text" placeholder="Address"  {...register("buyerAddress", { required: true })} />
-                        </div>
-                        <div className="addStrerchBuyer_info_section">
-                            <button className="btn btn1 ">Գրանցել</button>
-                        </div>
+            <div className="addStretchBuyer_head_name">Gnordi tvyalner</div>
+            <form onSubmit={handleSubmit(addStretchBuyer)} >
+                <div className="addStrerchBuyer_info">
+
+                    <div className="addStrerchBuyer_info_section">
+                        <label htmlFor="name">Անուն</label>
+                        <input
+                            id="name"
+                            type="text"
+                            placeholder="Name"
+                            {...register("buyerName", { required: true })} />
                     </div>
+                    <div className="addStrerchBuyer_info_section">
+                        <label htmlFor="phone">Հեռախոս</label>
+                        <input
+                            id="phone"
+                            type="number"
+                            placeholder="Phone"
+                            {...register("buyerPhone1", { required: true })} />
+                    </div>
+                    <div className="addStrerchBuyer_info_section">
+                        <label htmlFor="phone">Հեռախոս</label>
+                        <input
+                            id="phone"
+                            type="number"
+                            placeholder="Phone"
+                            {...register("buyerPhone2", { required: true })} />
+                    </div>
+                    <div className="addStrerchBuyer_info_section">
+                        <label htmlFor="region">Մարզ</label>
+                        <input
+                            id="region"
+                            type="text"
+                            placeholder="Region"
+                            {...register("buyerRegion", { required: true })} />
+                    </div>
+                    <div className="addStrerchBuyer_info_section">
+                        <label htmlFor="adress">Հասցե</label>
+                        <input
+                            id="adress"
+                            type="text"
+                            placeholder="Address"
+                            {...register("buyerAddress", { required: true })} />
+                    </div>
+                    <div className="addStrerchBuyer_info_section">
+                        <button >Գրանցել</button>
+                    </div>
+                </div>
 
 
 
-                </form>
-                {
-                    buyer.arrStretchBuyer && buyer.arrStretchBuyer.length > 0 ?
+            </form>
+            {
+                buyer.arrStretchBuyer && buyer.arrStretchBuyer.length > 0 ?
 
-                        <div className="addStretchBuyer_table" >
-                            <div className="addStretchBuyer_head_name">Gnordneri cucak</div>
+                    <div className="addStretchBuyer_table" >
+                        <div className="addStretchBuyer_head_name">Gnordneri cucak</div>
 
-                            <table className="table " >
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Անուն</th>
-                                        <th scope="col">Հեռախոս</th>
-                                        <th scope="col">Հասցե</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        buyer.arrStretchBuyer.map((e: any) => {
-                                            return (
-                                                <tr key={e._id}>
-                                                    <td>{e.buyerName}</td>
-                                                    <td>{e.buyerPhone}</td>
-                                                    <td>{e.buyerAddress}</td>
-                                                </tr>
-                                            )
-                                        })
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                        :
-                        null
-                }
-
-
-
-
-            </div>
+                        <table className="table " >
+                            <thead>
+                                <tr>
+                                    <th scope="col">Անուն</th>
+                                    <th scope="col">Հեռախոս</th>
+                                    <th scope="col">Հեռախոս</th>
+                                    <th scope="col">Մարզ</th>
+                                    <th scope="col">Հասցե</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    buyer.arrStretchBuyer.map((e: any) => {
+                                        return (
+                                            <tr key={e._id}>
+                                                <td>{e.buyerName}</td>
+                                                <td>{e.buyerPhone1}</td>
+                                                <td>{e.buyerPhone2}</td>
+                                                <td>{e.buyerRegion}</td>
+                                                <td>{e.buyerAddress}</td>
+                                            </tr>
+                                        )
+                                    })
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    :
+                    null
+            }
 
         </>
     );

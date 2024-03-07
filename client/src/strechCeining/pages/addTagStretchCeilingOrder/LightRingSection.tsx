@@ -1,69 +1,87 @@
-import React, { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { useCookies } from 'react-cookie';
-import { selectStretchLightRing } from '../../strechLightRing/strechLightRingSlice';
-import { getAllStretchLightRing } from '../../strechLightRing/strechLightRingApi';
-
-const LightRingSection: React.FC<any> = ({ register }: any) => {
-
-  const dispatch = useAppDispatch();
-  const [cookies, setCookie] = useCookies(['access_token']);
-  const [rowId, setRowId] = useState<number[]>([]);
+import React, { ChangeEvent } from 'react';
 
 
-  useEffect(() => {
-    dispatch(getAllStretchLightRing(cookies)).unwrap().then(res => {
-      if ("error" in res) {
-        // setCookie("access_token", '', { path: '/' })
-        // navigate("/")
-        alert(res)
-      }
-    })
+const LightRingSection: React.FC<any> = ({ register, lightRingRowId, removeLightRingRowId, setValue, roomId, stretchLightRing }: any) => {
 
-  }, []);
 
-  const stretchLightRing = useAppSelector(selectStretchLightRing)
+  const selectLightRingPrice = (event: ChangeEvent<HTMLSelectElement | HTMLInputElement>, rowKey: string, roomId: string): void => {
+    const selectedId = event.target.value;
+    const lightRing = stretchLightRing.arrStretchLightRing.find((e: any) => e._id === selectedId);
 
-  function addRow() {
-    rowId.push(rowId.length + 1)
-    setRowId([...rowId])
-  }
+    if (lightRing) {
+      setValue(`lightRingName_${rowKey}/${roomId}`, lightRing.name,);
+      setValue(`lightRingPrice_${rowKey}/${roomId}`, lightRing.price)
+    } else {
+      setValue(`lightRingPrice_${rowKey}/${roomId}`, 0)
+    }
+  };
 
-  function removeRow(event: any) {
-    rowId.splice(event, 1)
-    console.log(rowId);
-    setRowId([...rowId])
-  }
-
-  return (
-    <div className="dzgvox_arastax_material">
-    
-      {
-        rowId.map((el: any, index: any) => {
-          return (
-            <div className="divStretchInput1" key={Math.random()}>
-              <select id="selectCoop" key={Math.random()} {...register("lightRing_" + el)}>
-
-                {
-                  stretchLightRing.arrStretchLightRing && stretchLightRing.arrStretchLightRing.length > 0 ?
-                    stretchLightRing.arrStretchLightRing.map((e: any) => {
-                      return (
-                        <option key={e._id} value={e._id}>{e.name}</option>
-                      )
-                    })
-                    :
-                    null
-                }
-              </select>
-              <input id="quantity" key={Math.random()} type="number" className="dzgvox_arastax_quantity" placeholder="Quantity"  {...register("lightRingQuantity_" + el)} />
-              <button className='btn btn1' type="button" onClick={(e) => removeRow(index)} >Հեռացնել</button>
-            </div>
-          )
-        })
-      }
-      <button type="button" className='btn btn1' onClick={addRow}>Լույսի Օղակ</button>
-    </div>
-  );
+  return (<>
+    {
+      lightRingRowId.length > 0 ?
+        <div style={{ marginLeft: "5px", width: "100%" }}>
+          <table className="table tableSection"  >
+            <thead>
+              <tr style={{ background: "#dfdce0" }}>
+                <th>Լույսի Օղակ</th>
+                <th>Գին</th>
+                <th>Քանակ</th>
+                <th>Հեռացնել</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                lightRingRowId.map((rowKey: any) => {
+                  return (
+                    <tr key={rowKey}>
+                      <td style={{ minWidth: "250px", }}>
+                        <select
+                          {...register(`lightRing_${rowKey}/${roomId}`)}
+                          onChange={(e) => selectLightRingPrice(e, rowKey, roomId)}>
+                          <option>Ընտրել Տեսակը</option>
+                          {
+                            stretchLightRing.arrStretchLightRing && stretchLightRing.arrStretchLightRing.length > 0 ?
+                              stretchLightRing.arrStretchLightRing.map((e: any) => {
+                                return (
+                                  <option key={e._id} value={e._id} >{e.name}</option>
+                                )
+                              })
+                              :
+                              null
+                          }
+                        </select>
+                      </td>
+                      <td>
+                        <input
+                          id="price"
+                          type="number"
+                          placeholder="Price"
+                          {...register(`lightRingPrice_${rowKey}/${roomId}`)} />
+                      </td>
+                      <td>
+                        <input
+                          type="number"
+                          placeholder="Quantity"
+                          {...register(`lightRingQuantity_${rowKey}/${roomId}`)} />
+                      </td>
+                      <td>
+                        <button
+                          type="button"
+                          onClick={() => removeLightRingRowId(rowKey, roomId)}
+                        >
+                          Հեռացնել
+                        </button>
+                      </td>
+                    </tr>
+                  )
+                })
+              }
+            </tbody>
+          </table>
+        </div>
+        : null
+    }
+  </>);
 };
 
 export default LightRingSection;

@@ -9,8 +9,7 @@ export class Bardutyun {
     name: string;
     @Prop()
     price: number;
-    @Prop()
-    unyt: string;
+   
 }
 
 export const BardutyunSchema = SchemaFactory.createForClass(Bardutyun);

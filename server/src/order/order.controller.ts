@@ -41,10 +41,17 @@ export class OrderController {
           if (obj.newOrder.height <= 150) {
             metr = +(obj.newOrder.weight / 100 + 0.2).toFixed(2)
           } else {
-            metr = +(obj.newOrder.height / 100 + 0.2).toFixed(2)
+            metr = +((Math.ceil(obj.newOrder.weight / 145) * (obj.newOrder.height / 100) + 0.2 + Math.ceil(obj.newOrder.weight / 100) * 0.02)).toFixed(2)
           }
         }
-        if (texture.name !== "130KTAV" && texture.name !== "320ABOY") {
+        if (texture.name == "SAMAKLEY") {
+          if (obj.newOrder.height <= 125) {
+            metr = +(obj.newOrder.weight / 100 + 0.2).toFixed(2)
+          } else {
+            metr = +((Math.ceil(obj.newOrder.weight / 125) * (obj.newOrder.height / 100) + 0.2 + Math.ceil(obj.newOrder.weight / 100) * 0.02)).toFixed(2)
+          }
+        }
+        if (texture.name !== "130KTAV" && texture.name !== "320ABOY" && texture.name !=="SAMAKLEY ABOY" && texture.name !== "SAMAKLEY") {
           if (obj.newOrder.height <= 100) {
             metr = +(obj.newOrder.weight / 100 + 0.2).toFixed(2)
           } else {

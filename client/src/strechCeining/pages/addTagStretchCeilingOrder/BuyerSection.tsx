@@ -33,7 +33,9 @@ const BuyerSection: React.FC<any> = ({ register, setValue }: any) => {
 
     function selectedBuyer(e: any) {
         const selectedBuyer = stretchBuyer.arrStretchBuyer.find((element: any) => element._id === e.target.value);
-        setValue('buyerPhone', selectedBuyer.buyerPhone)
+        setValue('buyerPhone1', selectedBuyer.buyerPhone1)
+        setValue('buyerPhone2', selectedBuyer.buyerPhone2)
+        setValue('buyerRegion', selectedBuyer.buyerRegion)
         setValue('buyerAddress', selectedBuyer.buyerAddress)
         setValue('buyerName', selectedBuyer.buyerName)
     }
@@ -55,7 +57,7 @@ const BuyerSection: React.FC<any> = ({ register, setValue }: any) => {
                 <tbody>
                     <tr>
                         <td>
-                            <select>
+                            <select  {...register('code')}>
                                 <option>INT</option>
                                 <option>TAG</option>
                             </select>
@@ -99,14 +101,7 @@ const BuyerSection: React.FC<any> = ({ register, setValue }: any) => {
                     </tr>
                 </tbody>
             </table>
-
-
-
-
-
-
         </div>
-
     );
 };
 

@@ -58,6 +58,7 @@ const NewStretchOrderSection: React.FC<any> = ({ register, reset, setValue }: an
                                     <thead >
                                         <tr className=' back_color' >
                                             <th style={{ width: "30px" }}>Կոդ </th>
+                                            <th>Գրնցման/ԱԱ</th>
                                             <th>ԱԱ/սկիզբ</th>
                                             <th>ԱԱ/ավարտ</th>
                                             <th>Անուն Ազգանուն</th>
@@ -80,7 +81,15 @@ const NewStretchOrderSection: React.FC<any> = ({ register, reset, setValue }: an
                                                                 style={{
                                                                     width: "40px",
                                                                 }}>
-                                                                INT
+                                                                {e.code}
+                                                            </p>
+                                                        </td>
+                                                        <td >
+                                                            <p
+                                                                style={{
+                                                                    width: "100px"
+                                                                }}>
+                                                                {parseDate(e.date)}
                                                             </p>
                                                         </td>
                                                         <td >
@@ -120,13 +129,13 @@ const NewStretchOrderSection: React.FC<any> = ({ register, reset, setValue }: an
                                                                 style={{
                                                                     minWidth: "100px"
                                                                 }}>
-                                                                {e.buyer.buyerAddress}
+                                                                {e.buyer.buyerRegion}
                                                             </p>
                                                         </td>
                                                         <td>
                                                             <p
                                                                 style={{
-                                                                    minWidth: "150px"
+                                                                    minWidth: "300px"
                                                                 }}>
                                                                 {e.buyer.buyerAddress}
                                                             </p>
@@ -137,21 +146,21 @@ const NewStretchOrderSection: React.FC<any> = ({ register, reset, setValue }: an
                                                                     display: "flex",
                                                                     border: "none",
                                                                     gap: "5px",
-                                                                    width: "175px"
+                                                                    width: "215px"
                                                                 }}>
                                                                 <p
                                                                     style={{
-                                                                        minWidth: "80px"
+                                                                        minWidth: "100px"
                                                                     }}>
-                                                                    {e.buyer.buyerPhone}
+                                                                    {e.buyer.buyerPhone1}
                                                                 </p>
                                                                 <p
                                                                     style={{
-                                                                        minWidth: "80px"
+                                                                        minWidth: "100px"
                                                                     }}>
                                                                     {
                                                                         e.buyer.buyerPhone2 ?
-                                                                            e.buyer.buyerPhone
+                                                                            e.buyer.buyerPhone2
                                                                             : " ---------"
                                                                     }
                                                                 </p>

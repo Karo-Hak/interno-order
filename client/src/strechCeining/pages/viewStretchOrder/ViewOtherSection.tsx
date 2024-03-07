@@ -1,0 +1,34 @@
+
+const ViewOtherSection: React.FC<any> = ({ room }: any) => {
+
+
+  return (<>
+    {
+      room.groupedOthers      ?
+        < table className="table tableSection" key={room.id} >
+          <thead>
+            <tr style={{ background: "#dfdce0" }}>
+              <th >Լռացուցիչ</th>
+              <th >Գին</th>
+              <th >Հատ</th>
+            </tr>
+          </thead>
+          <tbody>
+            {room.groupedOthers && Object.keys(room.groupedOthers).map((key) => {
+              if (typeof room.groupedOthers[key] === 'object' && room.groupedOthers[key] !== null) {
+                return <tr key={key}>
+                  <td>{room.groupedOthers[key].otherName}</td>
+                  <td>{room.groupedOthers[key].otherPrice}</td>
+                  <td>{room.groupedOthers[key].otherQuantity}</td>
+                </tr>
+              }
+              return null;
+            })}
+          </tbody>
+        </table >
+        : null
+    }
+  </>);
+};
+
+export default ViewOtherSection;

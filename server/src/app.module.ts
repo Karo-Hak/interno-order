@@ -24,6 +24,8 @@ import { StretchBuyerModule } from './stretch-buyer/stretch-buyer.module';
 import { CoopStretchBuyerModule } from './coop-stretch-buyer/coop-stretch-buyer.module';
 import { AdditionalModule } from './additional/additional.module';
 import { StretchCeilingOrderModule } from './stretch-ceiling-order/stretch-ceiling-order.module';
+import { StretchWorkerModule } from './stretch-worker/stretch-worker.module';
+import { StretchWorkModule } from './stretch-work/stretch-worker.module';
 
 @Module({
   imports: [
@@ -49,6 +51,8 @@ import { StretchCeilingOrderModule } from './stretch-ceiling-order/stretch-ceili
     UserSphereModule,
     StretchTextureModule,
     StretchBuyerModule,
+    StretchWorkerModule,
+    StretchWorkModule,
     CoopStretchBuyerModule,
     AdditionalModule,
     StretchCeilingOrderModule,

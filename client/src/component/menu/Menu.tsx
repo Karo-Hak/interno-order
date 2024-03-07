@@ -47,6 +47,11 @@ export const Menu: React.FC = (): JSX.Element => {
             window.open("/addUser")
         }
     }
+    const stock = () => {
+        if (data.profile.role === "admin") {
+            window.open("/stock")
+        }
+    }
 
     return (<div>
 
@@ -69,6 +74,7 @@ export const Menu: React.FC = (): JSX.Element => {
                                     <button className="btn" onClick={wallpaper}>Ֆոտոպաստառ</button>
                                     <button className="btn" onClick={tagStretchCeiling}>Ձգվող առաստաղ</button>
                                     <button className="btn" onClick={coopStrechCeiling}>Համ․ Ձգվող առաստաղ</button>
+                                    <button className="btn" onClick={stock}>Պահեստ</button>
                                 </div>
                                 :
                                 null

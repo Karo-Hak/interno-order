@@ -1,100 +1,36 @@
-
-
-
-.viewStrechOrder_buyer_title_name {
+.apranqacank {
+    display: flex;
+    justify-content: first baseline;
+    gap: 5px;
     width: 100%;
-    background-color: rgb(162, 167, 189);
+    padding: 5px;
+}
+
+.tableSection {
+    max-width: 20%;
+    border: 2px solid black;
+}
+
+.tableSection th {
     text-align: center;
+    width: 50px;
+    font-size: 13px;
 }
 
-.viewStrechOrder_head_info_name {
-    display: flex;
-}
-
-.buyerInfo {
-    display: flex;
-    justify-content: space-around;
-
-}
-
-.buyerNamePhone {
-    width: 25%;
-}
-
-.buyerAddressDate {
-    width: 25%;
-}
-
-.buyerComment {
-    width: 30%;
-
-
-}
-
-.comment_bord {
-    border: 1px solid rgb(0, 0, 0);
-    height: 70%;
-}
-
-.popoxel {
-
-    width: 10%;
-    display: flex;
-    flex-direction: column;
+.tableSection td {
     text-align: center;
-
-
-
+    height: 10px;
+    font-size: 13px;
 }
 
-.btn1 {
-    border: 1px solid black;
+.tableSection tr {
+    height: 10px;
 }
 
 
-/* -------order ---- */
-.viewStrechOrder_order {
-    display: flex;
-    flex-direction: column;
-
-
-}
-
-.viewStrechOrder_order_apranq {
-    display: flex;
-    flex-direction: column;
-}
-
-.viewStrechOrder_order table {
-    width: 100%;
-
-}
-
-.order_profil_platform {
-    display: flex;
-
-
-}
-
-.order_profil_platform div {
-    width: 100%;
-}
-
-/* -----viewStrechOrder_order_pey--- */
-.viewStrechOrder_order_pey {
-    display: flex;
-    justify-content: space-around;
-}
-
-.pey_method {
-    display: flex;
-    gap: 20px;
-
-}
-
-/* .cha{
-    border: 1px solid black;
-} */
-.viewStrechOrder_order tr {
-    height: 35px;
+.grid-container{
+    display: grid;
+    grid-template-columns: auto auto;
+    padding: 20px 5px 20px 5px;
+    gap: 5px;
 }

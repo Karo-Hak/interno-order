@@ -1,17 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { CreateStretchCeilingOrderDto } from './dto/create-stretch-ceiling-order.dto';
 import { UpdateStretchCeilingOrderDto } from './dto/update-stretch-ceiling-order.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Document, Model, Types } from 'mongoose';
 import { StretchCeilingOrder } from './schema/stretch-ceiling-order.schema';
 import { StretchBuyer } from 'src/stretch-buyer/schema/stretch-buyer.schema';
 import { User } from 'src/user/schema/user.schema';
 import { StretchTexture } from 'src/stretch-texture/schema/stretch-texture.schema';
 import { Bardutyun } from 'src/bardutyun/schema/bardutyun.schema';
 import { Additional } from 'src/additional/schema/additional.schema';
-import { Profil } from 'src/profil/schema/profil.schema';
 import { ProfilService } from 'src/profil/profil.service';
 import { LightRingService } from 'src/light-ring/light-ring.service';
+import { StretchWorker } from 'src/stretch-worker/schema/stretch-worker.schema';
 
 @Injectable()
 export class StretchCeilingOrderService {
@@ -20,7 +19,7 @@ export class StretchCeilingOrderService {
     @InjectModel(StretchBuyer.name) private stretchBuyerModel: Model<StretchBuyer>,
     @InjectModel(StretchTexture.name) private stretchTextureModel: Model<StretchTexture>,
     @InjectModel(Additional.name) private additionalModel: Model<Additional>,
-    @InjectModel(Profil.name) private profilModel: Model<Profil>,
+    @InjectModel(StretchWorker.name) private stretchWorkerModel: Model<StretchWorker>,
     @InjectModel('User') private userModel: Model<User>,
 
     private readonly profilService: ProfilService,
@@ -28,13 +27,29 @@ export class StretchCeilingOrderService {
   ) { }
 
   async create(createStretchCeilingOrderDto: any) {
+
     const orderBuyer = await this.stretchBuyerModel.findById(createStretchCeilingOrderDto.orderBuyer);
     const orderUser = await this.userModel.findById(createStretchCeilingOrderDto.user.userId);
-    const createdOrder = await new this.stretchCeilingOrderModel({ ...createStretchCeilingOrderDto.stretchTextureOrder, user: orderUser.id, buyer: orderBuyer.id });
-    await this.userModel.findByIdAndUpdate(createStretchCeilingOrderDto.user.userId, { order: [...orderUser.order, createdOrder.id] })
-    await this.stretchBuyerModel.findByIdAndUpdate(createStretchCeilingOrderDto.orderBuyer, { order: [...orderBuyer.order, createdOrder.id] })
-    return createdOrder.save();
+    let orderWorkerId;
+    if (createStretchCeilingOrderDto.stretchTextureOrder.worker === "Աշխատակից") {
+      orderWorkerId = null;
+      const createdOrder = await new this.stretchCeilingOrderModel({ ...createStretchCeilingOrderDto.stretchTextureOrder, user: orderUser.id, buyer: orderBuyer.id });
+      await this.userModel.findByIdAndUpdate(createStretchCeilingOrderDto.user.userId, { order: [...orderUser.order, createdOrder.id] });
+      await this.stretchBuyerModel.findByIdAndUpdate(createStretchCeilingOrderDto.orderBuyer, { order: [...orderBuyer.order, createdOrder.id] });
+      return createdOrder.save();
+    } else {
+      const orderWorker = await this.stretchWorkerModel.findById(createStretchCeilingOrderDto.stretchTextureOrder.worker);
+      orderWorkerId = orderWorker;
+      const createdOrder = await new this.stretchCeilingOrderModel({ ...createStretchCeilingOrderDto.stretchTextureOrder, user: orderUser.id, buyer: orderBuyer.id, stretchWorker: orderWorkerId.id });
+      await this.userModel.findByIdAndUpdate(createStretchCeilingOrderDto.user.userId, { order: [...orderUser.order, createdOrder.id] });
+      await this.stretchBuyerModel.findByIdAndUpdate(createStretchCeilingOrderDto.orderBuyer, { order: [...orderBuyer.order, createdOrder.id] });
+      await this.stretchWorkerModel.findByIdAndUpdate(orderWorkerId.id, { order: [...orderWorkerId.order, createdOrder.id] });
+      return createdOrder.save();
+    }
+
   }
+
+
 
   async findNewOrders() {
     return await this.stretchCeilingOrderModel.find({ status: "progress" }).populate("buyer").sort({ date: -1 })
@@ -45,13 +60,12 @@ export class StretchCeilingOrderService {
   }
 
   async findOne(id: string) {
-    const data = await this.stretchCeilingOrderModel.findById(id).populate("buyer");
+    const data = (await this.stretchCeilingOrderModel.findById(id).populate("buyer").populate("stretchWorker"));
     const dataTexture = await this.stretchTextureModel.find();
     const additional = await this.additionalModel.find();
     const stretchProfil = await this.profilService.findAll();
     const dataLightRing = await this.lightRingService.findAll()
-    console.log(dataLightRing);
-    
+
     const textureMap = new Map(dataTexture.map(texture => [texture._id.toString(), texture.name]));
     const enhanceCeilingsWithNamesTexture = (groupedCeilings) => {
       const updatedCeilings = {};
@@ -85,7 +99,7 @@ export class StretchCeilingOrderService {
       }
       return updatedAdditional;
     };
-    
+
     const profilMap = new Map(stretchProfil.map(profil => [profil._id.toString(), profil.name]));
     const enhanceCeilingsWithNameProfil = (groupedProfils) => {
       const updatedProfil = {};
@@ -119,15 +133,20 @@ export class StretchCeilingOrderService {
       }
       return updatedLightRing;
     };
-    
-    data.groupedStretchCeilings = enhanceCeilingsWithNamesTexture(data.groupedStretchCeilings);
-    data.groupedAdditionals = enhanceCeilingsWithNamesAdditional(data.groupedAdditionals);
-    data.groupedProfils = enhanceCeilingsWithNameProfil(data.groupedProfils);
-    data.groupedLightRings = enhanceCeilingsWithNameLightRing(data.groupedLightRings);
+
+    // data.groupedStretchCeilings = enhanceCeilingsWithNamesTexture(data.groupedStretchCeilings);
+    // data.groupedAdditionals = enhanceCeilingsWithNamesAdditional(data.groupedAdditionals);
+    // data.groupedProfils = enhanceCeilingsWithNameProfil(data.groupedProfils);
+    // data.groupedLightRings = enhanceCeilingsWithNameLightRing(data.groupedLightRings);
     return data
   }
 
-  update(id: number, updateStretchCeilingOrderDto: UpdateStretchCeilingOrderDto) {
+  async update(id: string, updateStretchCeilingOrderDto: UpdateStretchCeilingOrderDto, buyer: any) {
+    console.log(updateStretchCeilingOrderDto,":order");
+
+    const updatedOrder = await this.stretchCeilingOrderModel.findByIdAndUpdate(id, updateStretchCeilingOrderDto)
+    
+
     return `This action updates a #${id} stretchCeilingOrder`;
   }
 

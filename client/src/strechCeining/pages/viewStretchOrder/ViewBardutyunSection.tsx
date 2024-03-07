@@ -1,0 +1,35 @@
+
+const ViewBardutyunSection: React.FC<any> = ({ room }: any) => {
+
+
+
+  return (<>
+    {
+      room.groupedBardutyuns      ?
+        < table className="table tableSection" key={room.id} >
+          <thead>
+            <tr style={{ background: "#dfdce0" }}>
+              <th >Բարդություն</th>
+              <th >Գին</th>
+              <th >Հատ</th>
+            </tr>
+          </thead>
+          <tbody>
+            {room.groupedBardutyuns && Object.keys(room.groupedBardutyuns).map((key) => {
+              if (typeof room.groupedBardutyuns[key] === 'object' && room.groupedBardutyuns[key] !== null) {
+                return <tr key={key}>
+                  <td>{room.groupedBardutyuns[key].bardutyunName}</td>
+                  <td>{room.groupedBardutyuns[key].bardutyunPrice}</td>
+                  <td>{room.groupedBardutyuns[key].bardutyunQuantity}</td>
+                </tr>
+              }
+              return null;
+            })}
+          </tbody>
+        </table >
+        : null
+    }
+  </>);
+};
+
+export default ViewBardutyunSection;

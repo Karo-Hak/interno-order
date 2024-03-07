@@ -58,7 +58,7 @@ export const StretchBardutyun: React.FC = (): JSX.Element => {
     return (
         <>
             <div className="addStretchBuyer_head">
-                <div className="addStretchBuyer_head_name">Gnordi tvyalner</div>
+                <div className="addStretchBuyer_head_name">Բարդություն</div>
 
                 <form onSubmit={handleSubmit(newStretchBardutyun)} >
                     <div className="addStrerchBuyer_info">
@@ -67,22 +67,9 @@ export const StretchBardutyun: React.FC = (): JSX.Element => {
                             <input id="name" type="text" placeholder="Name"  {...register("name", { required: true })} />
                         </div>
                         <div className="addStrerchBuyer_info_section">
-                            <label htmlFor="unyt">Չ/Մ</label>
-                            <select id="unyt" {...register("unyt", { required: true })}>
-                                {
-                                    unyt.arrUnyt && unyt.arrUnyt.length > 0 ?
-                                        unyt.arrUnyt.map((e: any, i: any) => {
-                                            return (
-                                                <option key={e._id} value={e.name}>{e.name}</option>
-                                            )
-                                        })
-                                        :
-                                        null
-                                }
-                            </select>
-
+                            <label htmlFor="name">Գին</label>
+                            <input id="name" type="text" placeholder="Name"  {...register("price", { required: true })} />
                         </div>
-
                         <div className="addStrerchBuyer_info_section">
                             <button className="btn btn1">Գրանցել</button>
                         </div>
@@ -91,13 +78,10 @@ export const StretchBardutyun: React.FC = (): JSX.Element => {
                 {
                     stretchBardutyun.arrStretchBardutyun && stretchBardutyun.arrStretchBardutyun.length > 0 ?
                         <div className="addStretchBuyer_table">
-                            <div className="addStretchBuyer_head_name">Gnordneri cucak</div>
-
                             <table className="table" >
                                 <thead>
                                     <tr>
                                         <th scope="col">Անվանում</th>
-                                        <th scope="col">Չ/Մ</th>
                                         <th scope="col">Գին</th>
 
                                     </tr>
@@ -108,7 +92,6 @@ export const StretchBardutyun: React.FC = (): JSX.Element => {
                                             return (
                                                 <tr key={e._id}>
                                                     <td>{e.name}</td>
-                                                    <td>{e.unyt}</td>
                                                     <td>{e.price}</td>
                                                 </tr>
                                             )

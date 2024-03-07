@@ -1,64 +1,76 @@
-import React, { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { selectStretchBardutyun } from "../../strechBardutyun/strechBardutyunSlice";
-import { getAllStretchBardutyun } from "../../strechBardutyun/strechBardutyunApi";
-import { useCookies } from 'react-cookie';
+import React, { ChangeEvent } from 'react';
 
-const BardutyunSection: React.FC<any> = ({ register }: any) => {
-  const dispatch = useAppDispatch();
-
-  const [cookies, setCookie] = useCookies(['access_token']);
-
-  const [rowId, setRowId] = useState<number[]>([]);
+import './tagStretchOrder.css';
 
 
-  useEffect(() => {
-    dispatch(getAllStretchBardutyun(cookies)).unwrap().then(res => {
-      if ("error" in res) {
-        alert(res)
-      }
-    })
-  }, []);
+const BardutyunSection: React.FC<any> = ({ register, setValue, bardutyunRowId, removeBardutyunRow, roomId, stretchBardutyun }: any) => {
 
-  const stretchBardutyun = useAppSelector(selectStretchBardutyun);
 
-  function addRow() {
-    rowId.push(rowId.length + 1)
-    setRowId([...rowId])
-  }
-
-  function removeRow(event: any) {
-    rowId.splice(event, 1)
-    setRowId([...rowId])
-  }
+  const stretchBardutyunPrice = (event: ChangeEvent<HTMLSelectElement | HTMLInputElement>, rowKey: string, roomId: string): void => {
+    const selectedId = event.target.value;
+    const bardutyun = stretchBardutyun.arrStretchBardutyun.find((e: any) => e._id === selectedId);
+    if (bardutyun) {
+      setValue(`bardutyunName_${rowKey}/${roomId}`, bardutyun.name,);
+      setValue(`bardutyunPrice_${rowKey}/${roomId}`, bardutyun.price);
+    } else {
+      setValue(`bardutyunPrice_${rowKey}/${roomId}`, 0);
+    }
+  };
 
   return (
-    <div className="formdivStretch">
-      Բարդություն
+    <div style={{ marginLeft: "5px", width: "100%" }} >
       {
-        rowId.map((el: any, index: any) => {
-          return (
-            <div className="divStretchInput" key={Math.random()}>
-              <select id="selectCoop" key={Math.random()} {...register("bardutyun_" + el)}>
+        bardutyunRowId && bardutyunRowId.length > 0 ?
 
-                {
-                  stretchBardutyun.arrStretchBardutyun && stretchBardutyun.arrStretchBardutyun.length > 0 ?
-                    stretchBardutyun.arrStretchBardutyun.map((e: any) => {
-                      return (
-                        <option key={e._id} value={e._id}>{e.name}</option>
-                      )
-                    })
-                    :
-                    null
-                }
-              </select>
-              <input id="quantity" key={Math.random()} type="number" className="inputNumber" placeholder="Quantity"  {...register("bardutyunQuantity_" + el)} />
-              <button className='btn' type="button" onClick={(e) => removeRow(index)} >Հեռացնել</button>
-            </div>
-          )
-        })
+          <table className="table tableSection" >
+            <thead>
+              <tr style={{ background: "#dfdce0" }}>
+                <th>Բարդություն</th>
+                <th>Գին</th>
+                <th>Քանակ</th>
+                <th>Հեռացնել</th>
+              </tr>
+            </thead>
+            <tbody>
+              {bardutyunRowId.map((el: any) => (
+                <tr key={el}>
+                  <td style={{ minWidth: "250px", }}>
+                    <select
+                      {...register(`bardutyun_${el}/${roomId}`)}
+                      onChange={(e) => stretchBardutyunPrice(e, el, roomId)}
+                    >
+                      <option>Ընտրել Տեսակը</option>
+                      {stretchBardutyun.arrStretchBardutyun && stretchBardutyun.arrStretchBardutyun.length > 0 ?
+                        stretchBardutyun.arrStretchBardutyun.map((bardutyun: any) => (
+                          <option key={bardutyun._id} value={bardutyun._id}>{bardutyun.name}</option>
+                        ))
+                        : null}
+                    </select>
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      placeholder="Price"
+                      {...register(`bardutyunPrice_${el}/${roomId}`)}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      placeholder="Quantity"
+                      {...register(`bardutyunQuantity_${el}/${roomId}`)}
+                    />
+                  </td>
+                  <td>
+                    <button type="button" onClick={() => removeBardutyunRow(el, roomId)}>
+                      Հեռացնել
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          : null
       }
-      <button type="button" className='btn' onClick={addRow}>Ավելացնել տող</button>
     </div>
   );
 };

@@ -1,156 +1,119 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { selectStretchAdditional } from "../../strechAdditional/strechAdditionalSlice";
-import { getAllStretchAdditional } from "../../strechAdditional/strechAdditionalApi";
-import { useCookies } from 'react-cookie';
+import React, { ChangeEvent, useEffect } from 'react';
+import { UseFormRegister, UseFormSetValue } from 'react-hook-form';
 
-const AdditionalSection: React.FC<any> = ({ register, reset, setValue, editingAdditionals, orderComment }: any) => {
+interface EditAdditionalSectionProps {
+  register: UseFormRegister<any>;
+  setValue: UseFormSetValue<any>;
+  additionalRowId: string[]; 
+  removeAdditionalRow: (rowId: any, roomId: string) => void 
+  roomId: string;
+  stretchAdditional: { arrStretchAdditional: Array<any> }; 
+  additionalId: Array<{ additional: string; additionalPrice: number; additionalQuantity: number }>;
+}
 
-  const dispatch = useAppDispatch();
 
-  const [cookies, setCookie] = useCookies(['access_token']);
-  const [rowId, setRowId] = useState<number[]>([]);
-  const [additionalPrices, setAdditionalPrices] = useState<{ [key: string]: number }>({});
-  const [priceValues, setPriceValues] = useState<{ [key: string]: number }>({});
+const EditAdditionalSection: React.FC<EditAdditionalSectionProps> = ({
+  register,
+  setValue,
+  additionalRowId,
+  removeAdditionalRow,
+  roomId,
+  stretchAdditional,
+  additionalId
 
+}: EditAdditionalSectionProps) => {
 
   useEffect(() => {
-    dispatch(getAllStretchAdditional(cookies)).unwrap().then(res => {
-      if ("error" in res) {
-        alert(res);
-      }
+    additionalRowId.forEach((rowId: any, index: number) => {
+        setValue(`additional_${rowId}/${roomId}`, additionalId[index].additional);
+        if (additionalId[index].additionalPrice) {
+            setValue(`additionalPrice_${rowId}/${roomId}`, additionalId[index].additionalPrice);
+        } else {
+            setValue(`stretchPrice_${rowId}/${roomId}`, 0);
+        }
+        if (additionalId[index].additionalQuantity) {
+            setValue(`additionalQuantity_${rowId}/${roomId}`, additionalId[index].additionalQuantity);
+        } else {
+            setValue(`additionalQuantity_${rowId}/${roomId}`, 0);
+        }
+
     });
-  }, []);
+}, [additionalId]);
 
-  const stretchAdditional = useAppSelector(selectStretchAdditional);
-
-  function addRow() {
-    setRowId(prevRowId => [...prevRowId, prevRowId.length + 1]);
-  }
-
-  useEffect(() => {
-    if (editingAdditionals) {
-      const newRows = Object.values(editingAdditionals).map((el: any, index: number) => {
-        const rowKey = index + 1;
-        setValue(`additional_${rowKey}`, el.additional);
-        setValue(`additionalPrice_${rowKey}`, el.additionalPrice);
-        setValue(`additionalQuantity_${rowKey}`, el.additionalQuantity);
-        setValue(`additionalTotal_${rowKey}`, el.additionalTotal);
-        setValue(`orderComment`, orderComment);
-        return rowKey;
-      });
-      setRowId(newRows);
-    }
-
-  }, [editingAdditionals, setValue]);
-
-  function removeRow(index: number, event: any, el: any): void {
-    reset({ [`additional_${el}`]: event.target.value })
-    setRowId(prevRowId => prevRowId.filter((_, i) => i !== index));
-  }
-
-
-  const selectAdditionalPrice = (event: ChangeEvent<HTMLSelectElement | HTMLInputElement>, rowKey: string): void => {
+  const selectAdditionalPrice = (event: ChangeEvent<HTMLSelectElement | HTMLInputElement>, rowKey: string, roomId: string): void => {
     const selectedId = event.target.value;
     const additional = stretchAdditional.arrStretchAdditional.find((e: any) => e._id === selectedId);
 
     if (additional) {
-      setPriceValues(prevValues => ({ ...prevValues, [rowKey]: additional.price }));
-      setValue(`additionalPrice_${rowKey}`, additional.price)
+      setValue(`additionalPrice_${rowKey}/${roomId}`, additional.price)
     } else {
-      setPriceValues(prevValues => ({ ...prevValues, [rowKey]: 0 }));
+      setValue(`additionalPrice_${rowKey}/${roomId}`, 0);
     }
   };
 
+  return (<>
+    {
+      additionalRowId.length > 0 ?
+        <div style={{ marginLeft: "5px", width: "100%" }}>
+          <table className="table tableSection"  >
+            <thead>
+              <tr style={{ background: "#dfdce0" }}>
+                <th style={{ width: "300px" }}>Այլ Ապրանք</th>
+                <th>Գին</th>
+                <th>Քանակ</th>
+                <th>Հեռացնել</th>
+              </tr>
+            </thead>
+            <tbody >
+              {
+                additionalRowId.map((el: any) => (
+                  <tr key={el}>
+                    <td style={{ minWidth: "250px", }}>
+                      <select
+                        {...register(`additional_${el}` + "/" + roomId)}
+                        onChange={(e) => selectAdditionalPrice(e, el, roomId)}
+                      >
+                        <option>Ընտրել Տեսակը</option>
+                        {stretchAdditional.arrStretchAdditional && stretchAdditional.arrStretchAdditional.length > 0 ?
+                          stretchAdditional.arrStretchAdditional.map((e: any) => (
+                            <option key={e._id} value={e._id} >
+                              {e.name}
+                            </option>
+                          ))
+                          : null}
+                      </select>
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        placeholder="Price"
+                        {...register(`additionalPrice_${el}` + "/" + roomId)}
 
-  const handleQuantityChange = (event: ChangeEvent<HTMLInputElement>, rowKey: string): void => {
-    const quantityField = `additionalQuantity_${rowKey}`;
-    const priceField = `additionalPrice_${rowKey}`;
-    const totalField = `additionalTotal_${rowKey}`;
-
-    const form = event.target.form;
-    if (form instanceof HTMLFormElement) {
-      const priceValue = parseFloat(form[priceField]?.value) || 0;
-      const quantityValue = parseFloat(form[quantityField]?.value) || 0;
-      const totalValue = priceValue * quantityValue;
-      setValue(totalField, totalValue.toFixed(2));
-    }
-
-  };
-
-  // console.log(editingAdditionals);
-
-
-  return (
-    <div className="formdivStretch1">
-      <div className='additionalDiv'>
-
-        {rowId.map((el: any, index: any) => (
-          <div className="divStretchInput1" key={el}>
-            <select id={`selectCoop_${el}`} {...register(`additional_${el}`)} onChange={(e) => selectAdditionalPrice(e, el)}>
-              <option>Լռացուցիչ</option>
-              {stretchAdditional.arrStretchAdditional && stretchAdditional.arrStretchAdditional.length > 0
-                ? stretchAdditional.arrStretchAdditional.map((e: any) => (
-                  <option key={e._id} value={e._id}>
-                    {e.name}
-                  </option>
+                      />
+                    </td>
+                    <td>
+                      <input
+                        id={`quantity_${el}`}
+                        type="number"
+                        placeholder="Quantity"
+                        {...register(`additionalQuantity_${el}` + "/" + roomId)}
+                      />
+                    </td>
+                    <td>
+                      <button
+                        type="button" onClick={() => removeAdditionalRow(el, roomId)}>
+                        Հեռացնել
+                      </button>
+                    </td>
+                  </tr>
                 ))
-                : null}
-            </select>
-            <input
-              id={`price_${el}`}
-              type="number"
-              className='stretchInput'
-              placeholder="Price"
-              value={priceValues[el] || 0}
-              {...register(`additionalPrice_${el}`)}
-              onChange={(e) => {
-                setPriceValues(prevValues => ({ ...prevValues, [el]: parseFloat(e.target.value) }));
-                handleQuantityChange(e, el);
-              }}
-            />
-            <input
-              id={`quantity_${el}`}
-              type="number"
-              className='stretchInput'
-              placeholder="Quantity"
-              {...register(`additionalQuantity_${el}`)}
-              onChange={(e) => {
-                handleQuantityChange(e, el);
-              }}
-            />
-            <input
-              id={`total_${el}`}
-              type="number"
-              className='stretchInput'
-              placeholder="Total"
-              {...register(`additionalTotal_${el}`)}
-            />
-            <button className="btn btn1" type="button" onClick={(e) => removeRow(index, e, el)}>
-              Հեռացնել
-            </button>
-          </div>
-        ))}
-        <div>
-
-          <button type="button" className="btn btn1" onClick={addRow}>
-            Լռացուցիչ
-          </button>
+              }
+            </tbody>
+          </table>
         </div>
-        <div>
-
-
-        </div>
-      </div>
-      <div className='dzgvox_arastax_nkaragrutyun'>
-
-        <textarea
-          placeholder='Նկարագրություն'
-          {...register(`orderComment`)}
-        ></textarea>
-      </div>
-    </div>
-  );
+        : null
+    }
+  </>);
 };
 
-export default AdditionalSection;
+export default EditAdditionalSection;

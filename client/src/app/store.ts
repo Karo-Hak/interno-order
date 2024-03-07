@@ -5,6 +5,8 @@ import cooperateReducer from '../features/cooperate/cooperateSlice'
 import buyerReducer from '../features/buyer/buyerSlice'
 import textureReducer from '../features/texture/textureSlice';
 import stretchBuyerReducer from '../strechCeining/StrechBuyer/strechBuyerSlice';
+import stretchWorkerReducer from '../strechCeining/StrechWorker/strechWorkerSlice';
+import stretchWorkReducer from '../strechCeining/StrechWork/strechWorkSlice';
 import stretchTextureReducer from '../strechCeining/strechTexture/strechTextureSlice';
 import coopStrechOrderReducer from '../strechCeining/coopStrechOrder/coopStretchOrderSlice'
 import userSphereReducer from '../features/userSphere/userSphereSlice'
@@ -27,6 +29,8 @@ export const store = configureStore({
     buyer: buyerReducer,
     texture: textureReducer,
     stretchBuyer: stretchBuyerReducer,
+    stretchWorker: stretchWorkerReducer,
+    stretchWork: stretchWorkReducer,
     stretchTexture: stretchTextureReducer,
     coopStrechOrder: coopStrechOrderReducer,
     userSphere: userSphereReducer,

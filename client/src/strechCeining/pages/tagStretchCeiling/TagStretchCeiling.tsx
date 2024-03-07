@@ -28,6 +28,9 @@ export const TagStretchCeiling: React.FC = (): JSX.Element => {
     const tagStretchBuyer = () => {
         window.open("/tagstretchceiling/addTagStretchBuyer")
     }
+    const tagStretchWorker = () => {
+        window.open("/tagstretchceiling/addTagStretchWorker")
+    }
     function goTo(event: ChangeEvent<HTMLSelectElement>): void {
         window.open(event.target.value)
 
@@ -48,8 +51,10 @@ export const TagStretchCeiling: React.FC = (): JSX.Element => {
                         <option value={"/stretchceiling/addStretchLightPlatform"}>Լույսի Պլատֆորմ</option>
                         <option value={"/stretchceiling/addStretchLightRing"}>Լույսի Օղակ</option>
                         <option value={"/stretchceiling/addStretchAdditional"}>Լռացուցիչ</option>
+                        <option value={"/stretchceiling/addTagStretchWorker"}>Աշխատանք</option>
                     </select>
                     <button className="btn" onClick={tagStretchBuyer}>Ավելացնել Գնորդ</button>
+                    <button className="btn" onClick={tagStretchWorker}>Ավելացնել Աշխատակից</button>
                     <button className="btn">Դիտել Պատվերները</button>
                 </div>
             </div>

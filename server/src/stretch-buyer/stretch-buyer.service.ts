@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateStretchBuyerDto } from './dto/create-stretch-buyer.dto';
 import { UpdateStretchBuyerDto } from './dto/update-stretch-buyer.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { StretchBuyer } from './schema/stretch-buyer.schema';
 
 @Injectable()
@@ -19,11 +19,19 @@ export class StretchBuyerService {
   }
 
   async findByPhone(phone: string) {
-    return await this.stretchBuyerModel.findOne({ buyerPhone: phone })
+    return await this.stretchBuyerModel.findOne({ buyerPhone1: phone })
   }
 
  async findOne(id: string) {
     return await this.stretchBuyerModel.findById(id);
+  }
+
+  async deleteFromArray(id: any, deleteId: any) {
+    await this.stretchBuyerModel.findByIdAndUpdate(
+      id,
+      { $pull: { order: new Types.ObjectId(deleteId) } },
+      { new: true }
+    );
   }
 
   update(id: number, updateStretchBuyerDto: UpdateStretchBuyerDto) {

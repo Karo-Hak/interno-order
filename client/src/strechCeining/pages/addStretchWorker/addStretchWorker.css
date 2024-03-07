@@ -1,0 +1,31 @@
+.addStretchBuyer_head {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+.addStretchBuyer_head_name{
+    text-align: center;
+ background-color: rgb(162, 167, 189);
+
+}
+
+.addStrerchBuyer_info {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+
+}
+
+.addStrerchBuyer_info_section {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+
+
+}
+.addStretchBuyer_table{
+    background-color: rgb(245, 245, 245);
+    padding: 0 10px;
+
+}

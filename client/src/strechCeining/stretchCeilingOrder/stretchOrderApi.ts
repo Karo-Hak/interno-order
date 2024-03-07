@@ -131,8 +131,10 @@ export const searchStretchOrder = createAsyncThunk(
 export const updateStretchOrderAll = createAsyncThunk(
   'stretchOrder/updateStretchOrder/axios',
   async (obj: any) => {
+    console.log(obj);
+    
     try {
-      const response = await axios.post(process.env.REACT_APP_SERVER_URL + "/stretchOrder/updateStretchOrder/" + obj.params.id, obj, {
+      const response = await axios.post(process.env.REACT_APP_SERVER_URL + "/stretch-ceiling-order/updateStretchOrder/" + obj.params.id, obj, {
         headers: {
           Authorization: `Bearer ${obj.cookies.access_token}`
         }

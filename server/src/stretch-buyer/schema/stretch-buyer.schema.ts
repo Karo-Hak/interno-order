@@ -9,7 +9,11 @@ export class StretchBuyer {
     @Prop()
     buyerName: string;
     @Prop()
-    buyerPhone: string;
+    buyerPhone1: string;
+    @Prop()
+    buyerPhone2: string;
+    @Prop()
+    buyerRegion: string;
     @Prop()
     buyerAddress: string;
     @Prop({
@@ -18,6 +22,7 @@ export class StretchBuyer {
         ]
     })
     order: StretchCeilingOrder[];
+  _id: any;
 }
 
 export const StretchBuyerSchema = SchemaFactory.createForClass(StretchBuyer);

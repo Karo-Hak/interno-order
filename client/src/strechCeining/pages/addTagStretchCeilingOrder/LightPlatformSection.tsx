@@ -1,66 +1,86 @@
-import React, { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { useCookies } from 'react-cookie';
-import { selectStretchLightPlatform } from '../../strechLightPlatform/strechLightPlatformSlice';
-import { getAllStretchLightPlatform } from '../../strechLightPlatform/strechLightPlatformApi';
+import React, { ChangeEvent } from 'react';
 
-const LightPlatformSection: React.FC<any> = ({ register }: any) => {
+const LightPlatformSection: React.FC<any> = ({ register, lightPlatformRowId, removeLightPlatformRowId, setValue, roomId, stretchLightPlatform }: any) => {
 
-  const dispatch = useAppDispatch();
-  const [cookies, setCookie] = useCookies(['access_token']);
-  const [rowId, setRowId] = useState<number[]>([]);
+  const selectLightPlatformPrice = (event: ChangeEvent<HTMLSelectElement | HTMLInputElement>, rowKey: string, roomId: string): void => {
+    const selectedId = event.target.value;
+    const lightPlatform = stretchLightPlatform.arrStretchLightPlatform.find((e: any) => e._id === selectedId);
 
-
-  useEffect(() => {
-    dispatch(getAllStretchLightPlatform(cookies)).unwrap().then(res => {
-      if ("error" in res) {
-        // setCookie("access_token", '', { path: '/' })
-        // navigate("/")
-        alert(res)
-      }
-    })
-  }, []);
-
-  const stretchLightPlatform = useAppSelector(selectStretchLightPlatform)
-
-  function addRow() {
-    rowId.push(rowId.length + 1)
-    setRowId([...rowId])
-  }
-
-  function removeRow(event: any) {
-    rowId.splice(event, 1)
-    console.log(rowId);
-    setRowId([...rowId])
-  }
+    if (lightPlatform) {
+      setValue(`lightPlatformName_${rowKey}/${roomId}`, lightPlatform.name,);
+      setValue(`lightPlatformPrice_${rowKey}/${roomId}`, lightPlatform.price)
+    } else {
+      setValue(`lightPlatformPrice_${rowKey}/${roomId}`, 0)
+    }
+  };
 
   return (
-    <div className="dzgvox_arastax_material">
+    <>
       {
-        rowId.map((el: any, index: any) => {
-          return (
-            <div className="divStretchInput1" key={Math.random()}>
-              <select id="selectCoop" key={Math.random()} {...register("lightPlatform_" + el)}>
-
+        lightPlatformRowId.length > 0 ?
+          <div style={{ marginLeft: "5px", width: "100%" }}>
+            <table className="table tableSection" >
+              <thead>
+                <tr
+                  style={{ background: "#dfdce0" }}>
+                  <th>Լույսի Պլատֆորմ</th>
+                  <th>Գին</th>
+                  <th>Քանակ</th>
+                  <th>Հեռացնել</th>
+                </tr>
+              </thead>
+              <tbody >
                 {
-                  stretchLightPlatform.arrStretchLightPlatform && stretchLightPlatform.arrStretchLightPlatform.length > 0 ?
-                    stretchLightPlatform.arrStretchLightPlatform.map((e: any) => {
-                      return (
-                        <option key={e._id} value={e._id} >{e.name}</option>
-                      )
-                    })
-                    :
-                    null
+                  lightPlatformRowId.map((rowKey: any, index: any) => {
+                    return (
+                      <tr key={index}>
+                        <td style={{ minWidth: "250px", }}>
+                          <select
+                            {...register(`lightPlatform_${rowKey}/${roomId}`)}
+                            onChange={(e) => selectLightPlatformPrice(e, rowKey, roomId)}>
+                            <option>Ընտրել Տեսակը</option>
+                            {
+                              stretchLightPlatform.arrStretchLightPlatform && stretchLightPlatform.arrStretchLightPlatform.length > 0 ?
+                                stretchLightPlatform.arrStretchLightPlatform.map((e: any) => {
+                                  return (
+                                    <option key={e._id} value={e._id} >{e.name}</option>
+                                  )
+                                })
+                                :
+                                null
+                            }
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            type="number"
+                            placeholder="Price"
+                            {...register(`lightPlatformPrice_${rowKey}/${roomId}`)}
+                          />
+                        </td>
+                        <td>
+                          <input
+                            type="number"
+                            placeholder="Quantity"
+                            {...register(`lightPlatformQuantity_${rowKey}/${roomId}`)} />
+                        </td>
+                        <td>
+                          <button
+                            type="button"
+                            onClick={() => removeLightPlatformRowId(rowKey, roomId)}>
+                            Հեռացնել
+                          </button>
+                        </td>
+                      </tr>
+                    )
+                  })
                 }
-              </select>
-              <input id="quantity" key={Math.random()} type="number" className="dzgvox_arastax_quantity" placeholder="Quantity"  {...register("lightPlatformQuantity_" + el)} />
-              <button className='btn btn1' type="button" onClick={(e) => removeRow(index)} >Հեռացնել</button>
-            </div>
-          )
-        })
+              </tbody>
+            </table>
+          </div>
+          : null
       }
-      <button type="button" className='btn btn1' onClick={addRow}>Լույսի Պլատֆորմ</button>
-    </div>
+    </>
   );
 };
 

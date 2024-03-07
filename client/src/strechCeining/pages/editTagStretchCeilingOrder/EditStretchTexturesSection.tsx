@@ -1,173 +1,111 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { getAllStretchTexture } from '../../strechTexture/strechTextureApi';
-import { selectStretchTexture } from '../../strechTexture/strechTextureSlice';
-import { useCookies } from 'react-cookie';
 
+import React, { ChangeEvent, useEffect } from 'react';
+import { UseFormRegister, UseFormSetValue } from 'react-hook-form';
 
-const StretchTexturesSection: React.FC<any> = ({ register, reset, setValue, editingStretchTexture }: any) => {
-    const dispatch = useAppDispatch();
-    const [cookies, setCookie] = useCookies(['access_token']);
+interface EditStretchTexturesSectionProps {
+    register: UseFormRegister<any>;
+    setValue: UseFormSetValue<any>;
+    stretchRowId: string[]; 
+    removeStretchRow: (rowId: string, roomId: string) => void 
+    roomId: string;
+    stretchTexture: { arrStretchTexture: Array<any> }; 
+    stretchTextureId: Array<{ stretchTexture: string; stretchPrice: number; stretchSquer: number }>;
+}
 
-    const [texturePrices, setTexturePrices] = useState<{ [key: string]: number }>({});
-    const [priceValues, setPriceValues] = useState<{ [key: string]: number }>({});
+const EditStretchTexturesSection: React.FC<EditStretchTexturesSectionProps> = ({
+    register,
+    setValue,
+    stretchRowId,
+    removeStretchRow,
+    roomId,
+    stretchTexture,
+    stretchTextureId
+}: EditStretchTexturesSectionProps) => {
+
 
     useEffect(() => {
-        dispatch(getAllStretchTexture(cookies)).unwrap().then(res => {
-            if ('error' in res) {
-                alert(res);
+        stretchRowId.forEach((rowId: any, index: number) => {
+            setValue(`stretchTexture_${rowId}/${roomId}`, stretchTextureId[index].stretchTexture);
+            if (stretchTextureId[index].stretchPrice) {
+                setValue(`stretchPrice_${rowId}/${roomId}`, stretchTextureId[index].stretchPrice);
+            } else {
+                setValue(`stretchPrice_${rowId}/${roomId}`, 0);
             }
+            if (stretchTextureId[index].stretchSquer) {
+                setValue(`stretchSquer_${rowId}/${roomId}`, stretchTextureId[index].stretchSquer);
+            } else {
+                setValue(`stretchSquer_${rowId}/${roomId}`, 0);
+            }
+
         });
+    }, [stretchTextureId]);
 
-    }, []);
 
-    const stretchTexture = useAppSelector(selectStretchTexture);
-
-    const [rowId, setRowId] = useState<number[]>([]);
-
-    function addRow() {
-        setRowId(prevRowId => [...prevRowId, prevRowId.length + 1]);
-    }
-
-    useEffect(() => {
-        if (editingStretchTexture) {
-            const newRows = Object.values(editingStretchTexture).map((el: any, index: number) => {
-                const rowKey = index + 1;
-                setValue(`stretchTexture_${rowKey}`, el.stretchTexture);
-                setValue(`stretchPrice_${rowKey}`, el.stretchPrice);
-                setValue(`stretchWidth_${rowKey}`, el.stretchWidth);
-                setValue(`stretchHeight_${rowKey}`, el.stretchHeight);
-                setValue(`stretchSquer_${rowKey}`, el.stretchSquer);
-                setValue(`stretchTotal_${rowKey}`, el.stretchTotal);
-                return rowKey;
-            });
-            setRowId(newRows);
-        }
-    }, [editingStretchTexture, setValue]);
-
-    function removeRow(index: number, event: any, rowKey: number): void {
-        reset({ [`stretchTexture_${rowKey}`]: event.target.value });
-        setRowId(prevRowId => prevRowId.filter((_, i) => i !== index));
-    }
-
-    const selectTexturePrice = (event: ChangeEvent<HTMLSelectElement | HTMLInputElement>, rowKey: string): void => {
+    const selectTexturePrice = (event: ChangeEvent<HTMLSelectElement>, rowId: any): void => {
         const selectedId = event.target.value;
         const texture = stretchTexture.arrStretchTexture.find((e: any) => e._id === selectedId);
         if (texture) {
-            setPriceValues(prevValues => ({ ...prevValues, [rowKey]: texture.price }));
-            setValue(`stretchPrice_${rowKey}`, texture.price)
+            setValue(`stretchPrice_${rowId}/${roomId}`, texture.price);
         } else {
-            setTexturePrices(prevPrices => ({ ...prevPrices, [rowKey]: 0 }));
-            setPriceValues(prevValues => ({ ...prevValues, [rowKey]: 0 }));
+            setValue(`stretchPrice_${rowId}/${roomId}`, 0);
         }
     };
-
-
-    const selectedSquerValues = (event: ChangeEvent<HTMLInputElement>, rowKey: string): void => {
-        const squerField = `stretchSquer_${rowKey}`;
-        const widthField = `width_${rowKey}`;
-        const heightField = `height_${rowKey}`;
-        const form = event.target.form;
-        if (form instanceof HTMLFormElement) {
-            const widthValue = parseFloat(form[widthField]?.value) || 0;
-            const heightValue = parseFloat(form[heightField]?.value) || 0;
-            const squerValue = (widthValue / 100) * (heightValue / 100)
-            setValue(squerField, squerValue.toFixed(2));
-        }
-    };
-    const selectedTotalValues = (event: ChangeEvent<HTMLInputElement>, rowKey: string): void => {
-        const totalField = `stretchTotal_${rowKey}`;
-        const squerField = `stretchSquer_${rowKey}`;
-        const priceField = `stretchPrice_${rowKey}`;
-        const form = event.target.form;
-        if (form instanceof HTMLFormElement) {
-            const priceValue = parseFloat(form[priceField]?.value) || 0;
-            const squerValue = parseFloat(form[squerField]?.value) || 0;
-            const totalValue = priceValue * squerValue
-            setValue(totalField, totalValue.toFixed(2));
-        }
-
-    };
-
-
 
     return (
-        <div className="formdivStretch">
-
-        {rowId.map((el: any, index: any) => (
-            <div key={el} className='dzgvox_arastax_chap'>
-                <select
-                    key={el}
-                    {...register("stretchTexture_" + el)}
-                    onChange={(e) => selectTexturePrice(e, el)}
-                >
-                    <option>Ձգվող Առաստաղ</option>
-
-                    {stretchTexture.arrStretchTexture && stretchTexture.arrStretchTexture.length > 0
-                        ? stretchTexture.arrStretchTexture.map((e: any) => (
-                            <option key={e._id} value={e._id}>{e.name}</option>
-                        ))
-                        : null}
-                </select>
-                <input
-                    className='stretchInput'
-                    id={`price_${el}`}
-                    type="number"
-                    placeholder="Price"
-                    value={priceValues[el] || 0}
-                    {...register(`stretchPrice_${el}`)}
-                    onChange={(e) => {
-                        setPriceValues(prevValues => ({ ...prevValues, [el]: parseFloat(e.target.value) }));
-                        selectedSquerValues(e, el);
-                        selectedTotalValues(e, el)
-                    }}
-                />
-                <input
-                    className='stretchInput'
-                    key={Math.random()}
-                    type='number'
-                    id={`width_${el}`}
-                    placeholder="Width"
-                    {...register("stretchWidth_" + el)}
-                    onChange={(e) => {
-                        selectedSquerValues(e, el);
-                        selectedTotalValues(e, el)
-                    }}
-                />
-                <input
-                    className='stretchInput'
-                    key={Math.random()}
-                    type='number'
-                    id={`height_${el}`}
-                    placeholder="Height"
-                    {...register("stretchHeight_" + el)}
-                    onChange={(e) => {
-                        selectedSquerValues(e, el)
-                        selectedTotalValues(e, el)
-                    }}
-                />
-                <input
-                    className='stretchInput'
-                    key={Math.random()}
-                    id={`squer_${el}`}
-                    placeholder="Squer"
-                    {...register("stretchSquer_" + el)}
-                    onChange={(e) => selectedTotalValues(e, el)}
-                />
-                <input
-                    className='stretchInput'
-                    key={Math.random()}
-                    type='number'
-                    id={`total_${el}`}
-                    placeholder="Total"
-                    {...register("stretchTotal_" + el)}
-                />
-                <button className='btn btn1' type="button" onClick={(e) => removeRow(index, e, el)} >Հեռացնել</button>
-            </div>
-        ))}
-        <button type="button" className='btn btn1' onClick={addRow}>Ձգվող Առաստաղ</button>
-    </div>
+        <div style={{ marginLeft: "5px", width: "100%" }}>
+            {
+                stretchRowId && stretchRowId.length > 0 ?
+                    <table className="table tableSection" >
+                        <thead>
+                            <tr style={{ background: "#dfdce0" }}>
+                                <th >Ձգվող Առաստաղ</th>
+                                <th>Գին</th>
+                                <th>Քանակ</th>
+                                <th>Հեռացնել</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {stretchRowId.map((rowId: any) => (
+                                <tr key={rowId}>
+                                    <td style={{ minWidth: "250px", }}>
+                                        <select
+                                            {...register(`stretchTexture_${rowId}/${roomId}`)}
+                                            onChange={(e) => selectTexturePrice(e, rowId)}
+                                        >
+                                            <option>Ընտրել Տեսակը</option>
+                                            {stretchTexture.arrStretchTexture && stretchTexture.arrStretchTexture.length > 0
+                                                ? stretchTexture.arrStretchTexture.map((texture: any) => (
+                                                    <option key={texture._id} value={texture._id}>{texture.name}</option>
+                                                ))
+                                                : null}
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input
+                                            type="number"
+                                            placeholder="Price"
+                                            {...register(`stretchPrice_${rowId}/${roomId}`)}
+                                        />
+                                    </td>
+                                    <td>
+                                        <input
+                                            placeholder="Squer"
+                                            {...register(`stretchSquer_${rowId}/${roomId}`)}
+                                        />
+                                    </td>
+                                    <td>
+                                        <button type="button" onClick={() => removeStretchRow(rowId, roomId)}>
+                                            Հեռացնել
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    : null
+            }
+        </div>
     );
 };
 
-export default StretchTexturesSection;
+export default EditStretchTexturesSection;

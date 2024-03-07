@@ -13,19 +13,24 @@ import { Profil, ProfilSchema } from 'src/profil/schema/profil.schema';
 import { ProfilService } from 'src/profil/profil.service';
 import { LightRingService } from 'src/light-ring/light-ring.service';
 import { LightRing, LightRingSchema } from 'src/light-ring/schema/light-ring.schema';
+import { StretchWorker, StretchWorkerSchema } from 'src/stretch-worker/schema/stretch-worker.schema';
+import { StretchWork, StretchWorkSchema } from 'src/stretch-work/schema/stretch-work.schema';
+import { StretchWorkerModule } from 'src/stretch-worker/stretch-worker.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: StretchCeilingOrder.name, schema: StretchCeilingOrderSchema },
       { name: StretchBuyer.name, schema: StretchBuyerSchema },
+      { name: StretchWorker.name, schema: StretchWorkerSchema },
+      { name: StretchWork.name, schema: StretchWorkSchema },
       { name: StretchTexture.name, schema: StretchTextureSchema },
       { name: Additional.name, schema: AdditionalSchema },
       { name: Profil.name, schema: ProfilSchema },
       { name: LightRing.name, schema: LightRingSchema },
       { name: User.name, schema: UserSchema },
     ]),
-    StretchBuyerModule, UserModule
+    StretchBuyerModule, UserModule, StretchWorkerModule
   ],
   controllers: [StretchCeilingOrderController],
   providers: [StretchCeilingOrderService, ProfilService, LightRingService],
