@@ -1,9 +1,9 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { getAllStretchTexture } from '../../strechTexture/strechTextureApi';
+import { getAllStretchTexture } from '../../features/strechTexture/strechTextureApi';
 import { useCookies } from 'react-cookie';
-import { viewNewOrders } from '../../stretchCeilingOrder/stretchOrderApi';
-import { selectStretchOrder } from '../../stretchCeilingOrder/stretchOrderSlice';
+import { viewNewOrders } from '../../features/stretchCeilingOrder/stretchOrderApi';
+import { selectStretchOrder } from '../../features/stretchCeilingOrder/stretchOrderSlice';
 
 
 const NewStretchOrderSection: React.FC<any> = ({ register, reset, setValue }: any) => {
@@ -33,8 +33,6 @@ const NewStretchOrderSection: React.FC<any> = ({ register, reset, setValue }: an
     function viewOrder(id: any) {
         window.open('/stretchceiling/viewStretchOrder/' + id, '_blank');
     }
-
-    console.log(newOrders.arrStretchOrder);
 
 
     return (

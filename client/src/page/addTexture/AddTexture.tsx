@@ -8,6 +8,7 @@ import { Texture, selectTexture } from "../../features/texture/textureSlice";
 import "./addTexture.css"
 import { selectUser } from "../../features/user/userSlice";
 import { userProfile } from "../../features/user/userApi";
+import { WallpaperMenu } from "../../component/menu/WallpaperMenu";
 
 export const AddTexture: React.FC = (): JSX.Element => {
     const dispatch = useAppDispatch();
@@ -42,61 +43,34 @@ export const AddTexture: React.FC = (): JSX.Element => {
         window.location.reload()
     }
 
-    const addBuyer = () => {
-        navigate('/wallpaper/addBuyer');
-    }
-    const addCooperate = () => {
-        if (user.profile.role === "admin") {
-            navigate("/wallpaper/addCooperate")
-        }
-    }
-    const addTexture = () => {
-        if (user.profile.role === "admin") {
-            navigate("/wallpaper/addTexture")
-        }
-    }
-    const search = () => {
-        navigate("/wallpaper/searchOrder")
-    }
-    const openOrderForm = () => {
-        navigate("/wallpaper")
-    }
-
     return (
         <div>
-            <div className="admin_profile">
-                <div >
-                    {/* <button className="btn" onClick={openCoopSpher}>Add cooperation sphere</button> */}
-                    <button className="btn" onClick={openOrderForm}>Ավելացնել Պատվեր</button>
-                    <button className="btn" onClick={addBuyer} >Ավելացնել Գնորդ</button>
-                    {
-                        user.profile && user.profile.role === "admin" ?
-                            <>
-                                <button className="btn" onClick={addCooperate} >Ավելացնել Գործընկեր</button>
-                                <button className="btn" onClick={addTexture} >Ավելացնել Տեսակ</button>
-                            </>
-                            :
-                            null
-                    }
-                    <button className="btn" onClick={search} >Դիտել Պատվերները</button>
-                </div>
-            </div>
-            <div className="divTexture">
-                <form className="divBtn" onSubmit={handleSubmit(saveTexture)}>
-                    <div style={{ display: "flex", flexDirection: "column" }}>
-                        <label htmlFor="addTexture">Անվանում</label>
-                        <input id="addTexture" className="userInput" type="text" placeholder="Name" {...register("name", { required: true })} />
+            <WallpaperMenu />
+            <div >
+                <form onSubmit={handleSubmit(saveTexture)}>
+                    <div style={{
+                        display: "flex",
+                        gap:"10px",
+                        margin:"20px"
+                    }}>
+                        <div className="divLabel">
+                            <label htmlFor="addTexture">Անվանում</label>
+                            <input id="addTexture" type="text" placeholder="Name" {...register("name", { required: true })} />
+                        </div>
+                        <div className="divLabel">
+                            <label htmlFor="addPrice">Գին</label>
+                            <input id="addPrice" type="number" placeholder="Price" {...register("price", { required: true })} />
+                        </div>
+                        <button>Գրանցել</button>
                     </div>
-                    <div style={{ display: "flex", flexDirection: "column" }}>
-                        <label htmlFor="addPrice">Գին</label>
-                        <input id="addPrice" className="userInput" type="number" placeholder="Price" {...register("price", { required: true })} />
-                    </div>
-                    <button className="btn" >Գրանցել</button>
                 </form>
                 {
                     texture?.arrTexture && texture.arrTexture.length > 0 ?
-                        <div className="divTexture">
-                            <table className="table" style={{ color: "white" }}>
+                        <div style={{ 
+                            width: "500px",
+                            margin:"20px"
+                            }}>
+                            <table className="tableName">
                                 <thead>
                                     <tr>
                                         <th>Անվանում</th>

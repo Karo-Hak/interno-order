@@ -18,6 +18,33 @@ body {
     color: rgb(141, 127, 127);
 }
 
+.divLabel{
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.tableName {
+  width: 100%;
+  text-align: center;
+}
+
+.tableName th {
+  border: 1px solid black;
+}
+
+.tableName td {
+  border: 1px solid black;
+}
+
+.tableName tr{
+  height: 10px;
+}
+
+.select{
+  border: 1px solid black;
+}
+
 /* 
 
 .profile {

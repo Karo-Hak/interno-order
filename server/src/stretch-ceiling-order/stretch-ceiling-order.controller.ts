@@ -101,14 +101,18 @@ export class StretchCeilingOrderController {
   @Post('updateStretchOrder/:id')
   async update(@Param('id') id: string, @Body() updateStretchCeilingOrderDto: UpdateStretchCeilingOrderDto, @Res() res: Response) {
     try {
-      const updatingOrder = await this.stretchCeilingOrderService.findOne(id);
+      const updatingOrder: any = await this.stretchCeilingOrderService.findOne(id);
       let orderBuyer = await this.stretchBuyerService.findByPhone(updateStretchCeilingOrderDto.buyer.buyerPhone1);
       if (!orderBuyer) {
         orderBuyer = await this.stretchBuyerService.create(updateStretchCeilingOrderDto.buyer)
       }
-      if (orderBuyer._id !== updatingOrder.buyer._id) {
-        await this.stretchBuyerService.deleteFromArray(updatingOrder.buyer._id, updatingOrder.id)
+      await this.stretchBuyerService.deleteFromArray(updatingOrder.buyer._id, updatingOrder.id)
+      let orderWorker = undefined
+      if (updateStretchCeilingOrderDto.stretchTextureOrder.stretchWorker) {
+        orderWorker = await this.stretchWorkerService.findOne(updateStretchCeilingOrderDto.stretchTextureOrder.stretchWorker);
       }
+      await this.stretchWorkerService.deleteFromArray(updatingOrder.stretchWorker, updatingOrder.id)
+
       if (updateStretchCeilingOrderDto.stretchTextureOrder.rooms) {
         removeEmptyValues(updateStretchCeilingOrderDto.stretchTextureOrder.rooms)
         removeEmptyObjects(updateStretchCeilingOrderDto.stretchTextureOrder.rooms)
@@ -118,8 +122,8 @@ export class StretchCeilingOrderController {
         removeEmptyObjects(updateStretchCeilingOrderDto.stretchTextureOrder.groupedWorks)
       }
 
-      const updatedSretchOrder = await this.stretchCeilingOrderService.update(id, updateStretchCeilingOrderDto.stretchTextureOrder, orderBuyer)
-      return res.status(HttpStatus.OK).json();
+      const updatedSretchOrder = await this.stretchCeilingOrderService.update(id, updateStretchCeilingOrderDto.stretchTextureOrder, orderBuyer, orderWorker)
+      return res.status(HttpStatus.OK).json(updatedSretchOrder);
     } catch (e) {
       return res.status(HttpStatus.OK).json({
         error: e.message

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { StretchWorker } from './schema/stretch-worker.schema';
 import { UpdateStretchWorkerDto } from './dto/update-stretch-worker.dto';
 
@@ -21,8 +21,16 @@ export class StretchWorkerService {
     return await this.stretchWorkerModel.findOne({ workerPhone1: phone1 })
   }
 
- async findOne(id: string) {
+  async findOne(id: string) {
     return await this.stretchWorkerModel.findById(id);
+  }
+
+  async deleteFromArray(id: any, deleteId: any) {
+    await this.stretchWorkerModel.findByIdAndUpdate(
+      id,
+      { $pull: { order: new Types.ObjectId(deleteId) } },
+      { new: true }
+    );
   }
 
   update(id: number, updateStretchWorkerDto: UpdateStretchWorkerDto) {

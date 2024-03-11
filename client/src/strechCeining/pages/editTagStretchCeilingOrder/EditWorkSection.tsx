@@ -22,6 +22,8 @@ const EditWorkSection: React.FC<EditStretchProfilsSectionProps> = ({
 
 
   useEffect(() => {
+    console.log(workId);
+    
     workRowId.forEach((rowId: any, index: number) => {
       setValue(`work_${rowId}`, workId[index].work);
       if (workId[index].workPrice) {
@@ -49,6 +51,7 @@ const EditWorkSection: React.FC<EditStretchProfilsSectionProps> = ({
       setValue(`workPrice_${rowKey}`, 0)
     }
   };
+
 
   return (<div style={{ marginLeft: "5px", width: "100%" }}>
     {

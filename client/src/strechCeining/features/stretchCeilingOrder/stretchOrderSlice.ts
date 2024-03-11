@@ -49,6 +49,7 @@ export const stretchOrderSlice = createSlice({
                     state.stretchOrder = action.payload
                 }
             })
+
             .addCase(findNewStretchOrder.fulfilled, (state, action) => {
                 if ('error' in action.payload) {
                 } else {

@@ -16,6 +16,8 @@ import { LightRing, LightRingSchema } from 'src/light-ring/schema/light-ring.sch
 import { StretchWorker, StretchWorkerSchema } from 'src/stretch-worker/schema/stretch-worker.schema';
 import { StretchWork, StretchWorkSchema } from 'src/stretch-work/schema/stretch-work.schema';
 import { StretchWorkerModule } from 'src/stretch-worker/stretch-worker.module';
+import { ProductModule } from 'src/product/product.module';
+import { Product, ProductSchema } from 'src/product/schema/product.schema';
 
 @Module({
   imports: [
@@ -29,8 +31,9 @@ import { StretchWorkerModule } from 'src/stretch-worker/stretch-worker.module';
       { name: Profil.name, schema: ProfilSchema },
       { name: LightRing.name, schema: LightRingSchema },
       { name: User.name, schema: UserSchema },
+      { name: Product.name, schema: ProductSchema }
     ]),
-    StretchBuyerModule, UserModule, StretchWorkerModule
+    StretchBuyerModule, UserModule, StretchWorkerModule, ProductModule
   ],
   controllers: [StretchCeilingOrderController],
   providers: [StretchCeilingOrderService, ProfilService, LightRingService],

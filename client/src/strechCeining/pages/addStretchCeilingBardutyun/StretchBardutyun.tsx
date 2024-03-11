@@ -5,11 +5,12 @@ import { useNavigate } from "react-router-dom";
 import { useCookies } from 'react-cookie'
 import { userProfile } from "../../../features/user/userApi";
 import './stretchBardutyun.css'
-import { selectStretchBardutyun } from "../../strechBardutyun/strechBardutyunSlice";
+import { selectStretchBardutyun } from "../../features/strechBardutyun/strechBardutyunSlice";
 import { getAllUnyt } from "../../unyt/unytApi";
 import { selectUnyt } from "../../unyt/unytSlice";
 import { useForm } from "react-hook-form";
-import { addStretchBardutyun, getAllStretchBardutyun } from "../../strechBardutyun/strechBardutyunApi";
+import { addStretchBardutyun, getAllStretchBardutyun } from "../../features/strechBardutyun/strechBardutyunApi";
+import { StretchMenu } from "../../../component/menu/StretchMenu";
 
 export const StretchBardutyun: React.FC = (): JSX.Element => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm<any>()
@@ -57,28 +58,33 @@ export const StretchBardutyun: React.FC = (): JSX.Element => {
 
     return (
         <>
-            <div className="addStretchBuyer_head">
-                <div className="addStretchBuyer_head_name">Բարդություն</div>
-
+            <StretchMenu />
+            <div style={{
+                margin: "20px"
+            }}>
                 <form onSubmit={handleSubmit(newStretchBardutyun)} >
-                    <div className="addStrerchBuyer_info">
-                        <div className="addStrerchBuyer_info_section">
+                    <div style={{
+                        display: "flex",
+                        gap: "10px"
+                    }} >
+                        <div className="divLabel">
                             <label htmlFor="name">Անվանում</label>
                             <input id="name" type="text" placeholder="Name"  {...register("name", { required: true })} />
                         </div>
-                        <div className="addStrerchBuyer_info_section">
+                        <div className="divLabel">
                             <label htmlFor="name">Գին</label>
                             <input id="name" type="text" placeholder="Name"  {...register("price", { required: true })} />
                         </div>
-                        <div className="addStrerchBuyer_info_section">
-                            <button className="btn btn1">Գրանցել</button>
-                        </div>
+                        <button >Գրանցել</button>
                     </div>
                 </form>
                 {
                     stretchBardutyun.arrStretchBardutyun && stretchBardutyun.arrStretchBardutyun.length > 0 ?
-                        <div className="addStretchBuyer_table">
-                            <table className="table" >
+                        <div style={{
+                            margin: "20px 0 ",
+                            width: "500px"
+                        }}>
+                            <table className="tableName" >
                                 <thead>
                                     <tr>
                                         <th scope="col">Անվանում</th>
@@ -103,11 +109,7 @@ export const StretchBardutyun: React.FC = (): JSX.Element => {
                         :
                         null
                 }
-
-
-
             </div>
-
         </>
     );
 }

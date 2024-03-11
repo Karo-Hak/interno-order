@@ -6,7 +6,6 @@ import { StretchCeilingOrder } from './schema/stretch-ceiling-order.schema';
 import { StretchBuyer } from 'src/stretch-buyer/schema/stretch-buyer.schema';
 import { User } from 'src/user/schema/user.schema';
 import { StretchTexture } from 'src/stretch-texture/schema/stretch-texture.schema';
-import { Bardutyun } from 'src/bardutyun/schema/bardutyun.schema';
 import { Additional } from 'src/additional/schema/additional.schema';
 import { ProfilService } from 'src/profil/profil.service';
 import { LightRingService } from 'src/light-ring/light-ring.service';
@@ -40,10 +39,11 @@ export class StretchCeilingOrderService {
     } else {
       const orderWorker = await this.stretchWorkerModel.findById(createStretchCeilingOrderDto.stretchTextureOrder.worker);
       orderWorkerId = orderWorker;
-      const createdOrder = await new this.stretchCeilingOrderModel({ ...createStretchCeilingOrderDto.stretchTextureOrder, user: orderUser.id, buyer: orderBuyer.id, stretchWorker: orderWorkerId.id });
+      const createdOrder = await new this.stretchCeilingOrderModel({ ...createStretchCeilingOrderDto.stretchTextureOrder, user: orderUser.id, buyer: orderBuyer.id, worker: orderWorkerId.id });
       await this.userModel.findByIdAndUpdate(createStretchCeilingOrderDto.user.userId, { order: [...orderUser.order, createdOrder.id] });
       await this.stretchBuyerModel.findByIdAndUpdate(createStretchCeilingOrderDto.orderBuyer, { order: [...orderBuyer.order, createdOrder.id] });
       await this.stretchWorkerModel.findByIdAndUpdate(orderWorkerId.id, { order: [...orderWorkerId.order, createdOrder.id] });
+
       return createdOrder.save();
     }
 
@@ -61,96 +61,26 @@ export class StretchCeilingOrderService {
 
   async findOne(id: string) {
     const data = (await this.stretchCeilingOrderModel.findById(id).populate("buyer").populate("stretchWorker"));
-    const dataTexture = await this.stretchTextureModel.find();
-    const additional = await this.additionalModel.find();
-    const stretchProfil = await this.profilService.findAll();
-    const dataLightRing = await this.lightRingService.findAll()
-
-    const textureMap = new Map(dataTexture.map(texture => [texture._id.toString(), texture.name]));
-    const enhanceCeilingsWithNamesTexture = (groupedCeilings) => {
-      const updatedCeilings = {};
-      for (const key in groupedCeilings) {
-        if (groupedCeilings.hasOwnProperty(key)) {
-          const ceiling = groupedCeilings[key];
-          const textureId = ceiling.stretchTexture.toString();
-          const textureName = textureMap.get(textureId);
-          if (textureName) {
-            ceiling.textureName = textureName;
-            updatedCeilings[key] = ceiling;
-          }
-        }
-      }
-      return updatedCeilings;
-    };
-
-    const additionalMap = new Map(additional.map(additional => [additional._id.toString(), additional.name]));
-    const enhanceCeilingsWithNamesAdditional = (groupedAdditionals) => {
-      const updatedAdditional = {};
-      for (const key in groupedAdditionals) {
-        if (groupedAdditionals.hasOwnProperty(key)) {
-          const additionals = groupedAdditionals[key];
-          const additionalId = additionals.additional.toString();
-          const additionalName = additionalMap.get(additionalId);
-          if (additionalName) {
-            additionals.additionalName = additionalName;
-            updatedAdditional[key] = additionals;
-          }
-        }
-      }
-      return updatedAdditional;
-    };
-
-    const profilMap = new Map(stretchProfil.map(profil => [profil._id.toString(), profil.name]));
-    const enhanceCeilingsWithNameProfil = (groupedProfils) => {
-      const updatedProfil = {};
-      for (const key in groupedProfils) {
-        if (groupedProfils.hasOwnProperty(key)) {
-          const profils = groupedProfils[key];
-          const profilId = profils.profil.toString();
-          const profilName = profilMap.get(profilId);
-          if (profilName) {
-            profils.profilName = profilName;
-            updatedProfil[key] = profils;
-          }
-        }
-      }
-      return updatedProfil;
-    };
-
-    const lightRingMap = new Map(dataLightRing.map(lightRing => [lightRing._id.toString(), lightRing.name]));
-    const enhanceCeilingsWithNameLightRing = (groupedLightRings) => {
-      const updatedLightRing = {};
-      for (const key in groupedLightRings) {
-        if (groupedLightRings.hasOwnProperty(key)) {
-          const lightRings = groupedLightRings[key];
-          const lightRingId = lightRings.lightRing.toString();
-          const lightRingName = lightRingMap.get(lightRingId);
-          if (lightRingName) {
-            lightRings.lightRingName = lightRingName;
-            updatedLightRing[key] = lightRings;
-          }
-        }
-      }
-      return updatedLightRing;
-    };
-
-    // data.groupedStretchCeilings = enhanceCeilingsWithNamesTexture(data.groupedStretchCeilings);
-    // data.groupedAdditionals = enhanceCeilingsWithNamesAdditional(data.groupedAdditionals);
-    // data.groupedProfils = enhanceCeilingsWithNameProfil(data.groupedProfils);
-    // data.groupedLightRings = enhanceCeilingsWithNameLightRing(data.groupedLightRings);
     return data
   }
 
-  async update(id: string, updateStretchCeilingOrderDto: UpdateStretchCeilingOrderDto, buyer: any) {
-    console.log(updateStretchCeilingOrderDto,":order");
+  async update(id: string, updateStretchCeilingOrderDto: object, buyer: any, orderWorker: any) {
+    const buyerCheck: { order: [string] } = await this.stretchBuyerModel.findOne(buyer._id);
+    let workerCheck
+    if (orderWorker) {
+      workerCheck = await this.stretchWorkerModel.findOne(orderWorker._id)
+    }
+    await this.stretchBuyerModel.findByIdAndUpdate(buyerCheck, { order: [...buyerCheck.order, id] });
+    if (workerCheck) {
+      await this.stretchWorkerModel.findByIdAndUpdate(workerCheck, { order: [...workerCheck.order, id] });
+      const updatedOrder = await this.stretchCeilingOrderModel.findByIdAndUpdate(id, { ...updateStretchCeilingOrderDto, stretchWorker: orderWorker.id })
+    }
+    const updatedOrder = await this.stretchCeilingOrderModel.findByIdAndUpdate(id, { ...updateStretchCeilingOrderDto, buyer: buyer.id })
 
-    const updatedOrder = await this.stretchCeilingOrderModel.findByIdAndUpdate(id, updateStretchCeilingOrderDto)
-    
-
-    return `This action updates a #${id} stretchCeilingOrder`;
+    return updatedOrder;
   }
 
   remove(id: number) {
-    return `This action removes a #${id} stretchCeilingOrder`;
+    return `This action removes a #${ id } stretchCeilingOrder`;
   }
 }

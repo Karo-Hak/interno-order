@@ -3,10 +3,14 @@ import { LightPlatformService } from './light-platform.service';
 import { LightPlatformController } from './light-platform.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { LightPlatform, LightPlatformSchema } from './schema/light-platform.schema';
+import { Product, ProductSchema } from 'src/product/schema/product.schema';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: LightPlatform.name, schema: LightPlatformSchema }])
+    MongooseModule.forFeature([
+      { name: LightPlatform.name, schema: LightPlatformSchema },
+      { name: Product.name, schema: ProductSchema }
+    ])
   ],
   controllers: [LightPlatformController],
   providers: [LightPlatformService],

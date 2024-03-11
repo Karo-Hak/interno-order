@@ -6,8 +6,9 @@ import { useCookies } from 'react-cookie'
 import { userProfile } from "../../../features/user/userApi";
 import './addStretchWork.css'
 import { useForm } from "react-hook-form";
-import { allStretchWork, newStretchWork } from "../../StrechWork/strechWorkApi";
-import { selectStretchWork } from "../../StrechWork/strechWorkSlice";
+import { allStretchWork, newStretchWork } from "../../features/StrechWork/strechWorkApi";
+import { selectStretchWork } from "../../features/StrechWork/strechWorkSlice";
+import { StretchMenu } from "../../../component/menu/StretchMenu";
 
 export const StretchWork: React.FC = (): JSX.Element => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm<any>()
@@ -49,8 +50,9 @@ console.log(work);
 
     return (
         <>
+        <StretchMenu />
             <div className="addStretchBuyer_head">
-                <div className="addStretchBuyer_head_name">Gnordi tvyalner</div>
+                <div className="addStretchBuyer_head_name">Աշխատակից</div>
                 <form onSubmit={handleSubmit(addStretchWork)} >
                     <div className="addStrerchBuyer_info">
                         <div className="addStrerchBuyer_info_section">

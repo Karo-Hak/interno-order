@@ -2,8 +2,8 @@ import React, { FC, useEffect } from 'react';
 import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../../app/hooks';
-import { selectStretchWorker } from '../../StrechWorker/strechWorkerSlice';
-import { allStretchWorker } from '../../StrechWorker/strechWorkerApi';
+import { selectStretchWorker } from '../../features/StrechWorker/strechWorkerSlice';
+import { allStretchWorker } from '../../features/StrechWorker/strechWorkerApi';
 import { UseFormRegister, UseFormSetValue } from 'react-hook-form';
 import { event } from 'jquery';
 

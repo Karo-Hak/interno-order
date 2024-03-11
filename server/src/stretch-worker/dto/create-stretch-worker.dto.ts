@@ -1,3 +1,3 @@
 export class CreateStretchWorkerDto {
-    phone1: string;
+    stretchWorkerPhone1: string;
 }

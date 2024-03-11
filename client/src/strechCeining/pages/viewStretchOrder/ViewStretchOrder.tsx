@@ -5,8 +5,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useCookies } from 'react-cookie'
 import { userProfile } from "../../../features/user/userApi";
 import './viewStretchOrder.css'
-import { findStretchOrder } from "../../stretchCeilingOrder/stretchOrderApi";
-import { selectStretchOrder } from "../../stretchCeilingOrder/stretchOrderSlice";
+import { findStretchOrder } from "../../features/stretchCeilingOrder/stretchOrderApi";
+import { selectStretchOrder } from "../../features/stretchCeilingOrder/stretchOrderSlice";
 import ViewStretchTexturesSection from "./ViewStretchTexturesSection";
 import ViewProfilSection from "./ViewProfilSection";
 import ViewLightPlatformSection from "./ViewLightPlatformSection";
@@ -15,6 +15,7 @@ import ViewAdditionalSection from "./ViewAdditionalSection";
 import ViewWorkSection from "./ViewWorkSection";
 import ViewBardutyunSection from "./ViewBardutyunSection";
 import ViewOtherSection from "./ViewOtherSection";
+import { StretchMenu } from "../../../component/menu/StretchMenu";
 
 
 export const ViewStretchOrder: React.FC = (): JSX.Element => {
@@ -25,34 +26,48 @@ export const ViewStretchOrder: React.FC = (): JSX.Element => {
 
     const [rooms, setRooms] = useState<any[]>([]);
     const [works, setWorks] = useState<any[]>([]);
+    const order = useAppSelector(selectStretchOrder).stretchOrder;
+
 
     useEffect(() => {
-        dispatch(userProfile(cookies)).unwrap().then(res => {
-            if ("error" in res) {
-                setCookie("access_token", '', { path: '/' });
-                navigate("/");
+        const fetchData = async () => {
+            try {
+                const userProfileResult = await dispatch(userProfile(cookies)).unwrap();
+                handleResult(userProfileResult);
+                const stretchOrderResult = await dispatch(findStretchOrder({ params, cookies })).unwrap();
+                handleResult(stretchOrderResult);
+            } catch (error) {
+                console.error("An error occurred:", error);
             }
-        });
-
-        dispatch(findStretchOrder({ params, cookies })).unwrap().then(res => {
-            if ("error" in res) {
-                setCookie("access_token", '', { path: '/' });
+        };
+    
+        const handleResult = (result: any) => {
+            if ("error" in result) {
+                console.error(result.error);
+                setCookie("access_token", "", { path: "/" });
                 navigate("/");
             } else {
-                if (typeof res.rooms === 'object' && res.rooms !== null) {
-                    const rooms: any = Object.values(res.rooms) as any;
-                    setRooms(rooms);
-                }
-                if (res.groupedWorks !== undefined && res.groupedWorks !== null) {
-                    const works: any = Object.values(res.groupedWorks)
-                    setWorks(works)
-                }
+                processResult(result);
             }
-        });
-    }, []);
+        };
+    
+        const processResult = (result: any) => {
+            if (result.rooms && typeof result.rooms === "object" && result.rooms !== null) {
+                const rooms = Object.values(result.rooms);
+                setRooms(rooms);
+            }
+    
+            if (result.groupedWorks !== undefined && result.groupedWorks !== null) {
+                const works = Object.values(result.groupedWorks);
+                setWorks(works);
+            }
+        };
+    
+        fetchData();
+    }, [dispatch, params, cookies, navigate, setCookie, setRooms, setWorks, order]);
+    
 
 
-    const order = useAppSelector(selectStretchOrder).stretchOrder;
     const user = useAppSelector(selectUser);
 
     const parseDate = (dateStr: string) => {
@@ -62,11 +77,13 @@ export const ViewStretchOrder: React.FC = (): JSX.Element => {
 
 
     function editOrder() {
-        window.open('/stretchceiling/editStretchOrder/' + params.id, '_blank');
+        navigate('/stretchceiling/editStretchOrder/' + params.id);
 
     }
 
     return (<>
+            <StretchMenu />
+
         {
             order && Object.values(order).length > 0 ?
                 <div className=''>

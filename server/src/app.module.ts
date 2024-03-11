@@ -26,6 +26,8 @@ import { AdditionalModule } from './additional/additional.module';
 import { StretchCeilingOrderModule } from './stretch-ceiling-order/stretch-ceiling-order.module';
 import { StretchWorkerModule } from './stretch-worker/stretch-worker.module';
 import { StretchWorkModule } from './stretch-work/stretch-worker.module';
+import { ProductModule } from './product/product.module';
+import { CategoryProductModule } from './category-product/category-product.module';
 
 @Module({
   imports: [
@@ -38,6 +40,8 @@ import { StretchWorkModule } from './stretch-work/stretch-worker.module';
     CooperationSphereModule,
     AuthModule,
     UploadModule,
+    ProductModule,
+    CategoryProductModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'uploads'), // Путь к папке с загруженными изображениями
       serveRoot: '/uploads', // Корневой путь, по которому будут доступны изображения на сервере

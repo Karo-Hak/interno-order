@@ -2,8 +2,8 @@ import React, { ChangeEvent, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { useCookies } from 'react-cookie';
 import './tagStretchOrder.css'
-import { allStretchWork } from '../../StrechWork/strechWorkApi';
-import { selectStretchWork } from '../../StrechWork/strechWorkSlice';
+import { allStretchWork } from '../../features/StrechWork/strechWorkApi';
+import { selectStretchWork } from '../../features/StrechWork/strechWorkSlice';
 
 const WorkSection: React.FC<any> = ({ register, setValue, workRowId, removeWorkRow }: any) => {
 

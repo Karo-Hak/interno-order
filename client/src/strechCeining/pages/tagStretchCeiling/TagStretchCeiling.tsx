@@ -6,6 +6,7 @@ import { useCookies } from 'react-cookie'
 import { userProfile } from "../../../features/user/userApi";
 import './tagStrechCeiling.css'
 import NewStretchOrderSection from "./NewStretchOrderSection";
+import { StretchMenu } from "../../../component/menu/StretchMenu";
 
 export const TagStretchCeiling: React.FC = (): JSX.Element => {
     const user = useAppSelector(selectUser);
@@ -25,39 +26,10 @@ export const TagStretchCeiling: React.FC = (): JSX.Element => {
 
     }, [])
 
-    const tagStretchBuyer = () => {
-        window.open("/tagstretchceiling/addTagStretchBuyer")
-    }
-    const tagStretchWorker = () => {
-        window.open("/tagstretchceiling/addTagStretchWorker")
-    }
-    function goTo(event: ChangeEvent<HTMLSelectElement>): void {
-        window.open(event.target.value)
 
-    }
-    const newTagStretchOrder = () => {
-        window.open("/stretchceiling/addTagStretchOrder")
-    }
     return (
         <>
-            <div className="admin_profile_Strech">
-                <div >
-                    <button className="btn" onClick={newTagStretchOrder} >Նոր Պատվեր</button>
-                    <select onChange={(e) => goTo(e)} className="btn" style={{ height: "35px" }}>
-                        <option>Ապրանք</option>
-                        <option value={"/stretchTexture"}>Ձգվող Առաստաղ</option>
-                        <option value={"/stretchceiling/addStretchBardutyun"}>Բարդություն</option>
-                        <option value={"/stretchceiling/addStretchProfil"}>Պրոֆիլ</option>
-                        <option value={"/stretchceiling/addStretchLightPlatform"}>Լույսի Պլատֆորմ</option>
-                        <option value={"/stretchceiling/addStretchLightRing"}>Լույսի Օղակ</option>
-                        <option value={"/stretchceiling/addStretchAdditional"}>Լռացուցիչ</option>
-                        <option value={"/stretchceiling/addTagStretchWorker"}>Աշխատանք</option>
-                    </select>
-                    <button className="btn" onClick={tagStretchBuyer}>Ավելացնել Գնորդ</button>
-                    <button className="btn" onClick={tagStretchWorker}>Ավելացնել Աշխատակից</button>
-                    <button className="btn">Դիտել Պատվերները</button>
-                </div>
-            </div>
+            <StretchMenu/>
             <div className="newStretchOrderSection">
                 <NewStretchOrderSection />
             </div>

@@ -7,6 +7,7 @@ import { selectUser } from "../../features/user/userSlice";
 import { getAllCooperate, getCoopSpher, newCooperate } from "../../features/cooperate/cooperateApi";
 import { selectCooperate } from "../../features/cooperate/cooperateSlice";
 import { userProfile } from "../../features/user/userApi";
+import { WallpaperMenu } from "../../component/menu/WallpaperMenu";
 
 export const AddCooperate: React.FC = (): JSX.Element => {
     const dispatch = useAppDispatch();
@@ -49,68 +50,37 @@ export const AddCooperate: React.FC = (): JSX.Element => {
         window.location.reload()
     }
 
-    const addBuyer = () => {
-        navigate('/wallpaper/addBuyer');
-    }
-    const addCooperate = () => {
-        if (user.profile.role === "admin") {
-            navigate("/wallpaper/addCooperate")
-        }
-    }
-    const addTexture = () => {
-        if (user.profile.role === "admin") {
-            navigate("/wallpaper/addTexture")
-        }
-    }
-    const search = () => {
-        navigate("/wallpaper/searchOrder")
-    }
-    const openOrderForm = () => {
-        navigate("/wallpaper")
-    }
-
     return (
         <div>
-            <div className="admin_profile">
-                <div >
-                    {/* <button className="btn" onClick={openCoopSpher}>Add cooperation sphere</button> */}
-                    <button className="btn" onClick={openOrderForm}>Ավելացնել Պատվեր</button>
-                    <button className="btn" onClick={addBuyer} >Ավելացնել Գնորդ</button>
-                    {
-                        user.profile && user.profile.role === "admin" ?
-                            <>
-                                <button className="btn" onClick={addCooperate} >Ավելացնել Գործընկեր</button>
-                                <button className="btn" onClick={addTexture} >Ավելացնել Տեսակ</button>
-                            </>
-                            :
-                            null
-                    }
-                    <button className="btn" onClick={search} >Դիտել Պատվերները</button>
-                </div>
-            </div>
-            <div className="profile">
-                <form className="divBtn" onSubmit={handleSubmit(saveCooperate)}>
-                    <div style={{ display: "flex", gap: "5px" }}>
-                        <div style={{ display: "flex", flexDirection: "column" }}>
+            <WallpaperMenu />
+            <div style={{
+                margin:"20px"
+            }}>
+                <form onSubmit={handleSubmit(saveCooperate)}>
+                    <div style={{
+                        display: "flex",
+                        gap: "5px"
+                    }}>
+                        <div className="divLabel">
                             <label htmlFor="cooperateName">Անուն</label>
-                            <input id="cooperateName" className="userInput" type="text" placeholder="Name" {...register("name", { required: true })} />
+                            <input id="cooperateName" type="text" placeholder="Name" {...register("name", { required: true })} />
                         </div>
-                        <div style={{ display: "flex", flexDirection: "column" }}>
+                        <div className="divLabel">
                             <label htmlFor="cooperateSurname">Ազգանուն</label>
-                            <input id="cooperateSurname" className="userInput" type="text" placeholder="Surname" {...register("surname")} />
+                            <input id="cooperateSurname" type="text" placeholder="Surname" {...register("surname")} />
                         </div>
-                        <div style={{ display: "flex", flexDirection: "column" }}>
+                        <div className="divLabel">
                             <label htmlFor="cooperatePhone">Հեռախես</label>
-                            <input id="cooperatePhone" className="userInput" type="text" placeholder="Phone" {...register("phone")} />
+                            <input id="cooperatePhone" type="text" placeholder="Phone" {...register("phone")} />
                         </div>
-                        <div style={{ display: "flex", flexDirection: "column" }}>
+                        <div className="divLabel">
                             <label htmlFor="cooperateRate">Գործընկերոջ տոկոս</label>
-                            <input id="cooperateRate" className="userInput" type="text" placeholder="Cooperate Rate" {...register("cooperateRate", { required: true })} />
+                            <input id="cooperateRate" type="text" placeholder="Cooperate Rate" {...register("cooperateRate", { required: true })} />
                         </div>
                         {
                             cooperate?.cooperationSphere && cooperate.cooperationSphere.length > 0 ?
 
-                                <div style={{ display: "flex", flexDirection: "column" }}>
+                                <div className="divLabel">
                                     <label htmlFor="cooperateSpher">Գործընկերոջ ոլորտ</label>
                                     <select id="cooperateSpher" aria-label="Default select example" {...register("cooperationSphere", { required: true })}>
                                         <option value={0}>Select</option>
@@ -128,14 +98,16 @@ export const AddCooperate: React.FC = (): JSX.Element => {
                                 :
                                 null
                         }
+                        <button >Գրանցել</button>
                     </div>
-                    <button className="btn" >Գրանցել</button>
                 </form>
             </div>
             {
                 cooperate?.arrCooperate && cooperate.arrCooperate.length > 0 ?
-                    <div className="profile">
-                        <table className="table" style={{ color: "white" }}>
+                    <div style={{
+                        margin:"20px"
+                    }}>
+                        <table className="tableName">
                             <thead>
                                 <tr>
                                     <th scope="col">Անուն</th>

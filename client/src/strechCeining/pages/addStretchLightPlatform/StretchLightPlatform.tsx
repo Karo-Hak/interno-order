@@ -5,11 +5,12 @@ import { useNavigate } from "react-router-dom";
 import { useCookies } from 'react-cookie'
 import { userProfile } from "../../../features/user/userApi";
 import './stretchLightPlatform.css'
-import { selectStretchLightPlatform } from "../../strechLightPlatform/strechLightPlatformSlice";
+import { selectStretchLightPlatform } from "../../features/strechLightPlatform/strechLightPlatformSlice";
 import { getAllUnyt } from "../../unyt/unytApi";
 import { selectUnyt } from "../../unyt/unytSlice";
 import { useForm } from "react-hook-form";
-import { addStretchLightPlatform, getAllStretchLightPlatform } from "../../strechLightPlatform/strechLightPlatformApi";
+import { addStretchLightPlatform, getAllStretchLightPlatform } from "../../features/strechLightPlatform/strechLightPlatformApi";
+import { StretchMenu } from "../../../component/menu/StretchMenu";
 
 export const StretchLightPlatform: React.FC = (): JSX.Element => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm<any>()
@@ -50,14 +51,17 @@ export const StretchLightPlatform: React.FC = (): JSX.Element => {
 
     return (
         <>
-            <div className="addStretchBuyer_head">
-            <div className="addStretchBuyer_head_name">Gnordi tvyalner</div>
-
+            <StretchMenu />
+            <div >
                 <form onSubmit={handleSubmit(newLightPlatform)} >
-                    <div className="addStrerchBuyer_info">
-                        <div className="addStrerchBuyer_info_section">
+                    <div style={{
+                        display: 'flex',
+                        margin: "20px",
+                        gap: "10px"
+                    }}>
+                        <div className="divLabel">
                             <label htmlFor="name">Անվանում</label>
-                            <select id="id"  {...register("id", { required: true })}>
+                            <select className="select" id="id"  {...register("id", { required: true })}>
                                 <option></option>
                                 {
                                     stretchLightPlatform.arrStretchLightPlatform && stretchLightPlatform.arrStretchLightPlatform.length > 0 ?
@@ -71,25 +75,23 @@ export const StretchLightPlatform: React.FC = (): JSX.Element => {
                                 }
                             </select>
                         </div>
-                        <div className="addStrerchBuyer_info_section">
+                        <div className="divLabel">
                             <label htmlFor="price">Գին</label>
                             <input id="price" type="number" placeholder="Price"  {...register("price", { required: true })} />
                         </div>
-                    <div className="addStrerchBuyer_info_section">
-                        <button className="btn btn1">Գրանցել</button>
-                    </div>
+                        <button>Գրանցել</button>
                     </div>
                 </form>
                 {
                     stretchLightPlatform.arrStretchLightPlatform && stretchLightPlatform.arrStretchLightPlatform.length > 0 ?
-                        <div className="addStretchBuyer_table">
-                            <div className="addStretchBuyer_head_name">Gnordneri cucak</div>
-
-                            <table className="table">
+                        <div style={{
+                            margin: "20px",
+                            width: "500px"
+                        }}>
+                            <table className="tableName">
                                 <thead>
                                     <tr>
                                         <th scope="col">Անվանում</th>
-                                        <th scope="col">Չ/Մ</th>
                                         <th scope="col">Գին</th>
                                     </tr>
                                 </thead>
@@ -99,7 +101,6 @@ export const StretchLightPlatform: React.FC = (): JSX.Element => {
                                             return (
                                                 <tr key={e._id}>
                                                     <td>{e.name}</td>
-                                                    <td>{e.unyt}</td>
                                                     <td>{e.price}</td>
                                                 </tr>
                                             )

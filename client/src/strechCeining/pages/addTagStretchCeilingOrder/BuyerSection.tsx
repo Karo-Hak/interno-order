@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { allStretchBuyer } from '../../StrechBuyer/strechBuyerApi';
-import { selectStretchBuyer } from '../../StrechBuyer/strechBuyerSlice';
+import { allStretchBuyer } from '../../features/StrechBuyer/strechBuyerApi';
+import { selectStretchBuyer } from '../../features/StrechBuyer/strechBuyerSlice';
 import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
 import './tagStretchCeilingOrder.css'

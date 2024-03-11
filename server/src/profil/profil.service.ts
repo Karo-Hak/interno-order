@@ -5,50 +5,33 @@ import { Profil } from './schema/profil.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { ObjectId } from 'mongodb';
+import { Product } from 'src/product/schema/product.schema';
 const { MongoClient } = require('mongodb');
 
 
 
 @Injectable()
 export class ProfilService {
-  constructor(@InjectModel(Profil.name) private profilModel: Model<Profil>) { }
-
+  constructor(
+    @InjectModel(Profil.name) private profilModel: Model<Profil>,
+    @InjectModel(Product.name) private productModel: Model<Product>,
+  ) { }
   async create(profil) {
     const profilId = profil.id
     const newPrice = profil.price
-    const stockUrl = 'mongodb://localhost:27017';
-    const stockClient = new MongoClient(stockUrl);
-    try {
-      await stockClient.connect();
-      const stockDb = stockClient.db('stock');
-      const stockCollection = stockDb.collection('products');
-      const result = await stockCollection.updateOne(
-        { _id: new ObjectId(profilId) },
-        { $set: { price: newPrice } }
-      );
-      return result;
-    } finally {
-      await stockClient.close();
-    }
+    const result = await this.productModel.updateOne(
+      { _id: new ObjectId(profilId) },
+      { $set: { price: newPrice } }
+    );
+    return result;
   }
 
   async findAll() {
-    const stockUrl = 'mongodb://localhost:27017';
-    const stockClient = new MongoClient(stockUrl);
-
-    try {
-      await stockClient.connect();
-      const stockDb = stockClient.db('stock');
-      const stockCollection = stockDb.collection('products');
-
-      const stockData = await stockCollection.find({}).toArray();
-      const profilmDb = stockData.filter(e => {
-        return e.categoryProduct == "65a794201acb8962fc25c963"
-      })
-      return profilmDb;
-    } finally {
-      await stockClient.close();
-    }
+    const stockData = await this.productModel.find()
+    const profilmDb = stockData.filter(e => {
+      return e.categoryProduct.toString() === "65a794201acb8962fc25c963"
+    })
+    return profilmDb;
   }
 
   findOne(id: number) {

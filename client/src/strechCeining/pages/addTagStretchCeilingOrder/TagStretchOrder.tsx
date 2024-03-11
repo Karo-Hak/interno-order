@@ -8,26 +8,27 @@ import PaymentSection from './PaymentSection';
 import { filterOrder } from './logic';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { selectUser } from '../../../features/user/userSlice';
-import { addNewStretchOrder, viewNewOrders } from '../../stretchCeilingOrder/stretchOrderApi';
+import { addNewStretchOrder, viewNewOrders } from '../../features/stretchCeilingOrder/stretchOrderApi';
 import RoomSection from './RoomSection';
 import './tagStretchOrder.css';
 import ModalRoom from '../../../component/modal/ModalRoom';
 import { v4 as uuidv4 } from 'uuid';
 import WorkSection from './WorkSection';
-import { getAllStretchTexture } from '../../strechTexture/strechTextureApi';
-import { selectStretchTexture } from '../../strechTexture/strechTextureSlice';
-import { getAllStretchAdditional } from '../../strechAdditional/strechAdditionalApi';
-import { selectStretchAdditional } from '../../strechAdditional/strechAdditionalSlice';
-import { getAllStretchProfil } from '../../strechProfil/strechProfilApi';
-import { selectStretchProfil } from '../../strechProfil/strechProfilSlice';
-import { getAllStretchLightPlatform } from '../../strechLightPlatform/strechLightPlatformApi';
-import { selectStretchLightPlatform } from '../../strechLightPlatform/strechLightPlatformSlice';
-import { getAllStretchLightRing } from '../../strechLightRing/strechLightRingApi';
-import { selectStretchLightRing } from '../../strechLightRing/strechLightRingSlice';
-import { getAllStretchBardutyun } from '../../strechBardutyun/strechBardutyunApi';
-import { selectStretchBardutyun } from '../../strechBardutyun/strechBardutyunSlice';
-import { selectStretchWork } from '../../StrechWork/strechWorkSlice';
-import { allStretchWork } from '../../StrechWork/strechWorkApi';
+import { getAllStretchTexture } from '../../features/strechTexture/strechTextureApi';
+import { selectStretchTexture } from '../../features/strechTexture/strechTextureSlice';
+import { getAllStretchAdditional } from '../../features/strechAdditional/strechAdditionalApi';
+import { selectStretchAdditional } from '../../features/strechAdditional/strechAdditionalSlice';
+import { getAllStretchProfil } from '../../features/strechProfil/strechProfilApi';
+import { selectStretchProfil } from '../../features/strechProfil/strechProfilSlice';
+import { getAllStretchLightPlatform } from '../../features/strechLightPlatform/strechLightPlatformApi';
+import { selectStretchLightPlatform } from '../../features/strechLightPlatform/strechLightPlatformSlice';
+import { getAllStretchLightRing } from '../../features/strechLightRing/strechLightRingApi';
+import { selectStretchLightRing } from '../../features/strechLightRing/strechLightRingSlice';
+import { getAllStretchBardutyun } from '../../features/strechBardutyun/strechBardutyunApi';
+import { selectStretchBardutyun } from '../../features/strechBardutyun/strechBardutyunSlice';
+import { selectStretchWork } from '../../features/StrechWork/strechWorkSlice';
+import { allStretchWork } from '../../features/StrechWork/strechWorkApi';
+import { StretchMenu } from '../../../component/menu/StretchMenu';
 
 
 
@@ -214,23 +215,7 @@ export const TagStretchOrderx: React.FC = (): JSX.Element => {
 
     return (
         <div className=''>
-            <div className="admin_profile_Strech">
-                <div >
-                    <button className="btn" onClick={newTagStretchOrder} >Նոր Պատվեր</button>
-                    <select onChange={(e) => goTo(e)} className="btn" style={{ height: "35px" }}>
-                        <option>Ապրանք</option>
-                        <option value={"/stretchTexture"}>Ձգվող Առաստաղ</option>
-                        <option value={"/stretchceiling/addStretchBardutyun"}>Բարդություն</option>
-                        <option value={"/stretchceiling/addStretchProfil"}>Պրոֆիլ</option>
-                        <option value={"/stretchceiling/addStretchLightPlatform"}>Լույսի Պլատֆորմ</option>
-                        <option value={"/stretchceiling/addStretchLightRing"}>Լույսի Օղակ</option>
-                        <option value={"/stretchceiling/addStretchAdditional"}>Լռացուցիչ</option>
-                    </select>
-                    <button className="btn" onClick={tagStretchBuyer}>Ավելացնել Գնորդ</button>
-                    <button className="btn" onClick={tagStretchWorkerr}>Ավելացնել Աշխատակից</button>
-                    <button className="btn">Դիտել Պատվերները</button>
-                </div>
-            </div>
+            <StretchMenu />
             <form onSubmit={handleSubmit(qountTotal)}>
                 <div className=''>
                     <BuyerSection register={register} setValue={setValue} />

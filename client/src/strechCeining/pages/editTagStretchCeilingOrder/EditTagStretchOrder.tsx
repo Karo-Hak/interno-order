@@ -4,20 +4,20 @@ import { ChangeEvent, useEffect, useState } from 'react'
 import { useNavigate, useParams } from "react-router-dom";
 import { useCookies } from 'react-cookie'
 import { userProfile } from "../../../features/user/userApi";
-import { findStretchOrder, updateStretchOrderAll } from "../../stretchCeilingOrder/stretchOrderApi";
-import { selectStretchOrder } from "../../stretchCeilingOrder/stretchOrderSlice";
-import { getAllStretchAdditional } from "../../strechAdditional/strechAdditionalApi";
-import { getAllStretchBardutyun } from "../../strechBardutyun/strechBardutyunApi";
-import { getAllStretchLightPlatform } from "../../strechLightPlatform/strechLightPlatformApi";
-import { getAllStretchLightRing } from "../../strechLightRing/strechLightRingApi";
-import { getAllStretchProfil } from "../../strechProfil/strechProfilApi";
-import { getAllStretchTexture } from "../../strechTexture/strechTextureApi";
-import { selectStretchAdditional } from "../../strechAdditional/strechAdditionalSlice";
-import { selectStretchBardutyun } from "../../strechBardutyun/strechBardutyunSlice";
-import { selectStretchLightPlatform } from "../../strechLightPlatform/strechLightPlatformSlice";
-import { selectStretchLightRing } from "../../strechLightRing/strechLightRingSlice";
-import { selectStretchProfil } from "../../strechProfil/strechProfilSlice";
-import { selectStretchTexture } from "../../strechTexture/strechTextureSlice";
+import { findStretchOrder, updateStretchOrderAll } from "../../features/stretchCeilingOrder/stretchOrderApi";
+import { selectStretchOrder } from "../../features/stretchCeilingOrder/stretchOrderSlice";
+import { getAllStretchAdditional } from "../../features/strechAdditional/strechAdditionalApi";
+import { getAllStretchBardutyun } from "../../features/strechBardutyun/strechBardutyunApi";
+import { getAllStretchLightPlatform } from "../../features/strechLightPlatform/strechLightPlatformApi";
+import { getAllStretchLightRing } from "../../features/strechLightRing/strechLightRingApi";
+import { getAllStretchProfil } from "../../features/strechProfil/strechProfilApi";
+import { getAllStretchTexture } from "../../features/strechTexture/strechTextureApi";
+import { selectStretchAdditional } from "../../features/strechAdditional/strechAdditionalSlice";
+import { selectStretchBardutyun } from "../../features/strechBardutyun/strechBardutyunSlice";
+import { selectStretchLightPlatform } from "../../features/strechLightPlatform/strechLightPlatformSlice";
+import { selectStretchLightRing } from "../../features/strechLightRing/strechLightRingSlice";
+import { selectStretchProfil } from "../../features/strechProfil/strechProfilSlice";
+import { selectStretchTexture } from "../../features/strechTexture/strechTextureSlice";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from 'uuid';
 import { filterOrder } from "../addTagStretchCeilingOrder/logic";
@@ -25,9 +25,10 @@ import EditBuyerSection from "./EditBuyerSection";
 import EditPaymentSection from "./EditPaymentSection";
 import ModalRoom from "../../../component/modal/ModalRoom";
 import EditRoomSection from "./EditRoomSection";
-import { allStretchWork } from "../../StrechWork/strechWorkApi";
-import { selectStretchWork } from "../../StrechWork/strechWorkSlice";
+import { allStretchWork } from "../../features/StrechWork/strechWorkApi";
+import { selectStretchWork } from "../../features/StrechWork/strechWorkSlice";
 import EditWorkSection from "./EditWorkSection";
+import { StretchMenu } from "../../../component/menu/StretchMenu";
 
 
 
@@ -50,71 +51,66 @@ export const EditTagStretchOrder: React.FC = (): JSX.Element => {
 
 
     useEffect(() => {
-        dispatch(userProfile(cookies)).unwrap().then(res => {
-            if ("error" in res) {
-                setCookie("access_token", '', { path: '/' });
-                navigate("/");
-            }
-        });
+        const fetchData = async () => {
+            try {
+                const userProfileResult = await dispatch(userProfile(cookies)).unwrap();
+                const stretchOrderResult = await dispatch(findStretchOrder({ params, cookies })).unwrap();
+                const stretchTextureResult = await dispatch(getAllStretchTexture(cookies)).unwrap();
+                const stretchAdditionalResult = await dispatch(getAllStretchAdditional(cookies)).unwrap();
+                const stretchProfilResult = await dispatch(getAllStretchProfil(cookies)).unwrap();
+                const stretchLightPlatformResult = await dispatch(getAllStretchLightPlatform(cookies)).unwrap();
+                const stretchLightRingResult = await dispatch(getAllStretchLightRing(cookies)).unwrap();
+                const stretchBardutyunResult = await dispatch(getAllStretchBardutyun(cookies)).unwrap();
+                const allStretchWorkResult = await dispatch(allStretchWork(cookies)).unwrap();
 
-        dispatch(findStretchOrder({ params, cookies })).unwrap().then(res => {
-            if ("error" in res) {
-                setCookie("access_token", '', { path: '/' });
+                handleResult(userProfileResult);
+                handleResult(stretchOrderResult);
+                handleResult(stretchTextureResult);
+                handleResult(stretchAdditionalResult);
+                handleResult(stretchProfilResult);
+                handleResult(stretchLightPlatformResult);
+                handleResult(stretchLightRingResult);
+                handleResult(stretchBardutyunResult);
+                handleResult(allStretchWorkResult);
+            } catch (error) {
+                console.error("An error occurred:", error);
+            }
+        };
+
+        const handleResult = (result: any) => {
+            if ("error" in result) {
+                alert(result);
+                setCookie("access_token", "", { path: "/" });
                 navigate("/");
             } else {
-                if (typeof res.rooms === 'object' && res.rooms !== null) {
-                    const rooms: any = Object.values(res.rooms) as any;
-                    setRooms(rooms);
-                }
-                if (res.groupedWorks !== undefined && res.groupedWorks !== null) {
-                    const works: any = Object.values(res.groupedWorks)
-                    setWorks(works)
-                    Object.entries(res.groupedWorks).forEach(([key, value]: [string, any], index: number) => {
-                        const rowId = key.split('/')[0];
-                        setWorkRowId((prevRowId) => [...prevRowId, rowId]);
-                    });
-                }
-                setPrepeyment(res.prepayment)
+                processResult(result);
+            }
+        };
 
+        const processResult = (result: any) => {
+            if (result.rooms && typeof result.rooms === "object") {
+                const rooms = Object.values(result.rooms);
+                setRooms(rooms);
             }
-        });
-        dispatch(getAllStretchTexture(cookies)).unwrap().then(res => {
-            if ('error' in res) {
-                alert(res);
-            }
-        });
-        dispatch(getAllStretchAdditional(cookies)).unwrap().then(res => {
-            if ("error" in res) {
-                alert(res);
-            }
-        });
-        dispatch(getAllStretchProfil(cookies)).unwrap().then(res => {
-            if ("error" in res) {
-                alert(res)
-            }
-        });
-        dispatch(getAllStretchLightPlatform(cookies)).unwrap().then(res => {
-            if ("error" in res) {
-                alert(res)
-            }
-        });
-        dispatch(getAllStretchLightRing(cookies)).unwrap().then(res => {
-            if ("error" in res) {
-                alert(res)
-            }
-        });
-        dispatch(getAllStretchBardutyun(cookies)).unwrap().then(res => {
-            if ("error" in res) {
-                alert(res)
-            }
-        });
-        dispatch(allStretchWork(cookies)).unwrap().then(res => {
-            if ("error" in res) {
-                alert(res)
-            }
-        })
 
+            if (result.groupedWorks) {
+                const works = Object.values(result.groupedWorks);
+                setWorks(works);
 
+                Object.entries(result.groupedWorks).forEach(([key, value]) => {
+                    const rowId = key.split("/")[0];
+                    setWorkRowId((prevRowId) => [...prevRowId, rowId]);
+                });
+            }
+            if (result.orderComment) {
+                setValue("orderComment", result.orderComment)
+            }
+            if (result.prepayment) {
+                setPrepeyment(result.prepayment)
+            }
+        };
+
+        fetchData();
     }, []);
 
 
@@ -183,28 +179,23 @@ export const EditTagStretchOrder: React.FC = (): JSX.Element => {
         stretchTextureOrder["installDate"] = updatingOrder.installDate
         stretchTextureOrder["code"] = updatingOrder.code
         stretchTextureOrder["salary"] = updatingOrder.stretchWorkerSalary
-        stretchTextureOrder["worker"] = updatingOrder.stretchWorkerId
-        console.log(stretchTextureOrder);
-        
+        if (updatingOrder.stretchWorkerId !== "Աշխատակից") {
+            stretchTextureOrder["stretchWorker"] = updatingOrder.stretchWorkerId
+        } else {
+            stretchTextureOrder["stretchWorker"] = null
+        }
+
 
         dispatch(updateStretchOrderAll({ params, buyer, stretchTextureOrder, cookies, user: user.profile })).unwrap().then(res => {
             if ("error" in res) {
                 alert(res.error)
             }
         });
+        navigate('/stretchceiling/viewStretchOrder/' + params.id,)
     };
 
 
-    const newOrder = () => {
-        // dispatch(addNewStretchOrder({ addOrder, cookies, user: user.profile })).unwrap().then(res => {
-        //     if ("error" in res) {
-        //         alert(res.error)
-        //     }
-        // });
 
-        // window.location.reload()
-
-    };
 
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -217,19 +208,7 @@ export const EditTagStretchOrder: React.FC = (): JSX.Element => {
         setIsModalOpen(false);
     };
 
-    const tagStretchBuyer = () => {
-        window.open("/tagstretchceiling/addTagStretchBuyer")
-    }
-    const tagStretchWorkerr = () => {
-        window.open("/tagstretchceiling/addTagStretchWorker")
-    }
-    function goTo(event: ChangeEvent<HTMLSelectElement>): void {
-        window.open(event.target.value)
 
-    }
-    const newTagStretchOrder = () => {
-        window.open("/stretchceiling/addTagStretchOrder")
-    }
 
     function handleCheckboxRoom(event: ChangeEvent<HTMLInputElement>, el: any, index: number) {
         const updatedRoom = [...room];
@@ -246,7 +225,7 @@ export const EditTagStretchOrder: React.FC = (): JSX.Element => {
     const removeWorkRow = (index: any,) => {
         reset({ [`work_${index}`]: '' })
         console.log(workRowId, index);
-        
+
         setWorkRowId(prevRowId => {
             return prevRowId.filter((_, i) => _ !== index);
         });
@@ -261,23 +240,7 @@ export const EditTagStretchOrder: React.FC = (): JSX.Element => {
 
     return (
         <div className=''>
-            <div className="admin_profile_Strech">
-                <div >
-                    <button className="btn" onClick={newTagStretchOrder} >Նոր Պատվեր</button>
-                    <select onChange={(e) => goTo(e)} className="btn" style={{ height: "35px" }}>
-                        <option>Ապրանք</option>
-                        <option value={"/stretchTexture"}>Ձգվող Առաստաղ</option>
-                        <option value={"/stretchceiling/addStretchBardutyun"}>Բարդություն</option>
-                        <option value={"/stretchceiling/addStretchProfil"}>Պրոֆիլ</option>
-                        <option value={"/stretchceiling/addStretchLightPlatform"}>Լույսի Պլատֆորմ</option>
-                        <option value={"/stretchceiling/addStretchLightRing"}>Լույսի Օղակ</option>
-                        <option value={"/stretchceiling/addStretchAdditional"}>Լռացուցիչ</option>
-                    </select>
-                    <button className="btn" onClick={tagStretchBuyer}>Ավելացնել Գնորդ</button>
-                    <button className="btn" onClick={tagStretchWorkerr}>Ավելացնել Աշխատակից</button>
-                    <button className="btn">Դիտել Պատվերները</button>
-                </div>
-            </div>
+            <StretchMenu />
             <form onSubmit={handleSubmit(qountTotal)}>
                 <div className=''>
                     <EditBuyerSection
@@ -322,7 +285,7 @@ export const EditTagStretchOrder: React.FC = (): JSX.Element => {
                         gap: "20px",
                         margin: "5px"
                     }}>
-                    <button onClick={handleOpenModal}>
+                    <button type="button" onClick={handleOpenModal}>
                         Ավելացնել սենյակ
                     </button>
                     {
@@ -412,8 +375,7 @@ export const EditTagStretchOrder: React.FC = (): JSX.Element => {
 
                 <div className="formdivStretch_1" >
                     <div className="buyer_label_1">
-                        <button className="btn btn1" type='button' onClick={newOrder}>Գրանցել</button>
-                        <button className='btn btn1' type='submit'>Հաշվարկել</button>
+                        <button className='btn btn1' type='submit'>Գրանցել</button>
                     </div>
                 </div>
             </form>

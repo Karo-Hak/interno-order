@@ -41,15 +41,8 @@ export const Login: React.FC = (): JSX.Element => {
 
     const save = async (us: User) => {
         dispatch(loginUser(us)).unwrap().then(res => {
-            if (res.role === "admin") {
-                setCookie("access_token", res.access_token, { path: '/' })
-                navigate('/' + sphere.replaceAll(" ", '').toLowerCase())
-            } else if (res.sphere.includes(sphere)) {
-                setCookie("access_token", res.access_token, { path: '/' })
-                navigate('/' + sphere.replaceAll(" ", '').toLowerCase())
-            } else {
-                alert("you don't have permission to access on " + sphere)
-            }
+            setCookie("access_token", res.access_token, { path: '/' })
+            navigate('/home')
 
         })
     }
@@ -67,22 +60,6 @@ export const Login: React.FC = (): JSX.Element => {
                     <label>Password</label>
                     <input  {...register("password", { required: true })} placeholder="Password" />
                     {errors.password && <p>Password</p>}
-                </div>
-                <div className="loginLine">
-                    <label>Sphere</label>
-                    {
-                        userSphere?.arrUserSphere && userSphere.arrUserSphere?.length > 0 ?
-                            <select className="" onChange={selectedSphere}>
-                                {
-                                    userSphere.arrUserSphere.map((e: any, i: any) => {
-                                        return (
-                                            <option key={e._id}>{e.name}</option>
-                                        )
-                                    })
-                                }
-                            </select>
-                            : null
-                    }
                 </div>
                 <button className="btn" >Login</button>
             </form>

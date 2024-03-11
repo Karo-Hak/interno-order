@@ -4,21 +4,23 @@ import orderReducer from '../features/order/orderSlice'
 import cooperateReducer from '../features/cooperate/cooperateSlice'
 import buyerReducer from '../features/buyer/buyerSlice'
 import textureReducer from '../features/texture/textureSlice';
-import stretchBuyerReducer from '../strechCeining/StrechBuyer/strechBuyerSlice';
-import stretchWorkerReducer from '../strechCeining/StrechWorker/strechWorkerSlice';
-import stretchWorkReducer from '../strechCeining/StrechWork/strechWorkSlice';
-import stretchTextureReducer from '../strechCeining/strechTexture/strechTextureSlice';
+import stretchBuyerReducer from '../strechCeining/features/StrechBuyer/strechBuyerSlice';
+import stretchWorkerReducer from '../strechCeining/features/StrechWorker/strechWorkerSlice';
+import stretchWorkReducer from '../strechCeining/features/StrechWork/strechWorkSlice';
+import stretchTextureReducer from '../strechCeining/features/strechTexture/strechTextureSlice';
 import coopStrechOrderReducer from '../strechCeining/coopStrechOrder/coopStretchOrderSlice'
 import userSphereReducer from '../features/userSphere/userSphereSlice'
 import unytReducer from '../strechCeining/unyt/unytSlice'
 import coopStretchBuyerReducer from '../strechCeining/CoopStrechBuyer/coopStrechBuyerSlice'
 // '../strechCeining/coopStrechBuyer/coopStrechBuyerSlice'
-import strechBardutyunReducer from '../strechCeining/strechBardutyun/strechBardutyunSlice';
-import stretchProfilReducer from '../strechCeining/strechProfil/strechProfilSlice'
-import LightPlatformReducer from '../strechCeining/strechLightPlatform/strechLightPlatformSlice'
-import LightRingReducer from '../strechCeining/strechLightRing/strechLightRingSlice'
-import stretchAdditional from '../strechCeining/strechAdditional/strechAdditionalSlice'
-import stretchOrderReducer from '../strechCeining/stretchCeilingOrder/stretchOrderSlice'
+import strechBardutyunReducer from '../strechCeining/features/strechBardutyun/strechBardutyunSlice';
+import stretchProfilReducer from '../strechCeining/features/strechProfil/strechProfilSlice'
+import LightPlatformReducer from '../strechCeining/features/strechLightPlatform/strechLightPlatformSlice'
+import LightRingReducer from '../strechCeining/features/strechLightRing/strechLightRingSlice'
+import stretchAdditional from '../strechCeining/features/strechAdditional/strechAdditionalSlice'
+import stretchOrderReducer from '../strechCeining/features/stretchCeilingOrder/stretchOrderSlice'
+import categoryReducer from '../strechCeining/features/category/categorySlice'
+import productReducer from '../strechCeining/features/product/productSlice'
 
 
 export const store = configureStore({
@@ -42,6 +44,8 @@ export const store = configureStore({
     stretchLightRing: LightRingReducer,
     stretchAdditional: stretchAdditional,
     stretchOrder: stretchOrderReducer,
+    category: categoryReducer,
+    product: productReducer,
 
   },
 });

@@ -11,17 +11,18 @@ export class StretchWorkerController {
   @Post()
   async create(@Body() createStretchWorkerDto: CreateStretchWorkerDto, @Res() res: Response) {
     try {
-      const existingStretchWorker = await this.stretchWorkerService.findByPhone(createStretchWorkerDto.phone1)
+      const existingStretchWorker = await this.stretchWorkerService.findByPhone(createStretchWorkerDto.stretchWorkerPhone1)
       if (existingStretchWorker) {
         return res.status(HttpStatus.BAD_REQUEST).json({
           error: "Բնորդը գոյություն ունի"
         })
+      } else {
+        const stretchWorker = await this.stretchWorkerService.create(createStretchWorkerDto);
+        return res.status(HttpStatus.CREATED).json({
+          message: "create Worker",
+          stretchWorker
+        })
       }
-      const stretchWorker = await this.stretchWorkerService.create(createStretchWorkerDto);
-      return res.status(HttpStatus.CREATED).json({
-        message: "create Worker",
-        stretchWorker
-      })
     } catch (e) {
       return res.status(HttpStatus.BAD_REQUEST).json({
         error: e.message
@@ -30,7 +31,7 @@ export class StretchWorkerController {
   }
 
   @Get()
- async findAll( @Res() res: Response) {
+  async findAll(@Res() res: Response) {
     try {
       const worker = await this.stretchWorkerService.findAll()
       return res.status(HttpStatus.OK).json({

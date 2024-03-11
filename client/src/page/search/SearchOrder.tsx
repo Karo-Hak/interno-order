@@ -14,6 +14,7 @@ import { allBuyer } from "../../features/buyer/buyerApi"
 import { getAllCooperate } from "../../features/cooperate/cooperateApi"
 import { getAllTexture } from "../../features/texture/textureApi"
 import { searchFilter } from "../../logic/searchLogic"
+import { WallpaperMenu } from "../../component/menu/WallpaperMenu"
 
 
 
@@ -161,7 +162,7 @@ export const SearchOrder: React.FC = (): JSX.Element => {
     }
     totalCooperateTotal = +totalCooperateTotal.toFixed(3)
 
-   
+
 
     const filteredBuyer = searchOrderRes.arr.filter((obj: any, index: any, self: any) =>
         index === self.findIndex((t: any) => (t.buyer._id === obj.buyer._id))
@@ -185,33 +186,17 @@ export const SearchOrder: React.FC = (): JSX.Element => {
         }
     }
     const search = () => {
-       navigate("/wallpaper/searchOrder")
+        navigate("/wallpaper/searchOrder")
     }
-    const openOrderForm = ()=>{
+    const openOrderForm = () => {
         navigate("/wallpaper")
     }
 
 
- 
+
     return (
         <div >
-              <div className="admin_profile">
-                <div >
-                    {/* <button className="btn" onClick={openCoopSpher}>Add cooperation sphere</button> */}
-                    <button className="btn" onClick={openOrderForm}>Ավելացնել Պատվեր</button>
-                    <button className="btn" onClick={addBuyer} >Ավելացնել Գնորդ</button>
-                    {
-                        user.profile && user.profile.role === "admin" ?
-                            <>
-                                <button className="btn" onClick={addCooperate} >Ավելացնել Գործընկեր</button>
-                                <button className="btn" onClick={addTexture} >Ավելացնել Տեսակ</button>
-                            </>
-                            :
-                            null
-                    }
-                    <button className="btn" onClick={search} >Դիտել Պատվերները</button>
-                </div>
-            </div>
+               <WallpaperMenu />
             <div className="profile ">
                 <div className="profile_info">
 

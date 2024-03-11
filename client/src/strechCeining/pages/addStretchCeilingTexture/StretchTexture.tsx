@@ -4,18 +4,16 @@ import { useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
 import { useCookies } from 'react-cookie'
 import { userProfile } from "../../../features/user/userApi";
-import './stretchTexture.css'
-import { selectStretchTexture } from "../../strechTexture/strechTextureSlice";
-import { getAllUnyt } from "../../unyt/unytApi";
-import { selectUnyt } from "../../unyt/unytSlice";
+import { selectStretchTexture } from "../../features/strechTexture/strechTextureSlice";
 import { useForm } from "react-hook-form";
-import { addStretchTexture, getAllStretchTexture } from "../../strechTexture/strechTextureApi";
+import { addStretchTexture, getAllStretchTexture } from "../../features/strechTexture/strechTextureApi";
+import { StretchMenu } from "../../../component/menu/StretchMenu";
+import './stretchTexture.css'
 
 export const StretchTexture: React.FC = (): JSX.Element => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm<any>()
     const user = useAppSelector(selectUser);
     const stretchTexture = useAppSelector(selectStretchTexture)
-    const unyt = useAppSelector(selectUnyt)
     const dispatch = useAppDispatch();
     const [cookies, setCookie] = useCookies(['access_token']);
     const navigate = useNavigate();
@@ -23,12 +21,6 @@ export const StretchTexture: React.FC = (): JSX.Element => {
 
     useEffect(() => {
         dispatch(userProfile(cookies)).unwrap().then(res => {
-            if ("error" in res) {
-                setCookie("access_token", '', { path: '/' })
-                navigate("/")
-            }
-        })
-        dispatch(getAllUnyt(cookies)).unwrap().then(res => {
             if ("error" in res) {
                 setCookie("access_token", '', { path: '/' })
                 navigate("/")
@@ -52,82 +44,57 @@ export const StretchTexture: React.FC = (): JSX.Element => {
         window.location.reload()
     }
 
-    console.log(unyt.arrUnyt);
-
     return (
         <>
-
-            <div className="addStretchBuyer_head">
-                <div className="addStretchBuyer_head_name">Gnordi tvyalner</div>
-
+            <StretchMenu />
+            <div style={{
+                margin: "20px"
+            }}>
                 <form onSubmit={handleSubmit(newStretchTexture)} >
-       
-                        <div className="addStrerchBuyer_info">
-                            <div className="addStrerchBuyer_info_section">
-                                <label htmlFor="name">Անվանում</label>
-                                <input id="name" type="text" placeholder="Name"  {...register("name", { required: true })} />
-                            </div>
-                            <div className="addStrerchBuyer_info_section">
-                                <label htmlFor="weight">Լայնություն</label>
-                                <input id="weight" type="number" placeholder="Weight"  {...register("weight", { required: true })} />
-                            </div>
-                            <div>
-                                <label htmlFor="unyt">Չ/Մ</label>
-                                <select id="unyt" {...register("unyt", { required: true })}>
-                                    {
-                                        unyt.arrUnyt && unyt.arrUnyt.length > 0 ?
-                                            unyt.arrUnyt.map((e: any, i: any) => {
-                                                return (
-                                                    <option key={e._id} value={e.name}>{e.name}</option>
-                                                )
-                                            })
-                                            :
-                                            null
-                                    }
-                                </select>
-                            </div>
+                    <div style={{
+                        display: "flex",
+                        gap: "10px"
+                    }}>
+                        <div className="divLabel">
+                            <label htmlFor="name">Անվանում</label>
+                            <input id="name" type="text" placeholder="Name"  {...register("name", { required: true })} />
                         </div>
-                        <div className="addStrerchBuyer_info_section">
-                        <div className="addStretchBuyer_head_name">vacharqi gin</div>
-                            <div className="addStrerchBuyer_info_section">
-                                <label htmlFor="price">Գին</label>
-                                <input id="price" type="number" placeholder="Price"  {...register("price", { required: true })} />
-                            </div>
-                            <div className="addStrerchBuyer_info_section">
-                                <label htmlFor="priceGarpun">Գին Գարպուն</label>
-                                <input id="priceGarpun" type="number" placeholder="Price Garpun"  {...register("priceGarpun", { required: true })} />
-                            </div>
-                            <div className="addStrerchBuyer_info_section">
-                                <label htmlFor="priceOtrez">Գին Կտրվածք</label>
-                                <input id="priceOtrez" type="number" placeholder="Price Otrez"  {...register("priceOtrez", { required: true })} />
-                            </div>
+                        <div className="divLabel">
+                            <label htmlFor="weight">Լայնություն</label>
+                            <input id="weight" type="number" placeholder="Weight"  {...register("weight", { required: true })} />
                         </div>
-                        <div className="addStrerchBuyer_info_section">
-                            <label>Համագործակցության գին</label>
-                            <p>_______________________________</p>
-                            <div className="addStrerchBuyer_info_section">
-                                <label htmlFor="priceCoopGarpun">Գին Գարպուն</label>
-                                <input id="priceCoopGarpun" type="number" placeholder="Price Garpun"  {...register("priceCoopGarpun", { required: true })} />
-                            </div>
-                            <div className="addStrerchBuyer_info_section">
-                                <label htmlFor="priceCoopOtrez">Գին Կտրվածք</label>
-                                <input id="priceCoopOtrez" type="number" placeholder="Price Otrez"  {...register("priceCoopOtrez", { required: true })} />
-                            </div>
-                            <div className="addStrerchBuyer_info_section">
-                                <button className="btn btn1">Գրանցել</button>
-                            </div>
+
+                        <div className="divLabel">
+                            <label htmlFor="price">Գին</label>
+                            <input id="price" type="number" placeholder="Price"  {...register("price", { required: true })} />
                         </div>
-                    
+                        <div className="divLabel">
+                            <label htmlFor="priceGarpun">Գին Գարպուն</label>
+                            <input id="priceGarpun" type="number" placeholder="Price Garpun"  {...register("priceGarpun", { required: true })} />
+                        </div>
+                        <div className="divLabel">
+                            <label htmlFor="priceOtrez">Գին Կտրվածք</label>
+                            <input id="priceOtrez" type="number" placeholder="Price Otrez"  {...register("priceOtrez", { required: true })} />
+                        </div>
 
+                        <div className="divLabel">
+                            <label htmlFor="priceCoopGarpun">Համ․ Գին Գարպուն</label>
+                            <input id="priceCoopGarpun" type="number" placeholder="Price Garpun"  {...register("priceCoopGarpun", { required: true })} />
+                        </div>
+                        <div className="divLabel">
+                            <label htmlFor="priceCoopOtrez">Համ․ Գին Կտրվածք</label>
+                            <input id="priceCoopOtrez" type="number" placeholder="Price Otrez"  {...register("priceCoopOtrez", { required: true })} />
+                        </div>
 
-
+                        <button >Գրանցել</button>
+                    </div>
                 </form>
                 {
                     stretchTexture.arrStretchTexture && stretchTexture.arrStretchTexture.length > 0 ?
-                        <div className="addStretchBuyer_table" >
-                            <div className="addStretchBuyer_head_name">Gnordneri cucak</div>
-
-                            <table className="table" >
+                        <div  style={{
+                            margin:"20px"
+                        }}>
+                            <table className="tableName" >
                                 <thead>
                                     <tr>
                                         <th scope="col">Անվանում</th>
@@ -162,11 +129,7 @@ export const StretchTexture: React.FC = (): JSX.Element => {
                         :
                         null
                 }
-
-
-
             </div>
-
         </>
     );
 }

@@ -1,7 +1,7 @@
 .admin_profile {
     background-color: rgb(65, 62, 62);
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
 }
 

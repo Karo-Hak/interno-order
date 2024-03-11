@@ -6,8 +6,9 @@ import { useCookies } from 'react-cookie'
 import { userProfile } from "../../../features/user/userApi";
 import './addStretchBuyer.css'
 import { useForm } from "react-hook-form";
-import { allStretchBuyer, newStretchBuyer } from "../../StrechBuyer/strechBuyerApi";
-import { selectStretchBuyer } from "../../StrechBuyer/strechBuyerSlice";
+import { allStretchBuyer, newStretchBuyer } from "../../features/StrechBuyer/strechBuyerApi";
+import { selectStretchBuyer } from "../../features/StrechBuyer/strechBuyerSlice";
+import { StretchMenu } from "../../../component/menu/StretchMenu";
 
 export const StretchBuyer: React.FC = (): JSX.Element => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm<any>()
@@ -49,7 +50,7 @@ export const StretchBuyer: React.FC = (): JSX.Element => {
     return (
         <>
 
-
+<StretchMenu />
             <div className="addStretchBuyer_head_name">Gnordi tvyalner</div>
             <form onSubmit={handleSubmit(addStretchBuyer)} >
                 <div className="addStrerchBuyer_info">

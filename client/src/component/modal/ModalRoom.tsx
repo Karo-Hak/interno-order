@@ -53,7 +53,7 @@ const ModalRoom: React.FC<InputModalProps> = ({ isOpen, onClose, setRoom, room }
       <div>
         <input type='text' id='roomName' onChange={handleInputChange} />
       </div>
-      <button className='btn' onClick={handleSave}>
+      <button className='btn' type='button' onClick={handleSave}>
         Գրանցել
       </button>
     </div>

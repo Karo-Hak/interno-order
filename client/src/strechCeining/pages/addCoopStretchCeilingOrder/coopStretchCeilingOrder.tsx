@@ -6,13 +6,13 @@ import { useCookies } from 'react-cookie'
 import { useForm } from "react-hook-form";
 import { userProfile } from "../../../features/user/userApi";
 import './coopStretchCeilingOrder.css'
-import { selectStretchTexture } from "../../strechTexture/strechTextureSlice";
 import { selectCoopStretchBuyer } from "../../CoopStrechBuyer/coopStrechBuyerSlice";
 import { addNewCoopStretchOrder } from "../../coopStrechOrder/coopStretchOrderApi"
 import { allCoopStretchBuyer } from "../../CoopStrechBuyer/coopStrechBuyerApi";
-import { getAllStretchTexture } from "../../strechTexture/strechTextureApi";
-import { selectStretchBardutyun } from "../../strechBardutyun/strechBardutyunSlice";
-import { getAllStretchBardutyun } from "../../strechBardutyun/strechBardutyunApi";
+import { selectStretchBardutyun } from "../../features/strechBardutyun/strechBardutyunSlice";
+import { getAllStretchBardutyun } from "../../features/strechBardutyun/strechBardutyunApi";
+import { getAllStretchTexture } from "../../features/strechTexture/strechTextureApi";
+import { selectStretchTexture } from "../../features/strechTexture/strechTextureSlice";
 
 
 export const CoopStretchOrder: React.FC = (): JSX.Element => {
@@ -183,151 +183,6 @@ export const CoopStretchOrder: React.FC = (): JSX.Element => {
     return (
         <>
 
-            <form className="orderDiv" onSubmit={handleSubmit(newOrder)}>
-                <div className="formdiv">
-                    <div className="formSelect">
-                        <div className="buyerDiv">
-                            Գնորդ
-                            <div>-------</div>
-                            <div>
-                                <label htmlFor="selectCoop">Ձգվող Առաստաղ</label>
-                                <select id="selectCoop" className="selectCoop form-control" {...register("cooperateId", { required: true })}>
-                                    {
-                                        stretchTexture.arrStretchTexture && stretchTexture.arrStretchTexture.length > 0 ?
-                                            stretchTexture.arrStretchTexture.map((e: any) => {
-                                                return <option key={e._id} value={e._id}
-                                                >{e.name}</option>
-                                            })
-                                            : null
-                                    }
-                                </select>
-                            </div>
-                                <div>
-                                    <button className="btn" onClick={handleAddSelect}>Ավելացնել Բարդություն</button>
-                                    {selectBarduyuns.map((select, index) => (
-                                        <div key={index}>{select}</div>
-                                    ))}
-                                </div>
-                            <div>
-                                <label htmlFor="buyerPhone">Հեռախես</label>
-                                <input id="buyerPhone" className="userInput form-control" type="text" placeholder=" Buyer Phone" {...register("buyerPhone", { required: true })} />
-                            </div>
-                            <div>
-                                <label htmlFor="buyerAdress">Հասցե</label>
-                                <input id="buyerAdress" className="userInput form-control" type="text" placeholder="Buyer Adress" {...register("buyerAdress", { required: true })} />
-                            </div>
-                        </div>
-                        <div className="buyerDiv">
-                            Ֆոտոպաստառ
-                            <div>------------------</div>
-                            <div className="wallpaperDiv">
-                                <div>
-                                    <div>
-                                        <label htmlFor="weight">Երկարություն</label>
-                                        <input id="weight" className="userInput form-control" type="number" placeholder="Width"  {...register("weight", { required: true })} onChange={(e) => setWeight(+e.target.value)} />
-                                    </div>
-                                    <div>
-                                        <label htmlFor="height">Բարձրություն</label>
-                                        <input id="height" className="userInput form-control" type="number" placeholder="Height" {...register("height", { required: true })} onChange={(e) => setHeight(+e.target.value)} />
-                                    </div>
-                                    <div>
-                                        <label htmlFor="sqMetr">Քառակուսի մետր</label>
-                                        <input id="sqMetr" className="userInput form-control" type="number" placeholder="SQ/METR" value={squer} readOnly {...register("sqMetr", { required: true })} />
-                                    </div>
-                                </div>
-                                <div >
-                                    <div>
-                                        <label htmlFor="price">Գին</label>
-                                        <input id="price" className="userInput form-control" type="number" placeholder="Price" value={price} {...register("price", { required: true })} onChange={(e) => setPrice(+e.target.value)} />
-                                    </div>
-                                    <div>
-                                        <label htmlFor="discount">Զեղչ</label>
-                                        <input id="discount" className="userInput form-control" type="number" placeholder="discount" {...register("discount")} onChange={(e) => setDiscount(+e.target.value)} />
-                                    </div>
-                                    <div>
-                                        <label htmlFor="total">Գումար</label>
-                                        <input id="total" className="userInput form-control" type="number" placeholder="total" value={totalOrder}  {...register("total", { required: true })} onChange={(e) => setTotalOrder(+e.target.value)} />
-                                    </div>
-                                </div>
-                                <div >
-                                    <div>
-                                        <label htmlFor="picCode">Նկարի կոդ</label>
-                                        <input id="picCode" className="userInput form-control" type="text" placeholder="Picture Code" {...register("picCode")} />
-                                    </div>
-                                    <div>
-                                        <label htmlFor="comment">Նկարագրություն</label>
-                                        <textarea id="comment" className="userInput form-control" placeholder="Comment" {...register("comment")}></textarea>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                        <div className="buyerDiv">
-                            Գործընկեր
-                            <div>-------------</div>
-                            {/* <div>
-                                        <label htmlFor="selectCoop">Գործընկերոջ անվանում</label>
-                                        <select id="selectCoop" className="selectCoop form-control" {...register("cooperateId", { required: true })} onChange={cooperateDiscount}>
-                                            {
-                                                cooperate?.arrCooperate && cooperate.arrCooperate.length > 0 ?
-                                                    cooperate.arrCooperate.map((e: any) => {
-                                                        return <option key={e._id} value={e._id}
-                                                        >{e.name} {e.surname}</option>
-                                                    })
-                                                    : null
-                                            }
-                                        </select>
-                                    </div> */}
-                            <div>
-                                <label htmlFor="coopRate">Գործընկերոջ տոկոս</label>
-                                <input id="coopRate" className="userInput form-control" type="number" placeholder="Cooperate Rate" value={coopRate} readOnly onChange={(e) => setCoopRate(+e.target.value)} />
-                            </div>
-                            <div>
-                                <label htmlFor="coopTotal">Գործընկերոջ գումար</label>
-                                <input id="coopTotal" className="userInput form-control" type="number" placeholder="Cooperate Totla" value={coopTotal} {...register("cooperateTotal")} />
-                            </div>
-                            <div>
-                                <label>
-                                    <input
-                                        type="checkbox"
-                                        onChange={handleCheckboxChange}
-                                    />
-                                    Փոխել գինը
-                                </label>
-                            </div>
-                        </div>
-                    </div >
-                    <div>
-                        <button className="btn btn-lg" onClick={() => window.location.reload()} >X</button>
-                    </div>
-
-                </div>
-                <div className="profile">
-                    <div>
-                        <label htmlFor="pey">Վճարման միջոց</label>
-                        <select id="pey" className="selectCoop form-control" {...register("paymentMethod", { required: true })}>
-                            <option className="selectCoop" value={"cash"} >Կանխիկ</option>
-                            <option className="selectCoop" value={"transfer"}>Փոխանցում</option>
-                            <option className="selectCoop" value={"pos"}>Պոս Տերմինալ</option>
-                            <option className="selectCoop" value={"credit"}>Ապառիկ</option>
-                            <option className="selectCoop" value={"inecoPay"}>Ինեկո Փեյ</option>
-                            <option className="selectCoop" value={"idram"}>Իդրամ</option>
-                        </select>
-                    </div>
-                    /
-                    <div>
-                        <label htmlFor="prepayment">Կանխավճար</label>
-                        <input id="prepayment" className="userInput form-control" type="number" placeholder="prepayment"  {...register("prepayment")} onChange={(e) => setPrepayment(+e.target.value)} />
-                    </div>
-                    <div>
-                        <label htmlFor="Sum">Մնացորդ</label>
-                        <input id="Sum" className="userInput form-control" type="number" placeholder="Sum" value={sum} {...register("groundTotal")} readOnly />
-                    </div>
-                </div>
-
-                <div><button className="btn">Գրանցել</button></div>
-
-            </form>
 
         </>
     );

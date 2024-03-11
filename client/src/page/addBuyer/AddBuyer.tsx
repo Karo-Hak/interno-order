@@ -8,6 +8,7 @@ import { selectBuyer } from "../../features/buyer/buyerSlice";
 import './addBuyer.css'
 import { selectUser } from "../../features/user/userSlice";
 import { userProfile } from "../../features/user/userApi";
+import { WallpaperMenu } from "../../component/menu/WallpaperMenu";
 
 
 
@@ -46,72 +47,40 @@ export const AddBuyer: React.FC = (): JSX.Element => {
         });
         window.location.reload()
     }
-    const addBuyer = () => {
-        navigate('/wallpaper/addBuyer');
-    }
-    const addCooperate = () => {
-        if (user.profile.role === "admin") {
-            navigate("/wallpaper/addCooperate")
-        }
-    }
-    const addTexture = () => {
-        if (user.profile.role === "admin") {
-            navigate("/wallpaper/addTexture")
-        }
-    }
-    const search = () => {
-       navigate("/wallpaper/searchOrder")
-    }
-    const openOrderForm = ()=>{
-        navigate("/wallpaper")
-    }
 
     return (
-        <div className="addBuyer">
-            
-            <div className="admin_profile">
-                <div >
-                    {/* <button className="btn" onClick={openCoopSpher}>Add cooperation sphere</button> */}
-                    <button className="btn" onClick={openOrderForm}>Ավելացնել Պատվեր</button>
-                    <button className="btn" onClick={addBuyer} >Ավելացնել Գնորդ</button>
-                    {
-                        user.profile && user.profile.role === "admin" ?
-                            <>
-                                <button className="btn" onClick={addCooperate} >Ավելացնել Գործընկեր</button>
-                                <button className="btn" onClick={addTexture} >Ավելացնել Տեսակ</button>
-                            </>
-                            :
-                            null
-                    }
-                    <button className="btn" onClick={search} >Դիտել Պատվերները</button>
-                </div>
-            </div>
-            <div className="addBuyer_profile">
-                <form  onSubmit={handleSubmit(saveBuyer)}>
-                    <div className="addBuyer_profile_info">
-                        <div className="addBuyer_profile_info_user">
+        <div >
+            <WallpaperMenu />
+            <div style={{
+                margin: "20px"
+            }}>
+                <form onSubmit={handleSubmit(saveBuyer)}>
+                    <div style={{
+                        display: "flex",
+                        gap: "10px"
+                    }}>
+                        <div className="divLabel">
                             <label htmlFor="buyerName">Անուն</label>
-                            <input id="buyerName" className="userInput" type="text" placeholder="Name" {...register("name", { required: true })} />
+                            <input id="buyerName" type="text" placeholder="Name" {...register("name", { required: true })} />
                         </div>
-                        <div className="addBuyer_profile_info_user">
+                        <div className="divLabel">
                             <label htmlFor="buyerPhone">Հեռախես</label>
-                            <input id="buyerPhone" className="userInput" type="text" placeholder="Phone" {...register("phone", { required: true })} />
+                            <input id="buyerPhone" type="text" placeholder="Phone" {...register("phone", { required: true })} />
                         </div>
-                        <div className="addBuyer_profile_info_user" >
+                        <div className="divLabel">
                             <label htmlFor="buyerAdress">Հասցե</label>
-                            <input id="buyerAdress" className="userInput" type="text" placeholder="Adress" {...register("adress", { required: true })} />
+                            <input id="buyerAdress" type="text" placeholder="Adress" {...register("adress", { required: true })} />
                         </div>
-                    </div>
-                    <div className="addBuyerButton"> 
-
-                    <button className="btn btn1" >Գրանցել</button>
+                        <button>Գրանցել</button>
                     </div>
                 </form>
             </div >
             {
                 buyer?.arrBuyer && buyer.arrBuyer.length > 0 ?
-                    <div className="admin_profile_list">
-                        <table className="admin_profile_table" >
+                    <div style={{
+                        margin: "20px"
+                    }}>
+                        <table className="tableName">
                             <thead>
                                 <tr>
                                     <th scope="col">Անուն</th>

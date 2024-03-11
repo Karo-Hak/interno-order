@@ -5,11 +5,12 @@ import { useNavigate } from "react-router-dom";
 import { useCookies } from 'react-cookie'
 import { userProfile } from "../../../features/user/userApi";
 import './stretchLightRing.css'
-import { selectStretchLightRing } from "../../strechLightRing/strechLightRingSlice";
+import { selectStretchLightRing } from "../../features/strechLightRing/strechLightRingSlice";
 import { getAllUnyt } from "../../unyt/unytApi";
 import { selectUnyt } from "../../unyt/unytSlice";
 import { useForm } from "react-hook-form";
-import { addStretchLightRing, getAllStretchLightRing } from "../../strechLightRing/strechLightRingApi";
+import { addStretchLightRing, getAllStretchLightRing } from "../../features/strechLightRing/strechLightRingApi";
+import { StretchMenu } from "../../../component/menu/StretchMenu";
 
 export const StretchLightRing: React.FC = (): JSX.Element => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm<any>()
@@ -50,16 +51,21 @@ export const StretchLightRing: React.FC = (): JSX.Element => {
 
     return (
         <>
-            <div className="profile">
+            <StretchMenu />
+            <div >
                 <form onSubmit={handleSubmit(newLightRing)} >
-                    <div className="divAllStrech">
-                        <div>
+                    <div style={{
+                        display: 'flex',
+                        margin: "20px",
+                        gap: "10px"
+                    }}>
+                        <div className="divLabel">
                             <label htmlFor="id">Անվանում/Մ</label>
-                            <select id="id"  {...register("id", { required: true })}>
+                            <select className="select" id="id"  {...register("id", { required: true })}>
                                 <option></option>
                                 {
-                                   stretchLightRing.arrStretchLightRing && stretchLightRing.arrStretchLightRing.length > 0 ?
-                                   stretchLightRing.arrStretchLightRing.map((e: any, i: any) => {
+                                    stretchLightRing.arrStretchLightRing && stretchLightRing.arrStretchLightRing.length > 0 ?
+                                        stretchLightRing.arrStretchLightRing.map((e: any, i: any) => {
                                             return (
                                                 <option key={e._id} value={e._id}>{e.name}</option>
                                             )
@@ -69,23 +75,23 @@ export const StretchLightRing: React.FC = (): JSX.Element => {
                                 }
                             </select>
                         </div>
-                        <div>
+                        <div className="divLabel">
                             <label htmlFor="price">Գին</label>
                             <input id="price" type="number" placeholder="Price"  {...register("price", { required: true })} />
                         </div>
-                    </div>
-                    <div>
-                        <button className="btn">Գրանցել</button>
+                        <button>Գրանցել</button>
                     </div>
                 </form>
                 {
                     stretchLightRing.arrStretchLightRing && stretchLightRing.arrStretchLightRing.length > 0 ?
-                        <div className="profile">
-                            <table className="table" style={{ color: "white" }}>
+                        <div style={{
+                            margin: "20px",
+                            width: "500px"
+                        }}>
+                            <table className="tableName">
                                 <thead>
                                     <tr>
                                         <th scope="col">Անվանում</th>
-                                        <th scope="col">Չ/Մ</th>
                                         <th scope="col">Գին</th>
                                     </tr>
                                 </thead>
@@ -95,7 +101,6 @@ export const StretchLightRing: React.FC = (): JSX.Element => {
                                             return (
                                                 <tr key={e._id}>
                                                     <td>{e.name}</td>
-                                                    <td>{e.unyt}</td>
                                                     <td>{e.price}</td>
                                                 </tr>
                                             )

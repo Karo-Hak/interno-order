@@ -25,84 +25,32 @@ export const Menu: React.FC = (): JSX.Element => {
 
     }, [])
 
-    const btnHome = () => {
-        navigate("/admine/profile")
-    }
-    const wallpaper = () => {
-        navigate("/wallpaper")
-    }
-    const coopStrechCeiling = () => {
-        if (data.profile.sphere.includes("Stretch Ceiling Coop")) {
-            navigate("/stretchceilingcoop")
-        }
-    }
-    const tagStretchCeiling = () => {
-        if (data.profile.sphere.includes("Stretch Ceiling")) {
-            navigate("/stretchceiling")
-        }
-    }
+
 
     const addUser = () => {
         if (data.profile.role === "admin") {
             window.open("/addUser")
         }
     }
-    const stock = () => {
-        if (data.profile.role === "admin") {
-            window.open("/stock")
-        }
-    }
+
+ 
+
 
     return (<div>
-
         <nav className="navbar_head">
             <div className="navbar_container">
-                <div className="navbar_logo">
-
-                    <button className="btn" onClick={btnHome}>Գլխավոր էջ</button>
-                    <a className="" href="#">
-                        <img src="/interno.png" alt="" height="50px" />
-                    </a>
-                </div>
                 <div className="menu_search">
                     <div className="menu_search_item">
+                        <div className="navbar_logo">
+                            <a href="/home">
+                                <img src="/interno.png" alt="" height="50px" />
+                            </a>
+                        </div>
                         {
                             data?.profile && data.profile?.role === "admin" ?
 
                                 <div className="menu_head">
                                     <button className="btn" onClick={addUser}>Օգտատեր</button>
-                                    <button className="btn" onClick={wallpaper}>Ֆոտոպաստառ</button>
-                                    <button className="btn" onClick={tagStretchCeiling}>Ձգվող առաստաղ</button>
-                                    <button className="btn" onClick={coopStrechCeiling}>Համ․ Ձգվող առաստաղ</button>
-                                    <button className="btn" onClick={stock}>Պահեստ</button>
-                                </div>
-                                :
-                                null
-                        }
-                        {
-                            data?.profile?.role === "user" ?
-                                <div>
-                                    {
-                                        data.profile.sphere.includes("Wallpaper") ?
-                                            <button className="btn" onClick={wallpaper}>Ֆոտոպաստառ</button>
-                                            :
-                                            null
-                                    }
-
-                                    {
-                                        data.profile.sphere.includes("Stretch Ceiling") ?
-                                            <button className="btn" onClick={tagStretchCeiling}>Ձգվող առաստաղ</button>
-                                            :
-                                            null
-                                    }
-
-                                    {
-                                        data.profile.sphere.includes("Stretch Ceiling Coop") ?
-                                            <button className="btn" onClick={coopStrechCeiling}>Համ․ Ձգվող առաստաղ</button>
-                                            :
-                                            null
-                                    }
-
                                 </div>
                                 :
                                 null
@@ -110,8 +58,6 @@ export const Menu: React.FC = (): JSX.Element => {
                         <div>
                             {
                                 data?.profile && data?.profile?.role === "admin" || data?.profile?.role === "user" ?
-
-
                                     <div className="user_name_surname">
                                         <div className="userNameSurname">
                                             <div >
@@ -141,13 +87,7 @@ export const Menu: React.FC = (): JSX.Element => {
                             }
                         </div>
                     </div>
-
-
-                    <div>
-
-                    </div>
                 </div>
-
             </div>
         </nav>
     </div>)

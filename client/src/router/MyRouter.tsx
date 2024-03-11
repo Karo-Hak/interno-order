@@ -26,11 +26,12 @@ import { EditTagStretchOrder } from "../strechCeining/pages/editTagStretchCeilin
 import { ViewStretchOrder } from "../strechCeining/pages/viewStretchOrder/ViewStretchOrder"
 import { StretchWorker } from "../strechCeining/pages/addStretchWorker/AddStretchWorker"
 import { StretchWork } from "../strechCeining/pages/addStretchWork/AddStretchWork"
-
-// import { AllUser } from "../page/AllUser"
-
-
-
+import { AddWallpaperOrder } from "../page/addWallpaperOrder/AddWallpaperOrder"
+import { StockProfile } from "../strechCeining/stock/stockProfile/StockProfile"
+import { AddCategory } from "../strechCeining/stock/addCategory/AddCategory"
+import { AddProduct } from "../strechCeining/stock/addProduct/AddProduct"
+import { Input_output } from "../strechCeining/stock/in_out/Input_output"
+import { HomePage } from "../page/homePage/HomePage"
 
 
 
@@ -43,8 +44,9 @@ export const MyRouter: React.FC = (): JSX.Element => {
                 </div>
                 <Routes>
                     <Route path="/" element={<Login />}></Route>
-                    {/* <Route path="/home" element={<Login />}></Route> */}
+                    <Route path="/home" element={<HomePage />}></Route>
                     <Route path="/wallpaper" element={<AdminProfile />}></Route>
+                    <Route path="/wallpaper/addOrder" element={<AddWallpaperOrder />}></Route>
                     <Route path="/order/:id" element={<Order />}></Route>
                     <Route path="/newOrder/:id" element={<NewOrder />}></Route>
                     <Route path="/wallpaper/searchOrder" element={<SearchOrder />}></Route>
@@ -69,7 +71,10 @@ export const MyRouter: React.FC = (): JSX.Element => {
                     <Route path="/stretchceiling/editStretchOrder/:id" element={<EditTagStretchOrder />}></Route>
                     <Route path="/stretchceiling/viewStretchOrder/:id" element={<ViewStretchOrder />}></Route>
                     <Route path="/coopStretchceiling/addCoopStretchOrder" element={<CoopStretchOrder />}></Route>
-
+                    <Route path="/stock" element={<StockProfile />}></Route>
+                    <Route path="/addCategory" element={<AddCategory />}></Route>
+                    <Route path="/addProduct" element={<AddProduct />}></Route>
+                    <Route path="/in_out" element={<Input_output />}></Route>
                 </Routes>
             </BrowserRouter>
         </>

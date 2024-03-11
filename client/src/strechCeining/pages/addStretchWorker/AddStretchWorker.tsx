@@ -6,8 +6,9 @@ import { useCookies } from 'react-cookie'
 import { userProfile } from "../../../features/user/userApi";
 import './addStretchWorker.css'
 import { useForm } from "react-hook-form";
-import { allStretchWorker, newStretchWorker } from "../../StrechWorker/strechWorkerApi";
-import { selectStretchWorker } from "../../StrechWorker/strechWorkerSlice";
+import { allStretchWorker, newStretchWorker } from "../../features/StrechWorker/strechWorkerApi";
+import { selectStretchWorker } from "../../features/StrechWorker/strechWorkerSlice";
+import { StretchMenu } from "../../../component/menu/StretchMenu";
 
 export const StretchWorker: React.FC = (): JSX.Element => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm<any>()
@@ -48,6 +49,7 @@ export const StretchWorker: React.FC = (): JSX.Element => {
 
     return (
         <>
+        <StretchMenu />
             <div className="addStretchBuyer_head_name">Gnordi tvyalner</div>
             
             <form onSubmit={handleSubmit(addStretchWorker)} >
@@ -74,7 +76,7 @@ export const StretchWorker: React.FC = (): JSX.Element => {
                             id="phone"
                             type="number"
                             placeholder="Phone"
-                            {...register("stretchWorkerPhone2", { required: true })} />
+                            {...register("stretchWorkerPhone2")} />
                     </div>
                     <div className="addStrerchBuyer_info_section">
                         <label htmlFor="region">Մարզ</label>
