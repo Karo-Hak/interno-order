@@ -41,9 +41,6 @@ export const EditTagStretchOrder: React.FC = (): JSX.Element => {
     const params = useParams()
 
     const [room, setRoom] = useState<{ id: string; name: string; isChecked: boolean }[]>([]);
-
-
-
     const [rooms, setRooms] = useState<any[]>([]);
     const [works, setWorks] = useState<any[]>([]);
     const [workRowId, setWorkRowId] = useState<any[]>([]);
@@ -266,7 +263,7 @@ export const EditTagStretchOrder: React.FC = (): JSX.Element => {
                         prepayment={prepayment}
                         groundTotal={order.groundTotal}
                         buyerComment={order.buyerComment}
-                        stretchWorkerId={order.stretchWorker}
+                        stretchWorkerId={order.stWorker}
                         stretchWorkerSalary={order.salary}
                         setPrepeyment={setPrepeyment}
                     />

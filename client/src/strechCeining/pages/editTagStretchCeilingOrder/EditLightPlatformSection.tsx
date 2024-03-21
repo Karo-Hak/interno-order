@@ -7,13 +7,13 @@ interface EditLightPlatformSectionProps {
   register: UseFormRegister<any>;
   setValue: UseFormSetValue<any>;
   lightPlatformRowId: string[]; 
-  removeStretchRow: (rowId: string, roomId: string) => void 
+  removeLightPlatformRowId: (rowId: string, roomId: string) => void 
   roomId: string;
-  lightPlatform: { arrStretchLightPlatform: Array<any> }; 
-  lightPlatformId: Array<{ lightPlatform: string; lightPlatformPrice: number; lightPlatformQuantity: number }>;
+  stretchLightPlatform: { arrStretchLightPlatform: Array<any> }; 
+  lightPlatformId: Array<{ id: string; price: number; quantity: number }>;
 }
 
-const EditLightPlatformSection: React.FC<any> = ({
+const EditLightPlatformSection: React.FC<EditLightPlatformSectionProps> = ({
   register,
   setValue,
   lightPlatformRowId,
@@ -21,18 +21,18 @@ const EditLightPlatformSection: React.FC<any> = ({
   roomId,
   stretchLightPlatform,
   lightPlatformId
-}: any) => {
+}: EditLightPlatformSectionProps) => {
 
   useEffect(() => {
     lightPlatformRowId.forEach((rowId: any, index: number) => {
-        setValue(`lightPlatform_${rowId}/${roomId}`, lightPlatformId[index].lightPlatform);
-        if (lightPlatformId[index].lightPlatformPrice) {
-            setValue(`lightPlatformPrice_${rowId}/${roomId}`, lightPlatformId[index].lightPlatformPrice);
+        setValue(`lightPlatformId_${rowId}/${roomId}`, lightPlatformId[index].id);
+        if (lightPlatformId[index].price) {
+            setValue(`lightPlatformPrice_${rowId}/${roomId}`, lightPlatformId[index].price);
         } else {
             setValue(`lightPlatformPrice_${rowId}/${roomId}`, 0);
         }
-        if (lightPlatformId[index].lightPlatformQuantity) {
-            setValue(`lightPlatformQuantity_${rowId}/${roomId}`, lightPlatformId[index].lightPlatformQuantity);
+        if (lightPlatformId[index].quantity) {
+            setValue(`lightPlatformQuantity_${rowId}/${roomId}`, lightPlatformId[index].quantity);
         } else {
             setValue(`lightPlatformQuantity_${rowId}/${roomId}`, 0);
         }
@@ -73,7 +73,7 @@ const EditLightPlatformSection: React.FC<any> = ({
                       <tr key={index}>
                         <td style={{ minWidth: "250px", }}>
                           <select
-                            {...register(`lightPlatform_${rowKey}/${roomId}`)}
+                            {...register(`lightPlatformId_${rowKey}/${roomId}`)}
                             onChange={(e) => selectLightPlatformPrice(e, rowKey, roomId)}>
                             <option>Ընտրել Տեսակը</option>
                             {

@@ -20,9 +20,9 @@ const ViewProfilSection: React.FC<any> = ({ room }: any) => {
             {room.groupedProfils && Object.keys(room.groupedProfils).map((key) => {
               if (typeof room.groupedProfils[key] === 'object' && room.groupedProfils[key] !== null) {
                 return <tr key={key}>
-                  <td>{room.groupedProfils[key].profilName}</td>
-                  <td>{room.groupedProfils[key].profilPrice}</td>
-                  <td>{room.groupedProfils[key].profilQuantity}</td>
+                  <td>{room.groupedProfils[key].name}</td>
+                  <td>{room.groupedProfils[key].price}</td>
+                  <td>{room.groupedProfils[key].quantity}</td>
                 </tr>
 
               }

@@ -8,7 +8,7 @@ interface EditBardutyunSectionProps {
   removeBardutyunRow: (rowId: string, roomId: string) => void
   roomId: string;
   stretchBardutyun: { arrStretchBardutyun: Array<any> };
-  bardutyunId: Array<{ bardutyun: string; bardutyunPrice: number; bardutyunQuantity: number }>;
+  bardutyunId: Array<{ id: string; price: number; quantity: number }>;
 }
 
 const EditBardutyunSection: React.FC<EditBardutyunSectionProps> = ({
@@ -23,15 +23,15 @@ const EditBardutyunSection: React.FC<EditBardutyunSectionProps> = ({
 
   useEffect(() => {
     bardutyunRowId.forEach((rowId: any, index: number) => {
-      setValue(`bardutyun_${rowId}/${roomId}`, bardutyunId[index].bardutyun);
+      setValue(`bardutyunId_${rowId}/${roomId}`, bardutyunId[index].id);
       
-      if (bardutyunId[index].bardutyunPrice) {
-        setValue(`bardutyunPrice_${rowId}/${roomId}`, bardutyunId[index].bardutyunPrice);
+      if (bardutyunId[index].price) {
+        setValue(`bardutyunPrice_${rowId}/${roomId}`, bardutyunId[index].price);
       } else {
         setValue(`bardutyunPrice_${rowId}/${roomId}`, 0);
       }
-      if (bardutyunId[index].bardutyunQuantity) {
-        setValue(`bardutyunQuantity_${rowId}/${roomId}`, bardutyunId[index].bardutyunQuantity);
+      if (bardutyunId[index].quantity) {
+        setValue(`bardutyunQuantity_${rowId}/${roomId}`, bardutyunId[index].quantity);
       } else {
         setValue(`bardutyunQuantity_${rowId}/${roomId}`, 0);
       }
@@ -68,7 +68,7 @@ const EditBardutyunSection: React.FC<EditBardutyunSectionProps> = ({
                 <tr key={el}>
                   <td style={{ minWidth: "250px", }}>
                     <select
-                      {...register(`bardutyun_${el}/${roomId}`)}
+                      {...register(`bardutyunId_${el}/${roomId}`)}
                       onChange={(e) => stretchBardutyunPrice(e, el, roomId)}
                     >
                       <option>Ընտրել Տեսակը</option>

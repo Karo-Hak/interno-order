@@ -7,7 +7,7 @@ const AdditionalSection: React.FC<any> = ({ register, setValue, additionalRowId,
 
   const selectAdditionalPrice = (event: ChangeEvent<HTMLSelectElement | HTMLInputElement>, rowKey: string, roomId: string): void => {
     const selectedId = event.target.value;
-    const additional = stretchAdditional.arrStretchAdditional.find((e: any) => e._id === selectedId);
+    const additional = stretchAdditional.find((e: any) => e._id === selectedId);
 
     if (additional) {
       setValue(`additionalPrice_${rowKey}/${roomId}`, additional.price)
@@ -37,12 +37,12 @@ const AdditionalSection: React.FC<any> = ({ register, setValue, additionalRowId,
                   <tr key={el}>
                     <td style={{minWidth:"250px", }}>
                       <select
-                        {...register(`additional_${el}` + "/" + roomId)}
+                        {...register(`additionalId_${el}` + "/" + roomId)}
                         onChange={(e) => selectAdditionalPrice(e, el, roomId)}
                       >
                         <option>Ընտրել Տեսակը</option>
-                        {stretchAdditional.arrStretchAdditional && stretchAdditional.arrStretchAdditional.length > 0 ?
-                          stretchAdditional.arrStretchAdditional.map((e: any) => (
+                        {stretchAdditional && stretchAdditional.length > 0 ?
+                          stretchAdditional.map((e: any) => (
                             <option key={e._id} value={e._id} >
                               {e.name}
                             </option>

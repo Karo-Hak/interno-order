@@ -45,9 +45,6 @@ export const StretchWork: React.FC = (): JSX.Element => {
 
     }
 
-console.log(work);
-
-
     return (
         <>
         <StretchMenu />
@@ -57,11 +54,11 @@ console.log(work);
                     <div className="addStrerchBuyer_info">
                         <div className="addStrerchBuyer_info_section">
                             <label htmlFor="name">Անվանում</label>
-                            <input id="name" type="text" placeholder="Name"  {...register("workName", { required: true })} />
+                            <input id="name" type="text" placeholder="Name"  {...register("name", { required: true })} />
                         </div>
                         <div className="addStrerchBuyer_info_section">
                             <label htmlFor="price">Գին</label>
-                            <input id="price" type="number" placeholder="Price"  {...register("workPrice", { required: true })} />
+                            <input id="price" type="number" placeholder="Price"  {...register("price", { required: true })} />
                         </div>
                         <div className="addStrerchBuyer_info_section">
                             <button className="btn btn1">Գրանցել</button>
@@ -87,8 +84,8 @@ console.log(work);
                                          work.arrStretchWork.map((e: any) => {
                                             return (
                                                 <tr key={e._id}>
-                                                    <td>{e.workName}</td>
-                                                    <td>{e.workPrice}</td>
+                                                    <td>{e.name}</td>
+                                                    <td>{e.price}</td>
                                                 </tr>
                                             )
                                         })

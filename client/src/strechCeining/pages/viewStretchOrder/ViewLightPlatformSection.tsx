@@ -20,9 +20,9 @@ const ViewLightPlatformSection: React.FC<any> = ({ room }: any) => {
             {room.groupedLightPlatforms && Object.keys(room.groupedLightPlatforms).map((key) => {
               if (typeof room.groupedLightPlatforms[key] === 'object' && room.groupedLightPlatforms[key] !== null) {
                 return <tr key={key}>
-                  <td>{room.groupedLightPlatforms[key].lightPlatformName}</td>
-                  <td>{room.groupedLightPlatforms[key].lightPlatformPrice}</td>
-                  <td>{room.groupedLightPlatforms[key].lightPlatformQuantity}</td>
+                  <td>{room.groupedLightPlatforms[key].name}</td>
+                  <td>{room.groupedLightPlatforms[key].price}</td>
+                  <td>{room.groupedLightPlatforms[key].quantity}</td>
                 </tr>
               }
               return null;

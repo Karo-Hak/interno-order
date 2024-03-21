@@ -17,9 +17,9 @@ const ViewAdditionalSection: React.FC<any> = ({ room }: any) => {
             {room.groupedAdditionals && Object.keys(room.groupedAdditionals).map((key) => {
               if (typeof room.groupedAdditionals[key] === 'object' && room.groupedAdditionals[key] !== null) {
                 return <tr key={key}>
-                  <td>{room.groupedAdditionals[key].additionalName}</td>
-                  <td>{room.groupedAdditionals[key].additionalPrice}</td>
-                  <td>{room.groupedAdditionals[key].additionalQuantity}</td>
+                  <td>{room.groupedAdditionals[key].name}</td>
+                  <td>{room.groupedAdditionals[key].price}</td>
+                  <td>{room.groupedAdditionals[key].quantity}</td>
                 </tr>
               }
               return null;

@@ -9,7 +9,7 @@ interface EditStretchTexturesSectionProps {
     removeStretchRow: (rowId: string, roomId: string) => void 
     roomId: string;
     stretchTexture: { arrStretchTexture: Array<any> }; 
-    stretchTextureId: Array<{ stretchTexture: string; stretchPrice: number; stretchSquer: number }>;
+    stretchTextureId: Array<{ id: string; price: number; quantity: number }>;
 }
 
 const EditStretchTexturesSection: React.FC<EditStretchTexturesSectionProps> = ({
@@ -25,16 +25,16 @@ const EditStretchTexturesSection: React.FC<EditStretchTexturesSectionProps> = ({
 
     useEffect(() => {
         stretchRowId.forEach((rowId: any, index: number) => {
-            setValue(`stretchTexture_${rowId}/${roomId}`, stretchTextureId[index].stretchTexture);
-            if (stretchTextureId[index].stretchPrice) {
-                setValue(`stretchPrice_${rowId}/${roomId}`, stretchTextureId[index].stretchPrice);
+            setValue(`stretchId_${rowId}/${roomId}`, stretchTextureId[index].id);
+            if (stretchTextureId[index].price) {
+                setValue(`stretchPrice_${rowId}/${roomId}`, stretchTextureId[index].price);
             } else {
                 setValue(`stretchPrice_${rowId}/${roomId}`, 0);
             }
-            if (stretchTextureId[index].stretchSquer) {
-                setValue(`stretchSquer_${rowId}/${roomId}`, stretchTextureId[index].stretchSquer);
+            if (stretchTextureId[index].quantity) {
+                setValue(`stretchQuantity_${rowId}/${roomId}`, stretchTextureId[index].quantity);
             } else {
-                setValue(`stretchSquer_${rowId}/${roomId}`, 0);
+                setValue(`stretchQuantity_${rowId}/${roomId}`, 0);
             }
 
         });
@@ -69,7 +69,7 @@ const EditStretchTexturesSection: React.FC<EditStretchTexturesSectionProps> = ({
                                 <tr key={rowId}>
                                     <td style={{ minWidth: "250px", }}>
                                         <select
-                                            {...register(`stretchTexture_${rowId}/${roomId}`)}
+                                            {...register(`stretchId_${rowId}/${roomId}`)}
                                             onChange={(e) => selectTexturePrice(e, rowId)}
                                         >
                                             <option>Ընտրել Տեսակը</option>
@@ -90,7 +90,7 @@ const EditStretchTexturesSection: React.FC<EditStretchTexturesSectionProps> = ({
                                     <td>
                                         <input
                                             placeholder="Squer"
-                                            {...register(`stretchSquer_${rowId}/${roomId}`)}
+                                            {...register(`stretchQuantity_${rowId}/${roomId}`)}
                                         />
                                     </td>
                                     <td>

@@ -8,9 +8,8 @@ const BardutyunSection: React.FC<any> = ({ register, setValue, bardutyunRowId, r
 
   const stretchBardutyunPrice = (event: ChangeEvent<HTMLSelectElement | HTMLInputElement>, rowKey: string, roomId: string): void => {
     const selectedId = event.target.value;
-    const bardutyun = stretchBardutyun.arrStretchBardutyun.find((e: any) => e._id === selectedId);
+    const bardutyun = stretchBardutyun.find((e: any) => e._id === selectedId);
     if (bardutyun) {
-      setValue(`bardutyunName_${rowKey}/${roomId}`, bardutyun.name,);
       setValue(`bardutyunPrice_${rowKey}/${roomId}`, bardutyun.price);
     } else {
       setValue(`bardutyunPrice_${rowKey}/${roomId}`, 0);
@@ -36,12 +35,12 @@ const BardutyunSection: React.FC<any> = ({ register, setValue, bardutyunRowId, r
                 <tr key={el}>
                   <td style={{ minWidth: "250px", }}>
                     <select
-                      {...register(`bardutyun_${el}/${roomId}`)}
+                      {...register(`bardutyunId_${el}/${roomId}`)}
                       onChange={(e) => stretchBardutyunPrice(e, el, roomId)}
                     >
                       <option>Ընտրել Տեսակը</option>
-                      {stretchBardutyun.arrStretchBardutyun && stretchBardutyun.arrStretchBardutyun.length > 0 ?
-                        stretchBardutyun.arrStretchBardutyun.map((bardutyun: any) => (
+                      {stretchBardutyun.length > 0 ?
+                        stretchBardutyun.map((bardutyun: any) => (
                           <option key={bardutyun._id} value={bardutyun._id}>{bardutyun.name}</option>
                         ))
                         : null}

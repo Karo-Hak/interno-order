@@ -7,9 +7,9 @@ export type StretchWorkDocument = HydratedDocument<StretchWork>;
 @Schema()
 export class StretchWork {
     @Prop()
-    workName: string;
+    name: string;
     @Prop()
-    workPrice: number;
+    price: number;
     @Prop({
         type: [
             { type: mongoose.Schema.Types.ObjectId, ref: "StretchCeilingOrder" }

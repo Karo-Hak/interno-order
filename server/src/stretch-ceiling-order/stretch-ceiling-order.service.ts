@@ -27,23 +27,24 @@ export class StretchCeilingOrderService {
 
   async create(createStretchCeilingOrderDto: any) {
 
+
     const orderBuyer = await this.stretchBuyerModel.findById(createStretchCeilingOrderDto.orderBuyer);
     const orderUser = await this.userModel.findById(createStretchCeilingOrderDto.user.userId);
     let orderWorkerId;
-    if (createStretchCeilingOrderDto.stretchTextureOrder.worker === "Աշխատակից") {
-      orderWorkerId = null;
-      const createdOrder = await new this.stretchCeilingOrderModel({ ...createStretchCeilingOrderDto.stretchTextureOrder, user: orderUser.id, buyer: orderBuyer.id });
+
+    if (createStretchCeilingOrderDto.stretchTextureOrder.stWorker === "Աշխատակից") {
+      console.log(createStretchCeilingOrderDto.stretchTextureOrder.stWorker);
+      const createdOrder = await new this.stretchCeilingOrderModel({ ...createStretchCeilingOrderDto.stretchTextureOrder, user: orderUser.id, buyer: orderBuyer.id, stWorker: null });
       await this.userModel.findByIdAndUpdate(createStretchCeilingOrderDto.user.userId, { order: [...orderUser.order, createdOrder.id] });
       await this.stretchBuyerModel.findByIdAndUpdate(createStretchCeilingOrderDto.orderBuyer, { order: [...orderBuyer.order, createdOrder.id] });
       return createdOrder.save();
     } else {
-      const orderWorker = await this.stretchWorkerModel.findById(createStretchCeilingOrderDto.stretchTextureOrder.worker);
+      const orderWorker = await this.stretchWorkerModel.findById(createStretchCeilingOrderDto.stretchTextureOrder.stWorker);
       orderWorkerId = orderWorker;
-      const createdOrder = await new this.stretchCeilingOrderModel({ ...createStretchCeilingOrderDto.stretchTextureOrder, user: orderUser.id, buyer: orderBuyer.id, worker: orderWorkerId.id });
+      const createdOrder = await new this.stretchCeilingOrderModel({ ...createStretchCeilingOrderDto.stretchTextureOrder, user: orderUser.id, buyer: orderBuyer.id, stretchWorker: orderWorkerId.id });
       await this.userModel.findByIdAndUpdate(createStretchCeilingOrderDto.user.userId, { order: [...orderUser.order, createdOrder.id] });
       await this.stretchBuyerModel.findByIdAndUpdate(createStretchCeilingOrderDto.orderBuyer, { order: [...orderBuyer.order, createdOrder.id] });
       await this.stretchWorkerModel.findByIdAndUpdate(orderWorkerId.id, { order: [...orderWorkerId.order, createdOrder.id] });
-
       return createdOrder.save();
     }
 
@@ -52,7 +53,36 @@ export class StretchCeilingOrderService {
 
 
   async findNewOrders() {
-    return await this.stretchCeilingOrderModel.find({ status: "progress" }).populate("buyer").sort({ date: -1 })
+    return await this.stretchCeilingOrderModel.find({ status: "progress", }).populate("buyer").sort({ date: -1 })
+  }
+  async findMesurOrders() {
+    return await this.stretchCeilingOrderModel.find({ status: "measurement" }).populate("buyer").sort({ date: -1 })
+  }
+  async findInstalOrders() {
+    return await this.stretchCeilingOrderModel.find({ status: "installation" }).populate("buyer").sort({ date: -1 })
+  }
+
+  async filterOrder(startDate: Date, endDate: Date) {
+    return await this.stretchCeilingOrderModel.find({
+      date: {
+        $gte: startDate,
+        $lte: endDate
+      }
+    }).populate("buyer").populate("stWorker").populate("user").sort({ date: -1 })
+  }
+
+  async filterOrderMaterial(startDate: Date, endDate: Date) {
+    return await this.stretchCeilingOrderModel.find({
+      date: {
+        $gte: startDate,
+        $lte: endDate
+      },
+      status: "dane"
+    })
+      .populate("buyer")
+      .populate("stWorker")
+      .populate("user")
+      .sort({ date: -1 });
   }
 
   async findAll() {
@@ -60,7 +90,7 @@ export class StretchCeilingOrderService {
   }
 
   async findOne(id: string) {
-    const data = (await this.stretchCeilingOrderModel.findById(id).populate("buyer").populate("stretchWorker"));
+    const data = (await this.stretchCeilingOrderModel.findById(id).populate("buyer").populate("stWorker"));
     return data
   }
 
@@ -80,7 +110,14 @@ export class StretchCeilingOrderService {
     return updatedOrder;
   }
 
+  async updateStatus(id: string, status: string) {
+    return await this.stretchCeilingOrderModel.findByIdAndUpdate(id)
+  }
+  async updateStretchPayed(id: string) {
+    return await this.stretchCeilingOrderModel.findByIdAndUpdate(id, { payed: true })
+  }
+
   remove(id: number) {
-    return `This action removes a #${ id } stretchCeilingOrder`;
+    return `This action removes a #${id} stretchCeilingOrder`;
   }
 }

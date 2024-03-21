@@ -8,7 +8,7 @@ interface EditStretchProfilsSectionProps {
   removeProfilRow: (rowId: number, roomId: string) => void
   roomId: string;
   stretchProfil: { arrStretchProfil: Array<any> };
-  profilId: Array<{ profil: string; profilPrice: number; profilQuantity: number }>;
+  profilId: Array<{ id: string; price: number; quantity: number }>;
 }
 
 const EditProfilSection: React.FC<EditStretchProfilsSectionProps> = ({
@@ -23,14 +23,14 @@ const EditProfilSection: React.FC<EditStretchProfilsSectionProps> = ({
 
   useEffect(() => {
     profilRowId.forEach((rowId: any, index: number) => {
-        setValue(`profil_${rowId}/${roomId}`, profilId[index].profil);
-        if (profilId[index].profilPrice) {
-            setValue(`profilPrice_${rowId}/${roomId}`, profilId[index].profilPrice);
+        setValue(`profilId_${rowId}/${roomId}`, profilId[index].id);
+        if (profilId[index].price) {
+            setValue(`profilPrice_${rowId}/${roomId}`, profilId[index].price);
         } else {
             setValue(`profilPrice_${rowId}/${roomId}`, 0);
         }
-        if (profilId[index].profilQuantity) {
-            setValue(`profilQuantity_${rowId}/${roomId}`, profilId[index].profilQuantity);
+        if (profilId[index].quantity) {
+            setValue(`profilQuantity_${rowId}/${roomId}`, profilId[index].quantity);
         } else {
             setValue(`profilQuantity_${rowId}/${roomId}`, 0);
         }
@@ -71,7 +71,7 @@ const EditProfilSection: React.FC<EditStretchProfilsSectionProps> = ({
                     <tr key={rowKey}>
                       <td style={{ minWidth: "250px", }}>
                         <select
-                          {...register(`profil_${rowKey}/${roomId}`)}
+                          {...register(`profilId_${rowKey}/${roomId}`)}
                           onChange={(e) => selectProfilPrice(e, rowKey, roomId)}
                         >
                           <option>Ընտրել Տեսակը</option>

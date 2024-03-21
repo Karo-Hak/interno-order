@@ -46,7 +46,7 @@ const ModalRoom: React.FC<InputModalProps> = ({ isOpen, onClose, setRoom, room }
     <div style={modalStyles} className='divModal'>
       <div className='cencel'>
         <h2>Անվանում</h2>
-        <button className='btn' onClick={handleClose}>
+        <button type='button' className='btn' onClick={handleClose}>
           X
         </button>
       </div>

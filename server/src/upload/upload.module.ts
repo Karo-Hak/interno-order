@@ -3,11 +3,9 @@ import { UploadService } from './upload.service';
 import { UploadController } from './upload.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Order, OrderSchema } from 'src/order/schema/order.schema';
-
 import { Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from 'mongoose';
-import { OrderModule } from 'src/order/order.module';
-import { OrderService } from 'src/order/order.service';
+import { StretchCeilingOrder, StretchCeilingOrderSchema } from 'src/stretch-ceiling-order/schema/stretch-ceiling-order.schema';
 
 
 export type UploadDocument = HydratedDocument<Upload>;
@@ -25,6 +23,8 @@ export const UploadSchema = SchemaFactory.createForClass(Upload);
   imports: [
     MongooseModule.forFeature([
       { name: Order.name, schema: OrderSchema },
+      { name: StretchCeilingOrder.name, schema: StretchCeilingOrderSchema },
+
     ]),
   ],
   providers: [UploadService],

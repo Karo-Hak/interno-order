@@ -25,9 +25,9 @@ const ViewWorkSection: React.FC<any> = ({ works }: any) => {
                     height: "10px"
                   }}
                     key={key}>
-                    <td>{works[key].workName}</td>
-                    <td>{works[key].workPrice}</td>
-                    <td>{works[key].workQuantity}</td>
+                    <td>{works[key].name}</td>
+                    <td>{works[key].price}</td>
+                    <td>{works[key].quantity}</td>
                   </tr>
                 }
                 return null;

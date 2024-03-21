@@ -8,7 +8,7 @@ interface EditLightRingSectionProps {
   removeLightRingRowId: (rowId: string, roomId: string) => void
   roomId: string;
   stretchLightRing: { arrStretchLightRing: Array<any> };
-  lightRingId: Array<{ lightRing: string; lightRingPrice: number; lightRingQuantity: number }>;
+  lightRingId: Array<{ id: string; price: number; quantity: number }>;
 }
 
 
@@ -24,14 +24,14 @@ const EditLightRingSection: React.FC<EditLightRingSectionProps> = ({
 
   useEffect(() => {
     lightRingRowId.forEach((rowId: any, index: number) => {
-      setValue(`lightRing_${rowId}/${roomId}`, lightRingId[index].lightRing);
-      if (lightRingId[index].lightRingPrice) {
-        setValue(`lightRingPrice_${rowId}/${roomId}`, lightRingId[index].lightRingPrice);
+      setValue(`lightRingId_${rowId}/${roomId}`, lightRingId[index].id);
+      if (lightRingId[index].price) {
+        setValue(`lightRingPrice_${rowId}/${roomId}`, lightRingId[index].price);
       } else {
         setValue(`lightRingPrice_${rowId}/${roomId}`, 0);
       }
-      if (lightRingId[index].lightRingQuantity) {
-        setValue(`lightRingQuantity_${rowId}/${roomId}`, lightRingId[index].lightRingQuantity);
+      if (lightRingId[index].quantity) {
+        setValue(`lightRingQuantity_${rowId}/${roomId}`, lightRingId[index].quantity);
       } else {
         setValue(`lightRingQuantity_${rowId}/${roomId}`, 0);
       }
@@ -70,7 +70,7 @@ const EditLightRingSection: React.FC<EditLightRingSectionProps> = ({
                     <tr key={rowKey}>
                       <td style={{ minWidth: "250px", }}>
                         <select
-                          {...register(`lightRing_${rowKey}/${roomId}`)}
+                          {...register(`lightRingId_${rowKey}/${roomId}`)}
                           onChange={(e) => selectLightRingPrice(e, rowKey, roomId)}>
                           <option>Ընտրել Տեսակը</option>
                           {

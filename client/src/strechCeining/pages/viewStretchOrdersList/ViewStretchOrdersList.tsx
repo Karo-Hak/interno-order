@@ -1,43 +1,134 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { useCookies } from 'react-cookie';
-import { viewNewOrders } from '../../features/stretchCeilingOrder/stretchOrderApi';
-import { selectStretchOrder } from '../../features/stretchCeilingOrder/stretchOrderSlice';
+import { useCookies } from "react-cookie"
+import { useNavigate } from "react-router-dom"
+import { ChangeEvent, useEffect, useState } from "react"
+import { useAppDispatch } from "../../../app/hooks"
+import { viewOrdersList } from "../../features/stretchCeilingOrder/stretchOrderApi"
+import "./viewStretchOrdersList.css"
+import { searchLogic } from "./searchLogic"
+import { StretchMenu } from "../../../component/menu/StretchMenu"
 
 
-const NewStretchOrderSection: React.FC<any> = () => {
+
+
+export const ViewStretchOrdersList: React.FC = (): JSX.Element => {
+
     const dispatch = useAppDispatch();
     const [cookies, setCookie] = useCookies(['access_token']);
-
-
+    const navigate = useNavigate();
+    const [ordersList, setOrdersList] = useState([])
+    const [ordersListFilter, setOrdersListFilter] = useState([])
+    const currentDate = new Date();
+    const [startDate, setStartDate] = useState(new Date(currentDate.getFullYear(), currentDate.getMonth(), 2).toISOString().split('T')[0]);
+    const [endDate, setEndDate] = useState(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 2).toISOString().split('T')[0]);
+    const [status, setStatus] = useState<string>("")
+    const [searchBuyer, setSearchBuyer] = useState<string>("")
 
     useEffect(() => {
-
-        dispatch(viewNewOrders(cookies)).unwrap().then(res => {
-            if ("error" in res) {
-                // setCookie("access_token", '', { path: '/' })
-                // navigate('/')
-                alert(res)
+        const fetchData = async () => {
+            try {
+                const dateFilter = { startDate, endDate }
+                const stretchOrderResult = await dispatch(viewOrdersList({ dateFilter, cookies })).unwrap();
+                handleResult(stretchOrderResult);
+            } catch (error) {
+                console.error("An error occurred:", error);
             }
-        })
-    }, []);
+        };
 
-    const newOrders = useAppSelector(selectStretchOrder);
+        const handleResult = (result: any) => {
+            if ("error" in result) {
+                alert(result);
+                // setCookie("access_token", "", { path: "/" });
+                // navigate("/");
+            } else {
+                processResult(result);
+            }
+        };
+
+        const processResult = (result: any) => {
+            if (result) {
+                setOrdersList(result)
+                setOrdersListFilter(result)
+            }
+        };
+
+        fetchData();
+        setStatus("")
+    }, [startDate, endDate]);
 
     const parseDate = (dateStr: string) => {
         const dateObj = new Date(dateStr);
-        return `${dateObj.getDate()} - ${dateObj.getMonth() + 1} - ${dateObj.getFullYear()} `;
+        return `${dateObj.getDate()} / ${dateObj.getMonth() + 1} / ${dateObj.getFullYear()} `;
     }
+
+    const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>): void => {
+        const selectedStatus = event.currentTarget.value;
+        if (selectedStatus !== "Ընտրել") {
+            setStatus(selectedStatus);
+            searchLogic(ordersListFilter, selectedStatus, ordersList, setOrdersList, searchBuyer);
+        } else {
+            setStatus("");
+            setOrdersList(ordersListFilter)
+        }
+    };
+
+    const filterBuyer = () => {
+        setSearchBuyer("")
+        searchLogic(ordersListFilter, status, ordersList, setOrdersList, searchBuyer);
+    }
+
+    const clearSearch = () => {
+        const clearBuyer = ""
+        searchLogic(ordersListFilter, status, ordersList, setOrdersList, clearBuyer);
+    }
+
 
     function viewOrder(id: any) {
         window.open('/stretchceiling/viewStretchOrder/' + id, '_blank');
     }
 
+
+
+
     return (
         <div>
-
+            <StretchMenu />
+            <div className="divFilter">
+                <div className="divDate">
+                    <div className="divLabel">
+                        <label htmlFor="startDate">Ամսատիվ սկիզբ</label>
+                        <input id="startDate" type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                    </div>
+                    <div className="divLabel">
+                        <label htmlFor="endDate">Ամսաթիվ վերջ</label>
+                        <input id="endDate" type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                    </div>
+                </div>
+                <div className="divDate">
+                    <div className="divLabel">
+                        <label htmlFor="endDate">Գնորդ</label>
+                        <div>
+                            <input id="stretchBuyer" type="text" value={searchBuyer} onChange={(e) => setSearchBuyer(e.target.value) } ></input>
+                            <button type="button" onClick={() => { setSearchBuyer(""); clearSearch(); }}>x</button>
+                            <button type="button" onClick={filterBuyer}>Որոնել</button>
+                        </div>
+                    </div>
+                    <div className="divLabel">
+                        <label htmlFor="startDate">Կարգավիճակ</label>
+                        <select value={status}
+                            style={{ border: "1px solid black" }}
+                            id="status"
+                            onChange={handleSelectChange}>
+                            <option>Ընտրել</option>
+                            <option value={"progress"}>Գրանցված</option>
+                            <option value={"measurement"}>Չափագրում</option>
+                            <option value={"installation"}>Տեղադրում</option>
+                            <option value={"dane"}>Ավարտված</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
             {
-                newOrders?.arrStretchOrder && newOrders.arrStretchOrder.length > 0 ?
+                ordersList.length > 0 ?
 
                     <div>
 
@@ -51,9 +142,9 @@ const NewStretchOrderSection: React.FC<any> = () => {
                             <div className=''>
 
                                 <table className="newStretchOrders" >
-                                    <thead >
-                                        <tr className=' back_color' >
-                                            <th style={{ width: "30px" }}>Կոդ </th>
+                                    <thead>
+                                        <tr>
+                                            <th>Կոդ </th>
                                             <th>Գրնցման/ԱԱ</th>
                                             <th>ԱԱ/սկիզբ</th>
                                             <th>ԱԱ/ավարտ</th>
@@ -69,14 +160,11 @@ const NewStretchOrderSection: React.FC<any> = () => {
                                     </thead>
                                     <tbody>
                                         {
-                                            newOrders.arrStretchOrder.map((e: any) => {
+                                            ordersList.map((e: any) => {
                                                 return (
                                                     <tr key={e._id}>
                                                         <td>
-                                                            <p
-                                                                style={{
-                                                                    width: "40px",
-                                                                }}>
+                                                            <p>
                                                                 {e.code}
                                                             </p>
                                                         </td>
@@ -113,18 +201,12 @@ const NewStretchOrderSection: React.FC<any> = () => {
                                                             </p>
                                                         </td>
                                                         <td>
-                                                            <p
-                                                                style={{
-                                                                    minWidth: "160px"
-                                                                }}>
+                                                            <p>
                                                                 {e.buyer.buyerName}
                                                             </p>
                                                         </td>
                                                         <td>
-                                                            <p
-                                                                style={{
-                                                                    minWidth: "100px"
-                                                                }}>
+                                                            <p>
                                                                 {e.buyer.buyerRegion}
                                                             </p>
                                                         </td>
@@ -203,6 +285,4 @@ const NewStretchOrderSection: React.FC<any> = () => {
             }
         </div>
     );
-};
-
-export default NewStretchOrderSection;
+}

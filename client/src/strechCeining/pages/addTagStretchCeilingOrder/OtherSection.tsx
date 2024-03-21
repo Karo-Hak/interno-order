@@ -1,12 +1,20 @@
+import { useEffect } from "react";
 
-const OtherSection: React.FC<any> = ({ register, otherRowId, removeOtherRow, roomId }: any) => {
+const OtherSection: React.FC<any> = ({ register, otherRowId, removeOtherRow, roomId, setValue }: any) => {
 
+
+  useEffect(() => {
+    otherRowId.forEach((rowKey: any) => {
+      setValue(`otherType_${rowKey}/${roomId}`, "other")
+    });
+
+  }, [otherRowId])
 
   return (<>
     {
       otherRowId.length > 0 ?
         <div style={{ marginLeft: "5px", width: "100%" }}>
-          <table className="table tableSection"  >
+          <table className="table tableSection">
             <thead>
               <tr style={{ background: "#dfdce0" }}>
                 <th style={{ width: "300px" }}>Լրացուցիչ</th>

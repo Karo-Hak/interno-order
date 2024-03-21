@@ -32,6 +32,8 @@ import { AddCategory } from "../strechCeining/stock/addCategory/AddCategory"
 import { AddProduct } from "../strechCeining/stock/addProduct/AddProduct"
 import { Input_output } from "../strechCeining/stock/in_out/Input_output"
 import { HomePage } from "../page/homePage/HomePage"
+import { ViewStretchOrdersList } from "../strechCeining/pages/viewStretchOrdersList/ViewStretchOrdersList"
+import { ViewMaterial } from "../strechCeining/pages/material/ViewMaterial"
 
 
 
@@ -61,7 +63,7 @@ export const MyRouter: React.FC = (): JSX.Element => {
                     <Route path="/stretchceiling/addTagStretchOrder" element={<TagStretchOrderx />}></Route>
                     <Route path="/tagstretchceiling/addTagStretchBuyer" element={<StretchBuyer />}></Route>
                     <Route path="/tagstretchceiling/addTagStretchWorker" element={<StretchWorker />}></Route>
-                    <Route path="/stretchceiling/addTagStretchWorker" element={<StretchWork />}></Route>
+                    <Route path="/stretchceiling/addTagStretchWork" element={<StretchWork />}></Route>
                     <Route path="/coopstretchceiling/addCoopStretchBuyer" element={<CoopStretchBuyer />}></Route>
                     <Route path="/stretchceiling/addStretchBardutyun" element={<StretchBardutyun />}></Route>
                     <Route path="/stretchceiling/addStretchAdditional" element={<StretchAdditional />}></Route>
@@ -70,6 +72,10 @@ export const MyRouter: React.FC = (): JSX.Element => {
                     <Route path="/stretchceiling/addStretchLightRing" element={<StretchLightRing />}></Route>
                     <Route path="/stretchceiling/editStretchOrder/:id" element={<EditTagStretchOrder />}></Route>
                     <Route path="/stretchceiling/viewStretchOrder/:id" element={<ViewStretchOrder />}></Route>
+                    <Route path="/stretchceiling/viewStretchOrdersList" element={<ViewStretchOrdersList />}></Route>
+                    <Route path="/stretchceiling/viewMaterial" element={<ViewMaterial />}></Route>
+
+
                     <Route path="/coopStretchceiling/addCoopStretchOrder" element={<CoopStretchOrder />}></Route>
                     <Route path="/stock" element={<StockProfile />}></Route>
                     <Route path="/addCategory" element={<AddCategory />}></Route>

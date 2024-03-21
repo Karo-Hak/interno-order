@@ -46,6 +46,12 @@ export const StretchMenu: React.FC<StretchMenuProps> = (): JSX.Element => {
     const home = () => {
         navigate("/stretchceiling")
     }
+    const viewStretchOrders = () => {
+        navigate("/stretchceiling/viewStretchOrdersList")
+    }
+    const viewMaterialsOrders = () => {
+        navigate("/stretchceiling/viewMaterial")
+    }
 
     return (
         <div className="admin_profile">
@@ -64,11 +70,13 @@ export const StretchMenu: React.FC<StretchMenuProps> = (): JSX.Element => {
                     <option value={"/stretchceiling/addStretchProfil"}>Պրոֆիլ</option>
                     <option value={"/stretchceiling/addStretchLightPlatform"}>Լույսի Պլատֆորմ</option>
                     <option value={"/stretchceiling/addStretchLightRing"}>Լույսի Օղակ</option>
+                    <option value={"/stretchceiling/addTagStretchWork"}>Աշխատանք</option>
                     <option value={"/stretchceiling/addStretchAdditional"}>Լռացուցիչ</option>
                 </select>
                 <button className="btn" onClick={tagStretchBuyer}>Ավելացնել Գնորդ</button>
                 <button className="btn" onClick={tagStretchWorkerr}>Ավելացնել Աշխատակից</button>
-                <button className="btn">Դիտել Պատվերները</button>
+                <button className="btn" onClick={viewStretchOrders}>Դիտել Պատվերները</button>
+                <button className="btn" onClick={viewMaterialsOrders}>Նյութածախս</button>
             </div>
             <div style={{width:"10%"}}></div>
         </div>

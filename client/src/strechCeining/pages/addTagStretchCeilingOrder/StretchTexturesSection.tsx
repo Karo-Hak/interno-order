@@ -8,7 +8,7 @@ const StretchTexturesSection: React.FC<any> = ({ register, setValue, stretchRowI
 
     const selectTexturePrice = (event: ChangeEvent<HTMLSelectElement>, rowId: any): void => {
         const selectedId = event.target.value;
-        const texture = stretchTexture.arrStretchTexture.find((e: any) => e._id === selectedId);
+        const texture = stretchTexture.find((e: any) => e._id === selectedId);
         if (texture) {
             setValue(`stretchPrice_${rowId}/${roomId}`, texture.price);
         } else {
@@ -34,12 +34,12 @@ const StretchTexturesSection: React.FC<any> = ({ register, setValue, stretchRowI
                                 <tr key={rowId}>
                                     <td style={{ minWidth: "250px", }}>
                                         <select
-                                            {...register(`stretchTexture_${rowId}/${roomId}`)}
+                                            {...register(`stretchId_${rowId}/${roomId}`)}
                                             onChange={(e) => selectTexturePrice(e, rowId)}
                                         >
                                             <option>Ընտրել Տեսակը</option>
-                                            {stretchTexture.arrStretchTexture && stretchTexture.arrStretchTexture.length > 0
-                                                ? stretchTexture.arrStretchTexture.map((texture: any) => (
+                                            {stretchTexture.length > 0
+                                                ? stretchTexture.map((texture: any) => (
                                                     <option key={texture._id} value={texture._id}>{texture.name}</option>
                                                 ))
                                                 : null}
@@ -55,7 +55,7 @@ const StretchTexturesSection: React.FC<any> = ({ register, setValue, stretchRowI
                                     <td>
                                         <input
                                             placeholder="Squer"
-                                            {...register(`stretchSquer_${rowId}/${roomId}`)}
+                                            {...register(`stretchQuantity_${rowId}/${roomId}`)}
                                         />
                                     </td>
                                     <td>

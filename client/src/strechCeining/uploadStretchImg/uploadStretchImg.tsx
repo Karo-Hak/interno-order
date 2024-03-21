@@ -1,0 +1,43 @@
+import React, { useState } from 'react';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
+
+function StretchImageUpload() {
+    const [selectedFile, setSelectedFile] = useState(null);
+    const params = useParams()
+    const [id, setId] = useState(params.id);
+
+
+    const handleFileChange = (event: any) => {
+        setSelectedFile(event.target.files[0]);
+    };
+
+
+    const handleUpload = async () => {
+        if (selectedFile) {
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+
+            try {
+                await axios.post(process.env.REACT_APP_SERVER_URL + '/upload/stretchImg/' + id, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+                console.log('Изображение успешно загружено');
+            } catch (error) {
+                console.error(error);
+            }
+            window.location.reload()
+        }
+    };
+
+    return (
+        <div style={{ display: "flex", gap:"20px", marginTop:"10px"}}>
+            <input type="file" onChange={handleFileChange} />
+            <button onClick={handleUpload} className='btn btn1'>Загрузить</button>
+        </div>
+    );
+}
+
+export default StretchImageUpload;

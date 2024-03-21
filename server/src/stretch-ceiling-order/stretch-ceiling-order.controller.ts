@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Res, Put } from '@nestjs/common';
 import { StretchCeilingOrderService } from './stretch-ceiling-order.service';
 import { UpdateStretchCeilingOrderDto } from './dto/update-stretch-ceiling-order.dto';
 import { Response } from 'express';
@@ -38,25 +38,26 @@ export class StretchCeilingOrderController {
 
   @Post()
   async create(@Body() obj: any, @Res() res: Response) {
+
     try {
       let orderBuyer
-      if (obj.addOrder.buyer.buyerId) {
-        orderBuyer = await this.stretchBuyerService.findOne(obj.addOrder.buyer.buyerId);
+      if (obj.buyer.buyerId) {
+        orderBuyer = await this.stretchBuyerService.findOne(obj.buyer.buyerId);
       } else {
-        orderBuyer = await this.stretchBuyerService.findByPhone(obj.addOrder.buyer.buyerPhone1);
+        orderBuyer = await this.stretchBuyerService.findByPhone(obj.buyer.buyerPhone1);
         if (orderBuyer === null) {
-          orderBuyer = await this.stretchBuyerService.create(obj.addOrder.buyer);
+          orderBuyer = await this.stretchBuyerService.create(obj.buyer);
         }
       }
-      if (obj.addOrder.stretchTextureOrder.rooms) {
-        removeEmptyValues(obj.addOrder.stretchTextureOrder.rooms)
-        removeEmptyObjects(obj.addOrder.stretchTextureOrder.rooms)
+      if (obj.stretchTextureOrder.rooms) {
+        removeEmptyValues(obj.stretchTextureOrder.rooms)
+        removeEmptyObjects(obj.stretchTextureOrder.rooms)
       }
-      if (obj.addOrder.stretchTextureOrder.groupedWorks) {
-        removeEmptyValues(obj.addOrder.stretchTextureOrder.groupedWorks)
-        removeEmptyObjects(obj.addOrder.stretchTextureOrder.groupedWorks)
+      if (obj.stretchTextureOrder.groupedWorks) {
+        removeEmptyValues(obj.stretchTextureOrder.groupedWorks)
+        removeEmptyObjects(obj.stretchTextureOrder.groupedWorks)
       }
-      const createdStretchOrder = { stretchTextureOrder: obj.addOrder.stretchTextureOrder, orderBuyer, user: obj.user }
+      const createdStretchOrder = { stretchTextureOrder: obj.stretchTextureOrder, orderBuyer, user: obj.user }
       const stretchCeilingOrder = await this.stretchCeilingOrderService.create(createdStretchOrder);
       return res.status(HttpStatus.CREATED).json({
         message: "created",
@@ -78,6 +79,55 @@ export class StretchCeilingOrderController {
       return res.status(HttpStatus.OK).json({
         error: e.message
       })
+    }
+  }
+  @Get('findNewMesur')
+  async findMesurOrders(@Res() res: Response) {
+    try {
+      const newOrders = await this.stretchCeilingOrderService.findMesurOrders();
+      return res.status(HttpStatus.OK).json(newOrders);
+    } catch (e) {
+      return res.status(HttpStatus.OK).json({
+        error: e.message
+      })
+    }
+  }
+  @Get('findNewInstal')
+  async findInstalOrders(@Res() res: Response) {
+    try {
+      const newOrders = await this.stretchCeilingOrderService.findInstalOrders();
+      return res.status(HttpStatus.OK).json(newOrders);
+    } catch (e) {
+      return res.status(HttpStatus.OK).json({
+        error: e.message
+      })
+    }
+  }
+
+  @Post('viewOrdersList')
+  async filterOrder(@Body() obj: any, @Res() res: Response) {
+    try {
+      const startDate = new Date(obj.dateFilter.startDate)
+      const endDate = new Date(obj.dateFilter.endDate)
+      const order = await this.stretchCeilingOrderService.filterOrder(startDate, endDate)
+      return res.status(HttpStatus.CREATED).json(order);
+    } catch (e) {
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        message: e.message
+      });
+    }
+  }
+  @Post('viewMaterialList')
+  async filterOrderMaterial(@Body() obj: any, @Res() res: Response) {
+    try {
+      const startDate = new Date(obj.dateFilter.startDate)
+      const endDate = new Date(obj.dateFilter.endDate)
+      const order = await this.stretchCeilingOrderService.filterOrderMaterial(startDate, endDate)
+      return res.status(HttpStatus.CREATED).json(order);
+    } catch (e) {
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        message: e.message
+      });
     }
   }
 
@@ -108,10 +158,11 @@ export class StretchCeilingOrderController {
       }
       await this.stretchBuyerService.deleteFromArray(updatingOrder.buyer._id, updatingOrder.id)
       let orderWorker = undefined
-      if (updateStretchCeilingOrderDto.stretchTextureOrder.stretchWorker) {
-        orderWorker = await this.stretchWorkerService.findOne(updateStretchCeilingOrderDto.stretchTextureOrder.stretchWorker);
+      
+      if (updateStretchCeilingOrderDto.stretchTextureOrder.stWorker) {
+        orderWorker = await this.stretchWorkerService.findOne(updateStretchCeilingOrderDto.stretchTextureOrder.stWorker);
       }
-      await this.stretchWorkerService.deleteFromArray(updatingOrder.stretchWorker, updatingOrder.id)
+      await this.stretchWorkerService.deleteFromArray(updatingOrder.stWorker, updatingOrder.id)
 
       if (updateStretchCeilingOrderDto.stretchTextureOrder.rooms) {
         removeEmptyValues(updateStretchCeilingOrderDto.stretchTextureOrder.rooms)
@@ -131,6 +182,35 @@ export class StretchCeilingOrderController {
     }
 
   }
+  @Put('updateStretchOrderStatuse/:id')
+  async updateStatus(@Param('id') id: string, @Body('status') status: string, @Res() res: Response) {
+    try {
+      const result = await this.stretchCeilingOrderService.updateStatus(id, status);
+      return res.status(HttpStatus.OK).json({
+        message: 'Status updated successfully',
+        result,
+      });
+    } catch (e) {
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        error: e.message,
+      });
+    }
+  }
+  @Put('updateStretchPayed/:id')
+  async updateStretchPayed(@Param('id') id: string, @Res() res: Response) {
+    try {
+      const result = await this.stretchCeilingOrderService.updateStretchPayed(id);
+      return res.status(HttpStatus.OK).json({
+        message: 'Status updated successfully',
+        result,
+      });
+    } catch (e) {
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        error: e.message,
+      });
+    }
+  }
+  
 
   @Delete(':id')
   remove(@Param('id') id: string) {

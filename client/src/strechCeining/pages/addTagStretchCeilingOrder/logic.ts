@@ -65,7 +65,6 @@ export const filterOrder = (
             other[e] = value
         }
     }
-console.log(stretchCeiling);
 
     for (const [elWork, valueWork] of Object.entries(work)) {
 
@@ -73,7 +72,8 @@ console.log(stretchCeiling);
             
             stretchWorkData.forEach((element: any) => {
                 if (valueWork === element._id) {
-                    work["workName_" + elWork.split('_')[1]] = element.workName
+                    work["WorkName_" + elWork.split('_')[1]] = element.name
+                    work["WorkType_" + elWork.split('_')[1]] = "work"
                 }
             });
         }
@@ -85,7 +85,7 @@ console.log(stretchCeiling);
         if (!groupedWorks[index]) {
             groupedWorks[index] = {};
         }
-        groupedWorks[index][property] = valueWork;
+        groupedWorks[index][property.slice(4).toLowerCase()] = valueWork;
     }
    
 
@@ -101,15 +101,17 @@ console.log(stretchCeiling);
                     value.groupedOthers[index] = {};
                 }
 
-                value.groupedOthers[index][property] = valueOther;
+                value.groupedOthers[index][property.slice(5).toLowerCase()] = valueOther;
             }
         }
 
         for (const [elStretch, valueStretch] of Object.entries(stretchCeiling)) {
-            if (elStretch.substring(0, 14) === "stretchTexture") {
+            
+            if (elStretch.substring(0, 9) === "stretchId") {
                 stretchTextureData.forEach((element: any) => {
                     if (valueStretch === element._id) {
                         stretchCeiling["stretchName_" + elStretch.split('_')[1]] = element.name
+                        stretchCeiling["stretchType_" + elStretch.split('_')[1]] = "stretch"
                     }
                 });
 
@@ -117,14 +119,13 @@ console.log(stretchCeiling);
         }
         for (const [elStretch, valueStretch] of Object.entries(stretchCeiling)) {
             if (elStretch.slice(elStretch.indexOf('/') + 1) === value.id) {
-
+                
                 const [property, index] = elStretch.split('_', 2);
-
+                
                 if (!value.groupedStretchCeilings[index]) {
                     value.groupedStretchCeilings[index] = {};
                 }
-
-                value.groupedStretchCeilings[index][property] = valueStretch;
+                value.groupedStretchCeilings[index][property.slice(7).toLowerCase()] = valueStretch;
             }
         }
 
@@ -134,6 +135,7 @@ console.log(stretchCeiling);
                 stretchAdditionalData.forEach((element: any) => {
                     if (valueAdditional === element._id) {
                         additional["additionalName_" + elAdditional.split('_')[1]] = element.name
+                        additional["additionalType_" + elAdditional.split('_')[1]] = "additional"
                     }
                 });
             }
@@ -146,7 +148,7 @@ console.log(stretchCeiling);
                     value.groupedAdditionals[index] = {};
                 }
 
-                value.groupedAdditionals[index][property] = valueAdditional;
+                value.groupedAdditionals[index][property.slice(10).toLowerCase()] = valueAdditional;
             }
 
         }
@@ -157,6 +159,7 @@ console.log(stretchCeiling);
                 stretchProfilData.forEach((element: any) => {
                     if (valueProfil === element._id) {
                         profil["profilName_" + elProfil.split('_')[1]] = element.name
+                        profil["profilType_" + elProfil.split('_')[1]] = "profil"
                     }
                 });
             }
@@ -169,7 +172,7 @@ console.log(stretchCeiling);
                     value.groupedProfils[index] = {};
                 }
 
-                value.groupedProfils[index][property] = valueProfil;
+                value.groupedProfils[index][property.slice(6).toLowerCase()] = valueProfil;
             }
         }
 
@@ -179,6 +182,7 @@ console.log(stretchCeiling);
                 stretchLightPlatformData.forEach((element: any) => {
                     if (valueLightPlatform === element._id) {
                         lightPlatform["lightPlatformName_" + elLightPlatform.split('_')[1]] = element.name
+                        lightPlatform["lightPlatformType_" + elLightPlatform.split('_')[1]] = "lightPlatform"
                     }
                 });
             }
@@ -192,7 +196,7 @@ console.log(stretchCeiling);
                     value.groupedLightPlatforms[index] = {};
                 }
 
-                value.groupedLightPlatforms[index][property] = valueLightPlatform;
+                value.groupedLightPlatforms[index][property.slice(13).toLowerCase()] = valueLightPlatform;
             }
         }
 
@@ -202,6 +206,7 @@ console.log(stretchCeiling);
                 stretchLightRingData.forEach((element: any) => {
                     if (valueLightRing === element._id) {
                         lightRing["lightRingName_" + elLightRing.split('_')[1]] = element.name
+                        lightRing["lightRingType_" + elLightRing.split('_')[1]] = "lightRing"
                     }
                 });
             }
@@ -215,7 +220,7 @@ console.log(stretchCeiling);
                     value.groupedLightRings[index] = {};
                 }
 
-                value.groupedLightRings[index][property] = valueLightRing;
+                value.groupedLightRings[index][property.slice(9).toLowerCase()] = valueLightRing;
             }
         }
 
@@ -225,6 +230,7 @@ console.log(stretchCeiling);
                 stretchBardutyunData.forEach((element: any) => {
                     if (valueBardutyun === element._id) {
                         bardutyun["bardutyunName_" + elBardutyun.split('_')[1]] = element.name
+                        bardutyun["bardutyunType_" + elBardutyun.split('_')[1]] = "bardutyun"
                     }
                 });
             }
@@ -238,7 +244,7 @@ console.log(stretchCeiling);
                     value.groupedBardutyuns[index] = {};
                 }
 
-                value.groupedBardutyuns[index][property] = valueBardutyun;
+                value.groupedBardutyuns[index][property.slice(9).toLowerCase()] = valueBardutyun;
             }
         }
 

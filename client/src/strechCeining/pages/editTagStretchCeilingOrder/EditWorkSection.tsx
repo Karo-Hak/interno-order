@@ -7,7 +7,7 @@ interface EditStretchProfilsSectionProps {
   workRowId: string[];
   removeWorkRow: (rowId: any) => void
   stretchWork: { arrStretchWork: Array<any> };
-  workId: Array<{ work: string; workPrice: number; workQuantity: number }>;
+  workId: Array<{ id: string; price: number; quantity: number, name:string }>;
 }
 
 
@@ -22,17 +22,16 @@ const EditWorkSection: React.FC<EditStretchProfilsSectionProps> = ({
 
 
   useEffect(() => {
-    console.log(workId);
-    
     workRowId.forEach((rowId: any, index: number) => {
-      setValue(`work_${rowId}`, workId[index].work);
-      if (workId[index].workPrice) {
-        setValue(`workPrice_${rowId}`, workId[index].workPrice);
+      setValue(`workId_${rowId}`, workId[index].id);
+      setValue(`workName_${rowId}`, workId[index].name,);
+      if (workId[index].price) {
+        setValue(`workPrice_${rowId}`, workId[index].price);
       } else {
         setValue(`workPrice_${rowId}`, 0);
       }
-      if (workId[index].workQuantity) {
-        setValue(`workQuantity_${rowId}`, workId[index].workQuantity);
+      if (workId[index].quantity) {
+        setValue(`workQuantity_${rowId}`, workId[index].quantity);
       } else {
         setValue(`workQuantity_${rowId}`, 0);
       }
@@ -46,7 +45,7 @@ const EditWorkSection: React.FC<EditStretchProfilsSectionProps> = ({
     const work = stretchWork.arrStretchWork.find((e: any) => e._id === selectedId);
 
     if (work) {
-      setValue(`workPrice_${rowKey}`, work.workPrice)
+      setValue(`workPrice_${rowKey}`, work.price)
     } else {
       setValue(`workPrice_${rowKey}`, 0)
     }
@@ -73,14 +72,14 @@ const EditWorkSection: React.FC<EditStretchProfilsSectionProps> = ({
                     <tr key={rowKey}>
                       <td style={{ minWidth: "250px", }}>
                         <select
-                          {...register(`work_${rowKey}`, { required: true })}
+                          {...register(`workId_${rowKey}`, { required: true })}
                           onChange={(e) => selectWorkPrice(e, rowKey)}
                         >
                           <option>Ընտրել Տեսակը</option>
                           {stretchWork.arrStretchWork && stretchWork.arrStretchWork.length > 0 ?
                             stretchWork.arrStretchWork.map((e: any) => (
                               <option key={e._id} value={e._id} >
-                                {e.workName}
+                                {e.name}
                               </option>
                             ))
                             : null}

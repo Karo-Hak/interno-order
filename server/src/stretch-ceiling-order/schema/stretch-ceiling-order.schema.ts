@@ -40,16 +40,20 @@ export class StretchCeilingOrder {
     measureDate: Date;
     @Prop()
     installDate: Date;
-    @Prop({ default: "progress" })
+    @Prop()
     status: string;
     @Prop()
     code: string;
     @Prop()
     salary: number;
+    @Prop({ default: false })
+    payed: boolean;
+    @Prop({ type: Array })
+    picUrl: Array<string>;
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "StretchBuyer" })
     buyer: StretchBuyer;
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "StretchWorker" })
-    stretchWorker: StretchWorker;
+    stWorker: StretchWorker;
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "User" })
     user: User;
 

@@ -7,7 +7,7 @@ interface EditOtherSectionProps {
   otherRowId: string[];
   removeOtherRow: (rowId: any, roomId: string) => void
   roomId: string;
-  otherId: Array<{ otherName: string; otherPrice: number; otherQuantity: number }>;
+  otherId: Array<{ name: string; price: number; quantity: number }>;
 }
 
 const EditOtherSection: React.FC<EditOtherSectionProps> = ({
@@ -18,18 +18,25 @@ const EditOtherSection: React.FC<EditOtherSectionProps> = ({
   roomId,
   otherId
 }: EditOtherSectionProps) => {
+  
+  useEffect(() => {
+    otherRowId.forEach((rowKey: any) => {
+      setValue(`otherType_${rowKey}/${roomId}`, "other")
+    });
+
+  }, [otherRowId])
 
 
   useEffect(() => {
     otherRowId.forEach((rowId: any, index: number) => {
-      setValue(`otherName_${rowId}/${roomId}`, otherId[index].otherName);
-      if (otherId[index].otherPrice) {
-        setValue(`otherPrice_${rowId}/${roomId}`, otherId[index].otherPrice);
+      setValue(`otherName_${rowId}/${roomId}`, otherId[index].name);
+      if (otherId[index].price) {
+        setValue(`otherPrice_${rowId}/${roomId}`, otherId[index].price);
       } else {
         setValue(`otherPrice_${rowId}/${roomId}`, 0);
       }
-      if (otherId[index].otherQuantity) {
-        setValue(`otherQuantity_${rowId}/${roomId}`, otherId[index].otherQuantity);
+      if (otherId[index].quantity) {
+        setValue(`otherQuantity_${rowId}/${roomId}`, otherId[index].quantity);
       } else {
         setValue(`otherQuantity_${rowId}/${roomId}`, 0);
       }

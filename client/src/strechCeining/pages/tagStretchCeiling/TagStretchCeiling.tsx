@@ -1,12 +1,14 @@
 import { selectUser } from "../../../features/user/userSlice";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { ChangeEvent, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
 import { useCookies } from 'react-cookie'
 import { userProfile } from "../../../features/user/userApi";
-import './tagStrechCeiling.css'
 import NewStretchOrderSection from "./NewStretchOrderSection";
 import { StretchMenu } from "../../../component/menu/StretchMenu";
+import MesurStretchOrderSection from "./MesurStretchOrderSection";
+import InstalStretchOrderSection from "./InstalStretchOrderSection";
+import './tagStrechCeiling.css'
 
 export const TagStretchCeiling: React.FC = (): JSX.Element => {
     const user = useAppSelector(selectUser);
@@ -29,9 +31,11 @@ export const TagStretchCeiling: React.FC = (): JSX.Element => {
 
     return (
         <>
-            <StretchMenu/>
+            <StretchMenu />
             <div className="newStretchOrderSection">
                 <NewStretchOrderSection />
+                <MesurStretchOrderSection/>
+                <InstalStretchOrderSection/>
             </div>
         </>
     );

@@ -8,12 +8,13 @@ import StretchTexturesSection from './StretchTexturesSection';
 import { v4 as uuidv4 } from 'uuid';
 import BardutyunSection from './BardutyunSection';
 import OtherSection from './OtherSection';
+import { UseFormRegister, UseFormReset, UseFormSetValue } from 'react-hook-form';
 
 interface RoomSectionProps {
-    register: any;
-    reset: any;
-    setValue: any;
-    roomId: any;
+    register: UseFormRegister<any>;
+    reset: UseFormReset<any>;
+    setValue: UseFormSetValue<any>;
+    roomId: string;
     room: any;
     stretchTextureData: any;
     stretchAdditionalData: any;
@@ -44,10 +45,9 @@ const RoomSection: FC<RoomSectionProps> = (
     const addNewRow = () => {
         setStretchRowId(prevRowId => [...prevRowId, prevRowId.length + 1 + uuidv4() as unknown as number]);
     };
-console.log(stretchRowId);
 
     const removeStretchRow = (index: any, roomId: any) => {
-        reset({ [`stretchTexture_${index}/${roomId}`]: '' })
+        reset({ [`stretch_${index}/${roomId}`]: '' })
         setStretchRowId(prevRowId => prevRowId.filter((_, i) => _ !== index));
     };
 
@@ -122,12 +122,20 @@ console.log(stretchRowId);
         setOtherRowId(prevRowId => prevRowId.filter((_, i) => _ !== index));
     };
 
+    let displayView: string = ""
+    if (room.isChecked) {
+        displayView = "block"
+    } else {
+        displayView = "none"
+    }
 
 
     return (
-        <div>
+        <div style={{
+            display: displayView
+        }}>
             <React.Fragment >
-                {room.isChecked && (
+              
                     <div key={roomId} style={{ margin: "auto" }}>
                         <div style={{ display: "flex", margin: "5px" }}>
                             <button
@@ -163,7 +171,7 @@ console.log(stretchRowId);
                             <button
                                 type="button"
                                 onClick={addOtherNewRow}>
-                                Լռացուցիչ
+                                Լրացուցիչ
                             </button>
                         </div>
 
@@ -222,10 +230,11 @@ console.log(stretchRowId);
                             otherRowId={otherRowId}
                             removeOtherRow={removeOtherRow}
                             roomId={roomId}
+                            setValue={setValue}
                         />
                     </div>
 
-                )}
+             
             </React.Fragment>
         </div>
     );

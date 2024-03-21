@@ -5,13 +5,12 @@ import { useAppSelector, useAppDispatch } from '../../../app/hooks';
 import { selectStretchWorker } from '../../features/StrechWorker/strechWorkerSlice';
 import { allStretchWorker } from '../../features/StrechWorker/strechWorkerApi';
 import { UseFormRegister, UseFormSetValue } from 'react-hook-form';
-import { event } from 'jquery';
 
 interface EditPaymentSection {
   register: UseFormRegister<any>;
   setOrderSum: (value: number) => void;
   paymentMethod: string;
-  setValue: UseFormSetValue<any>
+  setValue: UseFormSetValue<any>;
   balance: number;
   prepayment: number;
   groundTotal: number;
@@ -55,13 +54,14 @@ const EditPaymentSection: FC<EditPaymentSection> = ({
     setValue('prepayment', prepayment);
     setValue('groundTotal', balance - prepayment || 0);
     setValue('buyerComment', buyerComment);
-    setValue('stretchWorkerSalary', stretchWorkerSalary);
+    setValue('stWorkerSalary', stretchWorkerSalary);
     if (stretchWorkerId) {
-      setValue('stretchWorkerId', stretchWorkerId._id);
+      setValue('stWorkerId', stretchWorkerId._id);
     }
   }, [paymentMethod, balance, prepayment, buyerComment, stretchWorkerId])
 
   const worker = useAppSelector(selectStretchWorker)
+  
 
   return (
     <div >
@@ -107,14 +107,14 @@ const EditPaymentSection: FC<EditPaymentSection> = ({
               <textarea className="buyerCommentBuyerSection" placeholder="Buyer Comment" {...register('buyerComment')} />
             </td>
             <td>
-              <select id="selectCoop" {...register('stretchWorkerId')} >
+              <select id="selectCoop" {...register('stWorkerId')} >
                 <option>Աշխատակից</option>
                 {worker.arrStretchWorker &&
                   worker.arrStretchWorker.length > 0 ? (
                   worker.arrStretchWorker.map((e: any) => {
                     return (
                       <option key={e._id} value={e._id}>
-                        {e.stretchWorkerName}
+                        {e.name}
                       </option>
                     );
                   })
@@ -122,7 +122,7 @@ const EditPaymentSection: FC<EditPaymentSection> = ({
               </select>
             </td>
             <td>
-              <input id="salary" type="number" placeholder="Salary" {...register('stretchWorkerSalary')} />
+              <input id="salary" type="number" placeholder="Salary" {...register('stWorkerSalary')} />
             </td>
           </tr>
         </tbody>

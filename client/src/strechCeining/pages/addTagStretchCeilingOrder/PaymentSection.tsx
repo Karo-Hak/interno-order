@@ -5,14 +5,18 @@ import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../../app/hooks';
 import { selectStretchWorker } from '../../features/StrechWorker/strechWorkerSlice';
 import { allStretchWorker } from '../../features/StrechWorker/strechWorkerApi';
+import { UseFormRegister, UseFormSetValue } from 'react-hook-form';
 
 interface PaymentSectionProps {
-  register: any;
-  setOrderBalance: (value: number) => void;
-  setOrderSum: (value: number) => void;
+  register: UseFormRegister<any>;
+  setValue: UseFormSetValue<any>;
+  setPrepayment: (value: number) => void;
+  prepayment: number;
+  balance: number;
+  setBalance: (value: number) => void;
 }
 
-const PaymentSection: FC<PaymentSectionProps> = ({ register, setOrderBalance, setOrderSum }: PaymentSectionProps) => {
+const PaymentSection: FC<PaymentSectionProps> = ({ register, setValue, setPrepayment, prepayment, balance, setBalance }: PaymentSectionProps) => {
 
   const dispatch = useAppDispatch();
   const [cookies, setCookie] = useCookies(['access_token']);
@@ -28,6 +32,17 @@ const PaymentSection: FC<PaymentSectionProps> = ({ register, setOrderBalance, se
     })
   }, [])
   const worker = useAppSelector(selectStretchWorker)
+
+  const sumTotal = (e: any) => {
+    setBalance(e.target.value)
+  }
+  const sumPrepeymantTotal = (e: any) => {
+    setPrepayment(e.target.value)
+
+  }
+  useEffect(() => {
+    setValue("groundTotal", balance - prepayment)
+  }, [balance, prepayment])
 
   return (
     <div >
@@ -61,26 +76,28 @@ const PaymentSection: FC<PaymentSectionProps> = ({ register, setOrderBalance, se
                 type="number"
                 placeholder="Balance"
                 {...register('balance')}
+                onChange={(e) => sumTotal(e)}
+
               />
             </td>
             <td>
-              <input id="prepayment" type="number" placeholder="prepayment" {...register('prepayment')} />
+              <input id="prepayment" type="number" placeholder="prepayment" {...register('prepayment')} onChange={(e) => sumPrepeymantTotal(e)} />
             </td>
             <td>
-              <input id="Sum" type="number" placeholder="Sum" {...register('groundTotal')} onChange={(e) => setOrderSum(+e.target.value)} />
+              <input id="Sum" type="number" placeholder="Sum" {...register('groundTotal')} />
             </td>
             <td>
               <textarea className="buyerCommentBuyerSection" placeholder="Buyer Comment" {...register('buyerComment')} />
             </td>
             <td>
-              <select id="selectCoop" {...register('stretchWorkerId')} >
+              <select id="selectCoop" {...register('stWorkerId')} >
                 <option>Աշխատակից</option>
                 {worker.arrStretchWorker &&
                   worker.arrStretchWorker.length > 0 ? (
                   worker.arrStretchWorker.map((e: any) => {
                     return (
                       <option key={e._id} value={e._id}>
-                        {e.stretchWorkerName}
+                        {e.name}
                       </option>
                     );
                   })
@@ -88,7 +105,7 @@ const PaymentSection: FC<PaymentSectionProps> = ({ register, setOrderBalance, se
               </select>
             </td>
             <td>
-              <input id="salary" type="number" placeholder="Salary" {...register('stretchWorkerSalary')} />
+              <input id="salary" type="number" placeholder="Salary" {...register('stWorkerSalary')} />
             </td>
           </tr>
         </tbody>

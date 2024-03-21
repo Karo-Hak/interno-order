@@ -4,10 +4,9 @@ const LightPlatformSection: React.FC<any> = ({ register, lightPlatformRowId, rem
 
   const selectLightPlatformPrice = (event: ChangeEvent<HTMLSelectElement | HTMLInputElement>, rowKey: string, roomId: string): void => {
     const selectedId = event.target.value;
-    const lightPlatform = stretchLightPlatform.arrStretchLightPlatform.find((e: any) => e._id === selectedId);
+    const lightPlatform = stretchLightPlatform.find((e: any) => e._id === selectedId);
 
     if (lightPlatform) {
-      setValue(`lightPlatformName_${rowKey}/${roomId}`, lightPlatform.name,);
       setValue(`lightPlatformPrice_${rowKey}/${roomId}`, lightPlatform.price)
     } else {
       setValue(`lightPlatformPrice_${rowKey}/${roomId}`, 0)
@@ -36,12 +35,12 @@ const LightPlatformSection: React.FC<any> = ({ register, lightPlatformRowId, rem
                       <tr key={index}>
                         <td style={{ minWidth: "250px", }}>
                           <select
-                            {...register(`lightPlatform_${rowKey}/${roomId}`)}
+                            {...register(`lightPlatformId_${rowKey}/${roomId}`)}
                             onChange={(e) => selectLightPlatformPrice(e, rowKey, roomId)}>
                             <option>Ընտրել Տեսակը</option>
                             {
-                              stretchLightPlatform.arrStretchLightPlatform && stretchLightPlatform.arrStretchLightPlatform.length > 0 ?
-                                stretchLightPlatform.arrStretchLightPlatform.map((e: any) => {
+                              stretchLightPlatform.length > 0 ?
+                                stretchLightPlatform.map((e: any) => {
                                   return (
                                     <option key={e._id} value={e._id} >{e.name}</option>
                                   )

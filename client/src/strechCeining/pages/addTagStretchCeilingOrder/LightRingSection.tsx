@@ -6,10 +6,9 @@ const LightRingSection: React.FC<any> = ({ register, lightRingRowId, removeLight
 
   const selectLightRingPrice = (event: ChangeEvent<HTMLSelectElement | HTMLInputElement>, rowKey: string, roomId: string): void => {
     const selectedId = event.target.value;
-    const lightRing = stretchLightRing.arrStretchLightRing.find((e: any) => e._id === selectedId);
+    const lightRing = stretchLightRing.find((e: any) => e._id === selectedId);
 
     if (lightRing) {
-      setValue(`lightRingName_${rowKey}/${roomId}`, lightRing.name,);
       setValue(`lightRingPrice_${rowKey}/${roomId}`, lightRing.price)
     } else {
       setValue(`lightRingPrice_${rowKey}/${roomId}`, 0)
@@ -36,12 +35,12 @@ const LightRingSection: React.FC<any> = ({ register, lightRingRowId, removeLight
                     <tr key={rowKey}>
                       <td style={{ minWidth: "250px", }}>
                         <select
-                          {...register(`lightRing_${rowKey}/${roomId}`)}
+                          {...register(`lightRingId_${rowKey}/${roomId}`)}
                           onChange={(e) => selectLightRingPrice(e, rowKey, roomId)}>
                           <option>Ընտրել Տեսակը</option>
                           {
-                            stretchLightRing.arrStretchLightRing && stretchLightRing.arrStretchLightRing.length > 0 ?
-                              stretchLightRing.arrStretchLightRing.map((e: any) => {
+                            stretchLightRing.length > 0 ?
+                              stretchLightRing.map((e: any) => {
                                 return (
                                   <option key={e._id} value={e._id} >{e.name}</option>
                                 )

@@ -1,5 +1,5 @@
 import { createSlice, } from "@reduxjs/toolkit";
-import { addNewStretchOrder, findStretchOrder, findNewStretchOrder, searchStretchOrder, viewNewOrders } from "./stretchOrderApi";
+import { addNewStretchOrder, findStretchOrder, findNewStretchOrder, searchStretchOrder, viewNewOrders, updateStatuse, viewNewMesurOrders } from "./stretchOrderApi";
 
 
 
@@ -62,6 +62,13 @@ export const stretchOrderSlice = createSlice({
                     state.arrStretchOrder = action.payload
                 }
             })
+            .addCase(updateStatuse.fulfilled, (state, action) => {
+                if ('error' in action.payload) {
+                } else {
+                    state.arrStretchOrder = action.payload
+                }
+            })
+            
     }
 })
 

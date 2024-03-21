@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useCookies } from 'react-cookie'
 import { userProfile } from "../../../features/user/userApi";
 import './viewStretchOrder.css'
-import { findStretchOrder } from "../../features/stretchCeilingOrder/stretchOrderApi";
+import { findStretchOrder, updateStretchPayed } from "../../features/stretchCeilingOrder/stretchOrderApi";
 import { selectStretchOrder } from "../../features/stretchCeilingOrder/stretchOrderSlice";
 import ViewStretchTexturesSection from "./ViewStretchTexturesSection";
 import ViewProfilSection from "./ViewProfilSection";
@@ -16,6 +16,9 @@ import ViewWorkSection from "./ViewWorkSection";
 import ViewBardutyunSection from "./ViewBardutyunSection";
 import ViewOtherSection from "./ViewOtherSection";
 import { StretchMenu } from "../../../component/menu/StretchMenu";
+import StretchImageUpload from "../../uploadStretchImg/uploadStretchImg";
+import ImageGallery from "./ImageGallery";
+import ModalStretchStatus from "../../../component/modal/ModalStretchStatus";
 
 
 export const ViewStretchOrder: React.FC = (): JSX.Element => {
@@ -26,6 +29,7 @@ export const ViewStretchOrder: React.FC = (): JSX.Element => {
 
     const [rooms, setRooms] = useState<any[]>([]);
     const [works, setWorks] = useState<any[]>([]);
+    const [images, setImages] = useState<any[]>([]);
     const order = useAppSelector(selectStretchOrder).stretchOrder;
 
 
@@ -40,32 +44,36 @@ export const ViewStretchOrder: React.FC = (): JSX.Element => {
                 console.error("An error occurred:", error);
             }
         };
-    
+
         const handleResult = (result: any) => {
             if ("error" in result) {
                 console.error(result.error);
-                setCookie("access_token", "", { path: "/" });
-                navigate("/");
+                // setCookie("access_token", "", { path: "/" });
+                // navigate("/");
             } else {
                 processResult(result);
             }
         };
-    
+
         const processResult = (result: any) => {
             if (result.rooms && typeof result.rooms === "object" && result.rooms !== null) {
                 const rooms = Object.values(result.rooms);
                 setRooms(rooms);
             }
-    
+
             if (result.groupedWorks !== undefined && result.groupedWorks !== null) {
                 const works = Object.values(result.groupedWorks);
                 setWorks(works);
             }
+            if (result.picUrl) {
+                setImages(result.picUrl)
+            }
+
         };
-    
+
         fetchData();
-    }, [dispatch, params, cookies, navigate, setCookie, setRooms, setWorks, order]);
-    
+    }, []);
+
 
 
     const user = useAppSelector(selectUser);
@@ -80,9 +88,26 @@ export const ViewStretchOrder: React.FC = (): JSX.Element => {
         navigate('/stretchceiling/editStretchOrder/' + params.id);
 
     }
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleOpenModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+    };
+    const handlePayd = () => {
+        dispatch(updateStretchPayed({ cookies, params })).unwrap().then(res => {
+            if ("error" in res) {
+                alert(res.error)
+            }
+        });
+    };
+
 
     return (<>
-            <StretchMenu />
+        <StretchMenu />
 
         {
             order && Object.values(order).length > 0 ?
@@ -96,7 +121,11 @@ export const ViewStretchOrder: React.FC = (): JSX.Element => {
                     }}
                         className="admin_profile_Strech">
                         <p style={{ color: "white", marginTop: "10px" }}>կարգավիճակ -- {order.status}</p>
+                        <button type="button" onClick={handleOpenModal}>Փոխել Կարգավիճակը</button>
                         <button type="button" onClick={editOrder}>Լրացնել</button>
+
+                        <button type="button" onClick={handlePayd}>Վճարված</button>
+
                     </div>
                     <div className=''>
                         <div >
@@ -135,6 +164,7 @@ export const ViewStretchOrder: React.FC = (): JSX.Element => {
                             </table>
                         </div>
                     </div>
+
                     <p style={{ height: "5px" }}></p>
                     <div>
                         <div >
@@ -164,7 +194,7 @@ export const ViewStretchOrder: React.FC = (): JSX.Element => {
                                         <td>{order.prepayment}</td>
                                         <td>{order.groundTotal}</td>
                                         <td>{order.buyerComment}</td>
-                                        <td>{order.stretchWorker?.stretchWorkerName}</td>
+                                        <td>{order.stWorker?.name}</td>
                                         <td>{order.salary}</td>
                                     </tr>
                                 </tbody>
@@ -181,7 +211,13 @@ export const ViewStretchOrder: React.FC = (): JSX.Element => {
                                 </div>
                                 : null
                         }
+                        <div >
+                            <ImageGallery thumbnailImages={images} fullSizeImages={images} />
+                            <StretchImageUpload />
+
+                        </div>
                     </div>
+                    <ModalStretchStatus isOpen={isModalOpen} onClose={handleCloseModal} />
                     <div >
                         {rooms && rooms.length > 0 ?
                             rooms.map((room: any) => {

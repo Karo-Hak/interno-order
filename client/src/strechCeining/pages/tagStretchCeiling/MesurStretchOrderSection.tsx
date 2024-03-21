@@ -1,28 +1,45 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../../app/hooks';
+import React, { useEffect, useState } from 'react';
+import { useAppDispatch } from '../../../app/hooks';
 import { useCookies } from 'react-cookie';
-import { viewNewOrders } from '../../features/stretchCeilingOrder/stretchOrderApi';
-import { selectStretchOrder } from '../../features/stretchCeilingOrder/stretchOrderSlice';
+import { viewNewMesurOrders } from '../../features/stretchCeilingOrder/stretchOrderApi';
+import { useNavigate } from 'react-router-dom';
 
 
-const NewStretchOrderSection: React.FC<any> = () => {
+const MesurStretchOrderSection: React.FC<any> = () => {
     const dispatch = useAppDispatch();
     const [cookies, setCookie] = useCookies(['access_token']);
-
-
+    const navigate = useNavigate();
+    const [newMesurOrder, setNewMesurOrder] = useState([])
 
     useEffect(() => {
-
-        dispatch(viewNewOrders(cookies)).unwrap().then(res => {
-            if ("error" in res) {
-                // setCookie("access_token", '', { path: '/' })
-                // navigate('/')
-                alert(res)
+        const fetchData = async () => {
+            try {
+                const stretchOrderResult = await dispatch(viewNewMesurOrders(cookies)).unwrap();
+                handleResult(stretchOrderResult);
+            } catch (error) {
+                console.error("An error occurred:", error);
             }
-        })
+        };
+
+        const handleResult = (result: any) => {
+            if ("error" in result) {
+                alert(result);
+                setCookie("access_token", "", { path: "/" });
+                navigate("/");
+            } else {
+                processResult(result);
+            }
+        };
+
+        const processResult = (result: any) => {
+            if (result) {
+                setNewMesurOrder(result)
+            }
+        };
+
+        fetchData();
     }, []);
 
-    const newOrders = useAppSelector(selectStretchOrder);
 
     const parseDate = (dateStr: string) => {
         const dateObj = new Date(dateStr);
@@ -37,13 +54,13 @@ const NewStretchOrderSection: React.FC<any> = () => {
         <div>
 
             {
-                newOrders?.arrStretchOrder && newOrders.arrStretchOrder.length > 0 ?
+                newMesurOrder.length > 0 ?
 
                     <div>
 
                         <div className='newStretchOrderSection_head'>
                             <div className='newStretchOrderSection_head_name'>
-                                Ձգվող առաստաղ (Պատվերներ)
+                                Ձգվող առաստաղ (Չափագրում)
                             </div>
                         </div>
 
@@ -69,7 +86,7 @@ const NewStretchOrderSection: React.FC<any> = () => {
                                     </thead>
                                     <tbody>
                                         {
-                                            newOrders.arrStretchOrder.map((e: any) => {
+                                            newMesurOrder.map((e: any) => {
                                                 return (
                                                     <tr key={e._id}>
                                                         <td>
@@ -202,7 +219,8 @@ const NewStretchOrderSection: React.FC<any> = () => {
                     </div> : null
             }
         </div>
+
     );
 };
 
-export default NewStretchOrderSection;
+export default MesurStretchOrderSection;

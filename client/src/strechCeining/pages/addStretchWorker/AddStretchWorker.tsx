@@ -60,7 +60,7 @@ export const StretchWorker: React.FC = (): JSX.Element => {
                             id="name"
                             type="text"
                             placeholder="Name"
-                            {...register("stretchWorkerName", { required: true })} />
+                            {...register("name", { required: true })} />
                     </div>
                     <div className="addStrerchBuyer_info_section">
                         <label htmlFor="phone">Հեռախոս</label>
@@ -119,7 +119,7 @@ export const StretchWorker: React.FC = (): JSX.Element => {
                                     worker.arrStretchWorker.map((e: any) => {
                                         return (
                                             <tr key={e._id}>
-                                                <td>{e.stretchWorkerName}</td>
+                                                <td>{e.name}</td>
                                                 <td>{e.stretchWPhone1}</td>
                                                 <td>{e.stretchWPhone2}</td>
                                                 <td>{e.stretchWRegion}</td>

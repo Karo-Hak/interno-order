@@ -8,7 +8,7 @@ interface EditAdditionalSectionProps {
   removeAdditionalRow: (rowId: any, roomId: string) => void 
   roomId: string;
   stretchAdditional: { arrStretchAdditional: Array<any> }; 
-  additionalId: Array<{ additional: string; additionalPrice: number; additionalQuantity: number }>;
+  additionalId: Array<{ id: string; price: number; quantity: number }>;
 }
 
 
@@ -25,14 +25,14 @@ const EditAdditionalSection: React.FC<EditAdditionalSectionProps> = ({
 
   useEffect(() => {
     additionalRowId.forEach((rowId: any, index: number) => {
-        setValue(`additional_${rowId}/${roomId}`, additionalId[index].additional);
-        if (additionalId[index].additionalPrice) {
-            setValue(`additionalPrice_${rowId}/${roomId}`, additionalId[index].additionalPrice);
+        setValue(`additionalId_${rowId}/${roomId}`, additionalId[index].id);
+        if (additionalId[index].price) {
+            setValue(`additionalPrice_${rowId}/${roomId}`, additionalId[index].price);
         } else {
-            setValue(`stretchPrice_${rowId}/${roomId}`, 0);
+            setValue(`additionalPrice_${rowId}/${roomId}`, 0);
         }
-        if (additionalId[index].additionalQuantity) {
-            setValue(`additionalQuantity_${rowId}/${roomId}`, additionalId[index].additionalQuantity);
+        if (additionalId[index].quantity) {
+            setValue(`additionalQuantity_${rowId}/${roomId}`, additionalId[index].quantity);
         } else {
             setValue(`additionalQuantity_${rowId}/${roomId}`, 0);
         }
@@ -70,7 +70,7 @@ const EditAdditionalSection: React.FC<EditAdditionalSectionProps> = ({
                   <tr key={el}>
                     <td style={{ minWidth: "250px", }}>
                       <select
-                        {...register(`additional_${el}` + "/" + roomId)}
+                        {...register(`additionalId_${el}` + "/" + roomId)}
                         onChange={(e) => selectAdditionalPrice(e, el, roomId)}
                       >
                         <option>Ընտրել Տեսակը</option>

@@ -1,4 +1,4 @@
-import { Controller, Post, UseInterceptors, UploadedFile, Param,Req  } from '@nestjs/common';
+import { Controller, Post, UseInterceptors, UploadedFile, Param, Req } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
@@ -27,6 +27,14 @@ export class UploadController {
     async uploadFile(@UploadedFile() file, @Param('id') id: string, @Req() request) {
         const imageUrl = request.protocol + '://' + request.get('host') + '/' + file.path;
         await this.uploadService.findAndUpdatPicUrl(id, imageUrl)
+        return { message: 'Файл успешно загружен' };
+    }
+
+    @Post("stretchImg/:id")
+    @UseInterceptors(FileInterceptor('file', multerOptions))
+    async uploadStretchFile(@UploadedFile() file, @Param('id') id: string, @Req() request) {
+        const imageUrl = request.protocol + '://' + request.get('host') + '/' + file.path;
+        await this.uploadService.findAndUpdatStretchPicUrl(id, imageUrl)
         return { message: 'Файл успешно загружен' };
     }
 }

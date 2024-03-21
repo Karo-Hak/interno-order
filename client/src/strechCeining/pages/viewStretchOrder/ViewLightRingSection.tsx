@@ -20,9 +20,9 @@ const ViewLightRingSection: React.FC<any> = ({ room }: any) => {
             {room.groupedLightRings && Object.keys(room.groupedLightRings).map((key) => {
               if (typeof room.groupedLightRings[key] === 'object' && room.groupedLightRings[key] !== null) {
                 return <tr key={key}>
-                  <td>{room.groupedLightRings[key].lightRingName}</td>
-                  <td>{room.groupedLightRings[key].lightRingPrice}</td>
-                  <td>{room.groupedLightRings[key].lightRingQuantity}</td>
+                  <td>{room.groupedLightRings[key].name}</td>
+                  <td>{room.groupedLightRings[key].price}</td>
+                  <td>{room.groupedLightRings[key].quantity}</td>
                 </tr>
               }
               return null;

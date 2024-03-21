@@ -18,9 +18,9 @@ const ViewBardutyunSection: React.FC<any> = ({ room }: any) => {
             {room.groupedBardutyuns && Object.keys(room.groupedBardutyuns).map((key) => {
               if (typeof room.groupedBardutyuns[key] === 'object' && room.groupedBardutyuns[key] !== null) {
                 return <tr key={key}>
-                  <td>{room.groupedBardutyuns[key].bardutyunName}</td>
-                  <td>{room.groupedBardutyuns[key].bardutyunPrice}</td>
-                  <td>{room.groupedBardutyuns[key].bardutyunQuantity}</td>
+                  <td>{room.groupedBardutyuns[key].name}</td>
+                  <td>{room.groupedBardutyuns[key].price}</td>
+                  <td>{room.groupedBardutyuns[key].quantity}</td>
                 </tr>
               }
               return null;

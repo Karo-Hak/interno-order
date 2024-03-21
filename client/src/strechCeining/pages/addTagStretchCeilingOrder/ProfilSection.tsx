@@ -5,7 +5,7 @@ const ProfilSection: React.FC<any> = ({ register,setValue, profilRowId, removePr
 
   const selectProfilPrice = (event: ChangeEvent<HTMLSelectElement | HTMLInputElement>, rowKey: string, roomId: string): void => {
     const selectedId = event.target.value;
-    const profil = stretchProfil.arrStretchProfil.find((e: any) => e._id === selectedId);
+    const profil = stretchProfil.find((e: any) => e._id === selectedId);
 
     if (profil) {
       setValue(`profilPrice_${rowKey}/${roomId}`, profil.price)
@@ -35,12 +35,12 @@ const ProfilSection: React.FC<any> = ({ register,setValue, profilRowId, removePr
                     <tr key={rowKey}>
                       <td style={{minWidth:"250px", }}>
                         <select
-                          {...register(`profil_${rowKey}/${roomId}`)}
+                          {...register(`profilId_${rowKey}/${roomId}`)}
                           onChange={(e) => selectProfilPrice(e, rowKey, roomId)}
                         >
                           <option>Ընտրել Տեսակը</option>
-                          {stretchProfil.arrStretchProfil && stretchProfil.arrStretchProfil.length > 0 ?
-                            stretchProfil.arrStretchProfil.map((e: any) => (
+                          {stretchProfil.length > 0 ?
+                            stretchProfil.map((e: any) => (
                               <option key={e._id} value={e._id} >
                                 {e.name}
                               </option>

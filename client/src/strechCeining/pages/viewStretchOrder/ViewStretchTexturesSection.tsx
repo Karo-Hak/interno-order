@@ -21,9 +21,9 @@ const ViewStretchTexturesSection: React.FC<any> = ({ room }: any) => {
                         {room.groupedStretchCeilings && Object.keys(room.groupedStretchCeilings).map((key) => {
                             if (typeof room.groupedStretchCeilings[key] === 'object' && room.groupedStretchCeilings[key] !== null) {
                                 return <tr key={key}>
-                                    <td>{room.groupedStretchCeilings[key].stretchName}</td>
-                                    <td>{room.groupedStretchCeilings[key].stretchPrice}</td>
-                                    <td>{room.groupedStretchCeilings[key].stretchSquer}</td>
+                                    <td>{room.groupedStretchCeilings[key].name}</td>
+                                    <td>{room.groupedStretchCeilings[key].price}</td>
+                                    <td>{room.groupedStretchCeilings[key].quantity}</td>
                                 </tr>
 
                             }

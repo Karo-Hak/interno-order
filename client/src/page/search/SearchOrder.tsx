@@ -172,31 +172,10 @@ export const SearchOrder: React.FC = (): JSX.Element => {
         index === self.findIndex((t: any) => (t.cooperate._id === obj.cooperate._id))
     );
 
-    const addBuyer = () => {
-        navigate('/wallpaper/addBuyer');
-    }
-    const addCooperate = () => {
-        if (user.profile.role === "admin") {
-            navigate("/wallpaper/addCooperate")
-        }
-    }
-    const addTexture = () => {
-        if (user.profile.role === "admin") {
-            navigate("/wallpaper/addTexture")
-        }
-    }
-    const search = () => {
-        navigate("/wallpaper/searchOrder")
-    }
-    const openOrderForm = () => {
-        navigate("/wallpaper")
-    }
-
-
 
     return (
         <div >
-               <WallpaperMenu />
+            <WallpaperMenu />
             <div className="profile ">
                 <div className="profile_info">
 

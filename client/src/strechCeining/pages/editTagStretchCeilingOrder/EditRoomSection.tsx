@@ -134,7 +134,7 @@ const EditRoomSection: FC<EditRoomSectionProps> = (
     };
 
     const removeStretchRow = (index: any, roomId: any) => {
-        reset({ [`stretchTexture_${index}/${roomId}`]: '' })
+        reset({ [`stretch_${index}/${roomId}`]: '' })
         setStretchRowId(prevRowId => prevRowId.filter((_, i) => _ !== index));
     };
 
@@ -252,7 +252,7 @@ const EditRoomSection: FC<EditRoomSectionProps> = (
                         <button
                             type="button"
                             onClick={addOtherNewRow}>
-                            Լռացուցիչ
+                            Լրացուցիչ
                         </button>
                     </div>
 

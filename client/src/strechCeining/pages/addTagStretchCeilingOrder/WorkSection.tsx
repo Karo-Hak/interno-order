@@ -1,37 +1,57 @@
-import React, { ChangeEvent, useEffect } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { useCookies } from 'react-cookie';
 import './tagStretchOrder.css'
 import { allStretchWork } from '../../features/StrechWork/strechWorkApi';
-import { selectStretchWork } from '../../features/StrechWork/strechWorkSlice';
+import { useNavigate } from 'react-router-dom';
 
 const WorkSection: React.FC<any> = ({ register, setValue, workRowId, removeWorkRow }: any) => {
 
   const dispatch = useAppDispatch();
   const [cookies, setCookie] = useCookies(['access_token']);
+  const navigate = useNavigate();
+
+
+  const [stretchWork, setStretchWork] = useState<any>()
 
 
   useEffect(() => {
-    dispatch(allStretchWork(cookies)).unwrap().then(res => {
-      if ("error" in res) {
-        // setCookie("access_token", '', { path: '/' })
-        // navigate("/")
-        alert(res)
+    const fetchData = async () => {
+      try {
+        const stretchOrderResult = await dispatch(allStretchWork(cookies)).unwrap();
+        handleResult(stretchOrderResult);
+      } catch (error) {
+        console.error("An error occurred:", error);
       }
-    })
-  }, []);
+    };
 
-  const stretchWork = useAppSelector(selectStretchWork)
+    const handleResult = (result: any) => {
+      if ("error" in result) {
+        alert(result);
+        setCookie("access_token", "", { path: "/" });
+        navigate("/");
+      } else {
+        processResult(result);
+      }
+    };
+
+    const processResult = (result: any) => {
+      if (result) {
+        setStretchWork(result.work)
+      }
+    };
+
+    fetchData();
+  }, []);
 
 
 
   const selectWorkPrice = (event: ChangeEvent<HTMLSelectElement | HTMLInputElement>, rowKey: string): void => {
     const selectedId = event.target.value;
-    const work = stretchWork.arrStretchWork.find((e: any) => e._id === selectedId);
+    const work = stretchWork.find((e: any) => e._id === selectedId);
 
     if (work) {
-      setValue(`workName_${rowKey}`, work.workName,);
-      setValue(`workPrice_${rowKey}`, work.workPrice)
+      setValue(`workPrice_${rowKey}`, work.price)
     } else {
       setValue(`workPrice_${rowKey}`, 0)
     }
@@ -57,14 +77,14 @@ const WorkSection: React.FC<any> = ({ register, setValue, workRowId, removeWorkR
                     <tr key={index}>
                       <td style={{ minWidth: "250px", }}>
                         <select
-                          {...register(`work_${rowKey}`, { required: true })}
+                          {...register(`workId_${rowKey}`, { required: true })}
                           onChange={(e) => selectWorkPrice(e, rowKey)}
                         >
                           <option>Ընտրել Տեսակը</option>
-                          {stretchWork.arrStretchWork && stretchWork.arrStretchWork.length > 0 ?
-                            stretchWork.arrStretchWork.map((e: any) => (
+                          {stretchWork.length > 0 ?
+                            stretchWork.map((e: any) => (
                               <option key={e._id} value={e._id} >
-                                {e.workName}
+                                {e.name}
                               </option>
                             ))
                             : null}
