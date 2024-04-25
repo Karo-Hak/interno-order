@@ -1,5 +1,6 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
+import { DebetKredit } from 'src/debet-kredit/schema/debet-kredit.schema';
 import { StretchCeilingOrder } from 'src/stretch-ceiling-order/schema/stretch-ceiling-order.schema';
 
 export type StretchBuyerDocument = HydratedDocument<StretchBuyer>;
@@ -22,6 +23,12 @@ export class StretchBuyer {
         ]
     })
     order: StretchCeilingOrder[];
+    @Prop({
+        type: [
+            { type: mongoose.Schema.Types.ObjectId, ref: "DebetKredit" }
+        ]
+    })
+    debetKredit: DebetKredit[];
   _id: any;
 }
 

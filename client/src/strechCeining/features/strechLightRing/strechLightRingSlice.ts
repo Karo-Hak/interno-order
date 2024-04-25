@@ -2,20 +2,20 @@ import { createSlice } from "@reduxjs/toolkit";
 import { addStretchLightRing, getAllStretchLightRing } from "./strechLightRingApi";
 
 
-export interface StretchLightRing {
+export interface StretchLightRingProps {
     _id: string;
     name: string;
     price: number;
-    unyt: string;
+    coopPrice: number;
 }
 
 export interface StretchLightRingState {
-    arrStretchLightRing: Array<StretchLightRing>;
-    stretchLightRing: StretchLightRing
+    arrStretchLightRing: Array<StretchLightRingProps>;
+    stretchLightRing: StretchLightRingProps
 }
 export const initialState: StretchLightRingState = {
     arrStretchLightRing: [],
-    stretchLightRing: {} as StretchLightRing,
+    stretchLightRing: {} as StretchLightRingProps,
 
 }
 export const stretchLightRingSlice = createSlice({

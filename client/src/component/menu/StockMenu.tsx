@@ -3,7 +3,7 @@ import { selectUser } from "../../features/user/userSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { userProfile } from "../../features/user/userApi";
 import { useCookies } from 'react-cookie'
-import { useEffect } from "react";
+import { ChangeEvent, useEffect } from "react";
 
 
 interface StockMenuProps {
@@ -42,14 +42,31 @@ export const StockMenu: React.FC<StockMenuProps> = (): JSX.Element => {
         navigate("/in_out")
     }
 
+    function goTo(event: ChangeEvent<HTMLSelectElement>): void {
+        if (event.target.value !== "Ապրանք") {
+            navigate(event.target.value)
+        }
+
+    }
+
     return (
         <div className="admin_profile">
-           <div className="admin_profile">
-                            <button className="btn nav-link" onClick={btnHome}>Գլխավոր</button>
-                            <button className="btn nav-link" onClick={btnAddCategoryProduct}>Ավելացնել Խումբ</button>
-                            <button className="btn nav-link" onClick={btnAddProduct}>Ավելացնել ապրանք</button>
-                            <button className="btn nav-link" onClick={btnIn_out}>Մուտք/Ելք</button>
-                        </div>
+            <div className="admin_profile">
+                <button className="btn nav-link" onClick={btnHome}>Գլխավոր</button>
+                <select onChange={(e) => goTo(e)} className="btn" style={{ height: "35px" }}>
+                    <option>Ապրանք</option>
+                    <option value={"/stretchTexture"}>Ձգվող Առաստաղ</option>
+                    <option value={"/stretchceiling/addStretchBardutyun"}>Բարդություն</option>
+                    <option value={"/stretchceiling/addStretchProfil"}>Պրոֆիլ</option>
+                    <option value={"/stretchceiling/addStretchLightPlatform"}>Լույսի Պլատֆորմ</option>
+                    <option value={"/stretchceiling/addStretchLightRing"}>Լույսի Օղակ</option>
+                    <option value={"/stretchceiling/addTagStretchWork"}>Աշխատանք</option>
+                    <option value={"/stretchceiling/addStretchAdditional"}>Այլ Ապրանք</option>
+                </select>
+                <button className="btn nav-link" onClick={btnAddCategoryProduct}>Ավելացնել Խումբ</button>
+                <button className="btn nav-link" onClick={btnAddProduct}>Ավելացնել ապրանք</button>
+                <button className="btn nav-link" onClick={btnIn_out}>Մուտք/Ելք</button>
+            </div>
 
         </div>)
 }

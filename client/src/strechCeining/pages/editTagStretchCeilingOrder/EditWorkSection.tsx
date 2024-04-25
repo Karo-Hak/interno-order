@@ -1,19 +1,22 @@
 import React, { ChangeEvent, useEffect } from 'react';
-import { UseFormRegister, UseFormSetValue } from 'react-hook-form';
+import { UseFormGetValues, UseFormRegister, UseFormSetValue } from 'react-hook-form';
+import { Data } from '../addTagStretchCeilingOrder/TagStretchOrder';
 
 interface EditStretchProfilsSectionProps {
   register: UseFormRegister<any>;
   setValue: UseFormSetValue<any>;
+  getValues: UseFormGetValues<any>;
   workRowId: string[];
-  removeWorkRow: (rowId: any) => void
-  stretchWork: { arrStretchWork: Array<any> };
-  workId: Array<{ id: string; price: number; quantity: number, name:string }>;
+  removeWorkRow: (rowId: any) => void;
+  stretchWork: Array<Data>;
+  workId: Array<Data>;
 }
 
 
 const EditWorkSection: React.FC<EditStretchProfilsSectionProps> = ({
   register,
   setValue,
+  getValues,
   workRowId,
   removeWorkRow,
   stretchWork,
@@ -22,7 +25,7 @@ const EditWorkSection: React.FC<EditStretchProfilsSectionProps> = ({
 
 
   useEffect(() => {
-    workRowId.forEach((rowId: any, index: number) => {
+    workRowId.forEach((rowId: string, index: number) => {
       setValue(`workId_${rowId}`, workId[index].id);
       setValue(`workName_${rowId}`, workId[index].name,);
       if (workId[index].price) {
@@ -35,6 +38,11 @@ const EditWorkSection: React.FC<EditStretchProfilsSectionProps> = ({
       } else {
         setValue(`workQuantity_${rowId}`, 0);
       }
+      if (workId[index].sum) {
+        setValue(`workSum_${rowId}`, workId[index].sum);
+      } else {
+        setValue(`workSum_${rowId}`, workId[index].price * workId[index].quantity);
+      }
 
     });
   }, [workId]);
@@ -42,12 +50,22 @@ const EditWorkSection: React.FC<EditStretchProfilsSectionProps> = ({
 
   const selectWorkPrice = (event: ChangeEvent<HTMLSelectElement | HTMLInputElement>, rowKey: string): void => {
     const selectedId = event.target.value;
-    const work = stretchWork.arrStretchWork.find((e: any) => e._id === selectedId);
-
+    const work = stretchWork.find((e: Data) => e._id === selectedId);
     if (work) {
       setValue(`workPrice_${rowKey}`, work.price)
+      setValue(`workQuantity_${rowKey}`, "")
+      workSum(rowKey, 0, work.price)
     } else {
-      setValue(`workPrice_${rowKey}`, 0)
+      setValue(`workPrice_${rowKey}`, "")
+    }
+  };
+
+  const workSum = (rowKey: any, quantity: number, price: number): void => {
+    const totalPrice = price * quantity;
+    if (totalPrice) {
+      setValue(`workSum_${rowKey}`, totalPrice);
+    } else {
+      setValue(`workSum_${rowKey}`, 0);
     }
   };
 
@@ -62,12 +80,13 @@ const EditWorkSection: React.FC<EditStretchProfilsSectionProps> = ({
                 <th>Աշխատանք</th>
                 <th>Գին</th>
                 <th>Քանակ</th>
+                <th >Գումար</th>
                 <th>Հեռացնել</th>
               </tr>
             </thead>
             <tbody >
               {
-                workRowId.map((rowKey: any, index: any) => {
+                workRowId.map((rowKey: string) => {
                   return (
                     <tr key={rowKey}>
                       <td style={{ minWidth: "250px", }}>
@@ -76,8 +95,8 @@ const EditWorkSection: React.FC<EditStretchProfilsSectionProps> = ({
                           onChange={(e) => selectWorkPrice(e, rowKey)}
                         >
                           <option>Ընտրել Տեսակը</option>
-                          {stretchWork.arrStretchWork && stretchWork.arrStretchWork.length > 0 ?
-                            stretchWork.arrStretchWork.map((e: any) => (
+                          {stretchWork && stretchWork.length > 0 ?
+                            stretchWork.map((e: Data) => (
                               <option key={e._id} value={e._id} >
                                 {e.name}
                               </option>
@@ -88,16 +107,26 @@ const EditWorkSection: React.FC<EditStretchProfilsSectionProps> = ({
                       </td>
                       <td>
                         <input
-                          type="number"
+                          id={`workPrice_${rowKey}`}
                           placeholder="Price"
                           {...register(`workPrice_${rowKey}`)}
+                          onChange={(e) => workSum(rowKey, parseFloat(getValues(`workQuantity_${rowKey}`)), parseFloat(e.target.value))}
+
                         />
                       </td>
                       <td>
                         <input
-                          type="number"
+                          id={`workQuantity_${rowKey}`}
                           placeholder="Quantity"
                           {...register(`workQuantity_${rowKey}`)}
+                          onChange={(e) => workSum(rowKey, parseFloat(e.target.value), parseFloat(getValues(`workPrice_${rowKey}`)))}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          id={`workSum_${rowKey}`}
+                          placeholder="Sum"
+                          {...register(`workSum_${rowKey}`)}
                         />
                       </td>
                       <td>

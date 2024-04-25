@@ -146,10 +146,7 @@ const MesurStretchOrderSection: React.FC<any> = () => {
                                                             </p>
                                                         </td>
                                                         <td>
-                                                            <p
-                                                                style={{
-                                                                    minWidth: "300px"
-                                                                }}>
+                                                            <p>
                                                                 {e.buyer.buyerAddress}
                                                             </p>
                                                         </td>

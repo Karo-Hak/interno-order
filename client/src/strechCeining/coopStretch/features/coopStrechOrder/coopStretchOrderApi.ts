@@ -7,7 +7,7 @@ export const addNewCoopStretchOrder = createAsyncThunk(
   'coopStretchOrder/new/axios',
   async (obj: any) => {
     try {
-      const response = await axios.post(process.env.REACT_APP_SERVER_URL + "/coopStretchOrder", { ...obj }, {
+      const response = await axios.post(process.env.REACT_APP_SERVER_URL + "/coop-ceiling-order", { ...obj }, {
         headers: {
           Authorization: `Bearer ${obj.cookies.access_token}`
         }
@@ -17,6 +17,40 @@ export const addNewCoopStretchOrder = createAsyncThunk(
     } catch (e) {
       return { error: "not found" }
 
+    }
+  }
+);
+
+export const viewCoopOrdersList = createAsyncThunk(
+  'coopStretchOrder/viewCoopOrdersList/axios',
+  async (obj: any) => {
+    try {
+      const response = await axios.post(process.env.REACT_APP_SERVER_URL + "/coop-ceiling-order/viewCoopOrdersList", obj, {
+        headers: {
+          Authorization: `Bearer ${obj.cookies.access_token}`
+        }
+      })
+
+      return response.data
+    } catch (e) {
+      return { error: "not found" }
+
+    }
+  }
+);
+
+export const findCoopStretchOrder = createAsyncThunk(
+  'coopStretchOrder/findCoopStretchOrder/axios',
+  async (obj: any) => {
+    try {
+      const response = await axios.get(process.env.REACT_APP_SERVER_URL + "/coop-ceiling-order/findCoopStretchOrder/" + obj.params.id, {
+        headers: {
+          Authorization: `Bearer ${obj.cookies.access_token}`
+        }
+      })
+      return response.data
+    } catch (e) {
+      return { error: "not found" }
     }
   }
 );
@@ -61,21 +95,7 @@ export const viewNewCoopStretchOrder = createAsyncThunk(
   }
 );
 
-export const findCoopStretchOrder = createAsyncThunk(
-  'coopStretchOrder/findStretchOrder/axios',
-  async (obj: any) => {
-    try {
-      const response = await axios.get(process.env.REACT_APP_SERVER_URL + "/coopStretchOrder/findCoopStretchOrder/" + obj.params.id, {
-        headers: {
-          Authorization: `Bearer ${obj.cookies.access_token}`
-        }
-      })
-      return response.data
-    } catch (e) {
-      return { error: "not found" }
-    }
-  }
-)
+
 export const findNewCoopStretchOrder = createAsyncThunk(
   'coopStretchOrder/findNewCoopStretchOrder/axios',
   async (obj: any) => {

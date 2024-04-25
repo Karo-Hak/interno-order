@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { CreateStretchBuyerDto } from './dto/create-stretch-buyer.dto';
 import { UpdateStretchBuyerDto } from './dto/update-stretch-buyer.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
@@ -7,7 +6,9 @@ import { StretchBuyer } from './schema/stretch-buyer.schema';
 
 @Injectable()
 export class StretchBuyerService {
-  constructor(@InjectModel(StretchBuyer.name) private stretchBuyerModel: Model<StretchBuyer>) { }
+  constructor(
+    @InjectModel(StretchBuyer.name) private stretchBuyerModel: Model<StretchBuyer>
+  ) { }
 
   create(createStretchBuyerDto: any) {
     const createdBuyer = new this.stretchBuyerModel(createStretchBuyerDto);
@@ -22,7 +23,7 @@ export class StretchBuyerService {
     return await this.stretchBuyerModel.findOne({ buyerPhone1: phone })
   }
 
- async findOne(id: string) {
+  async findOne(id: string) {
     return await this.stretchBuyerModel.findById(id);
   }
 
@@ -33,6 +34,13 @@ export class StretchBuyerService {
       { new: true }
     );
   }
+  async removeDebetKreditFromBuyers(debetKreditIds: string[]) {
+    return await this.stretchBuyerModel.updateMany(
+        {},
+        { $pull: { debetKredit: { $in: debetKreditIds } } } 
+    );
+}
+
 
   update(id: number, updateStretchBuyerDto: UpdateStretchBuyerDto) {
     return `This action updates a #${id} stretchBuyer`;

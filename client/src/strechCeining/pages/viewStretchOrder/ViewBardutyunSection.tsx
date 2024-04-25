@@ -12,6 +12,7 @@ const ViewBardutyunSection: React.FC<any> = ({ room }: any) => {
               <th >Բարդություն</th>
               <th >Գին</th>
               <th >Հատ</th>
+              <th >Գումար</th>
             </tr>
           </thead>
           <tbody>
@@ -21,6 +22,7 @@ const ViewBardutyunSection: React.FC<any> = ({ room }: any) => {
                   <td>{room.groupedBardutyuns[key].name}</td>
                   <td>{room.groupedBardutyuns[key].price}</td>
                   <td>{room.groupedBardutyuns[key].quantity}</td>
+                  <td>{room.groupedBardutyuns[key].sum}</td>
                 </tr>
               }
               return null;

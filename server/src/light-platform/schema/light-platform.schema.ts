@@ -10,7 +10,7 @@ export class LightPlatform {
     @Prop()
     price: number;
     @Prop()
-    unyt: string;
+    coopPrice: number;
 }
 
 export const LightPlatformSchema = SchemaFactory.createForClass(LightPlatform);

@@ -46,6 +46,8 @@ export class StretchCeilingOrder {
     code: string;
     @Prop()
     salary: number;
+    @Prop()
+    roomSum: number;
     @Prop({ default: false })
     payed: boolean;
     @Prop({ type: Array })

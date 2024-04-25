@@ -1,20 +1,51 @@
-
 import React, { ChangeEvent } from 'react';
-
+import { UseFormGetValues, UseFormRegister, UseFormSetValue } from 'react-hook-form';
 import './tagStretchOrder.css';
+import { Data } from './TagStretchOrder';
 
-const StretchTexturesSection: React.FC<any> = ({ register, setValue, stretchRowId, removeStretchRow, roomId, stretchTexture }: any) => {
-    
+interface StretchTexturesSectionProps {
+    register: UseFormRegister<any>;
+    setValue: UseFormSetValue<any>;
+    getValues: UseFormGetValues<any>
+    stretchRowId: Array<string>
+    removeStretchRow: (rowId: string, roomId: string) => void
+    roomId: string;
+    stretchTexture: Array<Data>;
+}
 
-    const selectTexturePrice = (event: ChangeEvent<HTMLSelectElement>, rowId: any): void => {
+const StretchTexturesSection: React.FC<StretchTexturesSectionProps> = ({
+    register,
+    setValue,
+    getValues,
+    stretchRowId,
+    removeStretchRow,
+    roomId,
+    stretchTexture,
+}: StretchTexturesSectionProps) => {
+
+
+    const selectTexturePrice = (event: ChangeEvent<HTMLSelectElement>, rowId: string): void => {
         const selectedId = event.target.value;
-        const texture = stretchTexture.find((e: any) => e._id === selectedId);
+        const texture = stretchTexture.find((e: Data) => e._id === selectedId);
         if (texture) {
             setValue(`stretchPrice_${rowId}/${roomId}`, texture.price);
+            setValue(`stretchQuantity_${rowId}/${roomId}`, "");
+            textureSum(rowId, texture.price, 0)
         } else {
             setValue(`stretchPrice_${rowId}/${roomId}`, 0);
         }
     };
+
+    const textureSum = (rowId: string, price: number, quantity: number): void => {
+        const totalPrice = price * quantity;
+        if (totalPrice) {
+            setValue(`stretchSum_${rowId}/${roomId}`, Math.ceil(totalPrice));
+        } else {
+            setValue(`stretchSum_${rowId}/${roomId}`, 0);
+        }
+    };
+
+
 
     return (
         <div style={{ marginLeft: "5px", width: "100%" }}>
@@ -26,12 +57,13 @@ const StretchTexturesSection: React.FC<any> = ({ register, setValue, stretchRowI
                                 <th >Ձգվող Առաստաղ</th>
                                 <th>Գին</th>
                                 <th>Քանակ</th>
+                                <th>Գումար</th>
                                 <th>Հեռացնել</th>
                             </tr>
                         </thead>
                         <tbody>
                             {stretchRowId.map((rowId: any) => (
-                                <tr key={rowId}>
+                                <tr key={rowId + roomId}>
                                     <td style={{ minWidth: "250px", }}>
                                         <select
                                             {...register(`stretchId_${rowId}/${roomId}`)}
@@ -40,22 +72,34 @@ const StretchTexturesSection: React.FC<any> = ({ register, setValue, stretchRowI
                                             <option>Ընտրել Տեսակը</option>
                                             {stretchTexture.length > 0
                                                 ? stretchTexture.map((texture: any) => (
-                                                    <option key={texture._id} value={texture._id}>{texture.name}</option>
+                                                    <option key={`stretchId_${rowId}_${texture._id}`} value={texture._id}>{texture.name}</option>
                                                 ))
                                                 : null}
+
                                         </select>
                                     </td>
                                     <td>
                                         <input
-                                            type="number"
                                             placeholder="Price"
+                                            id={`stretchPrice_${rowId}/${roomId}`}
                                             {...register(`stretchPrice_${rowId}/${roomId}`)}
+                                            onChange={(e) => textureSum(rowId, parseFloat(e.target.value), parseFloat(getValues(`stretchQuantity_${rowId}/${roomId}`)))}
+
                                         />
                                     </td>
                                     <td>
                                         <input
                                             placeholder="Squer"
+                                            id={`stretchQuantity_${rowId}/${roomId}`}
                                             {...register(`stretchQuantity_${rowId}/${roomId}`)}
+                                            onChange={(e) => textureSum(rowId, parseFloat(getValues(`stretchPrice_${rowId}/${roomId}`)), parseFloat(e.target.value),)}
+                                        />
+                                    </td>
+                                    <td>
+                                        <input
+                                            id={`stretchSum_${rowId}/${roomId}`}
+                                            placeholder="Sum"
+                                            {...register(`stretchSum_${rowId}/${roomId}`)}
                                         />
                                     </td>
                                     <td>

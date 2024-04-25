@@ -22,13 +22,20 @@ import { StretchMenu } from '../../../component/menu/StretchMenu';
 import './tagStretchOrder.css';
 import { addNewStretchOrder } from '../../features/stretchCeilingOrder/stretchOrderApi';
 
-
+export interface Data {
+    id: string;
+    _id: string;
+    name: string;
+    price: number;
+    quantity: number,
+    sum: number
+}
 
 export const TagStretchOrderx: React.FC = (): JSX.Element => {
 
     const [cookies, setCookie] = useCookies(['access_token']);
     const navigate = useNavigate();
-    const { register, handleSubmit, formState: { errors }, reset, setValue, getValues } = useForm<any>();
+    const { register, handleSubmit, formState: { errors }, reset, setValue, watch, getValues } = useForm<any>();
     const dispatch = useAppDispatch();
 
     const [user, setUser] = useState();
@@ -39,9 +46,14 @@ export const TagStretchOrderx: React.FC = (): JSX.Element => {
     const [stretchLightRingData, setStretchLightRingData] = useState()
     const [stretchBardutyunData, setStretchBardutyunData] = useState()
     const [stretchWorkData, setStretchWorkData] = useState()
-
+    const [roomSum, setRoomSum] = useState<any>({});
+    const [orderSum, setOrderSum] = useState(0)
     const [prepayment, setPrepayment] = useState(0);
     const [balance, setBalance] = useState(0);
+
+    const [room, setRoom] = useState<{ id: string; name: string; isChecked: boolean; sum: number }[]>([]);
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -101,6 +113,7 @@ export const TagStretchOrderx: React.FC = (): JSX.Element => {
 
 
     const qountTotal = (order: any) => {
+        qountSum()
         const buyer = {
             buyerId: order.buyerId,
             buyerName: order.buyerName,
@@ -140,23 +153,21 @@ export const TagStretchOrderx: React.FC = (): JSX.Element => {
         stretchTextureOrder["code"] = order.code
         stretchTextureOrder["salary"] = order.stWorkerSalary
         stretchTextureOrder["status"] = order.status
+        stretchTextureOrder["roomSum"] = orderSum
         if (order.stretchWorkerId !== "Աշխատակից") {
             stretchTextureOrder["stWorker"] = order.stWorkerId
-        } 
+        }
         dispatch(addNewStretchOrder({ stretchTextureOrder, buyer, cookies, user })).unwrap().then(res => {
             if ("error" in res) {
                 alert(res.error)
             }
         });
-        window.location.reload()
+        // window.location.reload()
     };
 
 
 
 
-    const [room, setRoom] = useState<{ id: string; name: string; isChecked: boolean }[]>([]);
-
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -173,12 +184,12 @@ export const TagStretchOrderx: React.FC = (): JSX.Element => {
     }
 
 
-    const [workRowId, setWorkRowId] = useState<number[]>([]);
+    const [workRowId, setWorkRowId] = useState<string[]>([]);
     const addWorkNewRow = () => {
-        setWorkRowId(prevRowId => [...prevRowId, prevRowId.length + 1 + uuidv4() as unknown as number]);
+        setWorkRowId(prevRowId => [...prevRowId, prevRowId.length + 1 + uuidv4() as unknown as string]);
     };
 
-    const removeWorkRow = (index: any,) => {
+    const removeWorkRow = (index: string) => {
         reset({ [`work_${index}`]: '' })
         setWorkRowId(prevRowId => prevRowId.filter((_, i) => _ !== index));
     };
@@ -188,6 +199,31 @@ export const TagStretchOrderx: React.FC = (): JSX.Element => {
         updatedRoom.splice(roomId, 1);
         setRoom(updatedRoom);
     }
+
+    function qountSum() {
+        const formValues = watch();
+        const roomSum: { [id: string]: number } = {};
+        let sum = 0;
+
+        room.forEach((roomObj: { id: string, sum: number }) => {
+            for (const [key, value] of Object.entries(formValues)) {
+                if (roomObj.id.slice(-15) === key.slice(-15) && key.includes("Sum")) {
+                    const numericValue = value as number;
+                    sum += numericValue;
+                    if (roomSum[roomObj.id]) {
+                        roomSum[roomObj.id] = roomSum[roomObj.id] + numericValue;
+                        roomObj.sum = roomSum[roomObj.id]
+                    } else {
+                        roomSum[roomObj.id] = numericValue;
+                        roomObj.sum = numericValue
+                    }
+                }
+            }
+        });
+        setOrderSum(sum)
+        setRoomSum(roomSum);
+    }
+
 
     return (
         <div className=''>
@@ -201,13 +237,13 @@ export const TagStretchOrderx: React.FC = (): JSX.Element => {
                 }}>
                 </p>
                 <div>
-                    <PaymentSection 
-                    register={register} 
-                    setValue={setValue} 
-                    setPrepayment={setPrepayment} 
-                    prepayment={prepayment} 
-                    balance={balance} 
-                    setBalance={setBalance}/>
+                    <PaymentSection
+                        register={register}
+                        setValue={setValue}
+                        setPrepayment={setPrepayment}
+                        prepayment={prepayment}
+                        balance={balance}
+                        setBalance={setBalance} />
                 </div>
                 <div
                     style={{
@@ -223,15 +259,18 @@ export const TagStretchOrderx: React.FC = (): JSX.Element => {
                         gap: "20px",
                         margin: "5px"
                     }}>
-                    <select 
-                    style={{border:"1px solid black"}}
-                     id="status" 
-                     {...register("status", { required: true })}>
+                    <select
+                        style={{ border: "1px solid black" }}
+                        id="status"
+                        {...register("status", { required: true })}>
                         <option value={"progress"}>Գրանցված</option>
                         <option value={"measurement"}>Չափագրում</option>
                         <option value={"installation"}>Տեղադրում</option>
                         <option value={"dane"}>Ավարտված</option>
                     </select>
+                    <button type='button' onClick={qountSum}>
+                        Հաշվել {orderSum}
+                    </button>
                     <button type='button' onClick={handleOpenModal}>
                         Ավելացնել սենյակ
                     </button>
@@ -249,7 +288,7 @@ export const TagStretchOrderx: React.FC = (): JSX.Element => {
                                                 width: "150px",
                                                 textAlign: "center"
                                             }}>
-                                            {el.name}
+                                            {el.name} {roomSum[el.id]}
                                             <input
                                                 style={{ margin: "5px" }}
                                                 id={`roomChecked_${el.id}`}
@@ -275,6 +314,8 @@ export const TagStretchOrderx: React.FC = (): JSX.Element => {
                                             register={register}
                                             reset={reset}
                                             setValue={setValue}
+                                            watch={watch}
+                                            getValues={getValues}
                                             roomId={e.id}
                                             room={e}
                                             key={i}
@@ -284,6 +325,7 @@ export const TagStretchOrderx: React.FC = (): JSX.Element => {
                                             stretchLightPlatformData={stretchLightPlatformData}
                                             stretchLightRingData={stretchLightRingData}
                                             stretchBardutyunData={stretchBardutyunData}
+
                                         />
                                     )
                                 })
@@ -304,6 +346,7 @@ export const TagStretchOrderx: React.FC = (): JSX.Element => {
                         <WorkSection
                             register={register}
                             setValue={setValue}
+                            getValues={getValues}
                             workRowId={workRowId}
                             removeWorkRow={removeWorkRow}
                         />

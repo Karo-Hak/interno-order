@@ -19,13 +19,16 @@ import { StretchMenu } from "../../../component/menu/StretchMenu";
 import StretchImageUpload from "../../uploadStretchImg/uploadStretchImg";
 import ImageGallery from "./ImageGallery";
 import ModalStretchStatus from "../../../component/modal/ModalStretchStatus";
+import ConfirmationButton from "../../../component/confirmButten/ConfirmationButton";
+import AddPayment from "../../../component/confirmButten/AddPayment";
+import DeletOrder from "../../../component/confirmButten/DeletOrder";
 
 
 export const ViewStretchOrder: React.FC = (): JSX.Element => {
     const dispatch = useAppDispatch();
     const [cookies, setCookie] = useCookies(['access_token']);
-    const navigate = useNavigate();
     const params = useParams()
+    const navigate = useNavigate();
 
     const [rooms, setRooms] = useState<any[]>([]);
     const [works, setWorks] = useState<any[]>([]);
@@ -97,13 +100,7 @@ export const ViewStretchOrder: React.FC = (): JSX.Element => {
     const handleCloseModal = () => {
         setIsModalOpen(false);
     };
-    const handlePayd = () => {
-        dispatch(updateStretchPayed({ cookies, params })).unwrap().then(res => {
-            if ("error" in res) {
-                alert(res.error)
-            }
-        });
-    };
+
 
 
     return (<>
@@ -122,10 +119,10 @@ export const ViewStretchOrder: React.FC = (): JSX.Element => {
                         className="admin_profile_Strech">
                         <p style={{ color: "white", marginTop: "10px" }}>կարգավիճակ -- {order.status}</p>
                         <button type="button" onClick={handleOpenModal}>Փոխել Կարգավիճակը</button>
-                        <button type="button" onClick={editOrder}>Լրացնել</button>
-
-                        <button type="button" onClick={handlePayd}>Վճարված</button>
-
+                        <AddPayment/>
+                         <button type="button" onClick={editOrder}>Լրացնել</button>
+                        <ConfirmationButton payed={order.payed} />
+                        <DeletOrder/>
                     </div>
                     <div className=''>
                         <div >
@@ -201,7 +198,7 @@ export const ViewStretchOrder: React.FC = (): JSX.Element => {
                             </table>
                         </div>
                     </div>
-                    <div style={{ height: "20px" }} className="admin_profile_Strech"></div>
+                    <div style={{ height: "20px", color:"white" }} className="admin_profile_Strech"> Ընդամենը -- {order.roomSum}</div>
                     <div className="grid-container">
                         <ViewWorkSection works={works} />
                         {
@@ -212,19 +209,18 @@ export const ViewStretchOrder: React.FC = (): JSX.Element => {
                                 : null
                         }
                         <div >
-                            <ImageGallery thumbnailImages={images} fullSizeImages={images} />
-                            <StretchImageUpload />
-
+                            <ImageGallery thumbnailImages={images} fullSizeImages={images}/>
+                            <StretchImageUpload/>
                         </div>
                     </div>
-                    <ModalStretchStatus isOpen={isModalOpen} onClose={handleCloseModal} />
+                    <ModalStretchStatus isOpen={isModalOpen} onClose={handleCloseModal}/>
                     <div >
                         {rooms && rooms.length > 0 ?
                             rooms.map((room: any) => {
                                 return (
                                     <div key={room.id} >
                                         <div style={{ backgroundColor: "GrayText", paddingLeft: "100px", color: "white" }}>
-                                            <h5>{room.name}</h5>
+                                            <h5>{room.name} - {room.sum}</h5>
                                         </div>
                                         <div className="apranqacank">
                                             <ViewStretchTexturesSection room={room} />
@@ -234,15 +230,12 @@ export const ViewStretchOrder: React.FC = (): JSX.Element => {
                                             <ViewBardutyunSection room={room} />
                                             <ViewAdditionalSection room={room} />
                                             <ViewOtherSection room={room} />
-
                                         </div>
                                     </div>
                                 );
                             })
                             : null}
                     </div>
-
-
                 </div>
                 : null
         }

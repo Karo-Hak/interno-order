@@ -10,6 +10,8 @@ export class CoopStretchBuyerService {
   constructor(@InjectModel(CoopStretchBuyer.name) private coopStretchBuyerModel: Model<CoopStretchBuyer>) { }
   
   async create(createCoopStretchBuyerDto: CreateCoopStretchBuyerDto) {
+    console.log(createCoopStretchBuyerDto);
+    
     const createdBuyer = new this.coopStretchBuyerModel(createCoopStretchBuyerDto);
     return createdBuyer.save();
   }
@@ -18,8 +20,8 @@ async  findAll() {
     return await this.coopStretchBuyerModel.find()
   }
 
-  async findByPhone(phone: number) {
-    return await this.coopStretchBuyerModel.findOne({ phone })
+  async findByPhone(phone1: number) {
+    return await this.coopStretchBuyerModel.findOne({ phone1 })
   }
 
   findOne(id: number) {

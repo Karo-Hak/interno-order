@@ -10,7 +10,7 @@ export class Profil {
     @Prop()
     price: number;
     @Prop()
-    unyt: string;
+    coopPrice: string;
 }
 
 export const ProfilSchema = SchemaFactory.createForClass(Profil);

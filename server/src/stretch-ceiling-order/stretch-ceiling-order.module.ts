@@ -18,6 +18,8 @@ import { StretchWork, StretchWorkSchema } from 'src/stretch-work/schema/stretch-
 import { StretchWorkerModule } from 'src/stretch-worker/stretch-worker.module';
 import { ProductModule } from 'src/product/product.module';
 import { Product, ProductSchema } from 'src/product/schema/product.schema';
+import { DebetKredit, DebetKreditSchema } from 'src/debet-kredit/schema/debet-kredit.schema';
+import { DebetKreditModule } from 'src/debet-kredit/debet-kredit.module';
 
 @Module({
   imports: [
@@ -31,9 +33,14 @@ import { Product, ProductSchema } from 'src/product/schema/product.schema';
       { name: Profil.name, schema: ProfilSchema },
       { name: LightRing.name, schema: LightRingSchema },
       { name: User.name, schema: UserSchema },
-      { name: Product.name, schema: ProductSchema }
+      { name: Product.name, schema: ProductSchema },
+      { name: DebetKredit.name, schema: DebetKreditSchema },
     ]),
-    StretchBuyerModule, UserModule, StretchWorkerModule, ProductModule
+    StretchBuyerModule,
+    UserModule,
+    StretchWorkerModule,
+    ProductModule,
+    DebetKreditModule
   ],
   controllers: [StretchCeilingOrderController],
   providers: [StretchCeilingOrderService, ProfilService, LightRingService],

@@ -1,14 +1,41 @@
 import { useEffect } from "react";
+import { UseFormRegister, UseFormSetValue, UseFormGetValues } from "react-hook-form";
 
-const OtherSection: React.FC<any> = ({ register, otherRowId, removeOtherRow, roomId, setValue }: any) => {
+
+interface AdditionalSectionProps {
+  register: UseFormRegister<any>;
+  setValue: UseFormSetValue<any>;
+  getValues: UseFormGetValues<any>;
+  otherRowId: Array<string>;
+  removeOtherRow: (rowId: string, roomId: string) => void;
+  roomId: string;
+}
+
+const OtherSection: React.FC<AdditionalSectionProps> = ({
+  register,
+  setValue,
+  getValues,
+  otherRowId,
+  removeOtherRow,
+  roomId,
+}: AdditionalSectionProps) => {
 
 
   useEffect(() => {
-    otherRowId.forEach((rowKey: any) => {
-      setValue(`otherType_${rowKey}/${roomId}`, "other")
+    otherRowId.forEach((rowKey: string) => {
+      setValue(`otherType_${rowKey}/${roomId}`, "Այլ")
     });
 
   }, [otherRowId])
+
+  const otherSum = (rowId: string, price: number, quantity: number): void => {
+    const totalPrice = price * quantity;
+    if (totalPrice) {
+      setValue(`otherSum_${rowId}/${roomId}`, totalPrice);
+    } else {
+      setValue(`otherSum_${rowId}/${roomId}`, 0);
+    }
+  };
 
   return (<>
     {
@@ -20,12 +47,13 @@ const OtherSection: React.FC<any> = ({ register, otherRowId, removeOtherRow, roo
                 <th style={{ width: "300px" }}>Լրացուցիչ</th>
                 <th>Գին</th>
                 <th>Քանակ</th>
+                <th>Գումար</th>
                 <th>Հեռացնել</th>
               </tr>
             </thead>
             <tbody >
               {
-                otherRowId.map((rowId: any) => (
+                otherRowId.map((rowId: string) => (
                   <tr key={rowId}>
                     <td style={{ minWidth: "250px", }}>
                       <input
@@ -37,18 +65,27 @@ const OtherSection: React.FC<any> = ({ register, otherRowId, removeOtherRow, roo
                     </td>
                     <td>
                       <input
-                        type="number"
+                        id={`otherPrice_${rowId}/${roomId}`}
                         placeholder="Price"
                         {...register(`otherPrice_${rowId}/${roomId}`)}
-
+                        onChange={(e: { target: { value: string } }) =>
+                          otherSum(rowId, parseFloat(e.target.value), parseFloat(getValues(`otherQuantity_${rowId}/${roomId}`)))}
                       />
                     </td>
                     <td>
                       <input
-                        id={`quantity_${rowId}`}
-                        type="number"
+                        id={`otherQuantity_${rowId}/${roomId}`}
                         placeholder="Quantity"
                         {...register(`otherQuantity_${rowId}/${roomId}`)}
+                        onChange={(e: { target: { value: string } }) =>
+                          otherSum(rowId, parseFloat(getValues(`otherPrice_${rowId}/${roomId}`)), parseFloat(e.target.value))}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        id={`otherSum_${rowId}/${roomId}`}
+                        placeholder="Sum"
+                        {...register(`otherSum_${rowId}/${roomId}`)}
                       />
                     </td>
                     <td>

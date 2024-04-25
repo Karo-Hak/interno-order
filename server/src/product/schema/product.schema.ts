@@ -12,6 +12,8 @@ export class Product {
     @Prop()
     price: string;
     @Prop()
+    coopPrice: string;
+    @Prop()
     quantity: number;
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "CategoryProduct" })
     categoryProduct: CategoryProduct;

@@ -3,7 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schema/user.schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 @Injectable()
 export class UserService {
@@ -21,6 +21,14 @@ export class UserService {
 
   async findAll() {
     return await this.userModel.find()
+  }
+
+  async deleteFromArray(id: any, deleteId: any) {
+    await this.userModel.findByIdAndUpdate(
+      id,
+      { $pull: { order: new Types.ObjectId(deleteId) } },
+      { new: true }
+    );
   }
 
   findOne(id: number) {

@@ -11,7 +11,11 @@ export class ProfilController {
   @Post() /// Price add
   async create(@Body() createProfilDto: CreateProfilDto, @Res() res: Response) {
     try {
-      return await this.profilService.create(createProfilDto);
+      const stretchProfil = await this.profilService.create(createProfilDto);
+      return res.status(HttpStatus.OK).json({
+        messege: "ok",
+        stretchProfil
+      })
     } catch (e) {
       return res.status(HttpStatus.BAD_REQUEST).json({
         error: e.message

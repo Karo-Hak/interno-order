@@ -51,8 +51,6 @@ const MaterialListSection: FC<MaterialListSectionProps> = ({
         window.open('/stretchceiling/viewStretchOrder/' + id, '_blank');
     }
 
-
-
     return (
         <div>
             {ordersList.length > 0 && (
@@ -95,7 +93,7 @@ const MaterialListSection: FC<MaterialListSectionProps> = ({
                                                 <td><p style={{ width: "100px" }}>{parseDate(e.date)}</p></td>
                                                 <td><p style={{ width: "100px" }}>{e.installDate ? parseDate(e.installDate) : "---------"}</p></td>
                                                 <td><p>{e.buyer.buyerName}</p></td>
-                                                <td><p style={{ minWidth: "300px" }}>{e.buyer.buyerRegion} {e.buyer.buyerAddress}</p></td>
+                                                <td><p>{e.buyer.buyerRegion} {e.buyer.buyerAddress}</p></td>
                                                 <td>
                                                     <div style={{ display: "flex", border: "none", gap: "5px" }}>
                                                         <p style={{ minWidth: "100px" }}>{e.buyer.buyerPhone1}</p>
@@ -105,7 +103,7 @@ const MaterialListSection: FC<MaterialListSectionProps> = ({
                                                 <td><p style={{ minWidth: "80px" }}>{e.stWorker ? e.stWorker.name : "---------"}</p></td>
                                                 {
                                                     e.payed ?
-                                                        <td><p style={{ minWidth: "80px", backgroundColor:"red" }}>{e.stWorker ? e.salary : "---------"}</p></td>
+                                                        <td><p style={{ minWidth: "80px", backgroundColor:"green" }}>{e.stWorker ? e.salary : "---------"}</p></td>
 
                                                         :
                                                         <td><p style={{ minWidth: "80px" }}>{e.stWorker ? e.salary : "---------"}</p></td>

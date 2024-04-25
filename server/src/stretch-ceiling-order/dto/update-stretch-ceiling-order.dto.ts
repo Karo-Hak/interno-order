@@ -4,5 +4,6 @@ import { CreateStretchCeilingOrderDto } from './create-stretch-ceiling-order.dto
 export class UpdateStretchCeilingOrderDto extends PartialType(CreateStretchCeilingOrderDto) {
     buyer: any;
     stretchTextureOrder: any;
-    worker: any
+    worker: any;
+    user: string
 }

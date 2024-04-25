@@ -1,29 +1,32 @@
 import React, { ChangeEvent, useEffect } from 'react';
-import { UseFormRegister, UseFormSetValue } from 'react-hook-form';
+import { UseFormGetValues, UseFormRegister, UseFormSetValue } from 'react-hook-form';
+import { Data } from '../addTagStretchCeilingOrder/TagStretchOrder';
 
 interface EditLightRingSectionProps {
   register: UseFormRegister<any>;
   setValue: UseFormSetValue<any>;
+  getValues: UseFormGetValues<any>;
   lightRingRowId: string[];
-  removeLightRingRowId: (rowId: string, roomId: string) => void
+  removeLightRingRowId: (rowId: string, roomId: string) => void;
   roomId: string;
-  stretchLightRing: { arrStretchLightRing: Array<any> };
-  lightRingId: Array<{ id: string; price: number; quantity: number }>;
+  stretchLightRing: Array<Data>;
+  lightRingId: Array<Data>;
 }
 
 
 const EditLightRingSection: React.FC<EditLightRingSectionProps> = ({
   register,
   setValue,
+  getValues,
   lightRingRowId,
   removeLightRingRowId,
   roomId,
-  stretchLightRing, 
+  stretchLightRing,
   lightRingId
 }: EditLightRingSectionProps) => {
 
   useEffect(() => {
-    lightRingRowId.forEach((rowId: any, index: number) => {
+    lightRingRowId.forEach((rowId: string, index: number) => {
       setValue(`lightRingId_${rowId}/${roomId}`, lightRingId[index].id);
       if (lightRingId[index].price) {
         setValue(`lightRingPrice_${rowId}/${roomId}`, lightRingId[index].price);
@@ -35,18 +38,37 @@ const EditLightRingSection: React.FC<EditLightRingSectionProps> = ({
       } else {
         setValue(`lightRingQuantity_${rowId}/${roomId}`, 0);
       }
+      if (lightRingId[index].sum) {
+        setValue(`lightRingSum_${rowId}/${roomId}`, lightRingId[index].sum);
+      } else {
+        setValue(`lightRingSum_${rowId}/${roomId}`, +lightRingId[index].price * +lightRingId[index].quantity);
+      }
 
     });
   }, [lightRingId]);
 
+
   const selectLightRingPrice = (event: ChangeEvent<HTMLSelectElement | HTMLInputElement>, rowKey: string, roomId: string): void => {
     const selectedId = event.target.value;
-    const lightRing = stretchLightRing.arrStretchLightRing.find((e: any) => e._id === selectedId);
+    const lightRing = stretchLightRing.find((e: Data) => e._id === selectedId);
 
     if (lightRing) {
       setValue(`lightRingPrice_${rowKey}/${roomId}`, lightRing.price)
+      setValue(`lightRingQuantity_${rowKey}/${roomId}`, "")
+      lightRingSum(rowKey, lightRing.price, 0)
     } else {
       setValue(`lightRingPrice_${rowKey}/${roomId}`, 0)
+    }
+  };
+
+  function lightRingSum(rowId: string, price: number, quantity: number): void {
+    const totalPrice = price * quantity;
+    console.log(totalPrice);
+    
+    if (totalPrice) {
+      setValue(`lightRingSum_${rowId}/${roomId}`,  Math.ceil(totalPrice));
+    } else {
+      setValue(`lightRingSum_${rowId}/${roomId}`, 0)
     }
   };
 
@@ -60,12 +82,13 @@ const EditLightRingSection: React.FC<EditLightRingSectionProps> = ({
                 <th>Լույսի Օղակ</th>
                 <th>Գին</th>
                 <th>Քանակ</th>
+                <th >Գումար</th>
                 <th>Հեռացնել</th>
               </tr>
             </thead>
             <tbody>
               {
-                lightRingRowId.map((rowKey: any) => {
+                lightRingRowId.map((rowKey: string) => {
                   return (
                     <tr key={rowKey}>
                       <td style={{ minWidth: "250px", }}>
@@ -74,8 +97,8 @@ const EditLightRingSection: React.FC<EditLightRingSectionProps> = ({
                           onChange={(e) => selectLightRingPrice(e, rowKey, roomId)}>
                           <option>Ընտրել Տեսակը</option>
                           {
-                            stretchLightRing.arrStretchLightRing && stretchLightRing.arrStretchLightRing.length > 0 ?
-                              stretchLightRing.arrStretchLightRing.map((e: any) => {
+                            stretchLightRing && stretchLightRing.length > 0 ?
+                              stretchLightRing.map((e: Data) => {
                                 return (
                                   <option key={e._id} value={e._id} >{e.name}</option>
                                 )
@@ -87,16 +110,28 @@ const EditLightRingSection: React.FC<EditLightRingSectionProps> = ({
                       </td>
                       <td>
                         <input
-                          id="price"
-                          type="number"
+                          id={`lightRingPrice_${rowKey}/${roomId}`}
                           placeholder="Price"
-                          {...register(`lightRingPrice_${rowKey}/${roomId}`)} />
+                          {...register(`lightRingPrice_${rowKey}/${roomId}`)}
+                          onChange={(e: { target: { value: string } }) =>
+                            lightRingSum(rowKey, parseFloat(e.target.value), parseFloat(getValues(`lightRingQuantity_${rowKey}/${roomId}`)))}
+                        />
+
                       </td>
                       <td>
                         <input
-                          type="number"
+                          id={`lightRingQuantity_${rowKey}/${roomId}`}
                           placeholder="Quantity"
-                          {...register(`lightRingQuantity_${rowKey}/${roomId}`)} />
+                          {...register(`lightRingQuantity_${rowKey}/${roomId}`)}
+                          onChange={(e: { target: { value: string } }) =>
+                            lightRingSum(rowKey, parseFloat(getValues(`lightRingPrice_${rowKey}/${roomId}`)), parseFloat(e.target.value))}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          id={`lightRingSum_${rowKey}/${roomId}`}
+                          placeholder="Sum"
+                          {...register(`lightRingSum_${rowKey}/${roomId}`)} />
                       </td>
                       <td>
                         <button

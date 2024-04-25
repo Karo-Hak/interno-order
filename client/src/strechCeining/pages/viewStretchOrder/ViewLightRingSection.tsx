@@ -14,6 +14,7 @@ const ViewLightRingSection: React.FC<any> = ({ room }: any) => {
               <th >Լ. Օղակ</th>
               <th >Գին</th>
               <th >Հատ</th>
+              <th >Գումար</th>
             </tr>
           </thead>
           <tbody>
@@ -23,6 +24,7 @@ const ViewLightRingSection: React.FC<any> = ({ room }: any) => {
                   <td>{room.groupedLightRings[key].name}</td>
                   <td>{room.groupedLightRings[key].price}</td>
                   <td>{room.groupedLightRings[key].quantity}</td>
+                  <td>{room.groupedLightRings[key].sum}</td>
                 </tr>
               }
               return null;

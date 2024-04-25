@@ -30,17 +30,29 @@ export const StretchMenu: React.FC<StretchMenuProps> = (): JSX.Element => {
     const tagStretchBuyer = () => {
         navigate("/tagstretchceiling/addTagStretchBuyer")
     }
-    const tagStretchWorkerr = () => {
+    const tagStretchBuyerNewWindow = () => {
+        window.open("/tagstretchceiling/addTagStretchBuyer")
+    }
+
+    const tagStretchWorker = () => {
         navigate("/tagstretchceiling/addTagStretchWorker")
     }
+    const tagStretchWorkerNewWindow = () => {
+        window.open("/tagstretchceiling/addTagStretchWorker")
+    }
+
     function goTo(event: ChangeEvent<HTMLSelectElement>): void {
         if (event.target.value !== "Ապրանք") {
             navigate(event.target.value)
         }
 
     }
+    
     const newTagStretchOrder = () => {
         navigate("/stretchceiling/addTagStretchOrder")
+    }
+    const newTagStretchOrderNewWindow = () => {
+        window.open("/stretchceiling/addTagStretchOrder")
     }
 
     const home = () => {
@@ -49,8 +61,20 @@ export const StretchMenu: React.FC<StretchMenuProps> = (): JSX.Element => {
     const viewStretchOrders = () => {
         navigate("/stretchceiling/viewStretchOrdersList")
     }
+    const viewStretchOrdersNewWindow = () => {
+        window.open("/stretchceiling/viewStretchOrdersList")
+    }
     const viewMaterialsOrders = () => {
         navigate("/stretchceiling/viewMaterial")
+    }
+    const viewMaterialsOrdersNewWindow = () => {
+        window.open("/stretchceiling/viewMaterial")
+    }
+    const viewDebetKredit = () => {
+        navigate("/stretchceiling/debet-kredit")
+    }
+    const viewDebetKreditNewWindow = () => {
+        window.open("/stretchceiling/viewMaterial")
     }
 
     return (
@@ -62,8 +86,8 @@ export const StretchMenu: React.FC<StretchMenuProps> = (): JSX.Element => {
                 <button className="btn" onClick={home} >Գլխավոր Էջ</button>
             </div>
             <div className="admin_profile">
-                <button className="btn" onClick={newTagStretchOrder} >Նոր Պատվեր</button>
-                <select onChange={(e) => goTo(e)} className="btn" style={{ height: "35px" }}>
+                <button className="btn" onClick={newTagStretchOrder} onContextMenu={newTagStretchOrderNewWindow} >Նոր Պատվեր</button>
+                {/* <select onChange={(e) => goTo(e)} className="btn" style={{ height: "35px" }}>
                     <option>Ապրանք</option>
                     <option value={"/stretchTexture"}>Ձգվող Առաստաղ</option>
                     <option value={"/stretchceiling/addStretchBardutyun"}>Բարդություն</option>
@@ -71,12 +95,13 @@ export const StretchMenu: React.FC<StretchMenuProps> = (): JSX.Element => {
                     <option value={"/stretchceiling/addStretchLightPlatform"}>Լույսի Պլատֆորմ</option>
                     <option value={"/stretchceiling/addStretchLightRing"}>Լույսի Օղակ</option>
                     <option value={"/stretchceiling/addTagStretchWork"}>Աշխատանք</option>
-                    <option value={"/stretchceiling/addStretchAdditional"}>Լռացուցիչ</option>
-                </select>
-                <button className="btn" onClick={tagStretchBuyer}>Ավելացնել Գնորդ</button>
-                <button className="btn" onClick={tagStretchWorkerr}>Ավելացնել Աշխատակից</button>
-                <button className="btn" onClick={viewStretchOrders}>Դիտել Պատվերները</button>
-                <button className="btn" onClick={viewMaterialsOrders}>Նյութածախս</button>
+                    <option value={"/stretchceiling/addStretchAdditional"}>Այլ Ապրանք</option>
+                </select> */}
+                <button className="btn" onClick={tagStretchBuyer} onContextMenu={tagStretchBuyerNewWindow}>Ավելացնել Գնորդ</button>
+                <button className="btn" onClick={tagStretchWorker} onContextMenu={tagStretchWorkerNewWindow}>Ավելացնել Աշխատակից</button>
+                <button className="btn" onClick={viewStretchOrders} onContextMenu={viewStretchOrdersNewWindow}>Դիտել Պատվերները</button>
+                <button className="btn" onClick={viewMaterialsOrders} onContextMenu={viewMaterialsOrdersNewWindow}>Նյութածախս</button>
+                <button className="btn" onClick={viewDebetKredit} onContextMenu={viewDebetKreditNewWindow}>Դեբետ/Կրեդիտ</button>
             </div>
             <div style={{width:"10%"}}></div>
         </div>

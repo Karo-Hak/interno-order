@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../../app/hooks';
@@ -15,8 +15,8 @@ interface EditPaymentSection {
   prepayment: number;
   groundTotal: number;
   buyerComment: string;
-  stretchWorkerId: { _id?: string }
-  stretchWorkerSalary: number;
+  stWorkerId: { _id?: string }
+  stWorkerSalary: number;
   setPrepeyment: (value: number) => void;
 }
 
@@ -29,15 +29,16 @@ const EditPaymentSection: FC<EditPaymentSection> = ({
   prepayment,
   groundTotal,
   buyerComment,
-  stretchWorkerId,
-  stretchWorkerSalary,
+  stWorkerId,
+  stWorkerSalary,
   setPrepeyment
 }: EditPaymentSection) => {
 
   const dispatch = useAppDispatch();
   const [cookies, setCookie] = useCookies(['access_token']);
   const navigate = useNavigate();
-
+  const [qounting, setQounting] = useState(0)
+  const worker = useAppSelector(selectStretchWorker)
 
   useEffect(() => {
     dispatch(allStretchWorker(cookies)).unwrap().then(res => {
@@ -48,20 +49,24 @@ const EditPaymentSection: FC<EditPaymentSection> = ({
     })
   }, [])
 
+
   useEffect(() => {
     setValue('paymentMethod', paymentMethod);
     setValue('balance', balance || 0);
     setValue('prepayment', prepayment);
     setValue('groundTotal', balance - prepayment || 0);
     setValue('buyerComment', buyerComment);
-    setValue('stWorkerSalary', stretchWorkerSalary);
-    if (stretchWorkerId) {
-      setValue('stWorkerId', stretchWorkerId._id);
+    setValue('stWorkerSalary', stWorkerSalary);
+    if (stWorkerId) {
+      setValue('stWorkerId', stWorkerId._id);
     }
-  }, [paymentMethod, balance, prepayment, buyerComment, stretchWorkerId])
+  }, [paymentMethod, balance, prepayment, buyerComment, stWorkerId])
 
-  const worker = useAppSelector(selectStretchWorker)
-  
+  useEffect(() => {
+    setValue('groundTotal', qounting - prepayment || 0);
+  }, [qounting])
+
+
 
   return (
     <div >
@@ -95,10 +100,11 @@ const EditPaymentSection: FC<EditPaymentSection> = ({
                 type="number"
                 placeholder="Balance"
                 {...register('balance')}
+                onChange={(e) => setQounting(+e.target.value)}
               />
             </td>
             <td>
-              <input id="prepayment" type="number" placeholder="prepayment" {...register('prepayment')} onChange={(e) => setPrepeyment(+e.target.value)} />
+              <input id="prepayment" type="number" placeholder="prepayment" value={prepayment} {...register('prepayment')} onChange={(e) => setPrepeyment(+e.target.value)} disabled />
             </td>
             <td>
               <input id="Sum" type="number" placeholder="Sum" {...register('groundTotal')} onChange={(e) => setOrderSum(+e.target.value)} />

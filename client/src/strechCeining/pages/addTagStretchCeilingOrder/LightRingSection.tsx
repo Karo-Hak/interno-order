@@ -1,17 +1,47 @@
 import React, { ChangeEvent } from 'react';
+import { UseFormRegister, UseFormSetValue, UseFormGetValues } from 'react-hook-form';
+import { Data } from './TagStretchOrder';
 
 
-const LightRingSection: React.FC<any> = ({ register, lightRingRowId, removeLightRingRowId, setValue, roomId, stretchLightRing }: any) => {
+interface LightRingSectionProps {
+  register: UseFormRegister<any>;
+  setValue: UseFormSetValue<any>;
+  getValues: UseFormGetValues<any>;
+  lightRingRowId: Array<string>;
+  removeLightRingRowId: (rowId: string, roomId: string) => void;
+  roomId: string;
+  stretchLightRing: Array<Data>;
+}
+
+const LightRingSection: React.FC<LightRingSectionProps> = ({
+  register,
+  setValue,
+  getValues,
+  lightRingRowId,
+  removeLightRingRowId,
+  roomId,
+  stretchLightRing }: LightRingSectionProps) => {
 
 
   const selectLightRingPrice = (event: ChangeEvent<HTMLSelectElement | HTMLInputElement>, rowKey: string, roomId: string): void => {
     const selectedId = event.target.value;
-    const lightRing = stretchLightRing.find((e: any) => e._id === selectedId);
+    const lightRing = stretchLightRing.find((e: Data) => e._id === selectedId);
 
     if (lightRing) {
       setValue(`lightRingPrice_${rowKey}/${roomId}`, lightRing.price)
+      setValue(`lightRingQuantity_${rowKey}/${roomId}`, "")
+      lightRingSum(rowKey, lightRing.price, 0)
     } else {
       setValue(`lightRingPrice_${rowKey}/${roomId}`, 0)
+    }
+  };
+
+  function lightRingSum(rowId: string, price: number, quantity: number): void {
+    const totalPrice = price * quantity;
+    if (totalPrice) {
+      setValue(`lightRingSum_${rowId}/${roomId}`, totalPrice);
+    } else {
+      setValue(`lightRingSum_${rowId}/${roomId}`, 0)
     }
   };
 
@@ -25,12 +55,13 @@ const LightRingSection: React.FC<any> = ({ register, lightRingRowId, removeLight
                 <th>Լույսի Օղակ</th>
                 <th>Գին</th>
                 <th>Քանակ</th>
+                <th>Գումար</th>
                 <th>Հեռացնել</th>
               </tr>
             </thead>
             <tbody>
               {
-                lightRingRowId.map((rowKey: any) => {
+                lightRingRowId.map((rowKey: string) => {
                   return (
                     <tr key={rowKey}>
                       <td style={{ minWidth: "250px", }}>
@@ -40,7 +71,7 @@ const LightRingSection: React.FC<any> = ({ register, lightRingRowId, removeLight
                           <option>Ընտրել Տեսակը</option>
                           {
                             stretchLightRing.length > 0 ?
-                              stretchLightRing.map((e: any) => {
+                              stretchLightRing.map((e: Data) => {
                                 return (
                                   <option key={e._id} value={e._id} >{e.name}</option>
                                 )
@@ -52,16 +83,28 @@ const LightRingSection: React.FC<any> = ({ register, lightRingRowId, removeLight
                       </td>
                       <td>
                         <input
-                          id="price"
-                          type="number"
+                          id={`lightRingPrice_${rowKey}/${roomId}`}
                           placeholder="Price"
-                          {...register(`lightRingPrice_${rowKey}/${roomId}`)} />
+                          {...register(`lightRingPrice_${rowKey}/${roomId}`)}
+                          onChange={(e: { target: { value: string } }) =>
+                            lightRingSum(rowKey, parseFloat(e.target.value), parseFloat(getValues(`lightRingQuantity_${rowKey}/${roomId}`)))}
+                        />
+
                       </td>
                       <td>
                         <input
-                          type="number"
+                          id={`lightRingQuantity_${rowKey}/${roomId}`}
                           placeholder="Quantity"
-                          {...register(`lightRingQuantity_${rowKey}/${roomId}`)} />
+                          {...register(`lightRingQuantity_${rowKey}/${roomId}`)}
+                          onChange={(e: { target: { value: string } }) =>
+                            lightRingSum(rowKey, parseFloat(getValues(`lightRingPrice_${rowKey}/${roomId}`)), parseFloat(e.target.value))}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          id={`lightRingSum_${rowKey}/${roomId}`}
+                          placeholder="Sum"
+                          {...register(`lightRingSum_${rowKey}/${roomId}`)} />
                       </td>
                       <td>
                         <button

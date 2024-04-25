@@ -1,21 +1,24 @@
 import React, { ChangeEvent, useEffect } from 'react';
-import { UseFormRegister, UseFormSetValue } from 'react-hook-form';
+import { UseFormGetValues, UseFormRegister, UseFormSetValue } from 'react-hook-form';
+import { Data } from '../addTagStretchCeilingOrder/TagStretchOrder';
 
 
 interface EditLightPlatformSectionProps {
 
   register: UseFormRegister<any>;
   setValue: UseFormSetValue<any>;
-  lightPlatformRowId: string[]; 
-  removeLightPlatformRowId: (rowId: string, roomId: string) => void 
+  getValues: UseFormGetValues<any>;
+  lightPlatformRowId: string[];
+  removeLightPlatformRowId: (rowId: string, roomId: string) => void
   roomId: string;
-  stretchLightPlatform: { arrStretchLightPlatform: Array<any> }; 
-  lightPlatformId: Array<{ id: string; price: number; quantity: number }>;
+  stretchLightPlatform: Array<Data>;
+  lightPlatformId: Array<Data>;
 }
 
 const EditLightPlatformSection: React.FC<EditLightPlatformSectionProps> = ({
   register,
   setValue,
+  getValues,
   lightPlatformRowId,
   removeLightPlatformRowId,
   roomId,
@@ -24,30 +27,46 @@ const EditLightPlatformSection: React.FC<EditLightPlatformSectionProps> = ({
 }: EditLightPlatformSectionProps) => {
 
   useEffect(() => {
-    lightPlatformRowId.forEach((rowId: any, index: number) => {
-        setValue(`lightPlatformId_${rowId}/${roomId}`, lightPlatformId[index].id);
-        if (lightPlatformId[index].price) {
-            setValue(`lightPlatformPrice_${rowId}/${roomId}`, lightPlatformId[index].price);
-        } else {
-            setValue(`lightPlatformPrice_${rowId}/${roomId}`, 0);
-        }
-        if (lightPlatformId[index].quantity) {
-            setValue(`lightPlatformQuantity_${rowId}/${roomId}`, lightPlatformId[index].quantity);
-        } else {
-            setValue(`lightPlatformQuantity_${rowId}/${roomId}`, 0);
-        }
+    lightPlatformRowId.forEach((rowId: string, index: number) => {
+      setValue(`lightPlatformId_${rowId}/${roomId}`, lightPlatformId[index].id);
+      if (lightPlatformId[index].price) {
+        setValue(`lightPlatformPrice_${rowId}/${roomId}`, lightPlatformId[index].price);
+      } else {
+        setValue(`lightPlatformPrice_${rowId}/${roomId}`, 0);
+      }
+      if (lightPlatformId[index].quantity) {
+        setValue(`lightPlatformQuantity_${rowId}/${roomId}`, lightPlatformId[index].quantity);
+      } else {
+        setValue(`lightPlatformQuantity_${rowId}/${roomId}`, 0);
+      }
+      if (lightPlatformId[index].sum) {
+        setValue(`lightPlatformSum_${rowId}/${roomId}`, lightPlatformId[index].sum);
+      } else {
+        setValue(`lightPlatformSum_${rowId}/${roomId}`, +lightPlatformId[index].price * +lightPlatformId[index].quantity);
+      }
 
     });
-}, [lightPlatformId]);
+  }, [lightPlatformId]);
 
   const selectLightPlatformPrice = (event: ChangeEvent<HTMLSelectElement | HTMLInputElement>, rowKey: string, roomId: string): void => {
     const selectedId = event.target.value;
-    const lightPlatform = stretchLightPlatform.arrStretchLightPlatform.find((e: any) => e._id === selectedId);
+    const lightPlatform = stretchLightPlatform.find((e: Data) => e._id === selectedId);
 
     if (lightPlatform) {
       setValue(`lightPlatformPrice_${rowKey}/${roomId}`, lightPlatform.price)
+      setValue(`lightPlatformQuantity_${rowKey}/${roomId}`, "")
+      lightPlatformSum(rowKey, lightPlatform.price, 0)
     } else {
       setValue(`lightPlatformPrice_${rowKey}/${roomId}`, 0)
+    }
+  };
+
+  const lightPlatformSum = (rowId: string, price: number, quantity: number): void => {
+    const totalPrice = price * quantity;
+    if (totalPrice) {
+      setValue(`lightPlatformSum_${rowId}/${roomId}`,  Math.ceil(totalPrice));
+    } else {
+      setValue(`lightPlatformSum_${rowId}/${roomId}`, 0);
     }
   };
 
@@ -63,22 +82,23 @@ const EditLightPlatformSection: React.FC<EditLightPlatformSectionProps> = ({
                   <th>Լույսի Պլատֆորմ</th>
                   <th>Գին</th>
                   <th>Քանակ</th>
+                  <th >Գումար</th>
                   <th>Հեռացնել</th>
                 </tr>
               </thead>
               <tbody >
                 {
-                  lightPlatformRowId.map((rowKey: any, index: any) => {
+                  lightPlatformRowId.map((rowKey: string, index: number) => {
                     return (
-                      <tr key={index}>
+                      <tr key={rowKey}>
                         <td style={{ minWidth: "250px", }}>
                           <select
                             {...register(`lightPlatformId_${rowKey}/${roomId}`)}
                             onChange={(e) => selectLightPlatformPrice(e, rowKey, roomId)}>
                             <option>Ընտրել Տեսակը</option>
                             {
-                              stretchLightPlatform.arrStretchLightPlatform && stretchLightPlatform.arrStretchLightPlatform.length > 0 ?
-                                stretchLightPlatform.arrStretchLightPlatform.map((e: any) => {
+                              stretchLightPlatform && stretchLightPlatform.length > 0 ?
+                                stretchLightPlatform.map((e: any) => {
                                   return (
                                     <option key={e._id} value={e._id} >{e.name}</option>
                                   )
@@ -90,16 +110,27 @@ const EditLightPlatformSection: React.FC<EditLightPlatformSectionProps> = ({
                         </td>
                         <td>
                           <input
-                            type="number"
+                            id={`lightPlatformPrice_${rowKey}/${roomId}`}
                             placeholder="Price"
                             {...register(`lightPlatformPrice_${rowKey}/${roomId}`)}
+                            onChange={(e: { target: { value: string } }) =>
+                              lightPlatformSum(rowKey, parseFloat(e.target.value), parseFloat(getValues(`lightPlatformQuantity_${rowKey}/${roomId}`)))}
                           />
                         </td>
                         <td>
                           <input
-                            type="number"
+                            id={`lightPlatformQuantity_${rowKey}/${roomId}`}
                             placeholder="Quantity"
-                            {...register(`lightPlatformQuantity_${rowKey}/${roomId}`)} />
+                            {...register(`lightPlatformQuantity_${rowKey}/${roomId}`)}
+                            onChange={(e: { target: { value: string } }) =>
+                              lightPlatformSum(rowKey, parseFloat(getValues(`lightPlatformPrice_${rowKey}/${roomId}`)), parseFloat(e.target.value))}
+                          />
+                        </td>
+                        <td>
+                          <input
+                            id={`lightPlatformSum_${rowKey}/${roomId}`}
+                            placeholder="Sum"
+                            {...register(`lightPlatformSum_${rowKey}/${roomId}`)} />
                         </td>
                         <td>
                           <button

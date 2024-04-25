@@ -50,7 +50,7 @@ export const StretchBuyer: React.FC = (): JSX.Element => {
     return (
         <>
 
-<StretchMenu />
+            <StretchMenu />
             <div className="addStretchBuyer_head_name">Gnordi tvyalner</div>
             <form onSubmit={handleSubmit(addStretchBuyer)} >
                 <div className="addStrerchBuyer_info">

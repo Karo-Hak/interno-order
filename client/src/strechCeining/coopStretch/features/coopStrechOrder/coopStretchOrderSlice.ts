@@ -1,32 +1,69 @@
 import { createSlice, } from "@reduxjs/toolkit";
 import { addNewCoopStretchOrder, findCoopStretchOrder, findNewCoopStretchOrder, searchCoopStretchOrder, viewNewCoopStretchOrder } from "./coopStretchOrderApi";
+import { CoopStretchBuyerProps } from "../coopStrechBuyer/coopStrechBuyerSlice";
 
-
-
-export interface CoopStretchOrder {
+export interface StretchTextureProps {
     id: string;
+    name: string;
+    price: number;
+    width: number;
     height: number;
-    weight: number;
-    square: number;
-    discount: number;
-    total: number;
+    quantity: number;
+    sum: number;
+    type: string
+}
+export interface StretchProfilProps {
+    id: string;
+    name: string;
+    price: number;
+    quantity: number;
+    sum: number;
+    type: string
+}
+export interface LightPlatformProps {
+    id: string;
+    name: string;
+    price: number;
+    quantity: number;
+    sum: number;
+    type: string
+}
+export interface LightRingProps {
+    id: string;
+    name: string;
+    price: number;
+    quantity: number;
+    sum: number;
+    type: string
+}
+
+export interface CoopStretchOrderProps {
+    _id: string;
+    date: string;
+    groupedStretchTextureData: Array<StretchTextureProps>;
+    groupedStretchProfilData: Array<StretchProfilProps>;
+    groupedLightPlatformData: Array<LightPlatformProps>;
+    groupedLightRingData: Array<LightRingProps>;
+    balance: number;
     prepayment: number;
+    groundTotal: number;
+    buyerComment: string;
     picCode: string;
     picUrl: string;
-    cooperateTotal: number;
-    kontragent: string;
-    texture: string;
-    paymentMethod: string
+    payed: boolean;
+    paymentMethod: string;
+    buyer: CoopStretchBuyerProps;
+    user: object
 }
 
 export interface CoopStretchOrderState {
     arrCoopStretchOrder: Array<any>
-    coopStretchOrder: CoopStretchOrder;
+    coopStretchOrder: CoopStretchOrderProps;
 }
 
 export const initialState: CoopStretchOrderState = {
     arrCoopStretchOrder: [],
-    coopStretchOrder: {} as CoopStretchOrder
+    coopStretchOrder: {} as CoopStretchOrderProps
 }
 
 export const coopStretchOrderSlice = createSlice({

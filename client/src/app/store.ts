@@ -8,10 +8,10 @@ import stretchBuyerReducer from '../strechCeining/features/StrechBuyer/strechBuy
 import stretchWorkerReducer from '../strechCeining/features/StrechWorker/strechWorkerSlice';
 import stretchWorkReducer from '../strechCeining/features/StrechWork/strechWorkSlice';
 import stretchTextureReducer from '../strechCeining/features/strechTexture/strechTextureSlice';
-import coopStrechOrderReducer from '../strechCeining/coopStrechOrder/coopStretchOrderSlice'
+import coopStrechOrderReducer from '../strechCeining/coopStretch/features/coopStrechOrder/coopStretchOrderSlice'
 import userSphereReducer from '../features/userSphere/userSphereSlice'
 import unytReducer from '../strechCeining/unyt/unytSlice'
-import coopStretchBuyerReducer from '../strechCeining/CoopStrechBuyer/coopStrechBuyerSlice'
+import coopStretchBuyerReducer from '../strechCeining/coopStretch/features/coopStrechBuyer/coopStrechBuyerSlice'
 // '../strechCeining/coopStrechBuyer/coopStrechBuyerSlice'
 import strechBardutyunReducer from '../strechCeining/features/strechBardutyun/strechBardutyunSlice';
 import stretchProfilReducer from '../strechCeining/features/strechProfil/strechProfilSlice'

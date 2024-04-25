@@ -4,7 +4,6 @@ import { UpdateStretchTextureDto } from './dto/update-stretch-texture.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { StretchTexture } from './schema/stretch-texture.schema';
 import { Model } from 'mongoose';
-import { log } from 'util';
 
 @Injectable()
 export class StretchTextureService {
@@ -27,9 +26,15 @@ export class StretchTextureService {
     return `This action returns a #${id} stretchTexture`;
   }
 
-  update(id: number, updateStretchTextureDto: UpdateStretchTextureDto) {
-    return `This action updates a #${id} stretchTexture`;
+  async update(id: string, updateStretchTextureDto: UpdateStretchTextureDto) {
+    const updatedStretchTexture = await this.stretchTextureModel.updateOne(
+      { _id: id }, 
+      updateStretchTextureDto 
+    );
+    
+    return updatedStretchTexture;
   }
+  
 
   remove(id: number) {
     return `This action removes a #${id} stretchTexture`;

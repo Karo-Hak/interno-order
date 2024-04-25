@@ -2,20 +2,22 @@ import { createSlice } from "@reduxjs/toolkit";
 import { newCoopStretchBuyer, allCoopStretchBuyer } from "./coopStrechBuyerApi";
 
 
-export interface CoopStretchBuyer {
-    id: number;
+export interface CoopStretchBuyerProps {
+    _id: string;
     name: string;
-    phone: number;
-    adress: string;
+    phone1: string;
+    phone2: string;
+    region: string;
+    address: string;
 }
 
 export interface CoopStretchBuyerState {
-    arrCoopStretchBuyer: Array<CoopStretchBuyer>;
-    coopBuyerStrech: CoopStretchBuyer
+    arrCoopStretchBuyer: Array<CoopStretchBuyerProps>;
+    coopBuyerStrech: CoopStretchBuyerProps
 }
 export const initialState: CoopStretchBuyerState = {
     arrCoopStretchBuyer: [],
-    coopBuyerStrech: {} as CoopStretchBuyer
+    coopBuyerStrech: {} as CoopStretchBuyerProps
 }
 export const coopStretchBuyerSlice = createSlice({
     name: "coopStretchBuyer",

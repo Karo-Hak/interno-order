@@ -10,15 +10,14 @@ import { AddBuyer } from "../page/addBuyer/AddBuyer"
 import { AddCooperate } from "../page/addCooperate/AddCooperate"
 import { AddTexture } from "../page/addTexture/AddTexture"
 import { UpdateOrderInfo } from "../page/order/UpdateOrder"
-import { CoopStretchCeiling } from "../strechCeining/pages/coopStretchCeiling/CoopStretchCeiling"
+import { CoopStretchCeiling } from "../strechCeining/coopStretch/pages/coopStretchCeiling/CoopStretchCeiling"
 import { StretchTexture } from "../strechCeining/pages/addStretchCeilingTexture/StretchTexture"
 import { StretchBuyer } from "../strechCeining/pages/addStretchBuyer/AddStretchBuyer"
-import { CoopStretchBuyer } from "../strechCeining/pages/addCoopStretchBuyer/AddCoopStretchBuyer"
+import { CoopStretchBuyer } from "../strechCeining/coopStretch/pages/addCoopStretchBuyer/AddCoopStretchBuyer"
 import { StretchBardutyun } from "../strechCeining/pages/addStretchCeilingBardutyun/StretchBardutyun"
 import { StretchProfil } from "../strechCeining/pages/addStretchCeilingProfil/StretchProfil"
 import { StretchLightPlatform } from "../strechCeining/pages/addStretchLightPlatform/StretchLightPlatform"
 import { StretchLightRing } from "../strechCeining/pages/addStretchLightRing/StretchLightRing"
-import { CoopStretchOrder } from "../strechCeining/pages/addCoopStretchCeilingOrder/coopStretchCeilingOrder"
 import { TagStretchCeiling } from "../strechCeining/pages/tagStretchCeiling/TagStretchCeiling"
 import { TagStretchOrderx } from "../strechCeining/pages/addTagStretchCeilingOrder/TagStretchOrder"
 import { StretchAdditional } from "../strechCeining/pages/addStretchCeilingAdditional/StretchAdditional"
@@ -34,6 +33,10 @@ import { Input_output } from "../strechCeining/stock/in_out/Input_output"
 import { HomePage } from "../page/homePage/HomePage"
 import { ViewStretchOrdersList } from "../strechCeining/pages/viewStretchOrdersList/ViewStretchOrdersList"
 import { ViewMaterial } from "../strechCeining/pages/material/ViewMaterial"
+import { ViewDebetKredit } from "../strechCeining/pages/debetKredit/ViewDebetKredit"
+import { CoopStretchOrder } from "../strechCeining/coopStretch/pages/addCoopStretchCeilingOrder/CoopStretchOrder"
+import { ViewCoopStretchOrdersList } from "../strechCeining/coopStretch/pages/viewCoopStretchOrdersList/ViewCoopStretchOrdersList"
+import { ViewCoopStretchOrder } from "../strechCeining/coopStretch/pages/viewCoopStretchOrder/ViewCoopStretchOrder"
 
 
 
@@ -74,9 +77,20 @@ export const MyRouter: React.FC = (): JSX.Element => {
                     <Route path="/stretchceiling/viewStretchOrder/:id" element={<ViewStretchOrder />}></Route>
                     <Route path="/stretchceiling/viewStretchOrdersList" element={<ViewStretchOrdersList />}></Route>
                     <Route path="/stretchceiling/viewMaterial" element={<ViewMaterial />}></Route>
+                    <Route path="/stretchceiling/debet-kredit" element={<ViewDebetKredit />}></Route>
 
 
+
+                    <Route path="/coopStretchceiling" element={<CoopStretchCeiling />}></Route>
                     <Route path="/coopStretchceiling/addCoopStretchOrder" element={<CoopStretchOrder />}></Route>
+                    <Route path="/coopStretchceiling/AddCoopStretchBuyer" element={<CoopStretchBuyer />}></Route>
+                    <Route path="/coopStretchceiling/viewCoopStretchOrdersList" element={<ViewCoopStretchOrdersList />}></Route>
+                    <Route path="/coopStretchceiling/viewCoopStretchOrder/:id" element={<ViewCoopStretchOrder />}></Route>
+
+
+
+
+
                     <Route path="/stock" element={<StockProfile />}></Route>
                     <Route path="/addCategory" element={<AddCategory />}></Route>
                     <Route path="/addProduct" element={<AddProduct />}></Route>

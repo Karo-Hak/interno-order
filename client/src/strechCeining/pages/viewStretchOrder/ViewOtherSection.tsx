@@ -11,6 +11,7 @@ const ViewOtherSection: React.FC<any> = ({ room }: any) => {
               <th >Լռացուցիչ</th>
               <th >Գին</th>
               <th >Հատ</th>
+              <th >Գումար</th>
             </tr>
           </thead>
           <tbody>
@@ -20,6 +21,7 @@ const ViewOtherSection: React.FC<any> = ({ room }: any) => {
                   <td>{room.groupedOthers[key].name}</td>
                   <td>{room.groupedOthers[key].price}</td>
                   <td>{room.groupedOthers[key].quantity}</td>
+                  <td>{room.groupedOthers[key].sum}</td>
                 </tr>
               }
               return null;

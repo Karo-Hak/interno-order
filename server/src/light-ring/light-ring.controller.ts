@@ -11,7 +11,11 @@ export class LightRingController {
   @Post() ///Price add
   async create(@Body() createLightRingDto: CreateLightRingDto, @Res() res: Response) {
     try {
-      return await this.lightRingService.createPrice(createLightRingDto);
+      const lightRin = await this.lightRingService.createPrice(createLightRingDto);
+      return res.status(HttpStatus.OK).json({
+        messege: "ok",
+        lightRin
+      })
     } catch (e) {
       return res.status(HttpStatus.BAD_REQUEST).json({
         error: e.message

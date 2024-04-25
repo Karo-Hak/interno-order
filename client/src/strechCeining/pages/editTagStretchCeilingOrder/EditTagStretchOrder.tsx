@@ -1,4 +1,3 @@
-import { selectUser } from "../../../features/user/userSlice";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { ChangeEvent, useEffect, useState } from 'react'
 import { useNavigate, useParams } from "react-router-dom";
@@ -12,12 +11,6 @@ import { getAllStretchLightPlatform } from "../../features/strechLightPlatform/s
 import { getAllStretchLightRing } from "../../features/strechLightRing/strechLightRingApi";
 import { getAllStretchProfil } from "../../features/strechProfil/strechProfilApi";
 import { getAllStretchTexture } from "../../features/strechTexture/strechTextureApi";
-import { selectStretchAdditional } from "../../features/strechAdditional/strechAdditionalSlice";
-import { selectStretchBardutyun } from "../../features/strechBardutyun/strechBardutyunSlice";
-import { selectStretchLightPlatform } from "../../features/strechLightPlatform/strechLightPlatformSlice";
-import { selectStretchLightRing } from "../../features/strechLightRing/strechLightRingSlice";
-import { selectStretchProfil } from "../../features/strechProfil/strechProfilSlice";
-import { selectStretchTexture } from "../../features/strechTexture/strechTextureSlice";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from 'uuid';
 import { filterOrder } from "../addTagStretchCeilingOrder/logic";
@@ -26,9 +19,9 @@ import EditPaymentSection from "./EditPaymentSection";
 import ModalRoom from "../../../component/modal/ModalRoom";
 import EditRoomSection from "./EditRoomSection";
 import { allStretchWork } from "../../features/StrechWork/strechWorkApi";
-import { selectStretchWork } from "../../features/StrechWork/strechWorkSlice";
 import EditWorkSection from "./EditWorkSection";
 import { StretchMenu } from "../../../component/menu/StretchMenu";
+import { Data } from "../addTagStretchCeilingOrder/TagStretchOrder";
 
 
 
@@ -36,12 +29,22 @@ import { StretchMenu } from "../../../component/menu/StretchMenu";
 export const EditTagStretchOrder: React.FC = (): JSX.Element => {
     const [cookies, setCookie] = useCookies(['access_token']);
     const navigate = useNavigate();
-    const { register, handleSubmit, formState: { errors }, reset, setValue, getValues, } = useForm<any>();
+    const { register, handleSubmit, formState: { errors }, reset, setValue, getValues, watch } = useForm<any>();
     const dispatch = useAppDispatch();
     const params = useParams()
 
-    const [room, setRoom] = useState<{ id: string; name: string; isChecked: boolean }[]>([]);
+    const [user, setUser] = useState();
+    const [stretchTextureData, setStretchTextureData] = useState<Array<Data>>([])
+    const [stretchAdditionalData, setStretchAdditionalData] = useState<Array<Data>>([])
+    const [stretchProfilData, setStretchProfilData] = useState<Array<Data>>([])
+    const [stretchLightPlatformData, setStretchLightPlatformData] = useState<Array<Data>>([])
+    const [stretchLightRingData, setStretchLightRingData] = useState<Array<Data>>([])
+    const [stretchBardutyunData, setStretchBardutyunData] = useState<Array<Data>>([])
+    const [stretchWorkData, setStretchWorkData] = useState<Array<Data>>([])
+
+    const [room, setRoom] = useState<{ id: string; name: string; isChecked: boolean; sum: number }[]>([]);
     const [rooms, setRooms] = useState<any[]>([]);
+    const [roomSum, setRoomSum] = useState<any>({});
     const [works, setWorks] = useState<any[]>([]);
     const [workRowId, setWorkRowId] = useState<any[]>([]);
     const [prepayment, setPrepeyment] = useState<number>(0)
@@ -85,9 +88,27 @@ export const EditTagStretchOrder: React.FC = (): JSX.Element => {
         };
 
         const processResult = (result: any) => {
+
             if (result.rooms && typeof result.rooms === "object") {
                 const rooms = Object.values(result.rooms);
                 setRooms(rooms);
+            }
+            if (result.user) {
+                setUser(result.user)
+            } else if (result.stretchTexture) {
+                setStretchTextureData(result.stretchTexture)
+            } else if (result.stretchAdditional) {
+                setStretchAdditionalData(result.stretchAdditional)
+            } else if (result.stretchProfil) {
+                setStretchProfilData(result.stretchProfil)
+            } else if (result.lightPlatform) {
+                setStretchLightPlatformData(result.lightPlatform)
+            } else if (result.lightRing) {
+                setStretchLightRingData(result.lightRing)
+            } else if (result.stretchBardutyun) {
+                setStretchBardutyunData(result.stretchBardutyun)
+            } else if (result.work) {
+                setStretchWorkData(result.work)
             }
 
             if (result.groupedWorks) {
@@ -105,44 +126,26 @@ export const EditTagStretchOrder: React.FC = (): JSX.Element => {
             if (result.prepayment) {
                 setPrepeyment(result.prepayment)
             }
+            if (result.status) {
+                setValue('status', result.status);
+            }
+
         };
 
         fetchData();
     }, []);
 
 
-
-
     useEffect(() => {
         if (rooms.length > 0) {
-            setRoom(rooms.map(room => ({ id: room.id, name: room.name, isChecked: false })));
+            setRoom(rooms.map(room => ({ id: room.id, name: room.name, isChecked: false, sum: 0 })));
         }
     }, [rooms]);
 
 
 
     const order = useAppSelector(selectStretchOrder).stretchOrder;
-    const user = useAppSelector(selectUser);
-    const stretchTextureData = useAppSelector(selectStretchTexture);
-    const stretchAdditionalData = useAppSelector(selectStretchAdditional);
-    const stretchProfilData = useAppSelector(selectStretchProfil);
-    const stretchLightPlatformData = useAppSelector(selectStretchLightPlatform);
-    const stretchLightRingData = useAppSelector(selectStretchLightRing);
-    const stretchBardutyunData = useAppSelector(selectStretchBardutyun);
-    const stretchWorkData = useAppSelector(selectStretchWork)
-
-
-    const parseDate = (dateStr: string) => {
-        const dateObj = new Date(dateStr);
-        return `${dateObj.getDate()} / ${dateObj.getMonth() + 1} / ${dateObj.getFullYear()} `;
-    }
-
-
-
-    const [addOrder, setAddOrder] = useState({});
     const [orderSum, setOrderSum] = useState(0);
-    const [orderBalance, setOrderBalance] = useState(0);
-
 
     const qountTotal = (updatingOrder: any, event: any) => {
         const buyer = {
@@ -157,13 +160,13 @@ export const EditTagStretchOrder: React.FC = (): JSX.Element => {
         const stretchTextureOrder: any = filterOrder(
             updatingOrder,
             room,
-            stretchTextureData.arrStretchTexture,
-            stretchAdditionalData.arrStretchAdditional,
-            stretchProfilData.arrStretchProfil,
-            stretchLightPlatformData.arrStretchLightPlatform,
-            stretchLightRingData.arrStretchLightRing,
-            stretchBardutyunData.arrStretchBardutyun,
-            stretchWorkData.arrStretchWork
+            stretchTextureData,
+            stretchAdditionalData,
+            stretchProfilData,
+            stretchLightPlatformData,
+            stretchLightRingData,
+            stretchBardutyunData,
+            stretchWorkData
         )
 
         stretchTextureOrder["prepayment"] = +updatingOrder.prepayment
@@ -175,15 +178,16 @@ export const EditTagStretchOrder: React.FC = (): JSX.Element => {
         stretchTextureOrder["measureDate"] = updatingOrder.measureDate
         stretchTextureOrder["installDate"] = updatingOrder.installDate
         stretchTextureOrder["code"] = updatingOrder.code
-        stretchTextureOrder["salary"] = updatingOrder.stretchWorkerSalary
-        if (updatingOrder.stretchWorkerId !== "Աշխատակից") {
-            stretchTextureOrder["stretchWorker"] = updatingOrder.stretchWorkerId
+        stretchTextureOrder["salary"] = updatingOrder.stWorkerSalary
+        stretchTextureOrder["roomSum"] = orderSum
+        if (updatingOrder.stWorkerId !== "Աշխատակից") {
+            stretchTextureOrder["stWorkerId"] = updatingOrder.stWorkerId
         } else {
-            stretchTextureOrder["stretchWorker"] = null
+            stretchTextureOrder["stWorkerId"] = null
         }
 
 
-        dispatch(updateStretchOrderAll({ params, buyer, stretchTextureOrder, cookies, user: user.profile })).unwrap().then(res => {
+        dispatch(updateStretchOrderAll({ params, buyer, stretchTextureOrder, cookies, user })).unwrap().then(res => {
             if ("error" in res) {
                 alert(res.error)
             }
@@ -232,8 +236,33 @@ export const EditTagStretchOrder: React.FC = (): JSX.Element => {
         const updatedRoom = [...room]
         updatedRoom.splice(roomId, 1);
         setRoom(updatedRoom);
-    }
+    };
 
+    function qountSum() {
+        const formValues = watch();
+        const roomSum: { [id: string]: number } = {};
+        let sum = 0;
+
+        room.forEach((roomObj: { id: string, sum: number }) => {
+            for (const [key, value] of Object.entries(formValues)) {
+                if (roomObj.id.slice(-15) === key.slice(-15) && key.includes("Sum")) {
+                    const numericValue = value as number;
+                    console.log(typeof numericValue);
+                    
+                    sum += +numericValue ;
+                    if (roomSum[roomObj.id]) {
+                        roomSum[roomObj.id] = roomSum[roomObj.id] + numericValue;
+                        roomObj.sum = roomSum[roomObj.id]
+                    } else {
+                        roomSum[roomObj.id] = +numericValue;
+                        roomObj.sum = numericValue
+                    }
+                }
+            }
+        });
+        setOrderSum(sum)
+        setRoomSum(roomSum);
+    }
 
     return (
         <div className=''>
@@ -263,8 +292,8 @@ export const EditTagStretchOrder: React.FC = (): JSX.Element => {
                         prepayment={prepayment}
                         groundTotal={order.groundTotal}
                         buyerComment={order.buyerComment}
-                        stretchWorkerId={order.stWorker}
-                        stretchWorkerSalary={order.salary}
+                        stWorkerId={order.stWorker}
+                        stWorkerSalary={order.salary}
                         setPrepeyment={setPrepeyment}
                     />
                 </div>
@@ -282,6 +311,9 @@ export const EditTagStretchOrder: React.FC = (): JSX.Element => {
                         gap: "20px",
                         margin: "5px"
                     }}>
+                    <button type='button' onClick={qountSum}>
+                        Հաշվել {orderSum}
+                    </button>
                     <button type="button" onClick={handleOpenModal}>
                         Ավելացնել սենյակ
                     </button>
@@ -299,7 +331,7 @@ export const EditTagStretchOrder: React.FC = (): JSX.Element => {
                                                 width: "150px",
                                                 textAlign: "center"
                                             }}>
-                                            {el.name}
+                                            {el.name} {roomSum[el.id]}
                                             <input
                                                 style={{ margin: "5px" }}
                                                 id={`roomChecked_${el.id}`}
@@ -325,6 +357,7 @@ export const EditTagStretchOrder: React.FC = (): JSX.Element => {
                                             register={register}
                                             reset={reset}
                                             setValue={setValue}
+                                            getValues={getValues}
                                             roomId={e.id}
                                             room={e}
                                             key={i}
@@ -355,6 +388,7 @@ export const EditTagStretchOrder: React.FC = (): JSX.Element => {
                         <EditWorkSection
                             register={register}
                             setValue={setValue}
+                            getValues={getValues}
                             workRowId={workRowId}
                             removeWorkRow={removeWorkRow}
                             stretchWork={stretchWorkData}

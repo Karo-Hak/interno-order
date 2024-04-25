@@ -15,6 +15,7 @@ const ViewWorkSection: React.FC<any> = ({ works }: any) => {
               <th >Աշխատանք</th>
               <th >Գին</th>
               <th >Հատ</th>
+              <th >Գումար</th>
             </tr>
           </thead>
           <tbody>
@@ -28,6 +29,7 @@ const ViewWorkSection: React.FC<any> = ({ works }: any) => {
                     <td>{works[key].name}</td>
                     <td>{works[key].price}</td>
                     <td>{works[key].quantity}</td>
+                    <td>{works[key].sum}</td>
                   </tr>
                 }
                 return null;

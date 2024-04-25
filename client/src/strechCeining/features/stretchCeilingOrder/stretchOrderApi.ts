@@ -187,11 +187,12 @@ export const findStretchOrder = createAsyncThunk(
     }
   }
 )
-export const findNewStretchOrder = createAsyncThunk(
-  'stretchOrder/findNewStretchOrder/axios',
+
+export const deletOrder = createAsyncThunk(
+  'stretchOrder/deletOrder/axios',
   async (obj: any) => {
     try {
-      const response = await axios.get(process.env.REACT_APP_SERVER_URL + "/stretchOrder/findNewStretchOrder/" + obj.params.id, {
+      const response = await axios.delete(process.env.REACT_APP_SERVER_URL + "/stretch-ceiling-order/" + obj.params.id, {
         headers: {
           Authorization: `Bearer ${obj.cookies.access_token}`
         }
@@ -200,52 +201,18 @@ export const findNewStretchOrder = createAsyncThunk(
     } catch (e) {
       return { error: "not found" }
     }
+
   }
 )
 
 
 
 
-// export const updateStatus = createAsyncThunk(
-//   'order/updateStatus/axios',
-//   async (obj: any) => {
-//     try {
-//       const response = await axios.get(process.env.REACT_APP_SERVER_URL + "/order/updateStatus/" + obj.id, {
-//         headers: {
-//           Authorization: `Bearer ${obj.cookies.access_token}`
-//         }
-//       })
-//       return response.data
-//     } catch (e) {
-//       return { error: "not found" }
-//     }
-
-//   }
-// )
-
-export const searchStretchOrder = createAsyncThunk(
-  'stretchOrder/search/axios',
-  async (obj: any) => {
-    try {
-      const response = await axios.post(process.env.REACT_APP_SERVER_URL + "/stretchOrder/search", { ...obj }, {
-        headers: {
-          Authorization: `Bearer ${obj.cookies.access_token}`
-        }
-      })
-
-      return response.data
-    } catch (e) {
-      return { error: "not found" }
-
-    }
-  }
-);
-
 export const updateStretchOrderAll = createAsyncThunk(
   'stretchOrder/updateStretchOrder/axios',
   async (obj: any) => {
     console.log(obj);
-
+    
     try {
       const response = await axios.post(process.env.REACT_APP_SERVER_URL + "/stretch-ceiling-order/updateStretchOrder/" + obj.params.id, obj, {
         headers: {
@@ -256,8 +223,44 @@ export const updateStretchOrderAll = createAsyncThunk(
     } catch (e) {
       return { error: "not found" }
     }
-
+    
   }
-)
-
-
+  )
+  
+  
+  
+  export const findNewStretchOrder = createAsyncThunk(
+    'stretchOrder/findNewStretchOrder/axios',
+    async (obj: any) => {
+      try {
+        const response = await axios.get(process.env.REACT_APP_SERVER_URL + "/stretchOrder/findNewStretchOrder/" + obj.params.id, {
+          headers: {
+            Authorization: `Bearer ${obj.cookies.access_token}`
+          }
+        })
+        return response.data
+      } catch (e) {
+        return { error: "not found" }
+      }
+    }
+  )
+  
+  
+  
+  export const searchStretchOrder = createAsyncThunk(
+    'stretchOrder/search/axios',
+    async (obj: any) => {
+      try {
+        const response = await axios.post(process.env.REACT_APP_SERVER_URL + "/stretchOrder/search", { ...obj }, {
+          headers: {
+            Authorization: `Bearer ${obj.cookies.access_token}`
+          }
+        })
+  
+        return response.data
+      } catch (e) {
+        return { error: "not found" }
+  
+      }
+    }
+  );

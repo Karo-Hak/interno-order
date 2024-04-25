@@ -1,20 +1,22 @@
 import React, { ChangeEvent, useEffect } from 'react';
-import { UseFormRegister, UseFormSetValue } from 'react-hook-form';
+import { UseFormGetValues, UseFormRegister, UseFormSetValue } from 'react-hook-form';
 
 interface EditAdditionalSectionProps {
   register: UseFormRegister<any>;
   setValue: UseFormSetValue<any>;
-  additionalRowId: string[]; 
-  removeAdditionalRow: (rowId: any, roomId: string) => void 
+  getValues: UseFormGetValues<any>;
+  additionalRowId: string[];
+  removeAdditionalRow: (rowId: any, roomId: string) => void
   roomId: string;
-  stretchAdditional: { arrStretchAdditional: Array<any> }; 
-  additionalId: Array<{ id: string; price: number; quantity: number }>;
+  stretchAdditional: Array<{ _id: string; name: string; price: number; quantity: number, sum: number }>;
+  additionalId: Array<{ id: string; price: number; quantity: number, sum: number }>;
 }
 
 
 const EditAdditionalSection: React.FC<EditAdditionalSectionProps> = ({
   register,
   setValue,
+  getValues,
   additionalRowId,
   removeAdditionalRow,
   roomId,
@@ -24,30 +26,49 @@ const EditAdditionalSection: React.FC<EditAdditionalSectionProps> = ({
 }: EditAdditionalSectionProps) => {
 
   useEffect(() => {
-    additionalRowId.forEach((rowId: any, index: number) => {
-        setValue(`additionalId_${rowId}/${roomId}`, additionalId[index].id);
-        if (additionalId[index].price) {
-            setValue(`additionalPrice_${rowId}/${roomId}`, additionalId[index].price);
-        } else {
-            setValue(`additionalPrice_${rowId}/${roomId}`, 0);
-        }
-        if (additionalId[index].quantity) {
-            setValue(`additionalQuantity_${rowId}/${roomId}`, additionalId[index].quantity);
-        } else {
-            setValue(`additionalQuantity_${rowId}/${roomId}`, 0);
-        }
+    additionalRowId.forEach((rowId: string, index: number) => {
+      setValue(`additionalId_${rowId}/${roomId}`, additionalId[index].id);
+      if (additionalId[index].price) {
+        setValue(`additionalPrice_${rowId}/${roomId}`, additionalId[index].price);
+      } else {
+        setValue(`additionalPrice_${rowId}/${roomId}`, "");
+      }
+      if (additionalId[index].quantity) {
+        setValue(`additionalQuantity_${rowId}/${roomId}`, additionalId[index].quantity);
+      } else {
+        setValue(`additionalQuantity_${rowId}/${roomId}`, "");
+      }
+      if (additionalId[index].sum) {
+        setValue(`additionalSum_${rowId}/${roomId}`, additionalId[index].sum);
+      } else {
+        setValue(`additionalSum_${rowId}/${roomId}`, additionalId[index].price * additionalId[index].quantity);
+      }
 
     });
-}, [additionalId]);
+  }, [additionalId]);
+
+
 
   const selectAdditionalPrice = (event: ChangeEvent<HTMLSelectElement | HTMLInputElement>, rowKey: string, roomId: string): void => {
     const selectedId = event.target.value;
-    const additional = stretchAdditional.arrStretchAdditional.find((e: any) => e._id === selectedId);
+    const additional = stretchAdditional.find((e: { _id: string }) => e._id === selectedId);
 
     if (additional) {
       setValue(`additionalPrice_${rowKey}/${roomId}`, additional.price)
+      setValue(`additionalQuantity_${rowKey}/${roomId}`, "")
+      additionalSum(rowKey, additional.price, 0)
     } else {
       setValue(`additionalPrice_${rowKey}/${roomId}`, 0);
+    }
+  };
+
+  const additionalSum = (rowId: string, price: number, quantity: number): void => {
+
+    const totalPrice = price * quantity;
+    if (totalPrice) {
+      setValue(`additionalSum_${rowId}/${roomId}`,  Math.ceil(totalPrice));
+    } else {
+      setValue(`additionalSum_${rowId}/${roomId}`, 0);
     }
   };
 
@@ -61,21 +82,22 @@ const EditAdditionalSection: React.FC<EditAdditionalSectionProps> = ({
                 <th style={{ width: "300px" }}>Այլ Ապրանք</th>
                 <th>Գին</th>
                 <th>Քանակ</th>
+                <th >Գումար</th>
                 <th>Հեռացնել</th>
               </tr>
             </thead>
             <tbody >
               {
-                additionalRowId.map((el: any) => (
-                  <tr key={el}>
+                additionalRowId.map((rowId: any) => (
+                  <tr key={rowId}>
                     <td style={{ minWidth: "250px", }}>
                       <select
-                        {...register(`additionalId_${el}` + "/" + roomId)}
-                        onChange={(e) => selectAdditionalPrice(e, el, roomId)}
+                        {...register(`additionalId_${rowId}/${roomId}`)}
+                        onChange={(e) => selectAdditionalPrice(e, rowId, roomId)}
                       >
                         <option>Ընտրել Տեսակը</option>
-                        {stretchAdditional.arrStretchAdditional && stretchAdditional.arrStretchAdditional.length > 0 ?
-                          stretchAdditional.arrStretchAdditional.map((e: any) => (
+                        {stretchAdditional && stretchAdditional.length > 0 ?
+                          stretchAdditional.map((e: any) => (
                             <option key={e._id} value={e._id} >
                               {e.name}
                             </option>
@@ -85,23 +107,32 @@ const EditAdditionalSection: React.FC<EditAdditionalSectionProps> = ({
                     </td>
                     <td>
                       <input
-                        type="number"
                         placeholder="Price"
-                        {...register(`additionalPrice_${el}` + "/" + roomId)}
-
+                        id={`additionalPrice_${rowId}/${roomId}`}
+                        {...register(`additionalPrice_${rowId}/${roomId}`)}
+                        onChange={(e: { target: { value: string } }) =>
+                          additionalSum(rowId, parseFloat(e.target.value), parseFloat(getValues(`additionalQuantity_${rowId}/${roomId}`)))}
                       />
                     </td>
                     <td>
                       <input
-                        id={`quantity_${el}`}
-                        type="number"
+                        id={`additionalQuantity_${rowId}/${roomId}`}
                         placeholder="Quantity"
-                        {...register(`additionalQuantity_${el}` + "/" + roomId)}
+                        {...register(`additionalQuantity_${rowId}/${roomId}`)}
+                        onChange={(e: { target: { value: string } }) =>
+                          additionalSum(rowId, parseFloat(getValues(`additionalPrice_${rowId}/${roomId}`)), parseFloat(e.target.value))}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        id={`additionalSum_${rowId}/${roomId}`}
+                        placeholder="Sum"
+                        {...register(`additionalSum_${rowId}/${roomId}`)}
                       />
                     </td>
                     <td>
                       <button
-                        type="button" onClick={() => removeAdditionalRow(el, roomId)}>
+                        type="button" onClick={() => removeAdditionalRow(rowId, roomId)}>
                         Հեռացնել
                       </button>
                     </td>

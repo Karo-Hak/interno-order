@@ -1,18 +1,48 @@
 import React, { ChangeEvent } from 'react';
+import { UseFormRegister, UseFormSetValue, UseFormGetValues } from 'react-hook-form';
 
-const AdditionalSection: React.FC<any> = ({ register, setValue, additionalRowId, removeAdditionalRow, roomId, stretchAdditional }: any) => {
 
-  
+interface AdditionalSectionProps {
+  register: UseFormRegister<any>;
+  setValue: UseFormSetValue<any>;
+  getValues: UseFormGetValues<any>
+  additionalRowId: Array<string>
+  removeAdditionalRow: (rowId: string, roomId: string) => void
+  roomId: string;
+  stretchAdditional: Array<{ _id: string; name: string; price: number; quantity: number, sum: number }>;
+}
+
+const AdditionalSection: React.FC<AdditionalSectionProps> = ({
+  register,
+  setValue,
+  getValues,
+  additionalRowId,
+  removeAdditionalRow,
+  roomId,
+  stretchAdditional
+}: AdditionalSectionProps) => {
 
 
   const selectAdditionalPrice = (event: ChangeEvent<HTMLSelectElement | HTMLInputElement>, rowKey: string, roomId: string): void => {
     const selectedId = event.target.value;
-    const additional = stretchAdditional.find((e: any) => e._id === selectedId);
+    const additional = stretchAdditional.find((e: { _id: string }) => e._id === selectedId);
 
     if (additional) {
       setValue(`additionalPrice_${rowKey}/${roomId}`, additional.price)
+      setValue(`additionalQuantity_${rowKey}/${roomId}`, "")
+      additionalSum(rowKey, additional.price, 0)
     } else {
       setValue(`additionalPrice_${rowKey}/${roomId}`, 0);
+    }
+  };
+
+  const additionalSum = (rowId: string, price: number, quantity: number): void => {
+
+    const totalPrice = price * quantity;
+    if (totalPrice) {
+      setValue(`additionalSum_${rowId}/${roomId}`, totalPrice);
+    } else {
+      setValue(`additionalSum_${rowId}/${roomId}`, 0);
     }
   };
 
@@ -28,21 +58,22 @@ const AdditionalSection: React.FC<any> = ({ register, setValue, additionalRowId,
                 <th style={{ width: "300px" }}>Այլ Ապրանք</th>
                 <th>Գին</th>
                 <th>Քանակ</th>
+                <th>Գումար</th>
                 <th>Հեռացնել</th>
               </tr>
             </thead>
             <tbody >
               {
-                additionalRowId.map((el: any) => (
-                  <tr key={el}>
-                    <td style={{minWidth:"250px", }}>
+                additionalRowId.map((rowId: string) => (
+                  <tr key={rowId}>
+                    <td style={{ minWidth: "250px", }}>
                       <select
-                        {...register(`additionalId_${el}` + "/" + roomId)}
-                        onChange={(e) => selectAdditionalPrice(e, el, roomId)}
+                        {...register(`additionalId_${rowId}/${roomId}`)}
+                        onChange={(e) => selectAdditionalPrice(e, rowId, roomId)}
                       >
                         <option>Ընտրել Տեսակը</option>
                         {stretchAdditional && stretchAdditional.length > 0 ?
-                          stretchAdditional.map((e: any) => (
+                          stretchAdditional.map((e: { _id: string, name: string }) => (
                             <option key={e._id} value={e._id} >
                               {e.name}
                             </option>
@@ -52,23 +83,32 @@ const AdditionalSection: React.FC<any> = ({ register, setValue, additionalRowId,
                     </td>
                     <td>
                       <input
-                        type="number"
                         placeholder="Price"
-                        {...register(`additionalPrice_${el}` + "/" + roomId)}
-
+                        id={`additionalPrice_${rowId}/${roomId}`}
+                        {...register(`additionalPrice_${rowId}/${roomId}`)}
+                        onChange={(e: { target: { value: string } }) =>
+                          additionalSum(rowId, parseFloat(e.target.value), parseFloat(getValues(`additionalQuantity_${rowId}/${roomId}`)))}
                       />
                     </td>
                     <td>
                       <input
-                        id={`quantity_${el}`}
-                        type="number"
+                        id={`additionalQuantity_${rowId}/${roomId}`}
                         placeholder="Quantity"
-                        {...register(`additionalQuantity_${el}` + "/" + roomId)}
+                        {...register(`additionalQuantity_${rowId}/${roomId}`)}
+                        onChange={(e: { target: { value: string } }) =>
+                          additionalSum(rowId, parseFloat(getValues(`additionalPrice_${rowId}/${roomId}`)), parseFloat(e.target.value))}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        id={`additionalSum_${rowId}/${roomId}`}
+                        placeholder="Sum"
+                        {...register(`additionalSum_${rowId}/${roomId}`)}
                       />
                     </td>
                     <td>
                       <button
-                        type="button" onClick={() => removeAdditionalRow(el, roomId)}>
+                        type="button" onClick={() => removeAdditionalRow(rowId, roomId)}>
                         Հեռացնել
                       </button>
                     </td>

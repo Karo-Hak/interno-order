@@ -55,23 +55,23 @@ export const HomePage: React.FC = (): JSX.Element => {
     const stretch = () => {
         if (sphere.includes("Stretch Ceiling")) {
             navigate("/stretchceiling")
-        }  else {
+        } else {
             alert("you don't have permission to access on Stretch Ceiling")
         }
     }
     const stock = () => {
         if (sphere.includes("Stock")) {
             navigate("/stock")
-        }  else {
+        } else {
             alert("you don't have permission to access on Stock")
         }
     }
     const coopStretch = () => {
-        // if (sphere.includes("Stretch Ceiling Coop")) {
-        //     navigate("/stretchceilingcoop")
-        // }  else {
-        // }
-        alert("Hay hay hay!!!! el inch kuzeir")
+        if (sphere.includes("Stretch Ceiling Coop")) {
+            navigate("/coopStretchceiling")
+        } else {
+            alert("you don't have permission to access on Stretch Ceiling Coop")
+        }
     }
     const wpcPanel = () => {
         // if (sphere.includes("Wpc Panel")) {

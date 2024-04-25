@@ -1,18 +1,48 @@
 import React, { ChangeEvent } from 'react';
+import { UseFormRegister, UseFormSetValue, UseFormGetValues } from 'react-hook-form';
+import { Data } from './TagStretchOrder';
 
-import './tagStretchOrder.css';
 
+interface BardutyunSectionProps {
+  register: UseFormRegister<any>;
+  setValue: UseFormSetValue<any>;
+  getValues: UseFormGetValues<any>;
+  bardutyunRowId: Array<string>;
+  removeBardutyunRow: (rowId: string, roomId: string) => void;
+  roomId: string;
+  stretchBardutyun: Array<Data>;
+}
 
-const BardutyunSection: React.FC<any> = ({ register, setValue, bardutyunRowId, removeBardutyunRow, roomId, stretchBardutyun }: any) => {
+const BardutyunSection: React.FC<BardutyunSectionProps> = ({
+  register,
+  setValue,
+  getValues,
+  bardutyunRowId,
+  removeBardutyunRow,
+  roomId,
+  stretchBardutyun
+}: BardutyunSectionProps) => {
 
 
   const stretchBardutyunPrice = (event: ChangeEvent<HTMLSelectElement | HTMLInputElement>, rowKey: string, roomId: string): void => {
     const selectedId = event.target.value;
-    const bardutyun = stretchBardutyun.find((e: any) => e._id === selectedId);
+    const bardutyun = stretchBardutyun.find((e: { _id: string }) => e._id === selectedId);
     if (bardutyun) {
       setValue(`bardutyunPrice_${rowKey}/${roomId}`, bardutyun.price);
+      setValue(`bardutyunQuantity_${rowKey}/${roomId}`, "")
+      bardutyunSum(rowKey, bardutyun.price, 0)
     } else {
       setValue(`bardutyunPrice_${rowKey}/${roomId}`, 0);
+    }
+  };
+
+  const bardutyunSum = (rowId: string, price: number, quantity: number): void => {
+
+    const totalPrice = price * quantity;
+    if (totalPrice) {
+      setValue(`bardutyunSum_${rowId}/${roomId}`, totalPrice);
+    } else {
+      setValue(`bardutyunSum_${rowId}/${roomId}`, 0);
     }
   };
 
@@ -27,20 +57,21 @@ const BardutyunSection: React.FC<any> = ({ register, setValue, bardutyunRowId, r
                 <th>Բարդություն</th>
                 <th>Գին</th>
                 <th>Քանակ</th>
+                <th>Գումար</th>
                 <th>Հեռացնել</th>
               </tr>
             </thead>
             <tbody>
-              {bardutyunRowId.map((el: any) => (
-                <tr key={el}>
+              {bardutyunRowId.map((rowId: any) => (
+                <tr key={rowId}>
                   <td style={{ minWidth: "250px", }}>
                     <select
-                      {...register(`bardutyunId_${el}/${roomId}`)}
-                      onChange={(e) => stretchBardutyunPrice(e, el, roomId)}
+                      {...register(`bardutyunId_${rowId}/${roomId}`)}
+                      onChange={(e) => stretchBardutyunPrice(e, rowId, roomId)}
                     >
                       <option>Ընտրել Տեսակը</option>
                       {stretchBardutyun.length > 0 ?
-                        stretchBardutyun.map((bardutyun: any) => (
+                        stretchBardutyun.map((bardutyun: { _id: string, name: string }) => (
                           <option key={bardutyun._id} value={bardutyun._id}>{bardutyun.name}</option>
                         ))
                         : null}
@@ -48,19 +79,31 @@ const BardutyunSection: React.FC<any> = ({ register, setValue, bardutyunRowId, r
                   </td>
                   <td>
                     <input
-                      type="number"
                       placeholder="Price"
-                      {...register(`bardutyunPrice_${el}/${roomId}`)}
+                      id={`bardutyunPrice_${rowId}/${roomId}`}
+                      {...register(`bardutyunPrice_${rowId}/${roomId}`)}
+                      onChange={(e: { target: { value: string } }) =>
+                        bardutyunSum(rowId, parseFloat(e.target.value), parseFloat(getValues(`bardutyunQuantity_${rowId}/${roomId}`)))}
                     />
                   </td>
                   <td>
                     <input
                       placeholder="Quantity"
-                      {...register(`bardutyunQuantity_${el}/${roomId}`)}
+                      id={`bardutyunQuantity_${rowId}/${roomId}`}
+                      {...register(`bardutyunQuantity_${rowId}/${roomId}`)}
+                      onChange={(e: { target: { value: string } }) =>
+                        bardutyunSum(rowId, parseFloat(getValues(`bardutyunPrice_${rowId}/${roomId}`)), parseFloat(e.target.value))}
                     />
                   </td>
                   <td>
-                    <button type="button" onClick={() => removeBardutyunRow(el, roomId)}>
+                    <input
+                      placeholder="Sum"
+                      id={`bardutyunSum_${rowId}/${roomId}`}
+                      {...register(`bardutyunSum_${rowId}/${roomId}`)}
+                    />
+                  </td>
+                  <td>
+                    <button type="button" onClick={() => removeBardutyunRow(rowId, roomId)}>
                       Հեռացնել
                     </button>
                   </td>

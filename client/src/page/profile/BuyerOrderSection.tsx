@@ -45,7 +45,6 @@ const BuyerOrderSection: React.FC<any> = ({ register, setValue }: any) => {
         setValue('buyerName', selectedBuyer.name)
 
     }
-console.log(buyer.arrBuyer);
 
     return (
     <div className='buyer_head'>

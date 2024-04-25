@@ -4,7 +4,6 @@ import { allStretchBuyer } from '../../features/StrechBuyer/strechBuyerApi';
 import { selectStretchBuyer } from '../../features/StrechBuyer/strechBuyerSlice';
 import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
-import './tagStretchCeilingOrder.css'
 
 const BuyerSection: React.FC<any> = ({ register, setValue }: any) => {
     const dispatch = useAppDispatch();

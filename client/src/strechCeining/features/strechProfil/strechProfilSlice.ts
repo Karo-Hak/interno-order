@@ -2,20 +2,20 @@ import { createSlice } from "@reduxjs/toolkit";
 import { addStretchProfil, getAllStretchProfil } from "./strechProfilApi";
 
 
-export interface StretchProfil {
+export interface StretchProfilProps {
     _id: string;
     name: string;
     price: number;
-    unyt: string;
+    coopPrice: number;
 }
 
 export interface StretchProfilState {
-    arrStretchProfil: Array<StretchProfil>;
-    stretchProfil: StretchProfil
+    arrStretchProfil: Array<StretchProfilProps>;
+    stretchProfil: StretchProfilProps
 }
 export const initialState: StretchProfilState = {
     arrStretchProfil: [],
-    stretchProfil: {} as StretchProfil,
+    stretchProfil: {} as StretchProfilProps,
 
 }
 export const stretchProfilSlice = createSlice({

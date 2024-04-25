@@ -1,48 +1,102 @@
-import { selectUser } from "../../../features/user/userSlice";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { useEffect } from 'react'
-import { useNavigate } from "react-router-dom";
-import { useCookies } from 'react-cookie'
-import { userProfile } from "../../../features/user/userApi";
-import { selectStretchTexture } from "../../features/strechTexture/strechTextureSlice";
-import { useForm } from "react-hook-form";
-import { addStretchTexture, getAllStretchTexture } from "../../features/strechTexture/strechTextureApi";
-import { StretchMenu } from "../../../component/menu/StretchMenu";
-import './stretchTexture.css'
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
+import { useForm } from 'react-hook-form';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks';
+import { userProfile } from '../../../features/user/userApi';
+import { StretchMenu } from '../../../component/menu/StretchMenu';
+import './stretchTexture.css';
+import { StretchTextureProps } from '../../features/strechTexture/strechTextureSlice';
+import { User } from '../../../features/user/userSlice';
+import { getAllStretchTexture, addStretchTexture, updateStretchTexture } from '../../features/strechTexture/strechTextureApi';
+
+
 
 export const StretchTexture: React.FC = (): JSX.Element => {
-    const { register, handleSubmit, reset, formState: { errors } } = useForm<any>()
-    const user = useAppSelector(selectUser);
-    const stretchTexture = useAppSelector(selectStretchTexture)
+    const { register, handleSubmit, reset, formState: { errors }, setValue } = useForm<any>();
+    const [user, setUser] = useState<User>();
+    const [stretchTexture, setStretchTexture] = useState<StretchTextureProps[]>([]);
     const dispatch = useAppDispatch();
     const [cookies, setCookie] = useCookies(['access_token']);
     const navigate = useNavigate();
-
+    const [checkedTexture, setCheckedTexture] = useState(false);
 
     useEffect(() => {
-        dispatch(userProfile(cookies)).unwrap().then(res => {
-            if ("error" in res) {
-                setCookie("access_token", '', { path: '/' })
-                navigate("/")
-            }
-        })
-        dispatch(getAllStretchTexture(cookies)).unwrap().then(res => {
-            if ("error" in res) {
-                setCookie("access_token", '', { path: '/' })
-                navigate("/")
-            }
-        })
+        const fetchData = async () => {
+            try {
+                const userProfileResult = await dispatch(userProfile(cookies)).unwrap();
+                const stretchTextureResult = await dispatch(getAllStretchTexture(cookies)).unwrap();
 
-    }, [])
-
-    const newStretchTexture = (stretchTexture: any) => {
-        dispatch(addStretchTexture({ stretchTexture, cookies })).unwrap().then(res => {
-            if ("error" in res) {
-                alert(res.error)
+                handleResult(userProfileResult);
+                handleResult(stretchTextureResult);
+            } catch (error) {
+                console.error('An error occurred:', error);
             }
-        });
-        window.location.reload()
+        };
+
+        const handleResult = (result: any) => {
+            if ('error' in result) {
+                console.error(result.error);
+                setCookie('access_token', '', { path: '/' });
+                navigate('/');
+            } else {
+                processResult(result);
+            }
+        };
+
+        const processResult = (result: any) => {
+            if (result.user) {
+                setUser(result.user);
+            }
+            if (result.stretchTexture) {
+                setStretchTexture(result.stretchTexture);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+
+    function handleCheckboxTexture(event: any) {
+        setCheckedTexture(event.target.checked);
     }
+    useEffect(() => {
+        if (checkedTexture === false) {
+            reset()
+        }
+    }, [checkedTexture])
+
+    const newStretchTexture = (stretchTexture: object) => {
+        if (!checkedTexture) {
+            dispatch(addStretchTexture({ stretchTexture, cookies })).unwrap().then(res => {
+                if ("error" in res) {
+                    alert(res.error)
+                }
+            });
+        } else {
+            dispatch(updateStretchTexture({ stretchTexture, cookies })).unwrap().then(res => {
+                if ("error" in res) {
+                    alert(res.error)
+                }
+            });
+        }
+        // window.location.reload()
+    }
+
+    const selectedTexture = (texture: React.ChangeEvent<HTMLSelectElement>) => {
+        if (texture.target.value) {
+            const selectedTexture = stretchTexture.find((element: StretchTextureProps) => element._id === texture.target.value);
+            if (selectedTexture) {
+                setValue("name", selectedTexture.name);
+                setValue("weight", selectedTexture.weight);
+                setValue("price", selectedTexture.price);
+                setValue("priceCoopGarpun", selectedTexture.priceCoopGarpun);
+                setValue("priceCoopOtrez", selectedTexture.priceCoopOtrez);
+            }
+        }
+    }
+
+
 
     return (
         <>
@@ -50,14 +104,39 @@ export const StretchTexture: React.FC = (): JSX.Element => {
             <div style={{
                 margin: "20px"
             }}>
+
                 <form onSubmit={handleSubmit(newStretchTexture)} >
                     <div style={{
                         display: "flex",
                         gap: "10px"
                     }}>
                         <div className="divLabel">
-                            <label htmlFor="name">Անվանում</label>
-                            <input id="name" type="text" placeholder="Name"  {...register("name", { required: true })} />
+                            <label htmlFor="name">
+                                Անվանում_
+                                <input id="buyerCheckbox" type="checkbox" onChange={handleCheckboxTexture} />
+                                _Փոփոխել
+                            </label>
+
+                            {!checkedTexture ? (
+                                <input id="name" type="text" placeholder="Name"  {...register("name", { required: true })} />
+                            ) : (
+                                <select
+                                    style={{ border: "1px solid black" }}
+                                    id="selectCoop"
+                                    {...register('_id', { required: true })}
+                                    onChange={(event) => selectedTexture(event)}>
+                                    <option></option>
+                                    {stretchTexture && stretchTexture.length > 0 ? (
+                                        stretchTexture.map((e: any) => {
+                                            return (
+                                                <option key={e._id} value={e._id}>
+                                                    {e.name}
+                                                </option>
+                                            );
+                                        })
+                                    ) : null}
+                                </select>
+                            )}
                         </div>
                         <div className="divLabel">
                             <label htmlFor="weight">Լայնություն</label>
@@ -68,14 +147,6 @@ export const StretchTexture: React.FC = (): JSX.Element => {
                             <label htmlFor="price">Գին</label>
                             <input id="price" type="number" placeholder="Price"  {...register("price", { required: true })} />
                         </div>
-                        <div className="divLabel">
-                            <label htmlFor="priceGarpun">Գին Գարպուն</label>
-                            <input id="priceGarpun" type="number" placeholder="Price Garpun"  {...register("priceGarpun", { required: true })} />
-                        </div>
-                        <div className="divLabel">
-                            <label htmlFor="priceOtrez">Գին Կտրվածք</label>
-                            <input id="priceOtrez" type="number" placeholder="Price Otrez"  {...register("priceOtrez", { required: true })} />
-                        </div>
 
                         <div className="divLabel">
                             <label htmlFor="priceCoopGarpun">Համ․ Գին Գարպուն</label>
@@ -85,23 +156,21 @@ export const StretchTexture: React.FC = (): JSX.Element => {
                             <label htmlFor="priceCoopOtrez">Համ․ Գին Կտրվածք</label>
                             <input id="priceCoopOtrez" type="number" placeholder="Price Otrez"  {...register("priceCoopOtrez", { required: true })} />
                         </div>
-
                         <button >Գրանցել</button>
                     </div>
                 </form>
+
                 {
-                    stretchTexture.arrStretchTexture && stretchTexture.arrStretchTexture.length > 0 ?
-                        <div  style={{
-                            margin:"20px"
+                    stretchTexture && stretchTexture.length > 0 ?
+                        <div style={{
+                            margin: "20px"
                         }}>
                             <table className="tableName" >
                                 <thead>
                                     <tr>
                                         <th scope="col">Անվանում</th>
                                         <th scope="col">Լայնություն</th>
-                                        <th scope="col">Չ/Մ</th>
-                                        <th scope="col">Գին Գարպուն</th>
-                                        <th scope="col">Գին Ատրեզ</th>
+                                        <th scope="col">Գին</th>
                                         <th scope="col">Համ Գին Գարպուն </th>
                                         <th scope="col">Համ Գին Ատրեզ</th>
 
@@ -109,14 +178,12 @@ export const StretchTexture: React.FC = (): JSX.Element => {
                                 </thead>
                                 <tbody>
                                     {
-                                        stretchTexture.arrStretchTexture.map((e: any) => {
+                                        stretchTexture.map((e: any) => {
                                             return (
                                                 <tr key={e._id}>
                                                     <td>{e.name}</td>
                                                     <td>{e.weight}</td>
-                                                    <td>{e.unyt}</td>
-                                                    <td>{e.priceGarpun}</td>
-                                                    <td>{e.priceOtrez}</td>
+                                                    <td>{e.price}</td>
                                                     <td>{e.priceCoopGarpun}</td>
                                                     <td>{e.priceCoopOtrez}</td>
                                                 </tr>

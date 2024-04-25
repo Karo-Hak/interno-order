@@ -6,6 +6,7 @@ import { viewMaterialList } from "../../features/stretchCeilingOrder/stretchOrde
 import { MaterialSearchLogic } from "./MaterialSearchLogic";
 import { StretchMenu } from "../../../component/menu/StretchMenu";
 import MaterialListSection from "./MaterialListSection";
+import AllMaterialListSection from "./AllMaterialListSection";
 
 export const ViewMaterial: React.FC = (): JSX.Element => {
 
@@ -78,6 +79,12 @@ export const ViewMaterial: React.FC = (): JSX.Element => {
         MaterialSearchLogic(ordersListFilter, status, ordersList, setOrdersList, clearBuyer);
     }
 
+    const [handleChecked, setHandleChecked] = useState<boolean>(false);
+
+    function handleCheckbox(event: any) {
+        setHandleChecked(event.target.checked);
+    }
+
     return (
         <div>
             <StretchMenu />
@@ -114,9 +121,19 @@ export const ViewMaterial: React.FC = (): JSX.Element => {
                             <option value={"dane"}>Ավարտված</option>
                         </select>
                     </div>
+                    <div className="divLabel">
+                        <label htmlFor="endDate">Խմբավորել</label>
+                        <input id='checkboxAll' type="checkbox" onChange={handleCheckbox} />
+                    </div>
                 </div>
             </div>
-            <MaterialListSection ordersList={ordersList} parseDate={parseDate} />
+            {
+                !handleChecked ?
+                    <MaterialListSection ordersList={ordersList} parseDate={parseDate} />
+                    :
+                    <AllMaterialListSection ordersList={ordersList} />
+
+            }
 
         </div>
     )

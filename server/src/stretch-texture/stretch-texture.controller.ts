@@ -40,10 +40,21 @@ export class StretchTextureController {
     return this.stretchTextureService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStretchTextureDto: UpdateStretchTextureDto) {
-    return this.stretchTextureService.update(+id, updateStretchTextureDto);
+  @Patch('updateStretchTexture')
+  async update(@Body() updateStretchTextureDto: UpdateStretchTextureDto, @Res() res: Response) {
+    try {
+      const stretchTexture = await this.stretchTextureService.update(updateStretchTextureDto._id, updateStretchTextureDto);
+      return res.status(HttpStatus.OK).json({
+        message: "ok",
+        stretchTexture
+      });
+    } catch (e) {
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        error: e.message
+      });
+    }
   }
+  
 
   @Delete(':id')
   remove(@Param('id') id: string) {

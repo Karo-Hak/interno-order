@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { UseFormRegister, UseFormReset, UseFormSetValue } from 'react-hook-form';
+import { UseFormGetValues, UseFormRegister, UseFormReset, UseFormSetValue } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import EditStretchTexturesSection from './EditStretchTexturesSection';
 import EditProfilSection from './EditProfilSection';
@@ -8,21 +8,23 @@ import EditLightRingSection from './EditLightRingSection';
 import EditBardutyunSection from './EditBardutyunSection';
 import EditAdditionalSection from './EditAdditionalSection';
 import EditOtherSection from './EditOtherSection';
+import { Data } from '../addTagStretchCeilingOrder/TagStretchOrder';
 
 
 interface EditRoomSectionProps {
     register: UseFormRegister<any>;
     reset: UseFormReset<any>;
     setValue: UseFormSetValue<any>
-    roomId: any;
-    room: any;
-    stretchTextureData: any;
-    stretchAdditionalData: any;
-    stretchProfilData: any;
-    stretchLightPlatformData: any;
-    stretchLightRingData: any;
-    stretchBardutyunData: any;
-    rooms: any[]
+    getValues: UseFormGetValues<any>;
+    roomId: string;
+    room: { isChecked: boolean };
+    stretchTextureData: Array<Data>;
+    stretchAdditionalData:  Array<Data>;
+    stretchProfilData:  Array<Data>;
+    stretchLightPlatformData:  Array<Data>;
+    stretchLightRingData:  Array<Data>;
+    stretchBardutyunData:  Array<Data>;
+    rooms:  Array<{}>;
 
 }
 
@@ -31,6 +33,7 @@ const EditRoomSection: FC<EditRoomSectionProps> = (
         register,
         reset,
         setValue,
+        getValues,
         roomId,
         room,
         stretchTextureData,
@@ -42,7 +45,8 @@ const EditRoomSection: FC<EditRoomSectionProps> = (
         rooms
     }: EditRoomSectionProps) => {
 
-    const [stretchRowId, setStretchRowId] = useState<any[]>([]);
+
+
     const [stretchTextureId, setStretchTextureId] = useState<any[]>([]);
 
     const [profilRowId, setProfilRowId] = useState<any[]>([]);
@@ -68,7 +72,7 @@ const EditRoomSection: FC<EditRoomSectionProps> = (
 
         rooms.forEach((el: any) => {
             if (el.id === roomId && el.groupedStretchCeilings) {
-                Object.entries(el.groupedStretchCeilings).forEach(([key, value]: [string, any], index: number) => {
+                Object.entries(el.groupedStretchCeilings).forEach(([key, value]: [any, any], index: number) => {
                     const rowId = key.split('/')[0];
                     setStretchRowId((prevRowId) => [...prevRowId, rowId]);
                     const textur = value
@@ -129,22 +133,24 @@ const EditRoomSection: FC<EditRoomSectionProps> = (
 
 
     //////stretch Section
+    const [stretchRowId, setStretchRowId] = useState<number[]>([]);
     const addNewRow = () => {
         setStretchRowId(prevRowId => [...prevRowId, prevRowId.length + 1 + uuidv4() as unknown as number]);
     };
 
-    const removeStretchRow = (index: any, roomId: any) => {
+    const removeStretchRow = (index: number, roomId: string) => {
         reset({ [`stretch_${index}/${roomId}`]: '' })
         setStretchRowId(prevRowId => prevRowId.filter((_, i) => _ !== index));
     };
+    
 
 
     /////Profil Seqtion
     function addProfilRow() {
-        setProfilRowId(prevRowId => [...prevRowId, prevRowId.length + 1 + uuidv4() as unknown as number]);
+        setProfilRowId(prevRowId => [...prevRowId, prevRowId.length + 1 + uuidv4() as unknown as string]);
     }
 
-    function removeProfilRow(index: number, roomId: any) {
+    function removeProfilRow(index: string, roomId: string) {
         reset({ [`profil_${index}/${roomId}`]: '' })
         setProfilRowId(prevRowId => prevRowId.filter((_, i) => _ !== index));
     }
@@ -152,10 +158,10 @@ const EditRoomSection: FC<EditRoomSectionProps> = (
     //////Light Ring Section
 
     function addLightRingRow() {
-        setLightRingRowId(prevRowId => [...prevRowId, prevRowId.length + 1 + uuidv4() as unknown as number])
+        setLightRingRowId(prevRowId => [...prevRowId, prevRowId.length + 1 + uuidv4() as unknown as string])
     }
 
-    function removeLightRingRowId(index: any, roomId: any) {
+    function removeLightRingRowId(index: string, roomId: string) {
         reset({ [`lightRing_${index}/${roomId}`]: '' })
         setLightRingRowId(prevRowId => prevRowId.filter((_, i) => _ !== index));
 
@@ -164,10 +170,10 @@ const EditRoomSection: FC<EditRoomSectionProps> = (
     //////Light Platform Section
 
     function addLightPlatformRow() {
-        setLightPlatformRowId(prevRowId => [...prevRowId, prevRowId.length + 1 + uuidv4() as unknown as number])
+        setLightPlatformRowId(prevRowId => [...prevRowId, prevRowId.length + 1 + uuidv4() as unknown as string])
     }
 
-    function removeLightPlatformRowId(index: any, roomId: any) {
+    function removeLightPlatformRowId(index: string, roomId: string) {
         console.log(`lightPlatform_${index}/${roomId}`, 62);
 
         reset({ [`lightPlatform_${index}/${roomId}`]: '' })
@@ -177,29 +183,29 @@ const EditRoomSection: FC<EditRoomSectionProps> = (
 
     /////////////Bardutyun///////////
     const addBardutyunNewRow = () => {
-        setBardutyunRowId(prevRowId => [...prevRowId, prevRowId.length + 1 + uuidv4() as unknown as number]);
+        setBardutyunRowId(prevRowId => [...prevRowId, prevRowId.length + 1 + uuidv4() as unknown as string]);
     };
 
-    const removeBardutyunRow = (index: any, roomId: any) => {
+    const removeBardutyunRow = (index: string, roomId: string) => {
         reset({ [`bardutyun_${index}/${roomId}`]: '' })
         setBardutyunRowId(prevRowId => prevRowId.filter((_, i) => _ !== index));
     };
 
     ///////Additional Section
     function addAdditionalRow() {
-        setAdditionalRowId(prevRowId => [...prevRowId, prevRowId.length + 1 + uuidv4() as unknown as number]);
+        setAdditionalRowId(prevRowId => [...prevRowId, prevRowId.length + 1 + uuidv4() as unknown as string]);
     }
-    function removeAdditionalRow(index: number, roomId: any): void {
+    function removeAdditionalRow(index: string, roomId: string): void {
         reset({ [`additional_${index}/${roomId}`]: '' })
         setAdditionalRowId(prevRowId => prevRowId.filter((_, i) => _ !== index));
 
     }
     /////////////OtherSection///////////
     const addOtherNewRow = () => {
-        setOtherRowId(prevRowId => [...prevRowId, prevRowId.length + 1 + uuidv4() as unknown as number]);
+        setOtherRowId(prevRowId => [...prevRowId, prevRowId.length + 1 + uuidv4() as unknown as string]);
     };
 
-    const removeOtherRow = (index: number, roomId: any) => {
+    const removeOtherRow = (index: string, roomId: string) => {
         reset({ [`other_${index}/${roomId}`]: '' })
         setOtherRowId(prevRowId => prevRowId.filter((_, i) => _ !== index));
     };
@@ -259,6 +265,7 @@ const EditRoomSection: FC<EditRoomSectionProps> = (
                     <EditStretchTexturesSection
                         register={register}
                         setValue={setValue}
+                        getValues={getValues}
                         stretchRowId={stretchRowId}
                         removeStretchRow={removeStretchRow}
                         roomId={roomId}
@@ -270,6 +277,7 @@ const EditRoomSection: FC<EditRoomSectionProps> = (
                     <EditProfilSection
                         register={register}
                         setValue={setValue}
+                        getValues={getValues}
                         profilRowId={profilRowId}
                         removeProfilRow={removeProfilRow}
                         roomId={roomId}
@@ -280,6 +288,7 @@ const EditRoomSection: FC<EditRoomSectionProps> = (
                     <EditLightRingSection
                         register={register}
                         setValue={setValue}
+                        getValues={getValues}
                         lightRingRowId={lightRingRowId}
                         removeLightRingRowId={removeLightRingRowId}
                         roomId={roomId}
@@ -290,6 +299,7 @@ const EditRoomSection: FC<EditRoomSectionProps> = (
                     <EditLightPlatformSection
                         register={register}
                         setValue={setValue}
+                        getValues={getValues}
                         lightPlatformRowId={lightPlatformRowId}
                         removeLightPlatformRowId={removeLightPlatformRowId}
                         roomId={roomId}
@@ -300,6 +310,7 @@ const EditRoomSection: FC<EditRoomSectionProps> = (
                     <EditBardutyunSection
                         register={register}
                         setValue={setValue}
+                        getValues={getValues}
                         bardutyunRowId={bardutyunRowId}
                         removeBardutyunRow={removeBardutyunRow}
                         roomId={roomId}
@@ -310,6 +321,7 @@ const EditRoomSection: FC<EditRoomSectionProps> = (
                     <EditAdditionalSection
                         register={register}
                         setValue={setValue}
+                        getValues={getValues}
                         additionalRowId={additionalRowId}
                         removeAdditionalRow={removeAdditionalRow}
                         roomId={roomId}
@@ -320,6 +332,7 @@ const EditRoomSection: FC<EditRoomSectionProps> = (
                     <EditOtherSection
                         register={register}
                         setValue={setValue}
+                        getValues={getValues}
                         otherRowId={otherRowId}
                         removeOtherRow={removeOtherRow}
                         roomId={roomId}

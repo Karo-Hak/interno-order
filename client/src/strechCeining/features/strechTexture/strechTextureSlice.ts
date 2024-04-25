@@ -2,24 +2,22 @@ import { createSlice } from "@reduxjs/toolkit";
 import { addStretchTexture, getAllStretchTexture } from "./strechTextureApi";
 
 
-export interface StretchTexture {
+export interface StretchTextureProps {
     _id: string;
     name: string;
     weight: number;
-    priceGarpun: number;
-    priceOtrez: number;
+    price: number;
     priceCoopGarpun: number;
     priceCoopOtrez: number;
-    unyt: string;
 }
 
 export interface StretchTextureState {
-    arrStretchTexture: Array<StretchTexture>;
-    stretchTexture: StretchTexture
+    arrStretchTexture: Array<StretchTextureProps>;
+    stretchTexture: StretchTextureProps
 }
 export const initialState: StretchTextureState = {
     arrStretchTexture: [],
-    stretchTexture: {} as StretchTexture,
+    stretchTexture: {} as StretchTextureProps,
 
 }
 export const stretchTextureSlice = createSlice({

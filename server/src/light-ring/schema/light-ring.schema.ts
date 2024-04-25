@@ -10,7 +10,7 @@ export class LightRing {
     @Prop()
     price: number;
     @Prop()
-    unyt: string;
+    coopPrice: number;
 }
 
 export const LightRingSchema = SchemaFactory.createForClass(LightRing);

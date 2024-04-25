@@ -20,7 +20,10 @@ import { CooperateModule } from 'src/cooperate/cooperate.module';
       { name: Buyer.name, schema: BuyerSchema },
       { name: Texture.name, schema: TextureSchema },
     ]),
-    BuyerModule, TextureModule, CooperateModule],
+    BuyerModule,
+    TextureModule,
+    CooperateModule
+  ],
   controllers: [OrderController],
   providers: [OrderService],
   exports: [OrderService]

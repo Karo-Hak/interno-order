@@ -14,6 +14,7 @@ const ViewProfilSection: React.FC<any> = ({ room }: any) => {
               <th >Պրոֆիլ</th>
               <th >Գին</th>
               <th >Գ/Մ</th>
+              <th >Գումար</th>
             </tr>
           </thead>
           <tbody>
@@ -23,6 +24,7 @@ const ViewProfilSection: React.FC<any> = ({ room }: any) => {
                   <td>{room.groupedProfils[key].name}</td>
                   <td>{room.groupedProfils[key].price}</td>
                   <td>{room.groupedProfils[key].quantity}</td>
+                  <td>{room.groupedProfils[key].sum}</td>
                 </tr>
 
               }

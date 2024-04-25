@@ -12,7 +12,25 @@ export const addStretchTexture = createAsyncThunk(
   'stretchTexture/axios',
   async (obj: any) => {
     try {
-      const response = await axios.post(process.env.REACT_APP_SERVER_URL +"/stretchTexture", { ...obj.stretchTexture}, {
+      const response = await axios.post(process.env.REACT_APP_SERVER_URL + "/stretchTexture", { ...obj.stretchTexture }, {
+        headers: {
+          Authorization: `Bearer ${obj.cookies.access_token}`
+        }
+      })
+
+      return response.data
+    } catch (e) {
+      return { error: "not found" }
+
+    }
+  }
+);
+
+export const updateStretchTexture = createAsyncThunk(
+  'stretchTexture/updateStretchTexture/axios',
+  async (obj: any) => {
+    try {
+      const response = await axios.patch(process.env.REACT_APP_SERVER_URL + "/stretchTexture/updateStretchTexture", { ...obj.stretchTexture }, {
         headers: {
           Authorization: `Bearer ${obj.cookies.access_token}`
         }

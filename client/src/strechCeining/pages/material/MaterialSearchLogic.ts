@@ -14,7 +14,9 @@ export const MaterialSearchLogic = (
   if (searchBuyer !== "") {
     const normalizedSearchName = searchBuyer.toLowerCase();
     resultOrders = resultOrders.filter((element: any) =>
-      element.buyer.buyerName.toLowerCase().includes(normalizedSearchName)
+      element.buyer.buyerName.toLowerCase().includes(normalizedSearchName) ||
+      element.buyer.buyerPhone1.toLowerCase().includes(normalizedSearchName) ||
+      element.buyer.buyerPhone2.toLowerCase().includes(normalizedSearchName) 
     );
   }
 

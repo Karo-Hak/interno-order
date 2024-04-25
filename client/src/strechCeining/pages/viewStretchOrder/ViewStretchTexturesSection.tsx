@@ -12,9 +12,10 @@ const ViewStretchTexturesSection: React.FC<any> = ({ room }: any) => {
                     <thead>
                         <tr style={{ 
                             background: "#dfdce0" }}>
-                            <th scope="col">Առաստաղ</th>
-                            <th scope="col">Գին</th>
-                            <th scope="col">Ք/Մ</th>
+                            <th>Առաստաղ</th>
+                            <th>Գին</th>
+                            <th>Ք/Մ</th>
+                            <th>Գումար</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -24,6 +25,7 @@ const ViewStretchTexturesSection: React.FC<any> = ({ room }: any) => {
                                     <td>{room.groupedStretchCeilings[key].name}</td>
                                     <td>{room.groupedStretchCeilings[key].price}</td>
                                     <td>{room.groupedStretchCeilings[key].quantity}</td>
+                                    <td>{room.groupedStretchCeilings[key].sum}</td>
                                 </tr>
 
                             }

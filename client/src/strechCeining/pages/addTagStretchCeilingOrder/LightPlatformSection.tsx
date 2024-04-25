@@ -1,15 +1,46 @@
 import React, { ChangeEvent } from 'react';
+import { UseFormRegister, UseFormSetValue, UseFormGetValues } from 'react-hook-form';
+import { Data } from './TagStretchOrder';
 
-const LightPlatformSection: React.FC<any> = ({ register, lightPlatformRowId, removeLightPlatformRowId, setValue, roomId, stretchLightPlatform }: any) => {
+interface LightPlatformSectionProps {
+  register: UseFormRegister<any>;
+  setValue: UseFormSetValue<any>;
+  getValues: UseFormGetValues<any>;
+  lightPlatformRowId: Array<string>;
+  removeLightPlatformRowId: (rowId: string, roomId: string) => void;
+  roomId: string;
+  stretchLightPlatform: Array<Data>;
+}
+
+const LightPlatformSection: React.FC<LightPlatformSectionProps> = ({
+  register,
+  setValue,
+  getValues,
+  lightPlatformRowId,
+  removeLightPlatformRowId,
+  roomId,
+  stretchLightPlatform
+}: LightPlatformSectionProps) => {
 
   const selectLightPlatformPrice = (event: ChangeEvent<HTMLSelectElement | HTMLInputElement>, rowKey: string, roomId: string): void => {
     const selectedId = event.target.value;
-    const lightPlatform = stretchLightPlatform.find((e: any) => e._id === selectedId);
+    const lightPlatform = stretchLightPlatform.find((e: Data) => e._id === selectedId);
 
     if (lightPlatform) {
       setValue(`lightPlatformPrice_${rowKey}/${roomId}`, lightPlatform.price)
+      setValue(`lightPlatformQuantity_${rowKey}/${roomId}`, "")
+      lightPlatformSum(rowKey, lightPlatform.price, 0)
     } else {
       setValue(`lightPlatformPrice_${rowKey}/${roomId}`, 0)
+    }
+  };
+
+  const lightPlatformSum = (rowId: string, price: number, quantity: number): void => {
+    const totalPrice = price * quantity;
+    if (totalPrice) {
+      setValue(`lightPlatformSum_${rowId}/${roomId}`, totalPrice);
+    } else {
+      setValue(`lightPlatformSum_${rowId}/${roomId}`, 0);
     }
   };
 
@@ -25,12 +56,13 @@ const LightPlatformSection: React.FC<any> = ({ register, lightPlatformRowId, rem
                   <th>Լույսի Պլատֆորմ</th>
                   <th>Գին</th>
                   <th>Քանակ</th>
+                  <th>Գումար</th>
                   <th>Հեռացնել</th>
                 </tr>
               </thead>
               <tbody >
                 {
-                  lightPlatformRowId.map((rowKey: any, index: any) => {
+                  lightPlatformRowId.map((rowKey: string, index: number) => {
                     return (
                       <tr key={index}>
                         <td style={{ minWidth: "250px", }}>
@@ -52,16 +84,27 @@ const LightPlatformSection: React.FC<any> = ({ register, lightPlatformRowId, rem
                         </td>
                         <td>
                           <input
-                            type="number"
+                            id={`lightPlatformPrice_${rowKey}/${roomId}`}
                             placeholder="Price"
                             {...register(`lightPlatformPrice_${rowKey}/${roomId}`)}
+                            onChange={(e: { target: { value: string } }) =>
+                              lightPlatformSum(rowKey, parseFloat(e.target.value), parseFloat(getValues(`lightPlatformQuantity_${rowKey}/${roomId}`)))}
                           />
                         </td>
                         <td>
                           <input
-                            type="number"
+                            id={`lightPlatformQuantity_${rowKey}/${roomId}`}
                             placeholder="Quantity"
-                            {...register(`lightPlatformQuantity_${rowKey}/${roomId}`)} />
+                            {...register(`lightPlatformQuantity_${rowKey}/${roomId}`)}
+                            onChange={(e: { target: { value: string } }) =>
+                              lightPlatformSum(rowKey, parseFloat(getValues(`lightPlatformPrice_${rowKey}/${roomId}`)), parseFloat(e.target.value))}
+                          />
+                        </td>
+                        <td>
+                          <input
+                            id={`lightPlatformSum_${rowKey}/${roomId}`}
+                            placeholder="Sum"
+                            {...register(`lightPlatformSum_${rowKey}/${roomId}`)} />
                         </td>
                         <td>
                           <button

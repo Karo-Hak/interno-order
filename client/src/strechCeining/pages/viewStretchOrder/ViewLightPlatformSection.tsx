@@ -14,6 +14,7 @@ const ViewLightPlatformSection: React.FC<any> = ({ room }: any) => {
               <th >Լ. Պլատֆորմ</th>
               <th >Գին</th>
               <th >Հատ</th>
+              <th >Գումար</th>
             </tr>
           </thead>
           <tbody>
@@ -23,6 +24,7 @@ const ViewLightPlatformSection: React.FC<any> = ({ room }: any) => {
                   <td>{room.groupedLightPlatforms[key].name}</td>
                   <td>{room.groupedLightPlatforms[key].price}</td>
                   <td>{room.groupedLightPlatforms[key].quantity}</td>
+                  <td>{room.groupedLightPlatforms[key].sum}</td>
                 </tr>
               }
               return null;

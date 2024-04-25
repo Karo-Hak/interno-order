@@ -83,6 +83,9 @@ export const ViewStretchOrdersList: React.FC = (): JSX.Element => {
 
 
     function viewOrder(id: any) {
+        navigate('/stretchceiling/viewStretchOrder/' + id);
+    }
+    function viewOrderNewWindow(id: any) {
         window.open('/stretchceiling/viewStretchOrder/' + id, '_blank');
     }
 
@@ -107,7 +110,7 @@ export const ViewStretchOrdersList: React.FC = (): JSX.Element => {
                     <div className="divLabel">
                         <label htmlFor="endDate">Գնորդ</label>
                         <div>
-                            <input id="stretchBuyer" type="text" value={searchBuyer} onChange={(e) => setSearchBuyer(e.target.value) } ></input>
+                            <input id="stretchBuyer" type="text" value={searchBuyer} onChange={(e) => setSearchBuyer(e.target.value)} ></input>
                             <button type="button" onClick={() => { setSearchBuyer(""); clearSearch(); }}>x</button>
                             <button type="button" onClick={filterBuyer}>Որոնել</button>
                         </div>
@@ -211,10 +214,7 @@ export const ViewStretchOrdersList: React.FC = (): JSX.Element => {
                                                             </p>
                                                         </td>
                                                         <td>
-                                                            <p
-                                                                style={{
-                                                                    minWidth: "300px"
-                                                                }}>
+                                                            <p>
                                                                 {e.buyer.buyerAddress}
                                                             </p>
                                                         </td>
@@ -269,6 +269,7 @@ export const ViewStretchOrdersList: React.FC = (): JSX.Element => {
                                                         <td >
                                                             <button
                                                                 onClick={() => viewOrder(e._id)}
+                                                                onContextMenu={() => viewOrderNewWindow(e._id)}
                                                             >
                                                                 Ավելին
                                                             </button>

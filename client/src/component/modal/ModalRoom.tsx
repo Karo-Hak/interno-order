@@ -5,7 +5,7 @@ import './modal.css';
 interface InputModalProps {
   isOpen: boolean;
   onClose: () => void;
-  setRoom: React.Dispatch<React.SetStateAction<{ id: string; name: string; isChecked: boolean }[]>>;
+  setRoom: React.Dispatch<React.SetStateAction<{ id: string; name: string; isChecked: boolean; sum: number }[]>>;
   room: { id: string; name: string; isChecked: boolean }[];
 }
 
@@ -34,7 +34,8 @@ const ModalRoom: React.FC<InputModalProps> = ({ isOpen, onClose, setRoom, room }
       const newRoom = {
         id: uuidv4(),
         name: inputValue,
-        isChecked: false
+        isChecked: false,
+        sum: 0
       };
 
       setRoom((prevRoom) => [...prevRoom, newRoom]);

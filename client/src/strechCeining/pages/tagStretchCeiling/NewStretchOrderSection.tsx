@@ -129,10 +129,7 @@ const NewStretchOrderSection: React.FC<any> = () => {
                                                             </p>
                                                         </td>
                                                         <td>
-                                                            <p
-                                                                style={{
-                                                                    minWidth: "300px"
-                                                                }}>
+                                                            <p>
                                                                 {e.buyer.buyerAddress}
                                                             </p>
                                                         </td>
@@ -187,21 +184,22 @@ const NewStretchOrderSection: React.FC<any> = () => {
                                                         <td >
                                                             <button
                                                                 onClick={() => viewOrder(e._id)}
+                                                               
                                                             >
-                                                                Ավելին
-                                                            </button>
-                                                        </td>
+                                                            Ավելին
+                                                        </button>
+                                                    </td>
                                                     </tr>
-                                                )
+                                    )
                                             })
                                         }
-                                    </tbody>
-                                </table>
-                            </div>
+                                </tbody>
+                            </table>
                         </div>
+                    </div>
                     </div> : null
-            }
-        </div>
+}
+        </div >
     );
 };
 

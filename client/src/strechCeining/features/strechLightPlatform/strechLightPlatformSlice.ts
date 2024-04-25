@@ -2,20 +2,20 @@ import { createSlice } from "@reduxjs/toolkit";
 import { addStretchLightPlatform, getAllStretchLightPlatform } from "./strechLightPlatformApi";
 
 
-export interface StretchLightPlatform {
+export interface StretchLightPlatformProps {
     _id: string;
     name: string;
     price: number;
-    unyt: string;
+    coopPrice: number;
 }
 
 export interface StretchLightPlatformState {
-    arrStretchLightPlatform: Array<StretchLightPlatform>;
-    stretchLightPlatform: StretchLightPlatform
+    arrStretchLightPlatform: Array<StretchLightPlatformProps>;
+    stretchLightPlatform: StretchLightPlatformProps
 }
 export const initialState: StretchLightPlatformState = {
     arrStretchLightPlatform: [],
-    stretchLightPlatform: {} as StretchLightPlatform,
+    stretchLightPlatform: {} as StretchLightPlatformProps,
 
 }
 export const stretchLightPlatformSlice = createSlice({

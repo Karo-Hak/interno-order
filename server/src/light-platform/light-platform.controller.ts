@@ -11,7 +11,11 @@ export class LightPlatformController {
   @Post() /// Price add
   async create(@Body() createLightPlatformDto: CreateLightPlatformDto, @Res() res: Response) {
     try {
-      return await this.lightPlatformService.createPrice(createLightPlatformDto);
+      const lightPlatform = await this.lightPlatformService.createPrice(createLightPlatformDto);
+      return res.status(HttpStatus.OK).json({
+        messege: "ok",
+        lightPlatform
+      })
     } catch (e) {
       return res.status(HttpStatus.BAD_REQUEST).json({
         error: e.message
@@ -39,10 +43,10 @@ export class LightPlatformController {
     return this.lightPlatformService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLightPlatformDto: UpdateLightPlatformDto) {
-    return this.lightPlatformService.update(+id, updateLightPlatformDto);
-  }
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateLightPlatformDto: UpdateLightPlatformDto) {
+  //   return this.lightPlatformService.update(id, updateLightPlatformDto);
+  // }
 
   @Delete(':id')
   remove(@Param('id') id: string) {

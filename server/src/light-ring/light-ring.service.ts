@@ -1,12 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateLightRingDto } from './dto/create-light-ring.dto';
+import { Injectable } from '@nestjs/common';
 import { UpdateLightRingDto } from './dto/update-light-ring.dto';
 import { Model } from 'mongoose';
 import { LightRing } from './schema/light-ring.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { ObjectId } from 'mongodb';
 import { Product } from 'src/product/schema/product.schema';
-const { MongoClient } = require('mongodb');
 
 
 @Injectable()
@@ -19,16 +17,16 @@ export class LightRingService {
   async createPrice(lightRing) {
     const productId = lightRing.id
     const newPrice = lightRing.price
+    const newCoopPrice = lightRing.coopPrice
     const result = await this.productModel.updateOne(
       { _id: new ObjectId(productId) },
-      { $set: { price: newPrice } }
+      { $set: { price: newPrice, coopPrice: newCoopPrice } }
     );
     return result;
   }
 
   async findAll() {
     const stockData = await this.productModel.find();
-    
     const lightRingDb = stockData.filter(e => {
       const categoryProductString = e.categoryProduct?.toString();
       return (
@@ -36,10 +34,9 @@ export class LightRingService {
         categoryProductString === "65a639f04452458093923955"
       );
     });
-  
     return lightRingDb;
   }
-  
+
 
   findOne(id: number) {
     return `This action returns a #${id} lightRing`;

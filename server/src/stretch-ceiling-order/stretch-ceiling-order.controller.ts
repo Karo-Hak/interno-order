@@ -4,6 +4,7 @@ import { UpdateStretchCeilingOrderDto } from './dto/update-stretch-ceiling-order
 import { Response } from 'express';
 import { StretchBuyerService } from 'src/stretch-buyer/stretch-buyer.service';
 import { StretchWorkerService } from 'src/stretch-worker/stretch-worker.service';
+import { DebetKreditService } from 'src/debet-kredit/debet-kredit.service';
 
 
 const removeEmptyValues = (obj: any) => {
@@ -34,6 +35,7 @@ export class StretchCeilingOrderController {
     private readonly stretchCeilingOrderService: StretchCeilingOrderService,
     private readonly stretchBuyerService: StretchBuyerService,
     private readonly stretchWorkerService: StretchWorkerService,
+    private readonly debetKreditService: DebetKreditService,
   ) { }
 
   @Post()
@@ -158,11 +160,11 @@ export class StretchCeilingOrderController {
       }
       await this.stretchBuyerService.deleteFromArray(updatingOrder.buyer._id, updatingOrder.id)
       let orderWorker = undefined
-      
-      if (updateStretchCeilingOrderDto.stretchTextureOrder.stWorker) {
-        orderWorker = await this.stretchWorkerService.findOne(updateStretchCeilingOrderDto.stretchTextureOrder.stWorker);
+
+      if (updateStretchCeilingOrderDto.stretchTextureOrder.stWorkerId) {
+        orderWorker = await this.stretchWorkerService.findOne(updateStretchCeilingOrderDto.stretchTextureOrder.stWorkerId);
       }
-      await this.stretchWorkerService.deleteFromArray(updatingOrder.stWorker, updatingOrder.id)
+      await this.stretchWorkerService.deleteFromArray(updatingOrder.stWorkerId, updatingOrder.id)
 
       if (updateStretchCeilingOrderDto.stretchTextureOrder.rooms) {
         removeEmptyValues(updateStretchCeilingOrderDto.stretchTextureOrder.rooms)
@@ -173,7 +175,7 @@ export class StretchCeilingOrderController {
         removeEmptyObjects(updateStretchCeilingOrderDto.stretchTextureOrder.groupedWorks)
       }
 
-      const updatedSretchOrder = await this.stretchCeilingOrderService.update(id, updateStretchCeilingOrderDto.stretchTextureOrder, orderBuyer, orderWorker)
+      const updatedSretchOrder = await this.stretchCeilingOrderService.update(id, updateStretchCeilingOrderDto.stretchTextureOrder, orderBuyer, orderWorker, updatingOrder)
       return res.status(HttpStatus.OK).json(updatedSretchOrder);
     } catch (e) {
       return res.status(HttpStatus.OK).json({
@@ -210,10 +212,21 @@ export class StretchCeilingOrderController {
       });
     }
   }
-  
+
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.stretchCeilingOrderService.remove(+id);
+  async remove(@Param('id') id: string, @Res() res: Response) {
+    try {
+      const deletedOrder = await this.stretchCeilingOrderService.remove(id);
+      return res.status(HttpStatus.OK).json({
+        message: "ok",
+      });
+
+    } catch (e) {
+      console.error('An error occurred:', e);
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        message: e.message,
+      });
+    }
   }
 }

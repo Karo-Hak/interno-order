@@ -1,18 +1,12 @@
 import { useCookies } from "react-cookie"
 import { useAppDispatch, useAppSelector } from "../../app/hooks"
-import { selectBuyer } from "../../features/buyer/buyerSlice"
-import { selectCooperate } from "../../features/cooperate/cooperateSlice"
 import { selectOrder } from "../../features/order/orderSlice"
-import { selectTexture } from "../../features/texture/textureSlice"
 import { selectUser } from "../../features/user/userSlice"
 import { useNavigate } from "react-router-dom"
 import { ChangeEvent, useEffect, useState } from "react"
 import "./searchOrder.css"
 import { searchOrder } from "../../features/order/orderApi"
 import { allUser, userProfile } from "../../features/user/userApi"
-import { allBuyer } from "../../features/buyer/buyerApi"
-import { getAllCooperate } from "../../features/cooperate/cooperateApi"
-import { getAllTexture } from "../../features/texture/textureApi"
 import { searchFilter } from "../../logic/searchLogic"
 import { WallpaperMenu } from "../../component/menu/WallpaperMenu"
 
@@ -22,9 +16,6 @@ import { WallpaperMenu } from "../../component/menu/WallpaperMenu"
 export const SearchOrder: React.FC = (): JSX.Element => {
     const searchOrderRes = useAppSelector(selectOrder);
     const user = useAppSelector(selectUser);
-    const buyer = useAppSelector(selectBuyer);
-    const cooperate = useAppSelector(selectCooperate);
-    const texture = useAppSelector(selectTexture);
     const dispatch = useAppDispatch();
     const [cookies, setCookie] = useCookies(['access_token']);
     const navigate = useNavigate()
@@ -38,6 +29,11 @@ export const SearchOrder: React.FC = (): JSX.Element => {
     const [selectedTexture, setSelectedTexture] = useState("");
     const [selectPaymentMethod, setSelectPaymentMethod] = useState("")
     const [selectGroundTotal, setSelectGroundTotal] = useState("")
+
+
+    const [paymentMetod, setPaymentMetod] = useState<Array<string>>([""]);
+
+
 
     function selUser(event: ChangeEvent<HTMLSelectElement>): void {
         setSelectedUser(event.target.value);
@@ -62,24 +58,6 @@ export const SearchOrder: React.FC = (): JSX.Element => {
 
     useEffect(() => {
         dispatch(allUser(cookies)).unwrap().then(res => {
-            if ("error" in res) {
-                setCookie("access_token", '', { path: '/' })
-                navigate("/")
-            }
-        })
-        dispatch(allBuyer(cookies)).unwrap().then(res => {
-            if ("error" in res) {
-                setCookie("access_token", '', { path: '/' })
-                navigate("/")
-            }
-        })
-        dispatch(getAllCooperate(cookies)).unwrap().then(res => {
-            if ("error" in res) {
-                setCookie("access_token", '', { path: '/' })
-                navigate("/")
-            }
-        })
-        dispatch(getAllTexture(cookies)).unwrap().then(res => {
             if ("error" in res) {
                 setCookie("access_token", '', { path: '/' })
                 navigate("/")
@@ -119,15 +97,23 @@ export const SearchOrder: React.FC = (): JSX.Element => {
         selectGroundTotal
     ]);
 
+    useEffect(() => {
+        let initialState: string[] = [];
+        if (searchOrderRes.arr.length > 0) {
+            searchOrderRes.arr.forEach((order: { paymentMethod?: string }) => {
+                if (order.paymentMethod) {
+                    initialState.push(order.paymentMethod);
+                }
+            });
+        }
+        const uniqueArray = Array.from(new Set(initialState));
+        setPaymentMetod(uniqueArray);
+    }, [searchOrderRes]);
+
+
+
 
     const searchReset = () => {
-        // setSelectPaymentMethod("0");
-        // setSelectedBuyer("0");
-        // setSelectedUser("0");
-        // setSelectedCooperate("0");
-        // setSelectedTexture("0");
-        // setStartDate(new Date(2000, 0, 1).toISOString());
-        // setEndDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 2).toISOString().split('T')[0])
         window.location.reload()
     }
 
@@ -171,6 +157,13 @@ export const SearchOrder: React.FC = (): JSX.Element => {
     const filteredCoop = searchOrderRes.arr.filter((obj: any, index: any, self: any) =>
         index === self.findIndex((t: any) => (t.cooperate._id === obj.cooperate._id))
     );
+    const filteredTexture = searchOrderRes.arr.filter((obj: any, index: any, self: any) =>
+        index === self.findIndex((t: any) => (t.texture._id === obj.texture._id))
+    );
+
+
+
+
 
 
     return (
@@ -287,12 +280,14 @@ export const SearchOrder: React.FC = (): JSX.Element => {
                             <th scope="col">
                                 <select id="paymentMethod" className="admin_tbl_select4" onChange={selPaymentMethod}>
                                     <option value={0}>Վճ. եղանակ</option>
-                                    <option className="selectCoop" value={"cash"} >Կանխիկ</option>
-                                    <option className="selectCoop" value={"transfer"}>Փոխանցում</option>
-                                    <option className="selectCoop" value={"pos"}>Պոս Տերմինալ</option>
-                                    <option className="selectCoop" value={"credit"}>Ապառիկ</option>
-                                    <option className="selectCoop" value={"inecoPay"}>Ինեկո Փեյ</option>
-                                    <option className="selectCoop" value={"idram"}>Իդրամ</option>
+                                    {
+                                        paymentMetod && paymentMetod.length > 0 ?
+                                            paymentMetod.map((el: string) => {
+                                                return <option key={el} className="selectCoop" value={el} >{el}</option>
+
+                                            }) : null
+                                    }
+
                                 </select>
                             </th>
                             <th>
@@ -300,10 +295,10 @@ export const SearchOrder: React.FC = (): JSX.Element => {
                                     <option value={0}>Տեսակ</option>
 
                                     {
-                                        texture?.arrTexture && texture.arrTexture.length > 0 ?
-                                            texture.arrTexture.map((e: any) => {
+                                        filteredTexture && filteredTexture.length > 0 ?
+                                            filteredTexture.map((e: any) => {
                                                 return (
-                                                    <option key={e._id} value={e._id}>{e.name}</option>
+                                                    <option key={e.texture._id} value={e.texture._id}>{e.texture.name}</option>
                                                 )
                                             })
                                             :

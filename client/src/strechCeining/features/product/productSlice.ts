@@ -4,6 +4,8 @@ import { addProduct, getAllProduct } from "./productApi";
 export interface Product {
     _id: number;
     name: string;
+    price: number;
+    coopPrice: number;
     quantity: number;
 }
 

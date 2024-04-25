@@ -11,17 +11,11 @@ export class StretchTexture {
     @Prop()
     weight: number;
     @Prop()
-    @Prop()
     price: number;
-    priceGarpun: number;
-    @Prop()
-    priceOtrez: number;
     @Prop()
     priceCoopGarpun: number;
     @Prop()
     priceCoopOtrez: number;
-    @Prop()
-    unyt: string;
     @Prop({
         type: [
             { type: mongoose.Schema.Types.ObjectId, ref: "CoopCeilingOrder" }

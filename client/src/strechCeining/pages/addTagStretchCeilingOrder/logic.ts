@@ -32,10 +32,12 @@ export const filterOrder = (
     for (const roomItem of room) {
         const roomId: string = roomItem.id;
         const roomName: string = roomItem.name;
+        const roomSum:number = roomItem.sum
 
         rooms[roomName + "_" + roomId] = {
             id: roomId,
             name: roomName,
+            sum: roomSum,
             groupedStretchCeilings: {},
             groupedProfils: {},
             groupedLightPlatforms: {},
@@ -73,7 +75,7 @@ export const filterOrder = (
             stretchWorkData.forEach((element: any) => {
                 if (valueWork === element._id) {
                     work["WorkName_" + elWork.split('_')[1]] = element.name
-                    work["WorkType_" + elWork.split('_')[1]] = "work"
+                    work["WorkType_" + elWork.split('_')[1]] = "Աշխատանք"
                 }
             });
         }
@@ -111,7 +113,7 @@ export const filterOrder = (
                 stretchTextureData.forEach((element: any) => {
                     if (valueStretch === element._id) {
                         stretchCeiling["stretchName_" + elStretch.split('_')[1]] = element.name
-                        stretchCeiling["stretchType_" + elStretch.split('_')[1]] = "stretch"
+                        stretchCeiling["stretchType_" + elStretch.split('_')[1]] = "Ձգ․ Առաստաղ"
                     }
                 });
 
@@ -135,7 +137,7 @@ export const filterOrder = (
                 stretchAdditionalData.forEach((element: any) => {
                     if (valueAdditional === element._id) {
                         additional["additionalName_" + elAdditional.split('_')[1]] = element.name
-                        additional["additionalType_" + elAdditional.split('_')[1]] = "additional"
+                        additional["additionalType_" + elAdditional.split('_')[1]] = "Այլ Ապրանք"
                     }
                 });
             }
@@ -159,7 +161,7 @@ export const filterOrder = (
                 stretchProfilData.forEach((element: any) => {
                     if (valueProfil === element._id) {
                         profil["profilName_" + elProfil.split('_')[1]] = element.name
-                        profil["profilType_" + elProfil.split('_')[1]] = "profil"
+                        profil["profilType_" + elProfil.split('_')[1]] = "Պրոֆիլ"
                     }
                 });
             }
@@ -182,7 +184,7 @@ export const filterOrder = (
                 stretchLightPlatformData.forEach((element: any) => {
                     if (valueLightPlatform === element._id) {
                         lightPlatform["lightPlatformName_" + elLightPlatform.split('_')[1]] = element.name
-                        lightPlatform["lightPlatformType_" + elLightPlatform.split('_')[1]] = "lightPlatform"
+                        lightPlatform["lightPlatformType_" + elLightPlatform.split('_')[1]] = "Լույսի պլատֆորմ"
                     }
                 });
             }
@@ -206,7 +208,7 @@ export const filterOrder = (
                 stretchLightRingData.forEach((element: any) => {
                     if (valueLightRing === element._id) {
                         lightRing["lightRingName_" + elLightRing.split('_')[1]] = element.name
-                        lightRing["lightRingType_" + elLightRing.split('_')[1]] = "lightRing"
+                        lightRing["lightRingType_" + elLightRing.split('_')[1]] = "Լույսի օղակ"
                     }
                 });
             }
@@ -230,7 +232,7 @@ export const filterOrder = (
                 stretchBardutyunData.forEach((element: any) => {
                     if (valueBardutyun === element._id) {
                         bardutyun["bardutyunName_" + elBardutyun.split('_')[1]] = element.name
-                        bardutyun["bardutyunType_" + elBardutyun.split('_')[1]] = "bardutyun"
+                        bardutyun["bardutyunType_" + elBardutyun.split('_')[1]] = "Բարդություն"
                     }
                 });
             }

@@ -4,15 +4,31 @@ import { useCookies } from 'react-cookie';
 import './tagStretchOrder.css'
 import { allStretchWork } from '../../features/StrechWork/strechWorkApi';
 import { useNavigate } from 'react-router-dom';
+import { UseFormRegister, UseFormSetValue, UseFormGetValues } from 'react-hook-form';
+import { Data } from './TagStretchOrder';
 
-const WorkSection: React.FC<any> = ({ register, setValue, workRowId, removeWorkRow }: any) => {
+interface WorkSectionProps {
+  register: UseFormRegister<any>;
+  setValue: UseFormSetValue<any>;
+  getValues: UseFormGetValues<any>;
+  workRowId: Array<string>;
+  removeWorkRow: (rowId: string) => void;
+}
+
+const WorkSection: React.FC<WorkSectionProps> = ({
+  register,
+  setValue,
+  getValues,
+  workRowId,
+  removeWorkRow,
+}: WorkSectionProps) => {
 
   const dispatch = useAppDispatch();
   const [cookies, setCookie] = useCookies(['access_token']);
   const navigate = useNavigate();
 
 
-  const [stretchWork, setStretchWork] = useState<any>()
+  const [stretchWork, setStretchWork] = useState<Array<Data>>([]);
 
 
   useEffect(() => {
@@ -48,12 +64,22 @@ const WorkSection: React.FC<any> = ({ register, setValue, workRowId, removeWorkR
 
   const selectWorkPrice = (event: ChangeEvent<HTMLSelectElement | HTMLInputElement>, rowKey: string): void => {
     const selectedId = event.target.value;
-    const work = stretchWork.find((e: any) => e._id === selectedId);
-
+    const work = stretchWork.find((e: Data) => e._id === selectedId);
     if (work) {
       setValue(`workPrice_${rowKey}`, work.price)
+      setValue(`workQuantity_${rowKey}`, "")
+      workSum(rowKey, 0, work.price)
     } else {
-      setValue(`workPrice_${rowKey}`, 0)
+      setValue(`workPrice_${rowKey}`, "")
+    }
+  };
+
+  const workSum = (rowKey: string, quantity: number, price: number): void => {
+    const totalPrice = price * quantity;
+    if (totalPrice) {
+      setValue(`workSum_${rowKey}`, totalPrice);
+    } else {
+      setValue(`workSum_${rowKey}`, 0);
     }
   };
 
@@ -67,12 +93,13 @@ const WorkSection: React.FC<any> = ({ register, setValue, workRowId, removeWorkR
                 <th>Աշխատանք</th>
                 <th>Գին</th>
                 <th>Քանակ</th>
+                <th>Գումար</th>
                 <th>Հեռացնել</th>
               </tr>
             </thead>
             <tbody >
               {
-                workRowId.map((rowKey: any, index: any) => {
+                workRowId.map((rowKey: string, index: number) => {
                   return (
                     <tr key={index}>
                       <td style={{ minWidth: "250px", }}>
@@ -81,28 +108,40 @@ const WorkSection: React.FC<any> = ({ register, setValue, workRowId, removeWorkR
                           onChange={(e) => selectWorkPrice(e, rowKey)}
                         >
                           <option>Ընտրել Տեսակը</option>
-                          {stretchWork.length > 0 ?
-                            stretchWork.map((e: any) => (
+                          {stretchWork ? (stretchWork.length > 0 ? (
+                            stretchWork.map((e: Data) => (
                               <option key={e._id} value={e._id} >
                                 {e.name}
                               </option>
                             ))
-                            : null}
+                          ) : null
+                          ) : (
+                            <p>Loading...</p>)}
                         </select>
 
                       </td>
                       <td>
                         <input
-                          type="number"
+                          id={`workPrice_${rowKey}`}
                           placeholder="Price"
                           {...register(`workPrice_${rowKey}`)}
+                          onChange={(e) => workSum(rowKey, parseFloat(getValues(`workQuantity_${rowKey}`)), parseFloat(e.target.value))}
+
                         />
                       </td>
                       <td>
                         <input
-                          type="number"
+                          id={`workQuantity_${rowKey}`}
                           placeholder="Quantity"
                           {...register(`workQuantity_${rowKey}`)}
+                          onChange={(e) => workSum(rowKey, parseFloat(e.target.value), parseFloat(getValues(`workPrice_${rowKey}`)))}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          id={`workSum_${rowKey}`}
+                          placeholder="Sum"
+                          {...register(`workSum_${rowKey}`)}
                         />
                       </td>
                       <td>

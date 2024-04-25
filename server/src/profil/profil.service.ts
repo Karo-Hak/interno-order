@@ -19,9 +19,10 @@ export class ProfilService {
   async create(profil) {
     const profilId = profil.id
     const newPrice = profil.price
+    const newCoopPrice = profil.coopPrice
     const result = await this.productModel.updateOne(
       { _id: new ObjectId(profilId) },
-      { $set: { price: newPrice } }
+      { $set: { price: newPrice, coopPrice: newCoopPrice } }
     );
     return result;
   }

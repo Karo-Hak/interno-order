@@ -1,46 +1,71 @@
-import { selectUser } from "../../../features/user/userSlice";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { useEffect } from 'react'
+import { User } from "../../../features/user/userSlice";
+import { useAppDispatch } from "../../../app/hooks";
+import { ChangeEvent, useEffect, useState } from 'react'
 import { useNavigate } from "react-router-dom";
 import { useCookies } from 'react-cookie'
 import { userProfile } from "../../../features/user/userApi";
 import './stretchLightPlatform.css'
-import { selectStretchLightPlatform } from "../../features/strechLightPlatform/strechLightPlatformSlice";
-import { getAllUnyt } from "../../unyt/unytApi";
-import { selectUnyt } from "../../unyt/unytSlice";
+import { StretchLightPlatformProps } from "../../features/strechLightPlatform/strechLightPlatformSlice";
 import { useForm } from "react-hook-form";
 import { addStretchLightPlatform, getAllStretchLightPlatform } from "../../features/strechLightPlatform/strechLightPlatformApi";
 import { StretchMenu } from "../../../component/menu/StretchMenu";
 
 export const StretchLightPlatform: React.FC = (): JSX.Element => {
-    const { register, handleSubmit, reset, formState: { errors } } = useForm<any>()
-    const user = useAppSelector(selectUser);
-    const stretchLightPlatform = useAppSelector(selectStretchLightPlatform)
-    const unyt = useAppSelector(selectUnyt)
+    const { register, handleSubmit, setValue, formState: { errors } } = useForm<any>()
+    const [user, setUser] = useState<User>()
+    const [stretchLightPlatform, setStretchLightPlatform] = useState<StretchLightPlatformProps[]>([])
     const dispatch = useAppDispatch();
     const [cookies, setCookie] = useCookies(['access_token']);
     const navigate = useNavigate();
 
-
     useEffect(() => {
-        dispatch(userProfile(cookies)).unwrap().then(res => {
-            if ("error" in res) {
-                // setCookie("access_token", '', { path: '/' })
-                // navigate("/")
-                alert(res)
+        const fetchData = async () => {
+            try {
+                const userProfileResult = await dispatch(userProfile(cookies)).unwrap();
+                const stretchProfilResult = await dispatch(getAllStretchLightPlatform(cookies)).unwrap();
+                handleResult(userProfileResult);
+                handleResult(stretchProfilResult);
+            } catch (error) {
+                console.error('An error occurred:', error);
             }
-        })
-        dispatch(getAllStretchLightPlatform(cookies)).unwrap().then(res => {
-            if ("error" in res) {
-                // setCookie("access_token", '', { path: '/' })
-                // navigate("/")
-                alert(res)
+        };
+
+        const handleResult = (result: any) => {
+            if ('error' in result) {
+                console.error(result.error);
+                setCookie('access_token', '', { path: '/' });
+                navigate('/');
+            } else {
+                processResult(result);
             }
-        })
+        };
 
-    }, [])
+        const processResult = (result: any) => {
+            if (result.user) {
+                setUser(result.user);
+            }
+            if (result.lightPlatform) {
+                setStretchLightPlatform(result.lightPlatform);
+            }
+        };
 
-    const newLightPlatform = (stretchLightPlatform: any) => {
+        fetchData();
+    }, []);
+
+
+    const selectLightPlatformPrice = (event: ChangeEvent<HTMLSelectElement>): void => {
+        const selectedId = event.target.value;
+        const lightPlatform = stretchLightPlatform.find((e: StretchLightPlatformProps) => e._id === selectedId);
+        if (lightPlatform) {
+            setValue(`price`, lightPlatform.price);
+            setValue(`coopPrice`, lightPlatform.coopPrice);
+        } else {
+            setValue(`price`, 0);
+            setValue(`coopPrice`, 0);
+        }
+    };
+
+    const newLightPlatform = (stretchLightPlatform: StretchLightPlatformProps) => {
         dispatch(addStretchLightPlatform({ stretchLightPlatform, cookies })).unwrap().then(res => {
             if ("error" in res) {
                 alert(res.error)
@@ -61,11 +86,14 @@ export const StretchLightPlatform: React.FC = (): JSX.Element => {
                     }}>
                         <div className="divLabel">
                             <label htmlFor="name">Անվանում</label>
-                            <select className="select" id="id"  {...register("id", { required: true })}>
+                            <select className="select" id="id"
+                                {...register("id", { required: true })}
+                                onChange={(e) => selectLightPlatformPrice(e)}
+                            >
                                 <option></option>
                                 {
-                                    stretchLightPlatform.arrStretchLightPlatform && stretchLightPlatform.arrStretchLightPlatform.length > 0 ?
-                                        stretchLightPlatform.arrStretchLightPlatform.map((e: any, i: any) => {
+                                    stretchLightPlatform && stretchLightPlatform.length > 0 ?
+                                        stretchLightPlatform.map((e: StretchLightPlatformProps) => {
                                             return (
                                                 <option key={e._id} value={e._id}>{e.name}</option>
                                             )
@@ -79,11 +107,15 @@ export const StretchLightPlatform: React.FC = (): JSX.Element => {
                             <label htmlFor="price">Գին</label>
                             <input id="price" type="number" placeholder="Price"  {...register("price", { required: true })} />
                         </div>
+                        <div className="divLabel">
+                            <label htmlFor="coopPrice">Համ․ Գին</label>
+                            <input id="copPrice" type="number" placeholder="Coop Price"  {...register("coopPrice", { required: true })} />
+                        </div>
                         <button>Գրանցել</button>
                     </div>
                 </form>
                 {
-                    stretchLightPlatform.arrStretchLightPlatform && stretchLightPlatform.arrStretchLightPlatform.length > 0 ?
+                    stretchLightPlatform && stretchLightPlatform.length > 0 ?
                         <div style={{
                             margin: "20px",
                             width: "500px"
@@ -93,15 +125,17 @@ export const StretchLightPlatform: React.FC = (): JSX.Element => {
                                     <tr>
                                         <th scope="col">Անվանում</th>
                                         <th scope="col">Գին</th>
+                                        <th scope="col">Համ․ Գին</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {
-                                        stretchLightPlatform.arrStretchLightPlatform.map((e: any) => {
+                                        stretchLightPlatform.map((e: StretchLightPlatformProps) => {
                                             return (
                                                 <tr key={e._id}>
                                                     <td>{e.name}</td>
                                                     <td>{e.price}</td>
+                                                    <td>{e.coopPrice}</td>
                                                 </tr>
                                             )
                                         })

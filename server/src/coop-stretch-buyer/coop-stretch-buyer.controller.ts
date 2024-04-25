@@ -11,10 +11,10 @@ export class CoopStretchBuyerController {
   @Post()
   async create(@Body() createCoopStretchBuyerDto: CreateCoopStretchBuyerDto, @Res() res: Response) {
     try {
-      const existingCoopStretchBuyer = await this.coopStretchBuyerService.findByPhone(createCoopStretchBuyerDto.phone)
+      const existingCoopStretchBuyer = await this.coopStretchBuyerService.findByPhone(createCoopStretchBuyerDto.phone1)
       if (existingCoopStretchBuyer) {
         return res.status(HttpStatus.BAD_REQUEST).json({
-          error: "Բնորդը գոյություն ունի"
+          error: "Գնորդը գոյություն ունի"
         })
       }
       const coopStretchBuyer = await this.coopStretchBuyerService.create(createCoopStretchBuyerDto);

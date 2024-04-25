@@ -1,3 +1,3 @@
 export class CreateCoopStretchBuyerDto {
-    phone: number
+    phone1: number
 }
