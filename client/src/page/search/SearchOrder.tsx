@@ -346,7 +346,7 @@ export const SearchOrder: React.FC = (): JSX.Element => {
                                                 null
 
                                         }
-                                        <td><button className="btn btn1" onClick={() => viewOrder(e._id)}>Դիտել</button></td>
+                                        <td><button className="btn btn1" onClick={() => viewOrder(e._id)}>{e.comment.substring(0, 10)}</button></td>
                                     </tr>
                                 )
                             })

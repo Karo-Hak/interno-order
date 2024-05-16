@@ -46,7 +46,7 @@ export class CoopStretchBuyerController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.coopStretchBuyerService.findOne(+id);
+    return this.coopStretchBuyerService.findOne(id);
   }
 
   @Patch(':id')

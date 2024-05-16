@@ -11,6 +11,7 @@ import { CoopCeilingOrderModule } from './coop-ceiling-order.module';
 import { CoopStretchBuyerModule } from 'src/coop-stretch-buyer/coop-stretch-buyer.module';
 import { CoopStretchBuyer } from 'src/coop-stretch-buyer/schema/coop-stretch-buyer.schema';
 import { CoopStretchBuyerService } from 'src/coop-stretch-buyer/coop-stretch-buyer.service';
+import { CoopDebetKreditService } from 'src/coop-debet-kredit/coop-debet-kredit.service';
 
 @Injectable()
 export class CoopCeilingOrderService {
@@ -20,13 +21,13 @@ export class CoopCeilingOrderService {
     @InjectModel('User') private userModel: Model<User>,
 
     private readonly coopStretchBuyerService: CoopStretchBuyerService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly coopDebetKreditService: CoopDebetKreditService,
   ) { }
+
   async create(createCoopCeilingOrderDto: any) {
 
-
     const { buyer, user } = createCoopCeilingOrderDto;
-
     const orderBuyerDocument = await this.coopStretchBuyerModel.findById(buyer);
     if (!orderBuyerDocument) {
       throw new Error('Order buyer not found');
@@ -36,7 +37,6 @@ export class CoopCeilingOrderService {
     if (!orderUserDocument) {
       throw new Error('Order user not found');
     }
-console.log(createCoopCeilingOrderDto.stretchTextureOrder);
 
     const createdOrder: any = await this.coopCeilingOrderModel.create({
       ...createCoopCeilingOrderDto.stretchTextureOrder,
@@ -51,6 +51,8 @@ console.log(createCoopCeilingOrderDto.stretchTextureOrder);
       orderUserDocument.save(),
       orderBuyerDocument.save(),
     ]);
+
+    const debetKredit = await this.coopDebetKreditService.create(createdOrder._id, orderUserDocument.id, orderBuyerDocument.id, createdOrder.balance, createdOrder.prepayment)
 
     return createdOrder;
   }

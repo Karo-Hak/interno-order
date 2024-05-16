@@ -37,6 +37,7 @@ import { ViewDebetKredit } from "../strechCeining/pages/debetKredit/ViewDebetKre
 import { CoopStretchOrder } from "../strechCeining/coopStretch/pages/addCoopStretchCeilingOrder/CoopStretchOrder"
 import { ViewCoopStretchOrdersList } from "../strechCeining/coopStretch/pages/viewCoopStretchOrdersList/ViewCoopStretchOrdersList"
 import { ViewCoopStretchOrder } from "../strechCeining/coopStretch/pages/viewCoopStretchOrder/ViewCoopStretchOrder"
+import { EditCoopStretchOrder } from "../strechCeining/coopStretch/pages/editCoopStretchOrder/EditCoopStretchOrder"
 
 
 
@@ -86,6 +87,7 @@ export const MyRouter: React.FC = (): JSX.Element => {
                     <Route path="/coopStretchceiling/AddCoopStretchBuyer" element={<CoopStretchBuyer />}></Route>
                     <Route path="/coopStretchceiling/viewCoopStretchOrdersList" element={<ViewCoopStretchOrdersList />}></Route>
                     <Route path="/coopStretchceiling/viewCoopStretchOrder/:id" element={<ViewCoopStretchOrder />}></Route>
+                    <Route path="/coopStretchceiling/editCoopStretchOrder/:id" element={<EditCoopStretchOrder />}></Route>
 
 
 

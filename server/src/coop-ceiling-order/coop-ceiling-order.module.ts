@@ -7,6 +7,7 @@ import { User, UserSchema } from 'src/user/schema/user.schema';
 import { UserModule } from 'src/user/user.module';
 import { CoopStretchBuyer, CoopStretchBuyerSchema } from 'src/coop-stretch-buyer/schema/coop-stretch-buyer.schema';
 import { CoopStretchBuyerModule } from 'src/coop-stretch-buyer/coop-stretch-buyer.module';
+import { CoopDebetKreditModule } from 'src/coop-debet-kredit/coop-debet-kredit.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { CoopStretchBuyerModule } from 'src/coop-stretch-buyer/coop-stretch-buye
     ]),
     CoopStretchBuyerModule,
     UserModule,
+    CoopDebetKreditModule
   ],
   controllers: [CoopCeilingOrderController],
   providers: [CoopCeilingOrderService],

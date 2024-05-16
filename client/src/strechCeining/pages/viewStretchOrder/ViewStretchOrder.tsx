@@ -17,7 +17,6 @@ import ViewBardutyunSection from "./ViewBardutyunSection";
 import ViewOtherSection from "./ViewOtherSection";
 import { StretchMenu } from "../../../component/menu/StretchMenu";
 import StretchImageUpload from "../../uploadStretchImg/uploadStretchImg";
-import ImageGallery from "./ImageGallery";
 import ModalStretchStatus from "../../../component/modal/ModalStretchStatus";
 import ConfirmationButton from "../../../component/confirmButten/ConfirmationButton";
 import AddPayment from "../../../component/confirmButten/AddPayment";
@@ -124,6 +123,7 @@ export const ViewStretchOrder: React.FC = (): JSX.Element => {
                         <ConfirmationButton payed={order.payed} />
                         <DeletOrder/>
                     </div>
+ 
                     <div className=''>
                         <div >
                             <table className='buyerSectionName'>
@@ -199,6 +199,7 @@ export const ViewStretchOrder: React.FC = (): JSX.Element => {
                         </div>
                     </div>
                     <div style={{ height: "20px", color:"white" }} className="admin_profile_Strech"> Ընդամենը -- {order.roomSum}</div>
+                
                     <div className="grid-container">
                         <ViewWorkSection works={works} />
                         {
@@ -208,10 +209,7 @@ export const ViewStretchOrder: React.FC = (): JSX.Element => {
                                 </div>
                                 : null
                         }
-                        <div >
-                            <ImageGallery thumbnailImages={images} fullSizeImages={images}/>
-                            <StretchImageUpload/>
-                        </div>
+ 
                     </div>
                     <ModalStretchStatus isOpen={isModalOpen} onClose={handleCloseModal}/>
                     <div >
@@ -235,6 +233,9 @@ export const ViewStretchOrder: React.FC = (): JSX.Element => {
                                 );
                             })
                             : null}
+                    </div>
+                    <div>
+                        <StretchImageUpload/>
                     </div>
                 </div>
                 : null

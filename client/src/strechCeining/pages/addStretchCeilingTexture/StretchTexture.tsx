@@ -80,7 +80,7 @@ export const StretchTexture: React.FC = (): JSX.Element => {
                 }
             });
         }
-        // window.location.reload()
+        window.location.reload()
     }
 
     const selectedTexture = (texture: React.ChangeEvent<HTMLSelectElement>) => {
@@ -88,7 +88,7 @@ export const StretchTexture: React.FC = (): JSX.Element => {
             const selectedTexture = stretchTexture.find((element: StretchTextureProps) => element._id === texture.target.value);
             if (selectedTexture) {
                 setValue("name", selectedTexture.name);
-                setValue("weight", selectedTexture.weight);
+                setValue("width", selectedTexture.width);
                 setValue("price", selectedTexture.price);
                 setValue("priceCoopGarpun", selectedTexture.priceCoopGarpun);
                 setValue("priceCoopOtrez", selectedTexture.priceCoopOtrez);
@@ -140,7 +140,7 @@ export const StretchTexture: React.FC = (): JSX.Element => {
                         </div>
                         <div className="divLabel">
                             <label htmlFor="weight">Լայնություն</label>
-                            <input id="weight" type="number" placeholder="Weight"  {...register("weight", { required: true })} />
+                            <input id="weight" type="number" placeholder="Weight"  {...register("width", { required: true })} />
                         </div>
 
                         <div className="divLabel">

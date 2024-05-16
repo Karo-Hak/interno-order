@@ -5,7 +5,7 @@ import { addStretchTexture, getAllStretchTexture } from "./strechTextureApi";
 export interface StretchTextureProps {
     _id: string;
     name: string;
-    weight: number;
+    width: number;
     price: number;
     priceCoopGarpun: number;
     priceCoopOtrez: number;

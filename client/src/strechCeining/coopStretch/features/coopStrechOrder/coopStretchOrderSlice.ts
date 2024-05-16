@@ -2,7 +2,7 @@ import { createSlice, } from "@reduxjs/toolkit";
 import { addNewCoopStretchOrder, findCoopStretchOrder, findNewCoopStretchOrder, searchCoopStretchOrder, viewNewCoopStretchOrder } from "./coopStretchOrderApi";
 import { CoopStretchBuyerProps } from "../coopStrechBuyer/coopStrechBuyerSlice";
 
-export interface StretchTextureProps {
+export interface CoopStretchTextureProps {
     id: string;
     name: string;
     price: number;
@@ -12,7 +12,7 @@ export interface StretchTextureProps {
     sum: number;
     type: string
 }
-export interface StretchProfilProps {
+export interface CoopStretchProfilProps {
     id: string;
     name: string;
     price: number;
@@ -20,7 +20,7 @@ export interface StretchProfilProps {
     sum: number;
     type: string
 }
-export interface LightPlatformProps {
+export interface CoopLightPlatformProps {
     id: string;
     name: string;
     price: number;
@@ -28,7 +28,7 @@ export interface LightPlatformProps {
     sum: number;
     type: string
 }
-export interface LightRingProps {
+export interface CoopLightRingProps {
     id: string;
     name: string;
     price: number;
@@ -40,10 +40,10 @@ export interface LightRingProps {
 export interface CoopStretchOrderProps {
     _id: string;
     date: string;
-    groupedStretchTextureData: Array<StretchTextureProps>;
-    groupedStretchProfilData: Array<StretchProfilProps>;
-    groupedLightPlatformData: Array<LightPlatformProps>;
-    groupedLightRingData: Array<LightRingProps>;
+    groupedStretchTextureData: Array<CoopStretchTextureProps>;
+    groupedStretchProfilData: Array<CoopStretchProfilProps>;
+    groupedLightPlatformData: Array<CoopLightPlatformProps>;
+    groupedLightRingData: Array<CoopLightRingProps>;
     balance: number;
     prepayment: number;
     groundTotal: number;
@@ -55,6 +55,8 @@ export interface CoopStretchOrderProps {
     buyer: CoopStretchBuyerProps;
     user: object
 }
+
+
 
 export interface CoopStretchOrderState {
     arrCoopStretchOrder: Array<any>

@@ -1,4 +1,4 @@
-import { LightRingProps } from "../../features/coopStrechOrder/coopStretchOrderSlice";
+import { CoopLightRingProps } from "../../features/coopStrechOrder/coopStretchOrderSlice";
 
 const ViewCoopLightRingSection: React.FC<any> = ({lightRing}) => {
 
@@ -14,7 +14,7 @@ const ViewCoopLightRingSection: React.FC<any> = ({lightRing}) => {
       </thead>
       <tbody>
         {
-          lightRing.map((element: LightRingProps) => {
+          lightRing.map((element: CoopLightRingProps) => {
 
             return <tr key={element.id}>
               <td>{element.name}</td>

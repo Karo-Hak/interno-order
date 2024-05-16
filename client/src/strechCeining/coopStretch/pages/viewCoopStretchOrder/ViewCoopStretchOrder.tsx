@@ -1,9 +1,7 @@
-import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from "react-router-dom";
 import { useCookies } from 'react-cookie'
 import './viewCoopStretchOrder.css'
-import ImageGallery from "./ImageGallery";
-import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
+import { useAppDispatch } from '../../../../app/hooks';
 import { userProfile } from '../../../../features/user/userApi';
 import { findCoopStretchOrder } from '../../features/coopStrechOrder/coopStretchOrderApi';
 import { User } from '../../../../features/user/userSlice';
@@ -14,6 +12,7 @@ import ViewCoopProfilSection from './ViewCoopProfilSection';
 import ViewCoopLightPlatformSection from './ViewCoopLightPlatformSection';
 import ViewCoopLightRingSection from './ViewCoopLightRingSection';
 import AddPayment from '../../../../component/confirmButten/AddPayment';
+import { useState, useEffect } from "react";
 
 
 export const ViewCoopStretchOrder: React.FC = (): JSX.Element => {
@@ -72,20 +71,9 @@ export const ViewCoopStretchOrder: React.FC = (): JSX.Element => {
 
 
     function editOrder() {
-        navigate('/stretchceiling/editStretchOrder/' + params.id);
+        navigate('/coopStretchceiling/editCoopStretchOrder/' + params.id);
 
     }
-    const [isModalOpen, setIsModalOpen] = useState(false);
-
-    const handleOpenModal = () => {
-        setIsModalOpen(true);
-    };
-
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-    };
-
-
 
     return (<>
         <CoopStretchMenu />
@@ -179,7 +167,7 @@ export const ViewCoopStretchOrder: React.FC = (): JSX.Element => {
                             <StretchImageUpload/>
                         </div> */}
                     </div>
-                    <div style={{display:"flex", justifyContent:"center", gap:"10px"}} >
+                    <div style={{display:"flex", margin:"10px", gap:"10px"}} >
                         {
                             order.groupedStretchTextureData &&
                                 order.groupedStretchTextureData.length > 0 ?

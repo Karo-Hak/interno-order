@@ -21,7 +21,6 @@ export class CoopCeilingOrderController {
     try {
       let buyer
       if (obj.buyer.buyerId) {
-        
         buyer = await this.coopStretchBuyerService.findOne(obj.buyer.buyerId);
       } else {
         buyer = await this.coopStretchBuyerService.findByPhone(obj.buyer.phone1);

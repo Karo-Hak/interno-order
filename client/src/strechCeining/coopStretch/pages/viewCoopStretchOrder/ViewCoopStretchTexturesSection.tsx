@@ -1,5 +1,5 @@
 
-import { StretchTextureProps } from '../../features/coopStrechOrder/coopStretchOrderSlice';
+import { CoopStretchTextureProps } from '../../features/coopStrechOrder/coopStretchOrderSlice';
 import './viewCoopStretchOrder.css'
 
 
@@ -21,7 +21,7 @@ const ViewStretchTexturesSection: React.FC<any> = ({ stretch }) => {
             </thead>
             <tbody>
                 {
-                    stretch.map((element: StretchTextureProps) => {
+                    stretch.map((element: CoopStretchTextureProps) => {
                         return <tr key={element.id}>
                             <td>{element.name}</td>
                             <td>{element.price}</td>

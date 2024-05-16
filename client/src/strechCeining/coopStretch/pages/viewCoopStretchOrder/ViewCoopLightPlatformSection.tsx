@@ -1,4 +1,4 @@
-import { LightPlatformProps } from "../../features/coopStrechOrder/coopStretchOrderSlice";
+import { CoopLightPlatformProps } from "../../features/coopStrechOrder/coopStretchOrderSlice";
 
 const ViewCoopLightPlatformSection: React.FC<any> = ( {lightPlatform} ) => {
 
@@ -15,7 +15,7 @@ const ViewCoopLightPlatformSection: React.FC<any> = ( {lightPlatform} ) => {
       </thead>
       <tbody>
         {
-          lightPlatform.map((element: LightPlatformProps) => {
+          lightPlatform.map((element: CoopLightPlatformProps) => {
 
             return <tr key={element.id}>
               <td>{element.name}</td>

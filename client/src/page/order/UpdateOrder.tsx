@@ -164,13 +164,15 @@ export const UpdateOrderInfo: React.FC = (): JSX.Element => {
             paymentMethod: selectedPayment
         }
         dispatch(updateOrderAll({ buyer, updateingOrder, cookies, params })).unwrap().then(res => {
-            if ("error" in res) {
-                // setCookie("access_token", '', { path: '/' })
-                // navigate('/')
-                alert(res)
+            if (res && typeof res === "object" && "error" in res) {
+                setCookie("access_token", '', { path: '/' });
+                navigate('/');
+                alert(res.error);
             }
+            console.log(res);
+            
         })
-        navigate("/searchOrder")
+        navigate("/wallpaper/searchOrder")
     }
 
 
