@@ -28,10 +28,27 @@ export const viewDebetKredit = createAsyncThunk(
 export const addPayed = createAsyncThunk(
   'debetKredit/pay/axios',
   async (data: any) => {
-    console.log(data);
-    
+   
     try {
       const response = await axios.post(process.env.REACT_APP_SERVER_URL +"/debet-kredit/pay", { ...data}, {
+        headers: {
+          Authorization: `Bearer ${data.cookies.access_token}`
+        }
+      })
+
+      return response.data
+    } catch (e) {
+      return { error: "not found" }
+
+    }
+  }
+);
+
+export const findDebetByBuyer = createAsyncThunk(
+  'debetKredit/findDebetByBuyer/axios',
+  async (data: any) => {
+    try {
+      const response = await axios.get(process.env.REACT_APP_SERVER_URL +`/debet-kredit/findStretchOrder/${data.buyerId[0]}`, {
         headers: {
           Authorization: `Bearer ${data.cookies.access_token}`
         }

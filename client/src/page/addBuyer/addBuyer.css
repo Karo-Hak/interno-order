@@ -1,32 +1,66 @@
-
-
-.addBuyerButton {
-  display: flex;
-  justify-content: center;
-  
-   
-}
-.addBuyer_profile_info{
-    
+.divLabel {
     display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding-top: 10px;
+    flex-direction: column;
 }
-.addBuyer_profile_info input{
-    border: 1px solid rgb(95, 91, 91);
-    box-sizing: border-box;
+
+.divLabel label {
+    margin-bottom: 5px;
 }
-.admin_profile_table {
-    color: rgb(80, 78, 78);
-    background-color: rgb(245, 245, 245);
+
+.divLabel input {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: border-color 0.3s ease;
+}
+
+.divLabel input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.errorMessage {
+    color: #dc3545;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.addButton {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.addButton:hover {
+    background-color: #0056b3;
+}
+
+.tableName {
     width: 100%;
-    font-size: 12px;
-
-
-}
-.addBuyer_profile_info_user{
-    display: flex;
-    gap: 10px;
+    border-collapse: collapse;
+    margin-top: 20px;
 }
 
+.tableName th,
+.tableName td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.tableName th {
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+.tableName tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.tableName tr:hover {
+    background-color: #f2f2f2;
+}

@@ -83,7 +83,7 @@ const NewStretchOrderSection: React.FC<any> = () => {
                                                         <td >
                                                             <p
                                                                 style={{
-                                                                    width: "100px"
+                                                                    width: "110px"
                                                                 }}>
                                                                 {parseDate(e.date)}
                                                             </p>
@@ -91,7 +91,7 @@ const NewStretchOrderSection: React.FC<any> = () => {
                                                         <td >
                                                             <p
                                                                 style={{
-                                                                    width: "100px"
+                                                                    width: "110px"
                                                                 }}>
                                                                 {
                                                                     e.measureDate ?
@@ -103,7 +103,7 @@ const NewStretchOrderSection: React.FC<any> = () => {
                                                         <td>
                                                             <p
                                                                 style={{
-                                                                    width: "100px"
+                                                                    width: "110px"
                                                                 }}>
                                                                 {
                                                                     e.installDate ?
@@ -129,7 +129,7 @@ const NewStretchOrderSection: React.FC<any> = () => {
                                                             </p>
                                                         </td>
                                                         <td>
-                                                            <p>
+                                                            <p >
                                                                 {e.buyer.buyerAddress}
                                                             </p>
                                                         </td>

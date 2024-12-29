@@ -1,4 +1,4 @@
-import { Body, Controller, HttpStatus, Post, Res } from "@nestjs/common";
+import { Body, Controller, Get, HttpStatus, Param, Post, Res } from "@nestjs/common";
 import { DebetKreditService } from "./debet-kredit.service";
 import { Response } from 'express';
 
@@ -14,7 +14,7 @@ export class DebetKreditController {
     async create(@Body() data: any, @Res() res: Response) {
         try {
             const payed = await this.debetKreditService.creatPayment(data.params.id, data.sum)
-            return  res.status(HttpStatus.OK).json({
+            return res.status(HttpStatus.OK).json({
                 message: "ok",
                 payed
             });
@@ -74,6 +74,12 @@ export class DebetKreditController {
         }
 
 
+    }
+
+    @Get('findStretchOrder/:id')
+    async findOne(@Param('id') id: string, @Res() res: Response) {
+        console.log(id);
+        
     }
 
 }

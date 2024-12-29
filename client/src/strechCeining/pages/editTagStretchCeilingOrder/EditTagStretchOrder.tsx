@@ -225,7 +225,6 @@ export const EditTagStretchOrder: React.FC = (): JSX.Element => {
 
     const removeWorkRow = (index: any,) => {
         reset({ [`work_${index}`]: '' })
-        console.log(workRowId, index);
 
         setWorkRowId(prevRowId => {
             return prevRowId.filter((_, i) => _ !== index);
@@ -247,15 +246,13 @@ export const EditTagStretchOrder: React.FC = (): JSX.Element => {
             for (const [key, value] of Object.entries(formValues)) {
                 if (roomObj.id.slice(-15) === key.slice(-15) && key.includes("Sum")) {
                     const numericValue = value as number;
-                    console.log(typeof numericValue);
-                    
                     sum += +numericValue ;
                     if (roomSum[roomObj.id]) {
-                        roomSum[roomObj.id] = roomSum[roomObj.id] + numericValue;
-                        roomObj.sum = roomSum[roomObj.id]
+                        roomSum[roomObj.id] = +roomSum[roomObj.id] + +numericValue;
+                        roomObj.sum = +roomSum[roomObj.id]
                     } else {
                         roomSum[roomObj.id] = +numericValue;
-                        roomObj.sum = numericValue
+                        roomObj.sum = +numericValue
                     }
                 }
             }

@@ -115,7 +115,7 @@ export const AddWallpaperOrder: React.FC = (): JSX.Element => {
                 setCoopTotal(((coop?.cooperateRate * totalOrder) / 100))
             }
         }
-    }, [checked, price]);
+    }, [checked]);
 
     useEffect(() => {
         setPrice(texturePrice)
@@ -180,11 +180,11 @@ export const AddWallpaperOrder: React.FC = (): JSX.Element => {
                                         <div className="photopastar_wh" >
                                             <div className="buyer_label">
                                                 <label htmlFor="weight">Երկարություն</label>
-                                                <input id="weight" className="inputNumber" type="number" placeholder="Width"  {...register("weight", { required: true })} onChange={(e) => setWeight(+e.target.value)} />
+                                                <input id="weight" className="inputNumber" placeholder="Width"  {...register("weight", { required: true })} onChange={(e) => setWeight(+e.target.value)} />
                                             </div>
                                             <div className="buyer_label">
                                                 <label htmlFor="height">Բարձրություն</label>
-                                                <input id="height" className="inputNumber" type="number" placeholder="Height" {...register("height", { required: true })} onChange={(e) => setHeight(+e.target.value)} />
+                                                <input id="height" className="inputNumber"  placeholder="Height" {...register("height", { required: true })} onChange={(e) => setHeight(+e.target.value)} />
                                             </div>
                                             <div className="buyer_label">
                                                 <label htmlFor="sqMetr">Ք/Մ</label>

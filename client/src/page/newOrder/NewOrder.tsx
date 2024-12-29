@@ -7,6 +7,7 @@ import { useCookies } from 'react-cookie'
 import { findNewOrder } from "../../features/order/orderApi";
 import ImageUpload from '../uploadImg/uploadImg';
 import { selectUser } from '../../features/user/userSlice';
+import { WallpaperMenu } from '../../component/menu/WallpaperMenu';
 
 
 export const NewOrder: React.FC = (): JSX.Element => {
@@ -35,6 +36,7 @@ export const NewOrder: React.FC = (): JSX.Element => {
     }
     return (
         <div>
+            <WallpaperMenu />
             <div className="profile">
 
                 {

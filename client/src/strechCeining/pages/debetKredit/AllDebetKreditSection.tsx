@@ -58,6 +58,7 @@ const AllDebetKreditSection: FC<AllDebetKreditSectionProps> = ({
             setOrderSum(newOrderSum);
         }
     }, [orderObj]);
+    
 
     return (
         <div style={{width:"50%", margin:"auto"}}>

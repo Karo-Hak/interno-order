@@ -5,7 +5,7 @@ import { selectCategory } from "../../features/category/categorySlice";
 import { getAllCategory } from "../../features/category/categoryApi";
 import React from "react";
 import { getAllProduct, updateProductsLists } from "../../features/product/productApi";
-import { selectProduct } from "../../features/product/productSlice";
+import { Product, selectProduct } from "../../features/product/productSlice";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { StockMenu } from "../../../component/menu/StockMenu";
 
@@ -58,36 +58,48 @@ export const Input_output: React.FC = (): JSX.Element => {
 
     const updateProduct = () => {
         const updatedProductList = product.arrProduct.map((p) => ({ ...p }));
-        let updatedProductLists: any = []
+
+        let updatedProductLists: Product[] = [];
+
         updatedProducts.forEach((updatedProduct) => {
-            const productIndex = updatedProductList.findIndex((product: any) => product._id === updatedProduct._id);
+            const productIndex = updatedProductList.findIndex((product) => product._id === updatedProduct._id);
 
-            if (updatedProduct.quantityIn !== undefined) {
-                updatedProductList[productIndex].quantity = updatedProductList[productIndex].quantity + updatedProduct.quantityIn
+            if (productIndex !== -1) {
+                if (updatedProduct.quantityIn !== undefined) {
+                    updatedProductList[productIndex].quantity =
+                        parseFloat(
+                            (+updatedProductList[productIndex].quantity + +updatedProduct.quantityIn).toFixed(2)
+                        );
+
+                }
+
+                if (updatedProduct.quantityOut !== undefined) {
+                    updatedProductList[productIndex].quantity =
+                        parseFloat(
+                            (+updatedProductList[productIndex].quantity - +updatedProduct.quantityOut).toFixed(2)
+                        );
+                }
+
+                updatedProductLists.push(updatedProductList[productIndex]);
             }
-
-            if (updatedProduct.quantityOut !== undefined) {
-                updatedProductList[productIndex].quantity = updatedProductList[productIndex].quantity - updatedProduct.quantityOut
-            }
-            updatedProductLists.push(updatedProductList[productIndex])
-
         });
 
         setUpdatedProducts([]);
-        dispatch(updateProductsLists({ updatedProductLists, cookies })).then((resultAction) => {
-            const result = resultAction.payload;
-            if ("error" in result) {
-                alert(result.error);
-            }
-        });
+
+        dispatch(updateProductsLists({ updatedProductLists, cookies }))
+            .then((resultAction) => {
+                const result = resultAction.payload;
+                if ("error" in result) {
+                    alert(result.error);
+                }
+            });
 
         window.location.reload();
-
     };
 
 
     return (
-        <div style={{textAlign:"center"}}>
+        <div style={{ textAlign: "center" }}>
             <StockMenu />
             {
                 category?.arrCategory && category.arrCategory.length > 0 ? (
@@ -96,7 +108,7 @@ export const Input_output: React.FC = (): JSX.Element => {
                         width: "100%"
                     }}>
                         {category.arrCategory.map((e: any, index: number) => (
-                            <div key={e._id}  style={{
+                            <div key={e._id} style={{
                                 width: "100%",
                                 margin: "10px",
                                 border: "2px solid black",
@@ -106,7 +118,7 @@ export const Input_output: React.FC = (): JSX.Element => {
                                     {e.name}
                                 </h6>
                                 <div >
-                                    <table  className='buyerSectionName'>
+                                    <table className='buyerSectionName'>
                                         <thead >
                                             <tr  >
                                                 <th >Անուն</th>
@@ -120,8 +132,8 @@ export const Input_output: React.FC = (): JSX.Element => {
                                                 <tr>
                                                     <td >{productItem.name}</td>
                                                     <td >{productItem.quantity}</td>
-                                                    <td ><input style={{width:"60px"}}  onChange={(e) => inputQuantity(+e.target.value, productItem._id)} /></td>
-                                                    <td ><input style={{width:"60px"}}  onChange={(e) => outputQuantity(+e.target.value, productItem._id)} /></td>
+                                                    <td ><input style={{ width: "60px" }} onChange={(e) => inputQuantity(+e.target.value, productItem._id)} /></td>
+                                                    <td ><input style={{ width: "60px" }} onChange={(e) => outputQuantity(+e.target.value, productItem._id)} /></td>
                                                 </tr>
                                             </tbody>
                                         ))}

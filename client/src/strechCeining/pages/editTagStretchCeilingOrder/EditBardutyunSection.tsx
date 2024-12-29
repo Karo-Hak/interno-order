@@ -78,8 +78,8 @@ const EditBardutyunSection: React.FC<EditBardutyunSectionProps> = ({
             <thead>
               <tr style={{ background: "#dfdce0" }}>
                 <th>Բարդություն</th>
-                <th>Գին</th>
                 <th>Քանակ</th>
+                <th>Գին</th>
                 <th >Գումար</th>
                 <th>Հեռացնել</th>
               </tr>
@@ -102,20 +102,20 @@ const EditBardutyunSection: React.FC<EditBardutyunSectionProps> = ({
                   </td>
                   <td>
                     <input
-                      placeholder="Price"
-                      id={`bardutyunPrice_${rowId}/${roomId}`}
-                      {...register(`bardutyunPrice_${rowId}/${roomId}`)}
-                      onChange={(e: { target: { value: string } }) =>
-                        bardutyunSum(rowId, parseFloat(e.target.value), parseFloat(getValues(`bardutyunQuantity_${rowId}/${roomId}`)))}
-                    />
-                  </td>
-                  <td>
-                    <input
                       placeholder="Quantity"
                       id={`bardutyunQuantity_${rowId}/${roomId}`}
                       {...register(`bardutyunQuantity_${rowId}/${roomId}`)}
                       onChange={(e: { target: { value: string } }) =>
                         bardutyunSum(rowId, parseFloat(getValues(`bardutyunPrice_${rowId}/${roomId}`)), parseFloat(e.target.value))}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      placeholder="Price"
+                      id={`bardutyunPrice_${rowId}/${roomId}`}
+                      {...register(`bardutyunPrice_${rowId}/${roomId}`)}
+                      onChange={(e: { target: { value: string } }) =>
+                        bardutyunSum(rowId, parseFloat(e.target.value), parseFloat(getValues(`bardutyunQuantity_${rowId}/${roomId}`)))}
                     />
                   </td>
                   <td>

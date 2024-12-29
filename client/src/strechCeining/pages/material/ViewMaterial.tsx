@@ -20,6 +20,8 @@ export const ViewMaterial: React.FC = (): JSX.Element => {
     const [endDate, setEndDate] = useState(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 2).toISOString().split('T')[0]);
     const [status, setStatus] = useState<string>("")
     const [searchBuyer, setSearchBuyer] = useState<string>("")
+    const [orderSum, setOrderSum] = useState<number>(0)
+    const [orderSalary, setOrderSalary] = useState<number>(0)
 
     useEffect(() => {
         const fetchData = async () => {
@@ -53,21 +55,22 @@ export const ViewMaterial: React.FC = (): JSX.Element => {
         setStatus("")
     }, [startDate, endDate]);
 
+    useEffect(() => {
+        let sum = 0
+        let salary = 0
+        ordersList.map((e: any) => {
+            sum += e.balance
+            salary += e.salary
+        })
+        setOrderSum(sum)
+        setOrderSalary(salary)
+
+    }, [ordersList])
+
     const parseDate = (dateStr: string) => {
         const dateObj = new Date(dateStr);
         return `${dateObj.getDate()} / ${dateObj.getMonth() + 1} / ${dateObj.getFullYear()} `;
     }
-
-    const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>): void => {
-        const selectedStatus = event.currentTarget.value;
-        if (selectedStatus !== "Ընտրել") {
-            setStatus(selectedStatus);
-            MaterialSearchLogic(ordersListFilter, selectedStatus, ordersList, setOrdersList, searchBuyer);
-        } else {
-            setStatus("");
-            setOrdersList(ordersListFilter)
-        }
-    };
 
     const filterBuyer = () => {
         setSearchBuyer("")
@@ -84,6 +87,9 @@ export const ViewMaterial: React.FC = (): JSX.Element => {
     function handleCheckbox(event: any) {
         setHandleChecked(event.target.checked);
     }
+
+    console.log(ordersList, orderSum);
+
 
     return (
         <div>
@@ -109,22 +115,15 @@ export const ViewMaterial: React.FC = (): JSX.Element => {
                         </div>
                     </div>
                     <div className="divLabel">
-                        <label htmlFor="startDate">Կարգավիճակ</label>
-                        <select value={status}
-                            style={{ border: "1px solid black" }}
-                            id="status"
-                            onChange={handleSelectChange}>
-                            <option>Ընտրել</option>
-                            <option value={"progress"}>Գրանցված</option>
-                            <option value={"measurement"}>Չափագրում</option>
-                            <option value={"installation"}>Տեղադրում</option>
-                            <option value={"dane"}>Ավարտված</option>
-                        </select>
-                    </div>
-                    <div className="divLabel">
                         <label htmlFor="endDate">Խմբավորել</label>
                         <input id='checkboxAll' type="checkbox" onChange={handleCheckbox} />
                     </div>
+                </div>
+                <div style={{ marginTop: 40 }}>
+                    <p> Գումար - {orderSum} - </p>
+                </div>
+                <div style={{ marginTop: 40, paddingLeft: 20 }}>
+                    <p> Աշխատավարձ - {orderSalary} - </p>
                 </div>
             </div>
             {

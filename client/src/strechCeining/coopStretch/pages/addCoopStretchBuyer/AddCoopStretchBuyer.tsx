@@ -42,8 +42,6 @@ export const CoopStretchBuyer: React.FC = (): JSX.Element => {
         };
 
         const processResult = (result: any) => {
-            console.log(result);
-
             if (result.user) {
                 setUser(result.user);
             }

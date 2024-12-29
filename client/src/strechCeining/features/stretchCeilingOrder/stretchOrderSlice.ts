@@ -1,24 +1,27 @@
 import { createSlice, } from "@reduxjs/toolkit";
 import { addNewStretchOrder, findStretchOrder, findNewStretchOrder, searchStretchOrder, viewNewOrders, updateStatuse, viewNewMesurOrders } from "./stretchOrderApi";
+import { StretchBuyer } from "../StrechBuyer/strechBuyerSlice";
 
 
 
-export interface StretchOrder {
-    id: string;
-    height: number;
-    weight: number;
-    square: number;
-   
+export interface StretchOrderProps {
+    _id: string;
+    balance: number;
+    buyer: StretchBuyer;
+    buyerComment: string;
+    code: string;
+    date: string;
+
 }
 
 export interface StretchOrderState {
     arrStretchOrder: Array<any>
-    stretchOrder: StretchOrder;
+    stretchOrder: StretchOrderProps;
 }
 
 export const initialState: StretchOrderState = {
     arrStretchOrder: [],
-    stretchOrder: {} as StretchOrder
+    stretchOrder: {} as StretchOrderProps
 }
 
 export const stretchOrderSlice = createSlice({
@@ -68,7 +71,7 @@ export const stretchOrderSlice = createSlice({
                     state.arrStretchOrder = action.payload
                 }
             })
-            
+
     }
 })
 

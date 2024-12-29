@@ -80,8 +80,8 @@ const EditAdditionalSection: React.FC<EditAdditionalSectionProps> = ({
             <thead>
               <tr style={{ background: "#dfdce0" }}>
                 <th style={{ width: "300px" }}>Այլ Ապրանք</th>
-                <th>Գին</th>
                 <th>Քանակ</th>
+                <th>Գին</th>
                 <th >Գումար</th>
                 <th>Հեռացնել</th>
               </tr>
@@ -107,20 +107,20 @@ const EditAdditionalSection: React.FC<EditAdditionalSectionProps> = ({
                     </td>
                     <td>
                       <input
-                        placeholder="Price"
-                        id={`additionalPrice_${rowId}/${roomId}`}
-                        {...register(`additionalPrice_${rowId}/${roomId}`)}
-                        onChange={(e: { target: { value: string } }) =>
-                          additionalSum(rowId, parseFloat(e.target.value), parseFloat(getValues(`additionalQuantity_${rowId}/${roomId}`)))}
-                      />
-                    </td>
-                    <td>
-                      <input
                         id={`additionalQuantity_${rowId}/${roomId}`}
                         placeholder="Quantity"
                         {...register(`additionalQuantity_${rowId}/${roomId}`)}
                         onChange={(e: { target: { value: string } }) =>
                           additionalSum(rowId, parseFloat(getValues(`additionalPrice_${rowId}/${roomId}`)), parseFloat(e.target.value))}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        placeholder="Price"
+                        id={`additionalPrice_${rowId}/${roomId}`}
+                        {...register(`additionalPrice_${rowId}/${roomId}`)}
+                        onChange={(e: { target: { value: string } }) =>
+                          additionalSum(rowId, parseFloat(e.target.value), parseFloat(getValues(`additionalQuantity_${rowId}/${roomId}`)))}
                       />
                     </td>
                     <td>

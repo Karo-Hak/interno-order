@@ -80,8 +80,8 @@ const EditStretchTexturesSection: React.FC<EditStretchTexturesSectionProps> = ({
                         <thead>
                             <tr style={{ background: "#dfdce0" }}>
                                 <th >Ձգվող Առաստաղ</th>
-                                <th>Գին</th>
                                 <th>Քանակ</th>
+                                <th>Գին</th>
                                 <th >Գումար</th>
                                 <th>Հեռացնել</th>
                             </tr>
@@ -104,19 +104,19 @@ const EditStretchTexturesSection: React.FC<EditStretchTexturesSectionProps> = ({
                                     </td>
                                     <td>
                                         <input
+                                            placeholder="Squer"
+                                            id={`stretchQuantity_${rowId}/${roomId}`}
+                                            {...register(`stretchQuantity_${rowId}/${roomId}`)}
+                                            onChange={(e) => textureSum(rowId, parseFloat(getValues(`stretchPrice_${rowId}/${roomId}`)), parseFloat(e.target.value),)}
+                                        />
+                                    </td>
+                                    <td>
+                                        <input
                                             placeholder="Price"
                                             id={`stretchPrice_${rowId}/${roomId}`}
                                             {...register(`stretchPrice_${rowId}/${roomId}`)}
                                             onChange={(e) => textureSum(rowId, parseFloat(e.target.value), parseFloat(getValues(`stretchQuantity_${rowId}/${roomId}`)))}
 
-                                        />
-                                    </td>
-                                    <td>
-                                        <input
-                                            placeholder="Squer"
-                                            id={`stretchQuantity_${rowId}/${roomId}`}
-                                            {...register(`stretchQuantity_${rowId}/${roomId}`)}
-                                            onChange={(e) => textureSum(rowId, parseFloat(getValues(`stretchPrice_${rowId}/${roomId}`)), parseFloat(e.target.value),)}
                                         />
                                     </td>
                                     <td>

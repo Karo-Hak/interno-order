@@ -1,45 +1,59 @@
-import React, { FC, useEffect, useState } from 'react';
-import { useCookies } from 'react-cookie';
-import { useNavigate } from 'react-router-dom';
-import { useAppDispatch } from '../../../app/hooks';
-import { allStretchWorker } from '../../features/StrechWorker/strechWorkerApi';
-import OrderMaterialListSection from './BuyerDebetKreditSection';
+import React, { FC, useState } from 'react';
+import BuyerDebetKreditSection from './BuyerDebetKreditSection';
+import AddPayment from '../../../component/confirmButten/AddPayment';
+import AddStretchPayment from '../../../component/confirmButten/AddStretchPayment';
 
-interface DebetKreditSectionProps {
-    ordersList: any;
-    parseDate: any;
+interface DebetKredit {
+    type: string;
+    amount: number;
 }
 
-const DebetKreditSection: FC<DebetKreditSectionProps> = ({
-    ordersList,
-    parseDate
-}: DebetKreditSectionProps) => {
-    const dispatch = useAppDispatch();
-    const [cookies, setCookie] = useCookies(['access_token']);
-    const navigate = useNavigate();
+interface Order {
+    _id: string;
+    buyerName: string;
+    buyerPhone1: string;
+    debetKredit: DebetKredit[];
+    sumKredit: number;
+    buy: number;
+    payment: number;
+    order:[]
+}
 
-    useEffect(() => {
-        dispatch(allStretchWorker(cookies)).unwrap().then(res => {
-            if ("error" in res) {
-                setCookie("access_token", '', { path: '/' })
-                navigate("/")
-            }
-        })
-    }, []);
+interface DebetKreditSectionProps {
+    ordersList: Order[];
+    parseDate: (date: string) => string;
+}
+
+const DebetKreditSection: FC<DebetKreditSectionProps> = ({ ordersList, parseDate }) => {
+
+    const type = "tage"
+
+    const updatedOrdersList = ordersList.map(order => {
+        let sumBuy = 0;
+        let sumPayment = 0;
+        order.debetKredit.forEach(e => {
+            if (e.type === "Գնում") sumBuy += e.amount;
+            else if (e.type === "Վճարում") sumPayment += e.amount;
+        });
+        return {
+            ...order,
+            buy: sumBuy,
+            payment: sumPayment,
+        };
+    });
 
     const [showOrderMaterialList, setShowOrderMaterialList] = useState<{ [key: string]: boolean }>(() => {
         const initialState: { [key: string]: boolean } = {};
-        ordersList.forEach((order: any) => {
+        ordersList.forEach((order: Order) => {
             initialState[order._id] = false;
         });
         return initialState;
     });
 
-
     const toggleOrderMaterialList = (orderId: string) => {
         setShowOrderMaterialList(prevState => ({
             ...prevState,
-            [orderId]: !prevState[orderId]
+            [orderId]: !prevState[orderId],
         }));
     };
 
@@ -47,9 +61,10 @@ const DebetKreditSection: FC<DebetKreditSectionProps> = ({
         return showOrderMaterialList[orderId];
     };
 
-    function viewOrder(id: any) {
+    function viewOrder(id: string) {
         window.open('/stretchceiling/viewStretchOrder/' + id, '_blank');
     }
+console.log(updatedOrdersList);
 
     return (
         <div>
@@ -57,7 +72,7 @@ const DebetKreditSection: FC<DebetKreditSectionProps> = ({
                 <div>
                     <div className='newStretchOrderSection_head'>
                         <div className='newStretchOrderSection_head_name'>
-                            Ձգվող առաստաղ (Դեբետ/Կրեդիտ)
+                            Ձգվող առաստաղ (Դեբет/Կրեդիտ)
                         </div>
                     </div>
                     <div className=''>
@@ -65,14 +80,17 @@ const DebetKreditSection: FC<DebetKreditSectionProps> = ({
                             <table className="newStretchOrders">
                                 <thead>
                                     <tr>
-                                       <th></th>
+                                        <th></th>
                                         <th>Անուն Ազգանուն</th>
                                         <th>Հեռախոս</th>
-                                        <th>Դեբետ/Կրեդիտ</th>
+                                        <th>Գնում</th>
+                                        <th>Վճարում</th>
+                                        <th>Մնացորդ</th>
+                                        <th>Մուտք</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {ordersList.map((e: any) => (
+                                    {updatedOrdersList.map((e: Order) => (
                                         <React.Fragment key={e._id}>
                                             <tr>
                                                 <td>
@@ -88,9 +106,23 @@ const DebetKreditSection: FC<DebetKreditSectionProps> = ({
                                                         <p style={{ minWidth: "100px" }}>{e.buyerPhone1}</p>
                                                     </div>
                                                 </td>
-                                                <td><p>{e.sumKredit}</p></td>
+                                                <td><p>{e.buy}</p></td>
+                                                <td><p>{e.payment}</p></td>
+                                                {
+                                                    e.sumKredit <= 0 ?
+                                                        <td style={{ backgroundColor: "lightgreen" }}>
+                                                            <p>{e.sumKredit}</p>
+                                                        </td>
+                                                        :
+                                                        <td style={{ backgroundColor: "red" }}>
+                                                            <p>{e.sumKredit}</p>
+                                                        </td>
+                                                }
+                                                <td><AddStretchPayment id={e.order} /></td>
                                             </tr>
-                                            {showOrderMaterialList[e._id] && <OrderMaterialListSection order={e.debetKredit} parseDate={parseDate} />}
+                                            {showOrderMaterialList[e._id] && (
+                                                <BuyerDebetKreditSection order={e.debetKredit} parseDate={parseDate} />
+                                            )}
                                         </React.Fragment>
                                     ))}
                                 </tbody>

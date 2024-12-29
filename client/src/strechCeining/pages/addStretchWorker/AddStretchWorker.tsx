@@ -50,8 +50,6 @@ export const StretchWorker: React.FC = (): JSX.Element => {
     return (
         <>
         <StretchMenu />
-            <div className="addStretchBuyer_head_name">Gnordi tvyalner</div>
-            
             <form onSubmit={handleSubmit(addStretchWorker)} >
                 <div className="addStrerchBuyer_info">
                     <div className="addStrerchBuyer_info_section">

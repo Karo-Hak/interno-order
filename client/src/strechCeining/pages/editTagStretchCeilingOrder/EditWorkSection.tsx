@@ -78,8 +78,8 @@ const EditWorkSection: React.FC<EditStretchProfilsSectionProps> = ({
             <thead>
               <tr style={{ background: "#dfdce0" }}>
                 <th>Աշխատանք</th>
-                <th>Գին</th>
                 <th>Քանակ</th>
+                <th>Գին</th>
                 <th >Գումար</th>
                 <th>Հեռացնել</th>
               </tr>
@@ -107,19 +107,19 @@ const EditWorkSection: React.FC<EditStretchProfilsSectionProps> = ({
                       </td>
                       <td>
                         <input
+                          id={`workQuantity_${rowKey}`}
+                          placeholder="Quantity"
+                          {...register(`workQuantity_${rowKey}`)}
+                          onChange={(e) => workSum(rowKey, parseFloat(e.target.value), parseFloat(getValues(`workPrice_${rowKey}`)))}
+                        />
+                      </td>
+                      <td>
+                        <input
                           id={`workPrice_${rowKey}`}
                           placeholder="Price"
                           {...register(`workPrice_${rowKey}`)}
                           onChange={(e) => workSum(rowKey, parseFloat(getValues(`workQuantity_${rowKey}`)), parseFloat(e.target.value))}
 
-                        />
-                      </td>
-                      <td>
-                        <input
-                          id={`workQuantity_${rowKey}`}
-                          placeholder="Quantity"
-                          {...register(`workQuantity_${rowKey}`)}
-                          onChange={(e) => workSum(rowKey, parseFloat(e.target.value), parseFloat(getValues(`workPrice_${rowKey}`)))}
                         />
                       </td>
                       <td>

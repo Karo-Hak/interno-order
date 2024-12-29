@@ -45,11 +45,12 @@ const OrderMaterialListSection: FC<OrderMaterialListProps> = ({
                 if (!newOrderSum[element.type]) {
                     newOrderSum[element.type] = [];
                 }
-                let existingItemIndex = newOrderSum[element.type].findIndex((item: any) => item.name === element.name);
-                if (existingItemIndex === -1) {
-                    newOrderSum[element.type].push({ "name": element.name, "quantity": element.quantity });
+                let existingItem = newOrderSum[element.type].find((item: any) => item.name === element.name);
+                if (!existingItem) {
+                    newOrderSum[element.type].push({ "name": element.name, "quantity": parseFloat(element.quantity) });
                 } else {
-                    newOrderSum[element.type][existingItemIndex].quantity = +newOrderSum[element.type][existingItemIndex].quantity + parseInt(element.quantity);
+                    const totalQuantity = (parseFloat(existingItem.quantity) * 100 + parseFloat(element.quantity) * 100) / 100;
+                    existingItem.quantity = totalQuantity.toFixed(2); 
                 }
             });
             setOrderSum(newOrderSum);

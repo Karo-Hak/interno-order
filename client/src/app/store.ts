@@ -9,6 +9,7 @@ import stretchWorkerReducer from '../strechCeining/features/StrechWorker/strechW
 import stretchWorkReducer from '../strechCeining/features/StrechWork/strechWorkSlice';
 import stretchTextureReducer from '../strechCeining/features/strechTexture/strechTextureSlice';
 import coopStrechOrderReducer from '../strechCeining/coopStretch/features/coopStrechOrder/coopStretchOrderSlice'
+import plintOrderReducer from '../plint/features/plintOrder/plintOrderSlice'
 import userSphereReducer from '../features/userSphere/userSphereSlice'
 import unytReducer from '../strechCeining/unyt/unytSlice'
 import coopStretchBuyerReducer from '../strechCeining/coopStretch/features/coopStrechBuyer/coopStrechBuyerSlice'
@@ -21,6 +22,10 @@ import stretchAdditional from '../strechCeining/features/strechAdditional/strech
 import stretchOrderReducer from '../strechCeining/features/stretchCeilingOrder/stretchOrderSlice'
 import categoryReducer from '../strechCeining/features/category/categorySlice'
 import productReducer from '../strechCeining/features/product/productSlice'
+import plintReducer from '../plint/features/plint/plintSlice'
+import plintBuyerReducer from '../plint/features/plintBuyer/plintBuyerSlice'
+import plintCoopReducer from '../plint/features/plintCoop/plintCoopSlice'
+import plintDebetKreditReducer from '../plint/features/plintDebetKredit/plintDebetKreditSlice'
 
 
 export const store = configureStore({
@@ -46,6 +51,11 @@ export const store = configureStore({
     stretchOrder: stretchOrderReducer,
     category: categoryReducer,
     product: productReducer,
+    plint: plintReducer,
+    plintBuyer: plintBuyerReducer,
+    plintOrder: plintOrderReducer,
+    plintCoop: plintCoopReducer,
+    plintDebetKredit: plintDebetKreditReducer,
 
   },
 });

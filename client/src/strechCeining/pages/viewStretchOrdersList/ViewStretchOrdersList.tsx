@@ -15,13 +15,17 @@ export const ViewStretchOrdersList: React.FC = (): JSX.Element => {
     const dispatch = useAppDispatch();
     const [cookies, setCookie] = useCookies(['access_token']);
     const navigate = useNavigate();
-    const [ordersList, setOrdersList] = useState([])
+    const [ordersList, setOrdersList] = useState<any>([])
     const [ordersListFilter, setOrdersListFilter] = useState([])
     const currentDate = new Date();
     const [startDate, setStartDate] = useState(new Date(currentDate.getFullYear(), currentDate.getMonth(), 2).toISOString().split('T')[0]);
     const [endDate, setEndDate] = useState(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 2).toISOString().split('T')[0]);
     const [status, setStatus] = useState<string>("")
     const [searchBuyer, setSearchBuyer] = useState<string>("")
+    const [listSum, setListSum] = useState("")
+    const [totalOrders, setTotalOrders] = useState(0)
+
+    let squerOrders = 0
 
     useEffect(() => {
         const fetchData = async () => {
@@ -89,6 +93,18 @@ export const ViewStretchOrdersList: React.FC = (): JSX.Element => {
         window.open('/stretchceiling/viewStretchOrder/' + id, '_blank');
     }
 
+    useEffect(() => {
+        let sum = 0
+        ordersList.map((e: any) => {
+            sum += e.balance
+        })
+        setTotalOrders(sum)
+        if (ordersList.rooms && ordersList.rooms.length > 0) {
+
+        }
+
+    }, [ordersList])
+
 
 
 
@@ -128,6 +144,10 @@ export const ViewStretchOrdersList: React.FC = (): JSX.Element => {
                             <option value={"dane"}>Ավարտված</option>
                         </select>
                     </div>
+                    <div className="m_Sum">
+                        <p> Ընդամենը Ք/Մ </p>
+                        <p> Ընդամենը -- {totalOrders} -- Դրամ </p>
+                    </div>
                 </div>
             </div>
             {
@@ -137,7 +157,7 @@ export const ViewStretchOrdersList: React.FC = (): JSX.Element => {
 
                         <div className='newStretchOrderSection_head'>
                             <div className='newStretchOrderSection_head_name'>
-                                Ձգվող առաստաղ (Պատվերներ)
+                                Ձգվող առաստաղ ( Դիտել Պատվերները)
                             </div>
                         </div>
 
@@ -152,8 +172,7 @@ export const ViewStretchOrdersList: React.FC = (): JSX.Element => {
                                             <th>ԱԱ/սկիզբ</th>
                                             <th>ԱԱ/ավարտ</th>
                                             <th>Անուն Ազգանուն</th>
-                                            <th>Մարզ</th>
-                                            <th>Հասցե</th>
+                                            <th>Մարզ/Հասցե</th>
                                             <th>Հեռախոս</th>
                                             <th>Գումար</th>
                                             <th>Կանխավճար</th>
@@ -164,8 +183,18 @@ export const ViewStretchOrdersList: React.FC = (): JSX.Element => {
                                     <tbody>
                                         {
                                             ordersList.map((e: any) => {
+                                                let color = ""
+                                                if (e.status === "dane"){
+                                                    color = "green"
+                                                } else if (e.payed === false){
+                                                    color = "lightBlue"
+                                                } else {
+                                                    color = "#ebdc52"
+                                                }
                                                 return (
-                                                    <tr key={e._id}>
+                                                    <tr key={e._id}
+                                                        style={{ backgroundColor: color }}
+                                                    >
                                                         <td>
                                                             <p>
                                                                 {e.code}
@@ -174,7 +203,7 @@ export const ViewStretchOrdersList: React.FC = (): JSX.Element => {
                                                         <td >
                                                             <p
                                                                 style={{
-                                                                    width: "100px"
+                                                                    width: "110px",
                                                                 }}>
                                                                 {parseDate(e.date)}
                                                             </p>
@@ -182,7 +211,7 @@ export const ViewStretchOrdersList: React.FC = (): JSX.Element => {
                                                         <td >
                                                             <p
                                                                 style={{
-                                                                    width: "100px"
+                                                                    width: "110px"
                                                                 }}>
                                                                 {
                                                                     e.measureDate ?
@@ -194,7 +223,7 @@ export const ViewStretchOrdersList: React.FC = (): JSX.Element => {
                                                         <td>
                                                             <p
                                                                 style={{
-                                                                    width: "100px"
+                                                                    width: "110px"
                                                                 }}>
                                                                 {
                                                                     e.installDate ?
@@ -210,12 +239,7 @@ export const ViewStretchOrdersList: React.FC = (): JSX.Element => {
                                                         </td>
                                                         <td>
                                                             <p>
-                                                                {e.buyer.buyerRegion}
-                                                            </p>
-                                                        </td>
-                                                        <td>
-                                                            <p>
-                                                                {e.buyer.buyerAddress}
+                                                            {e.buyer.buyerRegion} -/- {e.buyer.buyerAddress}
                                                             </p>
                                                         </td>
                                                         <td >
@@ -224,23 +248,12 @@ export const ViewStretchOrdersList: React.FC = (): JSX.Element => {
                                                                     display: "flex",
                                                                     border: "none",
                                                                     gap: "5px",
-                                                                    width: "215px"
                                                                 }}>
                                                                 <p
                                                                     style={{
                                                                         minWidth: "100px"
                                                                     }}>
                                                                     {e.buyer.buyerPhone1}
-                                                                </p>
-                                                                <p
-                                                                    style={{
-                                                                        minWidth: "100px"
-                                                                    }}>
-                                                                    {
-                                                                        e.buyer.buyerPhone2 ?
-                                                                            e.buyer.buyerPhone2
-                                                                            : " ---------"
-                                                                    }
                                                                 </p>
                                                             </div>
                                                         </td>

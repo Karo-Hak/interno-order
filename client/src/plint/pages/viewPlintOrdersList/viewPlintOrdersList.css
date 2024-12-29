@@ -1,0 +1,24 @@
+.divDate{
+    display: flex;
+    gap:5px
+}
+
+.divFilter{
+    display: flex;
+    padding: 10px;
+    gap: 5px;
+}
+
+.m_Sum{
+    margin-left: 50px;
+}
+
+.newPlintOrders{
+    border: 1px solid black;
+}
+.newPlintOrders td{
+    border: 1px solid black;
+}
+.newPlintOrders th{
+    border: 1px solid black;
+}

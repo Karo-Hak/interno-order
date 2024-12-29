@@ -44,6 +44,24 @@ export const addCoopPayed = createAsyncThunk(
   }
 );
 
+export const findCoopDebetByBuyer = createAsyncThunk(
+  'CoopdebetKredit/findCoopDebetByBuyer/axios',
+  async (data: any) => {
+    try {
+      const response = await axios.get(process.env.REACT_APP_SERVER_URL +`/coop-debet-kredit/findCoopStretchOrder/${data.buyerId[0]}`, {
+        headers: {
+          Authorization: `Bearer ${data.cookies.access_token}`
+        }
+      })
+
+      return response.data
+    } catch (e) {
+      return { error: "not found" }
+
+    }
+  }
+);
+
 // export const getDebetKredit = createAsyncThunk(
 //   'strechTexture/all/axios',
 //   async (cookie: any) => {

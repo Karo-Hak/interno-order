@@ -21,6 +21,8 @@ import ModalStretchStatus from "../../../component/modal/ModalStretchStatus";
 import ConfirmationButton from "../../../component/confirmButten/ConfirmationButton";
 import AddPayment from "../../../component/confirmButten/AddPayment";
 import DeletOrder from "../../../component/confirmButten/DeletOrder";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import ViewStretchOrderPDF from "./ViewStretchOrderPDF";
 
 
 export const ViewStretchOrder: React.FC = (): JSX.Element => {
@@ -28,11 +30,18 @@ export const ViewStretchOrder: React.FC = (): JSX.Element => {
     const [cookies, setCookie] = useCookies(['access_token']);
     const params = useParams()
     const navigate = useNavigate();
+    const type = "tag"
 
     const [rooms, setRooms] = useState<any[]>([]);
     const [works, setWorks] = useState<any[]>([]);
     const [images, setImages] = useState<any[]>([]);
     const order = useAppSelector(selectStretchOrder).stretchOrder;
+
+    const [isDownloading, setIsDownloading] = useState(false);
+
+    const handleDownloadPDF = () => {
+        setIsDownloading(true);
+    };
 
 
     useEffect(() => {
@@ -77,7 +86,6 @@ export const ViewStretchOrder: React.FC = (): JSX.Element => {
     }, []);
 
 
-
     const user = useAppSelector(selectUser);
 
     const parseDate = (dateStr: string) => {
@@ -118,12 +126,12 @@ export const ViewStretchOrder: React.FC = (): JSX.Element => {
                         className="admin_profile_Strech">
                         <p style={{ color: "white", marginTop: "10px" }}>կարգավիճակ -- {order.status}</p>
                         <button type="button" onClick={handleOpenModal}>Փոխել Կարգավիճակը</button>
-                        <AddPayment/>
-                         <button type="button" onClick={editOrder}>Լրացնել</button>
+                        <AddPayment type={type} />
+                        <button type="button" onClick={editOrder}>Լրացնել</button>
                         <ConfirmationButton payed={order.payed} />
-                        <DeletOrder/>
+                        <DeletOrder />
                     </div>
- 
+
                     <div className=''>
                         <div >
                             <table className='buyerSectionName'>
@@ -198,8 +206,10 @@ export const ViewStretchOrder: React.FC = (): JSX.Element => {
                             </table>
                         </div>
                     </div>
-                    <div style={{ height: "20px", color:"white" }} className="admin_profile_Strech"> Ընդամենը -- {order.roomSum}</div>
-                
+                    <div style={{ height: "20px", color: "white" }} className="admin_profile_Strech"> Ընդամենը -
+                        - {order.roomSum} -/- {(((+order.roomSum - +order.balance) / +order.roomSum) * 100).toFixed(2)} %
+                    </div>
+
                     <div className="grid-container">
                         <ViewWorkSection works={works} />
                         {
@@ -209,9 +219,9 @@ export const ViewStretchOrder: React.FC = (): JSX.Element => {
                                 </div>
                                 : null
                         }
- 
+
                     </div>
-                    <ModalStretchStatus isOpen={isModalOpen} onClose={handleCloseModal}/>
+                    <ModalStretchStatus isOpen={isModalOpen} onClose={handleCloseModal} />
                     <div >
                         {rooms && rooms.length > 0 ?
                             rooms.map((room: any) => {
@@ -235,7 +245,19 @@ export const ViewStretchOrder: React.FC = (): JSX.Element => {
                             : null}
                     </div>
                     <div>
-                        <StretchImageUpload/>
+                        <StretchImageUpload />
+                    </div>
+                    <div>
+                        <button onClick={handleDownloadPDF} disabled={isDownloading}>
+                            {isDownloading ? 'Создание PDF...' : 'Скачать PDF'}
+                        </button>
+                        {isDownloading && order && (
+                            <PDFDownloadLink document={<ViewStretchOrderPDF order={order} />} fileName="order.pdf">
+                                {({ blob, url, loading, error }) =>
+                                    loading ? 'Загрузка документа...' : 'Готово! Нажмите для скачивания.'
+                                }
+                            </PDFDownloadLink>
+                        )}
                     </div>
                 </div>
                 : null

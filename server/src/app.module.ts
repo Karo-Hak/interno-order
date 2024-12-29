@@ -28,6 +28,13 @@ import { StretchWorkerModule } from './stretch-worker/stretch-worker.module';
 import { StretchWorkModule } from './stretch-work/stretch-worker.module';
 import { ProductModule } from './product/product.module';
 import { CategoryProductModule } from './category-product/category-product.module';
+import { PlintProductModule } from './plint-product/plint-product.module';
+import { PlintBuyerModule } from './plintBuyer/plint-buyer.module';
+import { PlintOrderModule } from './plint-order/plint-order.module';
+import { PlintDebetKreditModule } from './plint-debet-kredit/plint-debet-kredit.module';
+import { DebetKreditModule } from './debet-kredit/debet-kredit.module';
+import { CoopDebetKreditModule } from './coop-debet-kredit/coop-debet-kredit.module';
+import { PlintProductionModule } from './plint-production/plint-production.module';
 
 @Module({
   imports: [
@@ -42,6 +49,11 @@ import { CategoryProductModule } from './category-product/category-product.modul
     UploadModule,
     ProductModule,
     CategoryProductModule,
+    PlintProductModule,
+    PlintBuyerModule,
+    PlintOrderModule,
+    PlintProductionModule,
+    PlintDebetKreditModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'uploads'), // Путь к папке с загруженными изображениями
       serveRoot: '/uploads', // Корневой путь, по которому будут доступны изображения на сервере
@@ -57,9 +69,12 @@ import { CategoryProductModule } from './category-product/category-product.modul
     StretchBuyerModule,
     StretchWorkerModule,
     StretchWorkModule,
+    StretchWorkModule,
     CoopStretchBuyerModule,
     AdditionalModule,
     StretchCeilingOrderModule,
+    DebetKreditModule,
+    CoopDebetKreditModule,
   ],
   controllers: [AppController],
   providers: [AppService],

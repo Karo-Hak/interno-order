@@ -54,8 +54,8 @@ const LightPlatformSection: React.FC<LightPlatformSectionProps> = ({
                 <tr
                   style={{ background: "#dfdce0" }}>
                   <th>Լույսի Պլատֆորմ</th>
-                  <th>Գին</th>
                   <th>Քանակ</th>
+                  <th>Գին</th>
                   <th>Գումար</th>
                   <th>Հեռացնել</th>
                 </tr>
@@ -84,20 +84,20 @@ const LightPlatformSection: React.FC<LightPlatformSectionProps> = ({
                         </td>
                         <td>
                           <input
-                            id={`lightPlatformPrice_${rowKey}/${roomId}`}
-                            placeholder="Price"
-                            {...register(`lightPlatformPrice_${rowKey}/${roomId}`)}
-                            onChange={(e: { target: { value: string } }) =>
-                              lightPlatformSum(rowKey, parseFloat(e.target.value), parseFloat(getValues(`lightPlatformQuantity_${rowKey}/${roomId}`)))}
-                          />
-                        </td>
-                        <td>
-                          <input
                             id={`lightPlatformQuantity_${rowKey}/${roomId}`}
                             placeholder="Quantity"
                             {...register(`lightPlatformQuantity_${rowKey}/${roomId}`)}
                             onChange={(e: { target: { value: string } }) =>
                               lightPlatformSum(rowKey, parseFloat(getValues(`lightPlatformPrice_${rowKey}/${roomId}`)), parseFloat(e.target.value))}
+                          />
+                        </td>
+                        <td>
+                          <input
+                            id={`lightPlatformPrice_${rowKey}/${roomId}`}
+                            placeholder="Price"
+                            {...register(`lightPlatformPrice_${rowKey}/${roomId}`)}
+                            onChange={(e: { target: { value: string } }) =>
+                              lightPlatformSum(rowKey, parseFloat(e.target.value), parseFloat(getValues(`lightPlatformQuantity_${rowKey}/${roomId}`)))}
                           />
                         </td>
                         <td>

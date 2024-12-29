@@ -45,8 +45,8 @@ const OtherSection: React.FC<AdditionalSectionProps> = ({
             <thead>
               <tr style={{ background: "#dfdce0" }}>
                 <th style={{ width: "300px" }}>Լրացուցիչ</th>
-                <th>Գին</th>
                 <th>Քանակ</th>
+                <th>Գին</th>
                 <th>Գումար</th>
                 <th>Հեռացնել</th>
               </tr>
@@ -65,20 +65,20 @@ const OtherSection: React.FC<AdditionalSectionProps> = ({
                     </td>
                     <td>
                       <input
-                        id={`otherPrice_${rowId}/${roomId}`}
-                        placeholder="Price"
-                        {...register(`otherPrice_${rowId}/${roomId}`)}
-                        onChange={(e: { target: { value: string } }) =>
-                          otherSum(rowId, parseFloat(e.target.value), parseFloat(getValues(`otherQuantity_${rowId}/${roomId}`)))}
-                      />
-                    </td>
-                    <td>
-                      <input
                         id={`otherQuantity_${rowId}/${roomId}`}
                         placeholder="Quantity"
                         {...register(`otherQuantity_${rowId}/${roomId}`)}
                         onChange={(e: { target: { value: string } }) =>
                           otherSum(rowId, parseFloat(getValues(`otherPrice_${rowId}/${roomId}`)), parseFloat(e.target.value))}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        id={`otherPrice_${rowId}/${roomId}`}
+                        placeholder="Price"
+                        {...register(`otherPrice_${rowId}/${roomId}`)}
+                        onChange={(e: { target: { value: string } }) =>
+                          otherSum(rowId, parseFloat(e.target.value), parseFloat(getValues(`otherQuantity_${rowId}/${roomId}`)))}
                       />
                     </td>
                     <td>

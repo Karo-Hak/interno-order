@@ -38,8 +38,6 @@ export class CoopCeilingOrderController {
         message: e.message
       });
     }
-
-    // return this.coopCeilingOrderService.create(createCoopCeilingOrderDto);
   }
 
   @Post('viewCoopOrdersList')

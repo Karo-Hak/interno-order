@@ -1,4 +1,4 @@
-.homePageDiv{
+.homePageDiv {
     width: 100%;
     margin-top: 10%;
     text-align: center;
@@ -7,7 +7,19 @@
     justify-content: space-around;
 }
 
-.homeImg{
+.homeImg {
     width: 200px;
     height: 150px;
 }
+
+.wellcome {
+    margin: 50px;
+}
+
+.homepageBody {
+    padding: 5px;
+    background-image: url('../../assets/img/homepageBody.jpg');
+    height: 91vh;
+    color: aqua;
+}
+

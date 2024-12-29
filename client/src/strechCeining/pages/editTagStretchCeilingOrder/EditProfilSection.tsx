@@ -79,8 +79,8 @@ const EditProfilSection: React.FC<EditStretchProfilsSectionProps> = ({
             <thead>
               <tr style={{ background: "#dfdce0" }}>
                 <th>Պրոֆիլ</th>
-                <th>Գին</th>
                 <th>Քանակ</th>
+                <th>Գին</th>
                 <th >Գումար</th>
                 <th>Հեռացնել</th>
               </tr>
@@ -108,19 +108,19 @@ const EditProfilSection: React.FC<EditStretchProfilsSectionProps> = ({
                       </td>
                       <td>
                         <input
-                          id={`profilPrice_${rowKey}/${roomId}`}
-                          placeholder="Price"
-                          {...register(`profilPrice_${rowKey}/${roomId}`)}
-                          onChange={(e) => profilSum(rowKey, parseFloat(e.target.value), parseFloat(getValues(`profilQuantity_${rowKey}/${roomId}`)))}
+                          id={`profilQuantity_${rowKey}/${roomId}`}
+                          placeholder="Quantity"
+                          {...register(`profilQuantity_${rowKey}/${roomId}`)}
+                          onChange={(e) => profilSum(rowKey, parseFloat(getValues(`profilPrice_${rowKey}/${roomId}`)), parseFloat(e.target.value),)}
 
                         />
                       </td>
                       <td>
                         <input
-                          id={`profilQuantity_${rowKey}/${roomId}`}
-                          placeholder="Quantity"
-                          {...register(`profilQuantity_${rowKey}/${roomId}`)}
-                          onChange={(e) => profilSum(rowKey, parseFloat(getValues(`profilPrice_${rowKey}/${roomId}`)), parseFloat(e.target.value),)}
+                          id={`profilPrice_${rowKey}/${roomId}`}
+                          placeholder="Price"
+                          {...register(`profilPrice_${rowKey}/${roomId}`)}
+                          onChange={(e) => profilSum(rowKey, parseFloat(e.target.value), parseFloat(getValues(`profilQuantity_${rowKey}/${roomId}`)))}
 
                         />
                       </td>

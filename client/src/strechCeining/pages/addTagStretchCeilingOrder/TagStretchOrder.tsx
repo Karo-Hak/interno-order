@@ -162,7 +162,9 @@ export const TagStretchOrderx: React.FC = (): JSX.Element => {
                 alert(res.error)
             }
         });
-        // window.location.reload()
+        window.location.reload()
+
+        
     };
 
 
@@ -211,11 +213,11 @@ export const TagStretchOrderx: React.FC = (): JSX.Element => {
                     const numericValue = value as number;
                     sum += numericValue;
                     if (roomSum[roomObj.id]) {
-                        roomSum[roomObj.id] = roomSum[roomObj.id] + numericValue;
-                        roomObj.sum = roomSum[roomObj.id]
+                        roomSum[roomObj.id] = +roomSum[roomObj.id] + +numericValue;
+                        roomObj.sum = +roomSum[roomObj.id]
                     } else {
-                        roomSum[roomObj.id] = numericValue;
-                        roomObj.sum = numericValue
+                        roomSum[roomObj.id] = +numericValue;
+                        roomObj.sum = +numericValue
                     }
                 }
             }

@@ -53,8 +53,8 @@ const LightRingSection: React.FC<LightRingSectionProps> = ({
             <thead>
               <tr style={{ background: "#dfdce0" }}>
                 <th>Լույսի Օղակ</th>
-                <th>Գին</th>
                 <th>Քանակ</th>
+                <th>Գին</th>
                 <th>Գումար</th>
                 <th>Հեռացնել</th>
               </tr>
@@ -83,6 +83,15 @@ const LightRingSection: React.FC<LightRingSectionProps> = ({
                       </td>
                       <td>
                         <input
+                          id={`lightRingQuantity_${rowKey}/${roomId}`}
+                          placeholder="Quantity"
+                          {...register(`lightRingQuantity_${rowKey}/${roomId}`)}
+                          onChange={(e: { target: { value: string } }) =>
+                            lightRingSum(rowKey, parseFloat(getValues(`lightRingPrice_${rowKey}/${roomId}`)), parseFloat(e.target.value))}
+                        />
+                      </td>
+                      <td>
+                        <input
                           id={`lightRingPrice_${rowKey}/${roomId}`}
                           placeholder="Price"
                           {...register(`lightRingPrice_${rowKey}/${roomId}`)}
@@ -90,15 +99,6 @@ const LightRingSection: React.FC<LightRingSectionProps> = ({
                             lightRingSum(rowKey, parseFloat(e.target.value), parseFloat(getValues(`lightRingQuantity_${rowKey}/${roomId}`)))}
                         />
 
-                      </td>
-                      <td>
-                        <input
-                          id={`lightRingQuantity_${rowKey}/${roomId}`}
-                          placeholder="Quantity"
-                          {...register(`lightRingQuantity_${rowKey}/${roomId}`)}
-                          onChange={(e: { target: { value: string } }) =>
-                            lightRingSum(rowKey, parseFloat(getValues(`lightRingPrice_${rowKey}/${roomId}`)), parseFloat(e.target.value))}
-                        />
                       </td>
                       <td>
                         <input

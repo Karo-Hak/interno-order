@@ -1,0 +1,36 @@
+.apranqacank {
+    display: flex;
+    justify-content: first baseline;
+    gap: 5px;
+    width: 100%;
+    padding: 5px;
+}
+
+.tableSection {
+    max-width: 20%;
+    border: 2px solid black;
+}
+
+.tableSection th {
+    text-align: center;
+    width: 50px;
+    font-size: 13px;
+}
+
+.tableSection td {
+    text-align: center;
+    height: 10px;
+    font-size: 13px;
+}
+
+.tableSection tr {
+    height: 10px;
+}
+
+
+.grid-container{
+    display: grid;
+    grid-template-columns: auto auto auto;
+    padding: 20px 5px 20px 5px;
+    gap: 5px;
+}

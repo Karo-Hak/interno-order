@@ -1,19 +1,19 @@
-import { useEffect, useState } from "react"
-import { useAppDispatch, useAppSelector } from "../../app/hooks"
-import { selectUser } from "../../features/user/userSlice"
-import { userProfile } from "../../features/user/userApi"
-import { useCookies } from "react-cookie"
-import { Await, useNavigate } from "react-router-dom"
-import './homePage.css'
-
+import React from 'react';
+import { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { selectUser } from "../../features/user/userSlice";
+import { userProfile } from "../../features/user/userApi";
+import { useCookies } from "react-cookie";
+import { useNavigate } from "react-router-dom";
+import './homePage.css';
 
 export const HomePage: React.FC = (): JSX.Element => {
-    const dispatch = useAppDispatch()
+    const dispatch = useAppDispatch();
     const [cookies, setCookie] = useCookies(['access_token']);
     const navigate = useNavigate();
-    const [sphere, setSphere] = useState([""])
+    const [sphere, setSphere] = useState<string[]>([]);
 
-    const user = useAppSelector(selectUser)
+    const user = useAppSelector(selectUser);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -21,13 +21,13 @@ export const HomePage: React.FC = (): JSX.Element => {
                 const userProfileResult = await dispatch(userProfile(cookies)).unwrap();
                 handleResult(userProfileResult);
             } catch (error) {
-                console.error("An error occurred:", error);
+                console.error("Произошла ошибка:", error);
             }
         };
 
         const handleResult = (result: any) => {
             if ("error" in result) {
-                alert(result);
+                alert(result.error);
                 setCookie("access_token", "", { path: "/" });
                 navigate("/");
             } else {
@@ -42,80 +42,83 @@ export const HomePage: React.FC = (): JSX.Element => {
         };
 
         fetchData();
-    }, []);
-
+    }, [dispatch, cookies, setCookie, navigate]);
 
     const wallpaper = () => {
         if (sphere.includes("Wallpaper")) {
-            navigate("/wallpaper")
+            navigate("/wallpaper");
         } else {
-            alert("you don't have permission to access on Wallpaper")
+            alert("Եսի քո տեղը չի");
         }
-    }
+    };
+
     const stretch = () => {
         if (sphere.includes("Stretch Ceiling")) {
-            navigate("/stretchceiling")
+            navigate("/stretchceiling");
         } else {
-            alert("you don't have permission to access on Stretch Ceiling")
+            alert("Եսի քո տեղը չի");
         }
-    }
+    };
+
     const stock = () => {
         if (sphere.includes("Stock")) {
-            navigate("/stock")
+            navigate("/stock");
         } else {
-            alert("you don't have permission to access on Stock")
+            alert("Եսի քո տեղը չի");
         }
-    }
+    };
+
     const coopStretch = () => {
         if (sphere.includes("Stretch Ceiling Coop")) {
-            navigate("/coopStretchceiling")
+            navigate("/coopStretchceiling");
         } else {
-            alert("you don't have permission to access on Stretch Ceiling Coop")
+            alert("Եսի քո տեղը չի");
         }
-    }
+    };
+    
     const wpcPanel = () => {
-        // if (sphere.includes("Wpc Panel")) {
-        //     navigate("/wpcPanel")
-        // }  else {
-        // }
-        alert("Hay hay hay!!!! el inch kuzeir")
-    }
+        alert("Էլ ինչ կուզեիր");
+    };
+    
     const plinth = () => {
-        // if (sphere.includes("Plinth")) {
-        //     navigate("/plinth")
-        // }  else {
-        // }
-        alert("Hay hay hay!!!! el inch kuzeir")
-    }
+        if (sphere.includes("Plinth") || sphere.includes("Plinth TAG") || sphere.includes("Plinth Interno")) {
+            navigate("/plint/homePage");
+        } else {
+            alert("Եսի քո տեղը չի");
+        }
+    };
 
-    return (<>
-        <div className="homePageDiv">
-            <div onClick={wallpaper}>
-                <img className="homeImg" src="/img/wallpaper.jpg"></img>
-                <p>Ֆոտոպաստար</p>
+    return (
+        <div className="homepageBody">
+            <div className="wellcome">
+                <h1>Wellcome to INTERNO Group</h1>
             </div>
-
-            <div onClick={stretch}>
-                <img className="homeImg" src="/img/stretch.jpg"></img>
-                <p>Ձգվող Առաստաղ</p>
-            </div>
-
-            <div onClick={stock}>
-                <img className="homeImg" src="/img/stock.jpg"></img>
-                <p>Պահեստ</p>
-            </div>
-            <div onClick={coopStretch}>
-                <img className="homeImg" src="/img/coopStrtch.jpg"></img>
-                <p>Համ․ Առաստաղ</p>
-            </div>
-            <div onClick={wpcPanel}>
-                <img className="homeImg" src="/img/WpcPanel.jpg"></img>
-                <p>3D Պանել</p>
-            </div>
-            <div onClick={plinth}>
-                <img className="homeImg" src="/img/plint.jpg"></img>
-                <p>Հատակապատաարանքափայտ</p>
+            <div className="homePageDiv">
+                <div onClick={wallpaper}>
+                    <img className="homeImg" src="/img/wallpaper.jpg"/>
+                    <p>Ֆոտոպաստառ</p>
+                </div>
+                <div onClick={stretch}>
+                    <img className="homeImg" src="/img/stretch.jpg"/>
+                    <p>Ձգվող Առաստաղ</p>
+                </div>
+                <div onClick={stock}>
+                    <img className="homeImg" src="/img/stock.jpg"/>
+                    <p>Պահեստ</p>
+                </div>
+                <div onClick={coopStretch}>
+                    <img className="homeImg" src="/img/coopStrtch.jpg"/>
+                    <p>Համ․ Ձգվող Առաստաղ</p>
+                </div>
+                <div onClick={plinth}>
+                    <img className="homeImg" src="/img/plint.jpg"/>
+                    <p>Շրիշակ</p>
+                </div>
+                <div onClick={wpcPanel}>
+                    <img className="homeImg" src="/img/WpcPanel.jpg"/>
+                    <p>3D Պանել</p>
+                </div>
             </div>
         </div>
-    </>)
-}
+    );
+};

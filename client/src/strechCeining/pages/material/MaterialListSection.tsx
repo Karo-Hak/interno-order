@@ -57,7 +57,7 @@ const MaterialListSection: FC<MaterialListSectionProps> = ({
                 <div>
                     <div className='newStretchOrderSection_head'>
                         <div className='newStretchOrderSection_head_name'>
-                            Ձգվող առաստաղ (Պատվերներ)
+                            Ձգվող առաստաղ (Նյութածախս)
                         </div>
                     </div>
                     <div className=''>
@@ -103,7 +103,7 @@ const MaterialListSection: FC<MaterialListSectionProps> = ({
                                                 <td><p style={{ minWidth: "80px" }}>{e.stWorker ? e.stWorker.name : "---------"}</p></td>
                                                 {
                                                     e.payed ?
-                                                        <td><p style={{ minWidth: "80px", backgroundColor:"green" }}>{e.stWorker ? e.salary : "---------"}</p></td>
+                                                        <td><p style={{ minWidth: "80px", backgroundColor:"lightgreen" }}>{e.stWorker ? e.salary : "---------"}</p></td>
 
                                                         :
                                                         <td><p style={{ minWidth: "80px" }}>{e.stWorker ? e.salary : "---------"}</p></td>

@@ -95,7 +95,7 @@ export class StretchCeilingOrderService {
 
   async filterOrderMaterial(startDate: Date, endDate: Date) {
     return await this.stretchCeilingOrderModel.find({
-      date: {
+      installDate: {
         $gte: startDate,
         $lte: endDate
       },
@@ -165,6 +165,7 @@ export class StretchCeilingOrderService {
 
     return await this.stretchCeilingOrderModel.findByIdAndUpdate(id, { status })
   }
+  
   async updateStretchPayed(id: string) {
     return await this.stretchCeilingOrderModel.findByIdAndUpdate(id, { payed: true })
   }

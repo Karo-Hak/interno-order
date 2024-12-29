@@ -13,6 +13,8 @@ import ViewCoopLightPlatformSection from './ViewCoopLightPlatformSection';
 import ViewCoopLightRingSection from './ViewCoopLightRingSection';
 import AddPayment from '../../../../component/confirmButten/AddPayment';
 import { useState, useEffect } from "react";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import ViewCoopStretchOrderPDF from "./ViewCoopStretchOrderPDF";
 
 
 export const ViewCoopStretchOrder: React.FC = (): JSX.Element => {
@@ -23,8 +25,15 @@ export const ViewCoopStretchOrder: React.FC = (): JSX.Element => {
 
     const [images, setImages] = useState<any[]>([]);
     const [order, setOrder] = useState<CoopStretchOrderProps>()
-    const [user, setUser] = useState<User>()
+    const [user, setUser] = useState<User>();
+    const type = "coop"
 
+
+    const [isDownloading, setIsDownloading] = useState(false);
+
+    const handleDownloadPDF = () => {
+        setIsDownloading(true);
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -61,14 +70,10 @@ export const ViewCoopStretchOrder: React.FC = (): JSX.Element => {
         fetchData();
     }, []);
 
-
-
-
     const parseDate = (dateStr: string) => {
         const dateObj = new Date(dateStr);
         return `${dateObj.getDate()} / ${dateObj.getMonth() + 1} / ${dateObj.getFullYear()} `;
     }
-
 
     function editOrder() {
         navigate('/coopStretchceiling/editCoopStretchOrder/' + params.id);
@@ -89,9 +94,8 @@ export const ViewCoopStretchOrder: React.FC = (): JSX.Element => {
                         gap: "20px"
                     }}
                         className="admin_profile_Strech">
-                        <AddPayment/>
+                        <AddPayment type={type} />
                         <button type="button" onClick={editOrder}>Լրացնել</button>
-                        {/* <ConfirmationButton payed={order.payed} /> */}
                         {/* <DeletOrder/> */}
                     </div>
                     <div className=''>
@@ -167,7 +171,7 @@ export const ViewCoopStretchOrder: React.FC = (): JSX.Element => {
                             <StretchImageUpload/>
                         </div> */}
                     </div>
-                    <div style={{display:"flex", margin:"10px", gap:"10px"}} >
+                    <div style={{ display: "flex", margin: "10px", gap: "10px" }} >
                         {
                             order.groupedStretchTextureData &&
                                 order.groupedStretchTextureData.length > 0 ?
@@ -197,9 +201,23 @@ export const ViewCoopStretchOrder: React.FC = (): JSX.Element => {
 
                         }
                     </div>
+                    <div>
+                        <button onClick={handleDownloadPDF} disabled={isDownloading}>
+                            {isDownloading ? 'Создание PDF...' : 'Скачать PDF'}
+                        </button>
+                        {isDownloading && order && (
+                            <PDFDownloadLink document={<ViewCoopStretchOrderPDF order={order} />} fileName="order.pdf">
+                                {({ blob, url, loading, error }) =>
+                                    loading ? 'Загрузка документа...' : 'Готово! Нажмите для скачивания.'
+                                }
+                            </PDFDownloadLink>
+                        )}
+                    </div>
                 </div>
                 : null
         }
+
+
     </>);
 }
 

@@ -102,7 +102,7 @@ export const Order: React.FC = (): JSX.Element => {
                                                 </thead>
                                                 <tbody>
                                                     <tr key={order.order._id}>
-                                                        <td>{order.order.cooperate.name} {order.order.cooperate.սւռնամե}</td>
+                                                        <td>{order.order.cooperate.name} {order.order.cooperate.surname}</td>
                                                         <td>{order.order.cooperate.phone}</td>
                                                         <td>{order.order.cooperate.cooperateRate}</td>
                                                         <td>{order.order.cooperateTotal}</td>

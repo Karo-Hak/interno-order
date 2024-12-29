@@ -184,6 +184,7 @@ export class StretchCeilingOrderController {
     }
 
   }
+  
   @Put('updateStretchOrderStatuse/:id')
   async updateStatus(@Param('id') id: string, @Body('status') status: string, @Res() res: Response) {
     try {
@@ -198,6 +199,7 @@ export class StretchCeilingOrderController {
       });
     }
   }
+
   @Put('updateStretchPayed/:id')
   async updateStretchPayed(@Param('id') id: string, @Res() res: Response) {
     try {
