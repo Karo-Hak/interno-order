@@ -4,9 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../../../app/hooks';
 import { PlintBuyerProps } from '../../features/plintBuyer/plintBuyerSlice';
 import { allPlintBuyer } from '../../features/plintBuyer/plintBuyerApi';
-import PlintCoopSection from './PlintCoopSection';
+// import PlintCoopSection from './PlintCoopSection';
 
-const BuyerSection: React.FC<any> = ({ register, setValue }: any) => {
+const PlintRetailBuyerSection: React.FC<any> = ({ register, setValue }: any) => {
     const dispatch = useAppDispatch();
     const [checkedBuyer, setCheckedBuyer] = useState(false);
     const [cookies, setCookie] = useCookies(['access_token']);
@@ -74,7 +74,7 @@ const BuyerSection: React.FC<any> = ({ register, setValue }: any) => {
                 <thead>
                     <tr style={{ background: "#dfdce0" }}>
                         <th>Անուն Ազգանուն/ <input id="buyerCheckbox" type="checkbox" onChange={handleCheckboxBuyer} /></th>
-                        <th>Գործընկեր</th>
+                        {/* <th>Գործընկեր</th> */}
                         <th>Մարզ</th>
                         <th>Հասցե</th>
                         <th>Հեռախես</th>
@@ -100,9 +100,9 @@ const BuyerSection: React.FC<any> = ({ register, setValue }: any) => {
                                 </select>
                             )}
                         </td>
-                        <td>
+                        {/* <td>
                             <PlintCoopSection register={register} setValue={setValue} />
-                        </td>
+                        </td> */}
                         <td>
                             <input id="buyerRegion" type="text" placeholder=" Buyer Region" {...register('region', { required: true })} />
                         </td>
@@ -122,4 +122,4 @@ const BuyerSection: React.FC<any> = ({ register, setValue }: any) => {
     );
 };
 
-export default BuyerSection;
+export default PlintRetailBuyerSection;

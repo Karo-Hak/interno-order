@@ -41,6 +41,8 @@ export class User {
         ]
     })
     plintOrder: PlintOrder[];
+    @Prop({ required: false })
+    chatId?: string;
 };
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -51,7 +51,7 @@ export const PlintHonePage: React.FC = (): JSX.Element => {
     function viewOrder(id: any) {
         window.open('/plint/viewPlintOrder/' + id, '_blank');
     }
-console.log(plint);
+
 
 
     return (

@@ -6,6 +6,8 @@ import axios from "axios";
 export const addNewPlintOrder = createAsyncThunk(
   'plintOrder/new/axios',
   async (obj: any) => {
+    console.log(obj);
+    
     try {
       const response = await axios.post(process.env.REACT_APP_SERVER_URL + "/plintOrder", { ...obj }, {
         headers: {
@@ -23,10 +25,8 @@ export const addNewPlintOrder = createAsyncThunk(
 export const editPlintOrder = createAsyncThunk(
   'plintOrder/update/new/axios',
   async (obj: any) => {
-    console.log(obj);
-    
     try {
-      const response = await axios.post(process.env.REACT_APP_SERVER_URL + "/plintOrder/update" + obj.params.id, { ...obj }, {
+      const response = await axios.post(process.env.REACT_APP_SERVER_URL + "/plintOrder/update/" + obj.params.id, { ...obj }, {
         headers: {
           Authorization: `Bearer ${obj.cookies.access_token}`
         }

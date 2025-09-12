@@ -20,57 +20,65 @@ export class StretchCeilingOrderService {
 
     private readonly debetKreditService: DebetKreditService,
     private readonly stretchBuyerService: StretchBuyerService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
   ) { }
 
 
   async create(createStretchCeilingOrderDto: any) {
-    const { orderBuyer, user } = createStretchCeilingOrderDto;
+  const { orderBuyer, user } = createStretchCeilingOrderDto;
 
-    const orderBuyerDocument = await this.stretchBuyerModel.findById(orderBuyer);
-    if (!orderBuyerDocument) {
-      throw new Error('Order buyer not found');
-    }
-
-    const orderUserDocument = await this.userModel.findById(user.userId);
-    if (!orderUserDocument) {
-      throw new Error('Order user not found');
-    }
-
-    let stWorkerId = null;
-    if (createStretchCeilingOrderDto.stretchTextureOrder.stWorker !== "Աշխատակից") {
-      const orderWorkerDocument = await this.stretchWorkerModel.findById(createStretchCeilingOrderDto.stretchTextureOrder.stWorker);
-      if (!orderWorkerDocument) {
-        throw new Error('Order worker not found');
-      }
-      stWorkerId = orderWorkerDocument.id;
-    }
-
-    const createdOrder: any = await this.stretchCeilingOrderModel.create({
-      ...createStretchCeilingOrderDto.stretchTextureOrder,
-      user: orderUserDocument.id,
-      buyer: orderBuyerDocument.id,
-      stWorker: stWorkerId,
-    });
-
-    orderUserDocument.order.push(createdOrder.id);
-    orderBuyerDocument.order.push(createdOrder.id);
-
-    await Promise.all([
-      orderUserDocument.save(),
-      orderBuyerDocument.save(),
-    ]);
-
-    if (stWorkerId) {
-      const orderWorkerDocument = await this.stretchWorkerModel.findById(stWorkerId);
-      orderWorkerDocument.order.push(createdOrder.id);
-      await orderWorkerDocument.save();
-    }
-    const debetKredit = await this.debetKreditService.create(createdOrder._id, orderUserDocument.id, orderBuyerDocument.id, createdOrder.balance, createdOrder.prepayment)
-
-
-    return createdOrder;
+  const orderBuyerDocument = await this.stretchBuyerModel.findById(orderBuyer);
+  if (!orderBuyerDocument) {
+    throw new Error('Order buyer not found');
   }
+
+  const orderUserDocument = await this.userModel.findById(user.userId);
+  if (!orderUserDocument) {
+    throw new Error('Order user not found');
+  }
+
+  let stWorkerId = null;
+  if (createStretchCeilingOrderDto.stretchTextureOrder.stWorker !== "Աշխատակից") {
+    const orderWorkerDocument = await this.stretchWorkerModel.findById(createStretchCeilingOrderDto.stretchTextureOrder.stWorker);
+    if (!orderWorkerDocument) {
+      throw new Error('Order worker not found');
+    }
+    stWorkerId = orderWorkerDocument.id;
+  }
+
+  const createdOrder: any = await this.stretchCeilingOrderModel.create({
+    ...createStretchCeilingOrderDto.stretchTextureOrder,
+    user: orderUserDocument.id,
+    buyer: orderBuyerDocument.id,
+    stWorker: stWorkerId,
+  });
+
+  orderUserDocument.order.push(createdOrder.id);
+  orderBuyerDocument.order.push(createdOrder.id);
+
+  await Promise.all([
+    orderUserDocument.save(),
+    orderBuyerDocument.save(),
+  ]);
+
+  if (stWorkerId) {
+    const orderWorkerDocument = await this.stretchWorkerModel.findById(stWorkerId);
+    orderWorkerDocument.order.push(createdOrder.id);
+    await orderWorkerDocument.save();
+  }
+
+  await this.debetKreditService.create(
+    createdOrder._id,
+    orderUserDocument.id,
+    orderBuyerDocument.id,
+    createdOrder.balance,
+    createdOrder.prepayment
+  );
+
+  
+  return createdOrder;
+}
+
 
 
 
@@ -86,7 +94,7 @@ export class StretchCeilingOrderService {
 
   async filterOrder(startDate: Date, endDate: Date) {
     return await this.stretchCeilingOrderModel.find({
-      date: {
+      installDate: {
         $gte: startDate,
         $lte: endDate
       }
@@ -112,8 +120,7 @@ export class StretchCeilingOrderService {
   }
 
   async findOne(id: string) {
-    const data = (await this.stretchCeilingOrderModel.findById(id).populate("buyer").populate("stWorker"));
-    return data
+    return await this.stretchCeilingOrderModel.findById(id).populate("buyer").populate("stWorker");
   }
 
   async update(id: string, updateStretchCeilingOrderDto: { balance: number, prepayment: number }, buyer: any, orderWorker: any, updatingOrder: UpdateStretchCeilingOrderDto) {
@@ -165,7 +172,7 @@ export class StretchCeilingOrderService {
 
     return await this.stretchCeilingOrderModel.findByIdAndUpdate(id, { status })
   }
-  
+
   async updateStretchPayed(id: string) {
     return await this.stretchCeilingOrderModel.findByIdAndUpdate(id, { payed: true })
   }

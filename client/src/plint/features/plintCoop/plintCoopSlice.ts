@@ -44,6 +44,6 @@ export const plintCoopSlice = createSlice({
 })
 
 
-export const selectPlintBuyer = (state: any) => state.plintBuyer;
+export const selectPlintCoop = (state: any) => state.plintCoop;
 
 export default plintCoopSlice.reducer;

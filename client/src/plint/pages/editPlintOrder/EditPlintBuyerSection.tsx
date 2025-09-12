@@ -24,7 +24,6 @@ const EditPlintBuyerSection: React.FC<EditPlintBuyerSectionProps> = ({ register,
     const navigate = useNavigate();
 
     const [plintBuyer, setPlintBuyer] = useState<PlintBuyerProps[]>([])
-    console.log(orderCoop);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -47,8 +46,8 @@ const EditPlintBuyerSection: React.FC<EditPlintBuyerSectionProps> = ({ register,
         };
 
         const processResult = (result: any) => {
-            if (result.plintBuyer) {
-                setPlintBuyer(result.plintBuyer);
+            if (result.buyer) {
+                setPlintBuyer(result.buyer);
             }
         };
 
@@ -106,7 +105,7 @@ const EditPlintBuyerSection: React.FC<EditPlintBuyerSectionProps> = ({ register,
                             {!checkedBuyer ? (
                                 <input id="buyerName" type="text" placeholder=" Buyer Name" {...register('name', { required: true })} />
                             ) : (
-                                <select id="selectCoop" {...register('buyerId', { required: true })} onChange={(event) => selectedBuyer(event)}>
+                                <select id="buyerId" {...register('buyerId', { required: true })} onChange={(event) => selectedBuyer(event)}>
                                     {plintBuyer && plintBuyer.length > 0 ? (
                                         plintBuyer.map((e: any) => {
                                             return (
@@ -119,6 +118,9 @@ const EditPlintBuyerSection: React.FC<EditPlintBuyerSectionProps> = ({ register,
                                 </select>
                             )}
                         </td>
+                        {
+                            
+                        }
                         <td>
                             <EditPlintCoopSection register={register} setValue={setValue} orderCoop={orderCoop} />
                         </td>

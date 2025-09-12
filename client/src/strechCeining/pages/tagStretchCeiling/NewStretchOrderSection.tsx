@@ -125,12 +125,12 @@ const NewStretchOrderSection: React.FC<any> = () => {
                                                                 style={{
                                                                     minWidth: "100px"
                                                                 }}>
-                                                                {e.buyer.buyerRegion}
+                                                                {e.buyer.region}
                                                             </p>
                                                         </td>
                                                         <td>
                                                             <p >
-                                                                {e.buyer.buyerAddress}
+                                                                {e.address}
                                                             </p>
                                                         </td>
                                                         <td >

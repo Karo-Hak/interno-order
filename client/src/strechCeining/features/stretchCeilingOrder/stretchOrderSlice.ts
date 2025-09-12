@@ -11,6 +11,8 @@ export interface StretchOrderProps {
     buyerComment: string;
     code: string;
     date: string;
+    address: string;
+    region: string;
 
 }
 

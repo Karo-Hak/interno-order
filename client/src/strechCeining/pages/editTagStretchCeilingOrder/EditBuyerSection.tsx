@@ -5,7 +5,7 @@ import { selectStretchBuyer } from '../../features/StrechBuyer/strechBuyerSlice'
 import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
 
-const EditBuyerSection: React.FC<any> = ({ buyer, installDate, measureDate, register, setValue, code }: any) => {
+const EditBuyerSection: React.FC<any> = ({ buyer, installDate, measureDate, register, setValue, code, address, region }: any) => {
     const dispatch = useAppDispatch();
     const stretchBuyer = useAppSelector(selectStretchBuyer);
     const [checkedBuyer, setCheckedBuyer] = useState(false);
@@ -20,7 +20,7 @@ const EditBuyerSection: React.FC<any> = ({ buyer, installDate, measureDate, regi
         }).catch(error => {
             console.error("Error in promise:", error);
         });
-       
+
 
     }, []);
     useEffect(() => {
@@ -34,6 +34,14 @@ const EditBuyerSection: React.FC<any> = ({ buyer, installDate, measureDate, regi
             const formattedInstallDate = new Date(installDate).toISOString().split('T')[0];
             setValue('measureDate', formattedMeasureDate);
             setValue('installDate', formattedInstallDate);
+            if (address && address.length > 0) {
+                setValue('address', address);
+                setValue('region', region);
+            } else {
+                setValue('address', buyer.buyerAddress);
+                setValue('region', buyer.buyerRegion);
+            }
+            
             setValue('code', code);
         }
     }, [buyer, measureDate, installDate, code]);
@@ -57,7 +65,7 @@ const EditBuyerSection: React.FC<any> = ({ buyer, installDate, measureDate, regi
         setValue('buyerAddress', selectedBuyer.buyerAddress)
         setValue('buyerName', selectedBuyer.buyerName)
         setValue('buyerId', selectedBuyer._id)
-        
+
     }
 
     return (
@@ -107,10 +115,10 @@ const EditBuyerSection: React.FC<any> = ({ buyer, installDate, measureDate, regi
                             )}
                         </td>
                         <td>
-                            <input id="buyerRegion" type="text" placeholder=" Buyer Region" {...register('buyerRegion', { required: true })} />
+                            <input id="buyerRegion" type="text" placeholder=" Buyer Region" {...register('region', { required: true })} />
                         </td>
                         <td>
-                            <input style={{ width: "300px" }} id="buyerAddress" type="text" placeholder="Buyer Address" {...register('buyerAddress', { required: true })} />
+                            <input style={{ width: "300px" }} id="buyerAddress" type="text" placeholder="Buyer Address" {...register('address', { required: true })} />
                         </td>
                         <td>
                             <div className='buyerPhone1_2'>

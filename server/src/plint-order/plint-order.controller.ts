@@ -4,6 +4,7 @@ import { PlintBuyerService } from 'src/plintBuyer/plint-buyer.service';
 import { PlintOrderService } from './plint-order.service';
 import { UpdatePlintOrderDto } from './dto/update-plint-order.dto';
 import { PlintProductService } from 'src/plint-product/plint-product.service';
+import { PlintCoopService } from 'src/plint-coop/plint-coop.service';
 
 
 @Controller('plintOrder')
@@ -11,7 +12,8 @@ export class PlintOrderController {
   constructor(
     private readonly plintOrderService: PlintOrderService,
     private readonly plintBuyerService: PlintBuyerService,
-    private readonly plintProductService: PlintProductService
+    private readonly plintProductService: PlintProductService,
+    private readonly plintCoopService: PlintCoopService
 
   ) {
   }
@@ -19,7 +21,7 @@ export class PlintOrderController {
   @Post()
   async create(@Body() obj: any, @Res() res: Response) {
     try {
-
+      
       let buyer
       if (obj.buyer.buyerId) {
         buyer = await this.plintBuyerService.findOne(obj.buyer.buyerId);
@@ -29,8 +31,10 @@ export class PlintOrderController {
           buyer = await this.plintBuyerService.create(obj.buyer);
         }
       }
+      
       const createdPlinthOrder = { plintOrder: obj.plintOrder, buyer, user: obj.user }
       const plintOrder = await this.plintOrderService.create(createdPlinthOrder);
+      
       return res.status(HttpStatus.CREATED).json({
         message: "created",
       })
@@ -47,29 +51,20 @@ export class PlintOrderController {
   async update(@Param('id') id: string, @Body() updatePlintOrderDto: UpdatePlintOrderDto, @Res() res: Response) {
     try {
       const updatingOrder: any = await this.plintOrderService.findOne(id);
-      // let orderBuyer = await this.plintBuyerService.findByPhone(updatePlintOrderDto.buyer.buyerPhone1);
-      // if (!orderBuyer) {
-      //   orderBuyer = await this.plintBuyerService.create(updatePlintOrderDto.buyer)
-      // }
-      // await this.plintBuyerService.deleteFromArray(updatingOrder.buyer._id, updatingOrder.id)
-      // let orderWorker = undefined
+      
+      let orderBuyer = await this.plintBuyerService.findByPhone(updatePlintOrderDto.buyer.phone1);
+      if (!orderBuyer) {
+        orderBuyer = await this.plintBuyerService.create(updatePlintOrderDto.buyer)
+      }
+      await this.plintBuyerService.deleteFromArray(updatingOrder.buyer._id, updatingOrder.id)
+      
+      let orderCoop = await this.plintCoopService.findOne(updatePlintOrderDto.coop);
+      if(orderCoop){
+        await this.plintCoopService.deleteFromArray(updatingOrder.coop._id, updatingOrder.id)
+      }
 
-      // if (updatePlintOrderDto.plintOrder) {
-      //   orderWorker = await this.stretchWorkerService.findOne(updateStretchCeilingOrderDto.stretchTextureOrder.stWorkerId);
-      // }
-      // await this.stretchWorkerService.deleteFromArray(updatingOrder.stWorkerId, updatingOrder.id)
-
-      // if (updateStretchCeilingOrderDto.stretchTextureOrder.rooms) {
-      //   removeEmptyValues(updateStretchCeilingOrderDto.stretchTextureOrder.rooms)
-      //   removeEmptyObjects(updateStretchCeilingOrderDto.stretchTextureOrder.rooms)
-      // }
-      // if (updateStretchCeilingOrderDto.stretchTextureOrder.groupedWorks) {
-      //   removeEmptyValues(updateStretchCeilingOrderDto.stretchTextureOrder.groupedWorks)
-      //   removeEmptyObjects(updateStretchCeilingOrderDto.stretchTextureOrder.groupedWorks)
-      // }
-
-      const updatedPlintOrder = await this.plintOrderService.update(id, updatePlintOrderDto)
-      return res.status(HttpStatus.OK).json(updatedPlintOrder);
+      const updatedPlintOrder = await this.plintOrderService.update(id, updatePlintOrderDto.plintOrder, orderBuyer, updatingOrder)
+      return res.status(HttpStatus.OK).json({updatedPlintOrder});
     } catch (e) {
       return res.status(HttpStatus.OK).json({
         error: e.message

@@ -30,7 +30,7 @@ const EditPlintSection: React.FC<EditPlintSectionProps> = ({
         orderPlint.forEach((el: GroupedPlintDataProps, index: number) => {
             if (plintRowId.length > 0) {
                 setValue(`plintId_${plintRowId[index]}`, el.id)
-                setValue(`plintPrice_${plintRowId[index]}`, el.price)
+                setValue(`plintPrice_${plintRowId[index]}`, el.price1)
                 setValue(`plintQuantity_${plintRowId[index]}`, el.quantity)
                 setValue(`plintSum_${plintRowId[index]}`, el.sum)
             }
@@ -44,8 +44,8 @@ const EditPlintSection: React.FC<EditPlintSectionProps> = ({
         const selectedId = event.target.value;
         const texture = plint.find((e: PlintProps) => e._id === selectedId);
         if (texture) {
-            setValue(`plintPrice_${rowId}`, texture.price);
-            textureSum(rowId, +texture.price, 0)
+            setValue(`plintPrice_${rowId}`, texture.price1);
+            textureSum(rowId, +texture.price1, 0)
         } else {
             setValue(`plintPrice_${rowId}`, 0);
         }

@@ -55,6 +55,21 @@ export class PlintProductService {
     await Promise.all(updatePromises);
     return updatePromises;
   }
+  
+  async updatePrice(updatePlintProductDto: { _id: string; price1: number; price2: number }) {
+    const { _id, price1, price2 } = updatePlintProductDto;
+  
+    if (!Types.ObjectId.isValid(_id)) {
+      throw new Error(`Неверный ObjectId: ${_id}`);
+    }
+  
+    return this.plintProductModel.updateOne(
+      { _id: new Types.ObjectId(_id) }, // Преобразование в ObjectId
+      { $set: { price1, price2 } }
+    );
+  }
+  
+  
 
   async updateProductQuantity(id: string, newQuantity: number) {
     return this.plintProductModel.updateOne({ _id: id }, { $set: { quantity: newQuantity } });

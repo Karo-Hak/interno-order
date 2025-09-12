@@ -1,6 +1,6 @@
 import React, { ChangeEvent } from 'react';
 import { UseFormGetValues, UseFormRegister, UseFormSetValue } from 'react-hook-form';
-import './plintOrder.css';
+import './plintCoopOrder.css';
 import { PlintProps } from '../../features/plint/plintSlice';
 
 interface PlintSectionProps {
@@ -12,7 +12,7 @@ interface PlintSectionProps {
     plint: Array<PlintProps>;
 }
 
-const PlintSection: React.FC<PlintSectionProps> = ({
+const PlintRetailSection: React.FC<PlintSectionProps> = ({
     register,
     setValue,
     getValues,
@@ -27,9 +27,9 @@ const PlintSection: React.FC<PlintSectionProps> = ({
 
         const texture = plint.find((e: PlintProps) => e._id === selectedId);
         if (texture) {
-            setValue(`plintPrice_${rowId}`, texture.price);
+            setValue(`plintPrice_${rowId}`, texture.price2);
             deletInputs(rowId)
-            textureSum(rowId, +texture.price, 0)
+            textureSum(rowId, +texture.price2, 0)
         } else {
             setValue(`plintPrice_${rowId}`, 0);
         }
@@ -124,4 +124,4 @@ const PlintSection: React.FC<PlintSectionProps> = ({
     );
 };
 
-export default PlintSection;
+export default PlintRetailSection;

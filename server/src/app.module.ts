@@ -35,6 +35,8 @@ import { PlintDebetKreditModule } from './plint-debet-kredit/plint-debet-kredit.
 import { DebetKreditModule } from './debet-kredit/debet-kredit.module';
 import { CoopDebetKreditModule } from './coop-debet-kredit/coop-debet-kredit.module';
 import { PlintProductionModule } from './plint-production/plint-production.module';
+import { TelegramModule } from './telegram/telegram.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -75,6 +77,8 @@ import { PlintProductionModule } from './plint-production/plint-production.modul
     StretchCeilingOrderModule,
     DebetKreditModule,
     CoopDebetKreditModule,
+    TelegramModule,
+    ConfigModule.forRoot({ isGlobal: true })
   ],
   controllers: [AppController],
   providers: [AppService],

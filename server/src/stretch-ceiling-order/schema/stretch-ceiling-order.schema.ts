@@ -27,6 +27,10 @@ export class StretchCeilingOrder {
     @Prop()
     buyerComment: string;
     @Prop()
+    address: string;
+    @Prop()
+    region: string;
+    @Prop()
     balance: number;
     @Prop()
     prepayment: number;

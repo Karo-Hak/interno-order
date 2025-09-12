@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import './plintOrder.css'
+import './plintRetailOrder.css'
 import { UseFormRegister, UseFormSetValue } from 'react-hook-form';
 
 
@@ -8,7 +8,7 @@ interface PlintPaymentSectionProps {
   setValue: UseFormSetValue<any>;
 }
 
-const PlintPaymentSection: FC<PlintPaymentSectionProps> = ({
+const PlintRetailPaymentSection: FC<PlintPaymentSectionProps> = ({
   register,
   setValue,
 }: PlintPaymentSectionProps) => {
@@ -73,22 +73,25 @@ const PlintPaymentSection: FC<PlintPaymentSectionProps> = ({
         <table className='paymentSection' >
           <thead>
             <tr style={{ background: "#dfdce0" }}>
-              <th>Գործ․ %</th>
-              <th>Գործ․ գումար</th>
-              <th>Առաքում</th>
+              <th>Զեղչ %</th>
+              <th>
+              <input id="delivery" type="checkbox" placeholder="Delivery" {...register('delivery')} onChange={handleCheckboxDelivery} />
+                Առաքման Հասցե
+                </th>
+              <th>Հեռ․</th>
               <th>Առ․ գումար</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td>
-                <input id="discount" type="text" placeholder="discount" {...register('coopDiscount')} />
+                <input id="discount" type="text" placeholder="discount" {...register('discount')} />
               </td>
               <td>
-                <input id="coopTotal" type="number" placeholder="coopTotal" {...register('coopTotal')} />
+                <input  style={{minWidth:"200px"}} id="deliveryAddress" type="text" placeholder="Delivery Address" {...register('deliveryAddress')} />
               </td>
               <td>
-                <p>Մեր կողմից</p> <input id="delivery" type="checkbox" placeholder="Delivery" {...register('delivery')} onChange={handleCheckboxDelivery} />
+                <input id="deliveryPhone" type="text" placeholder="Delivery Phone" {...register('deliveryPhone')} onChange={handleCheckboxDelivery} />
               </td>
               <td>
                 <input id="deliverySum" type="number" placeholder="deliverySum" {...register('deliverySum')} />
@@ -103,4 +106,4 @@ const PlintPaymentSection: FC<PlintPaymentSectionProps> = ({
   );
 };
 
-export default PlintPaymentSection;
+export default PlintRetailPaymentSection;

@@ -20,7 +20,7 @@ export class PlintBuyerService {
   }
 
   async findByPhone(phone: string) {
-    return await this.plintBuyerModel.findOne({ buyerPhone1: phone })
+    return await this.plintBuyerModel.findOne({ phone1: phone })
   }
 
   async findOne(id: string) {

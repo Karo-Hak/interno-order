@@ -11,9 +11,6 @@ const PlintCoopSection: React.FC<any> = ({ register, setValue, orderCoop }: any)
     const navigate = useNavigate();
 
     const [plintCoop, setPlintCoop] = useState<PlintCoopProps[]>([]);
-console.log(orderCoop);
-
-
 
     useEffect(() => {
         const fetchData = async () => {
@@ -42,14 +39,22 @@ console.log(orderCoop);
         };
 
         fetchData();
-        setValue('plintcoopId', orderCoop._id)
-    }, [cookies, dispatch, navigate, setCookie, orderCoop]);
+
+        if (orderCoop && orderCoop._id) {
+            setValue('plintcoopId', orderCoop._id);
+        } else {
+            setValue('plintcoopId', '');
+        }
+    }, [cookies, dispatch, navigate, setCookie, orderCoop, setValue]);
 
     function selectedCoop(event: React.ChangeEvent<HTMLSelectElement>) {
         const selectedCoop = plintCoop.find((element: PlintCoopProps) => element._id === event.target.value);
         if (selectedCoop) {
             setValue('coopDiscount', selectedCoop.coopDiscount);
             setValue('plintcoopId', selectedCoop._id);
+        } else {
+            setValue('coopDiscount', '');
+            setValue('plintcoopId', '');
         }
     }
 

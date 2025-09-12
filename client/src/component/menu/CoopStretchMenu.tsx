@@ -59,16 +59,16 @@ export const CoopStretchMenu: React.FC<CoopStretchMenuProps> = (): JSX.Element =
         window.open("/coopStretchceiling/viewCoopStretchOrdersList")
     }
     const viewMaterialsOrders = () => {
-        navigate("/coopStretchceiling/viewMaterial")
+        navigate("/coopStretchceiling/coopViewMaterial")
     }
     const viewMaterialsOrdersNewWindow = () => {
-        window.open("/coopStretchceiling/viewMaterial")
+        window.open("/coopStretchceiling/coopViewMaterial")
     }
     const viewDebetKredit = () => {
         navigate("/coopStretchceiling/viewCoopDebetKredit")
     }
     const viewDebetKreditNewWindow = () => {
-        window.open("/coopStretchceiling/viewMaterial")
+        window.open("/coopStretchceiling/viewCoopDebetKredit")
     }
 
     return (

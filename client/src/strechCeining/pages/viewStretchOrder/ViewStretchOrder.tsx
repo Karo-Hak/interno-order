@@ -35,7 +35,8 @@ export const ViewStretchOrder: React.FC = (): JSX.Element => {
     const [rooms, setRooms] = useState<any[]>([]);
     const [works, setWorks] = useState<any[]>([]);
     const [images, setImages] = useState<any[]>([]);
-    const order = useAppSelector(selectStretchOrder).stretchOrder;
+    // const order = useAppSelector(selectStretchOrder).stretchOrder.order;
+    const [order, setOrder] = useState<any>({})
 
     const [isDownloading, setIsDownloading] = useState(false);
 
@@ -67,10 +68,7 @@ export const ViewStretchOrder: React.FC = (): JSX.Element => {
         };
 
         const processResult = (result: any) => {
-            if (result.rooms && typeof result.rooms === "object" && result.rooms !== null) {
-                const rooms = Object.values(result.rooms);
-                setRooms(rooms);
-            }
+
 
             if (result.groupedWorks !== undefined && result.groupedWorks !== null) {
                 const works = Object.values(result.groupedWorks);
@@ -79,11 +77,20 @@ export const ViewStretchOrder: React.FC = (): JSX.Element => {
             if (result.picUrl) {
                 setImages(result.picUrl)
             }
+            if (result.order) {
+                setOrder(result.order)
+            }
 
         };
 
         fetchData();
     }, []);
+    useEffect(() => {
+        if (order.rooms && typeof order.rooms === "object" && order.rooms !== null) {
+            const rooms = Object.values(order.rooms);
+            setRooms(rooms);
+        }
+    }, [order])
 
 
     const user = useAppSelector(selectUser);
@@ -157,8 +164,8 @@ export const ViewStretchOrder: React.FC = (): JSX.Element => {
                                         <td>{parseDate(order.measureDate)}</td>
                                         <td>{parseDate(order.installDate)}</td>
                                         <td>{order.buyer.buyerName}</td>
-                                        <td>{order.buyer.buyerRegion}</td>
-                                        <td>{order.buyer.buyerAddress}</td>
+                                        <td>{order.region}</td>
+                                        <td>{order.address}</td>
                                         <td>
                                             <div className='buyerPhone1_2'>
                                                 {order.buyer.buyerPhone1} / {order.buyer.buyerPhone2}

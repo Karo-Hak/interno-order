@@ -84,6 +84,7 @@ export const ViewPlintOrder: React.FC = (): JSX.Element => {
     const statuse = () => {
         setDone(true);
     };
+console.log(order);
 
     return (<>
         <PlintMenu />
@@ -159,9 +160,9 @@ export const ViewPlintOrder: React.FC = (): JSX.Element => {
                                         <th>Կանխավճար</th>
                                         <th>Մնացորդ</th>
                                         <th>Նկարագրություն</th>
-                                        <th>Գործ․ %</th>
-                                        <th>Գործ․ գումար</th>
-                                        <th>Առաքում</th>
+                                        <th>Զեղչ %</th>
+                                        <th>Առ․ հասցե</th>
+                                        <th>Առ․ Հեռախես</th>
                                         <th>Առ․ գումար</th>
                                     </tr>
                                 </thead>
@@ -176,13 +177,9 @@ export const ViewPlintOrder: React.FC = (): JSX.Element => {
                                         <td>{order.prepayment}</td>
                                         <td>{order.groundTotal}</td>
                                         <td>{order.buyerComment}</td>
-                                        <td>{order.coopDiscount}</td>
-                                        <td>{order.coopTotal}</td>
-                                        {
-                                            order.delivery ?
-                                            <td>V</td> :
-                                            <td></td> 
-                                        }
+                                        <td>{order.discount}</td>
+                                        <td>{order.deliveryAddress}</td>
+                                        <td>{order.deliveryPhone}</td>
                                         <td>{order.deliverySum}</td>
                                     </tr>
                                 </tbody>

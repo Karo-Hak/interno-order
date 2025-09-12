@@ -7,7 +7,8 @@ import { StretchBuyer } from './schema/stretch-buyer.schema';
 @Injectable()
 export class StretchBuyerService {
   constructor(
-    @InjectModel(StretchBuyer.name) private stretchBuyerModel: Model<StretchBuyer>
+    @InjectModel(StretchBuyer.name) 
+    private stretchBuyerModel: Model<StretchBuyer>,
   ) { }
 
   create(createStretchBuyerDto: any) {
@@ -19,9 +20,16 @@ export class StretchBuyerService {
     return await this.stretchBuyerModel.find()
   }
 
-  async findByPhone(phone: string) {
-    return await this.stretchBuyerModel.findOne({ buyerPhone1: phone })
+  async findByPhoneAndName(phone: string, name: string) {
+    return await this.stretchBuyerModel.findOne({
+      $and: [{ buyerPhone1: phone }, { buyerName: name }]
+    });
   }
+
+  async findByPhone(phone: string) {
+    return await this.stretchBuyerModel.findOne({ buyerPhone1: phone });
+  }
+
 
   async findOne(id: string) {
     return await this.stretchBuyerModel.findById(id);
@@ -36,10 +44,10 @@ export class StretchBuyerService {
   }
   async removeDebetKreditFromBuyers(debetKreditIds: string[]) {
     return await this.stretchBuyerModel.updateMany(
-        {},
-        { $pull: { debetKredit: { $in: debetKreditIds } } } 
+      {},
+      { $pull: { debetKredit: { $in: debetKreditIds } } }
     );
-}
+  }
 
 
   update(id: number, updateStretchBuyerDto: UpdateStretchBuyerDto) {

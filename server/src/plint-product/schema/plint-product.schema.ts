@@ -9,7 +9,9 @@ export class PlintProduct {
     @Prop()
     name: string;
     @Prop()
-    price: string;
+    price1: string;
+    @Prop()
+    price2: string;
     @Prop()
     quantity: string;
 

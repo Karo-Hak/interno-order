@@ -12,6 +12,9 @@ import { PlintCoopModule } from 'src/plint-coop/plint-coop.module';
 import { PlintDebetKreditModule } from 'src/plint-debet-kredit/plint-debet-kredit.module';
 import { PlintProduct, PlintProductSchema } from 'src/plint-product/schema/plint-product.schema';
 import { PlintProductModule } from 'src/plint-product/plint-product.module';
+import { PlintAgent, PlintAgentSchema } from 'src/plint-agent/schema/plint-agent.schema';
+import { PlintAgentModule } from 'src/plint-agent/plint-agent.module';
+import { TelegramModule } from '../telegram/telegram.module';
 
 @Module({
   imports: [
@@ -19,14 +22,17 @@ import { PlintProductModule } from 'src/plint-product/plint-product.module';
       { name: PlintOrder.name, schema: PlintOrderSchema },
       { name: PlintBuyer.name, schema: PlintBuyerSchema },
       { name: PlintCoop.name, schema: PlintCoopSchema },
+      { name: PlintAgent.name, schema: PlintAgentSchema },
       { name: User.name, schema: UserSchema },
       {name: PlintProduct.name, schema: PlintProductSchema }
     ]),
     PlintBuyerModule,
     UserModule,
     PlintCoopModule,
+    PlintAgentModule,
     PlintDebetKreditModule,
-    PlintProductModule
+    PlintProductModule,
+    TelegramModule
 
   ],
   controllers: [PlintOrderController],

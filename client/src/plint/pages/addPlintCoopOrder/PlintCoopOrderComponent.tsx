@@ -1,9 +1,9 @@
 import React, { FC, useState } from 'react';
-import './plintOrder.css'
+import './plintCoopOrder.css'
 import { v4 as uuidv4 } from 'uuid';
 import { UseFormGetValues, UseFormRegister, UseFormReset, UseFormSetValue } from 'react-hook-form';
 import { PlintProps } from '../../features/plint/plintSlice';
-import PlintSection from './PlintSection';
+import PlintRetailSection from './PlintRetailSection';
 
 
 interface PlintOrderComponentProps {
@@ -15,7 +15,7 @@ interface PlintOrderComponentProps {
 
 }
 
-const PlintOrderComponent: FC<PlintOrderComponentProps> = (
+const PlintRetailOrderComponent: FC<PlintOrderComponentProps> = (
     {
         register,
         reset,
@@ -53,7 +53,7 @@ const PlintOrderComponent: FC<PlintOrderComponentProps> = (
                         </button>
                     </div>
 
-                    <PlintSection
+                    <PlintRetailSection
                         register={register}
                         setValue={setValue}
                         getValues={getValues}
@@ -71,4 +71,4 @@ const PlintOrderComponent: FC<PlintOrderComponentProps> = (
     );
 };
 
-export default PlintOrderComponent;
+export default PlintRetailOrderComponent;

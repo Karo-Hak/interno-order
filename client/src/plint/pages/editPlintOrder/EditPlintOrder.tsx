@@ -13,7 +13,7 @@ import { PlintMenu } from '../../../component/menu/PlintMenu';
 import EditPlintBuyerSection from './EditPlintBuyerSection';
 import EditPlintPaymentSection from './EditPlintPaymentSection';
 import EditPlintOrderComponent from './EditPlintOrderComponent';
-import { filterOrder } from '../addPlintOrder/plintLogic';
+import { filterOrder } from '../addPlintRetailOrder/plintRetailLogic';
 import { PlintCoopProps } from '../../features/plintCoop/plintCoopSlice';
 
 export const EditPlintOrder: React.FC = (): JSX.Element => {
@@ -67,7 +67,7 @@ export const EditPlintOrder: React.FC = (): JSX.Element => {
                 const userProfileResult = await dispatch(userProfile(cookies)).unwrap();
                 const plintResult = await dispatch(getAllPlint(cookies)).unwrap();
                 const plintOrderResult = await dispatch(findPlintOrder({ params, cookies })).unwrap();
-
+    
                 handleResult(plintOrderResult);
                 handleResult(userProfileResult);
                 handleResult(plintResult);
@@ -77,7 +77,7 @@ export const EditPlintOrder: React.FC = (): JSX.Element => {
         };
         const handleResult = (result: any) => {
             if ("error" in result) {
-                alert(result);
+                alert(result.error);
                 setCookie("access_token", "", { path: "/" });
                 navigate("/");
             } else {
@@ -91,10 +91,10 @@ export const EditPlintOrder: React.FC = (): JSX.Element => {
                 setPlintData(result.plint);
             } else if (result.order) {
                 setOrder(result.order);
-                setOrderBuyer(result.order.buyer);
-                setOrderCoop(result.order.coop);
-                setPrepayment(result.order.prepayment);
-                setBalance(result.order.balance);
+                setOrderBuyer(result.order.buyer); 
+                setOrderCoop(result.order.coop || {}); 
+                setPrepayment(result.order.prepayment || 0);
+                setBalance(result.order.balance || 0);
                 if (result.order.groupedPlintData && result.order.groupedPlintData.length > 0) {
                     const data: SetStateAction<PlintProps[]> | PlintProps[] = [];
                     result.order.groupedPlintData.forEach((e: PlintProps) => {
@@ -104,56 +104,54 @@ export const EditPlintOrder: React.FC = (): JSX.Element => {
                 }
             }
         };
-
+    
         fetchData();
     }, [dispatch, cookies, navigate, params, setCookie]);
-
+    
     useEffect(() => {
         setValue("groundTotal", balance - prepayment);
         setValue("balance", balance);
         setValue("prepayment", prepayment);
-        setValue("paymentMethod", order.paymentMethod);
-        setValue("buyerComment", order.buyerComment);
-        setValue("coopDiscount", order.coopDiscount);
-        setValue("coopTotal", order.coopTotal);
-        setValue("deliverySum", order.deliverySum);
-        setValue("delivery", order.delivery);
-    }, [balance, prepayment]);
-
-
-
+        setValue("paymentMethod", order.paymentMethod || ""); 
+        setValue("buyerComment", order.buyerComment || ""); 
+        setValue("coopDiscount", order.coopDiscount || 0);
+        setValue("coopTotal", order.coopTotal || 0);
+        setValue("deliverySum", order.deliverySum || 0);
+        setValue("delivery", order.delivery || false);
+    }, [balance, prepayment, order, setValue]);
+    
     const save = (order: any) => {
         const buyer = {
             buyerId: order.buyerId,
             name: order.name,
             phone1: order.phone1,
-            phone2: order.phone2,
+            phone2: order.phone2 || "",
             address: order.address,
-            region: order.region,
+            region: order.region
         };
         const plintOrder: any = filterOrder(order, plintData);
-
+    
         const balance = calculateTotalOrder(order);
-
-        const prepayment = order.prepayment
-        const coopDiscount = order.coopDiscount
-        const discountSum = +balance - +balance * +coopDiscount / 100
-        const orderBalance = +discountSum - +prepayment
-        const coopTotal = +balance * +coopDiscount / 100
-
-        plintOrder["prepayment"] = order.prepayment;
-        plintOrder["paymentMethod"] = order.paymentMethod;
+    
+        const prepayment = order.prepayment || 0;
+        const coopDiscount = order.coopDiscount || 0;
+        const discountSum = +balance - (+balance * +coopDiscount / 100);
+        const orderBalance = +discountSum - +prepayment;
+        const coopTotal = +balance * +coopDiscount / 100;
+    
+        plintOrder["prepayment"] = prepayment;
+        plintOrder["paymentMethod"] = order.paymentMethod || "";
         plintOrder["groundTotal"] = orderBalance;
-        plintOrder["buyerComment"] = order.buyerComment;
-        plintOrder["code"] = order.code;
-        plintOrder["coopDiscount"] = order.coopDiscount;
+        plintOrder["buyerComment"] = order.buyerComment || "";
+        plintOrder["code"] = order.code || "";
+        plintOrder["coopDiscount"] = coopDiscount;
         plintOrder["balance"] = balance;
         plintOrder["coopTotal"] = coopTotal;
-        plintOrder["delivery"] = order.delivery;
-        plintOrder["deliverySum"] = order.deliverySum;
-        plintOrder["coop"] = order.plintcoopId;
-
-        dispatch(editPlintOrder({ plintOrder, buyer, cookies, user }))
+        plintOrder["delivery"] = order.delivery || false;
+        plintOrder["deliverySum"] = order.deliverySum || 0;
+        plintOrder["coop"] = order.plintcoopId || null;
+    
+        dispatch(editPlintOrder({ plintOrder, buyer, cookies, user, params }))
             .unwrap()
             .then(res => {
                 if ("error" in res) {
@@ -163,6 +161,7 @@ export const EditPlintOrder: React.FC = (): JSX.Element => {
                 }
             });
     };
+    
 
     function qount() {
         const order: Record<string, number> = watch();
@@ -183,7 +182,12 @@ export const EditPlintOrder: React.FC = (): JSX.Element => {
             <PlintMenu />
             <form onSubmit={handleSubmit(save)}>
                 <div className=''>
-                    <EditPlintBuyerSection register={register} setValue={setValue} orderBuyer={orderBuyer} setOrderBuyer={setOrderBuyer} orderCoop={orderCoop} />
+                    <EditPlintBuyerSection
+                        register={register}
+                        setValue={setValue}
+                        orderBuyer={orderBuyer}
+                        setOrderBuyer={setOrderBuyer}
+                        orderCoop={orderCoop} />
                 </div>
                 <p style={{ height: "20px" }}>
                 </p>

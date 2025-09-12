@@ -40,6 +40,12 @@ export const PlintMenu: React.FC<PlintMenuProps> = (): JSX.Element => {
     const plintCoopNewWindow = () => {
         window.open("/plint/plintCoop")
     }
+    const plintAgent = () => {
+        navigate("/plint/plintAgent")
+    }
+    const plintAgentNewWindow = () => {
+        window.open("/plint/plintAgent")
+    }
     const addPlint = () => {
         navigate("/plint/addPlint")
     }
@@ -72,11 +78,11 @@ export const PlintMenu: React.FC<PlintMenuProps> = (): JSX.Element => {
     const Input_outputPlintNewWindow = () => {
         window.open("/plint/inputOutputPlint")
     }
-    
+
     const home = () => {
         navigate("/plint/homepage")
     }
-    
+
     const plintProduction = () => {
         navigate("/plint/plintProduction")
     }
@@ -126,11 +132,11 @@ export const PlintMenu: React.FC<PlintMenuProps> = (): JSX.Element => {
                 <button className="btn" onClick={home} >Գլխավոր Էջ</button>
             </div>
             <div className="admin_profile">
-                <button className="btn" type="button" onClick={newPlintOrder}>Նոր Պատվեր</button>
-                <button className="btn" onClick={newPlintOrder} onContextMenu={newPlintOrderNewWindow} >Նոր Պատվեր</button>
-                <button className="btn" onClick={plintBuyer} onContextMenu={plintBuyerNewWindow}>Ավելացնել Գնորդ</button>
-                <button className="btn" onClick={plintCoop} onContextMenu={plintCoopNewWindow}>Ավելացնել Գործընկեր</button>
-                <button className="btn" onClick={addPlint} onContextMenu={addPlintNewWindow}>Ավելացնել Շրիշակ</button>
+                <button className="btn" onClick={handleOpenModal} >Նոր Պատվեր</button>
+                <button className="btn" onClick={plintBuyer} onContextMenu={plintBuyerNewWindow}> + Գնորդ</button>
+                <button className="btn" onClick={plintCoop} onContextMenu={plintCoopNewWindow}> + Գործընկեր</button>
+                <button className="btn" onClick={plintAgent} onContextMenu={plintAgentNewWindow}> + Միջնորդ</button>
+                <button className="btn" onClick={addPlint} onContextMenu={addPlintNewWindow}> + Շրիշակ</button>
                 <button className="btn" onClick={stockPlint} onContextMenu={stockPlintNewWindow}>Պահեստ</button>
                 <button className="btn" onClick={plintProduction} onContextMenu={plintProductionNewWindow}>Արտադրություն</button>
                 <button className="btn" onClick={Input_outputPlint} onContextMenu={Input_outputPlintNewWindow}>Գույքագրում</button>

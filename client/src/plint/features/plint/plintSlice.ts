@@ -5,7 +5,8 @@ import { getAllPlint, addNewPlint } from "./plintApi";
 export interface PlintProps {
     _id: string;
     name: string;
-    price: string;
+    price1: string;
+    price2: string;
     quantity: string;
 
 }

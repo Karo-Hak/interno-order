@@ -18,7 +18,7 @@ export const ViewStretchOrdersList: React.FC = (): JSX.Element => {
     const [ordersList, setOrdersList] = useState<any>([])
     const [ordersListFilter, setOrdersListFilter] = useState([])
     const currentDate = new Date();
-    const [startDate, setStartDate] = useState(new Date(currentDate.getFullYear(), currentDate.getMonth(), 2).toISOString().split('T')[0]);
+    const [startDate, setStartDate] = useState(new Date(currentDate.getFullYear(), currentDate.getMonth(), -29).toISOString().split('T')[0]);
     const [endDate, setEndDate] = useState(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 2).toISOString().split('T')[0]);
     const [status, setStatus] = useState<string>("")
     const [searchBuyer, setSearchBuyer] = useState<string>("")
@@ -239,7 +239,7 @@ export const ViewStretchOrdersList: React.FC = (): JSX.Element => {
                                                         </td>
                                                         <td>
                                                             <p>
-                                                            {e.buyer.buyerRegion} -/- {e.buyer.buyerAddress}
+                                                            {e.region} -/- {e.address}
                                                             </p>
                                                         </td>
                                                         <td >

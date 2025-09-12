@@ -142,12 +142,12 @@ const MesurStretchOrderSection: React.FC<any> = () => {
                                                                 style={{
                                                                     minWidth: "100px"
                                                                 }}>
-                                                                {e.buyer.buyerRegion}
+                                                                {e.region}
                                                             </p>
                                                         </td>
                                                         <td>
                                                             <p>
-                                                                {e.buyer.buyerAddress}
+                                                                {e.address}
                                                             </p>
                                                         </td>
                                                         <td >

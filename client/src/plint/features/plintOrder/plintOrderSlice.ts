@@ -8,7 +8,8 @@ export interface GroupedPlintDataProps {
 
     id: string;
     name: string;
-    price: string;
+    price1: string;
+    price2: string;
     quantity: string;
     sum: number;
 }
@@ -32,6 +33,9 @@ export interface PlintOrderProps {
     user: User;
     coopTotal: number;
     sum: number;
+    discount: number;
+    deliveryAddress: string;
+    deliveryPhone: string;
 
 }
 

@@ -64,6 +64,8 @@ export const ViewDebetKredit: React.FC = (): JSX.Element => {
         DebetKreditSearchLogic(ordersListFilter, orderType, ordersList, setOrdersList, clearBuyer);
     }
 
+    console.log(ordersList);
+    
     
     return (
         <div>

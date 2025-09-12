@@ -25,6 +25,7 @@ import productReducer from '../strechCeining/features/product/productSlice'
 import plintReducer from '../plint/features/plint/plintSlice'
 import plintBuyerReducer from '../plint/features/plintBuyer/plintBuyerSlice'
 import plintCoopReducer from '../plint/features/plintCoop/plintCoopSlice'
+import plintAgentReducer from '../plint/features/plintAgent/plintAgentSlice'
 import plintDebetKreditReducer from '../plint/features/plintDebetKredit/plintDebetKreditSlice'
 
 
@@ -55,6 +56,7 @@ export const store = configureStore({
     plintBuyer: plintBuyerReducer,
     plintOrder: plintOrderReducer,
     plintCoop: plintCoopReducer,
+    plintAgent: plintAgentReducer,
     plintDebetKredit: plintDebetKreditReducer,
 
   },

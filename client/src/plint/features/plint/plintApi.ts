@@ -42,6 +42,25 @@ export const updatePlint = createAsyncThunk(
     }
   }
 );
+export const updatePlintPrice = createAsyncThunk(
+  'plint/updatePrice/axios',
+  async (obj: any) => {
+    console.log("api", obj);
+    
+    try {
+      const response = await axios.post(process.env.REACT_APP_SERVER_URL +"/plint/updatePrice", { ...obj.plint }, {
+        headers: {
+          Authorization: `Bearer ${obj.cookies.access_token}`
+        }
+      })
+
+      return response.data
+    } catch (e) {
+      return { error: "not found" }
+
+    }
+  }
+);
 
 export const getAllPlint = createAsyncThunk(
   'plint/all/axios',

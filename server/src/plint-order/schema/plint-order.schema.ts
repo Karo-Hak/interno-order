@@ -1,5 +1,6 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
+import { PlintAgent } from 'src/plint-agent/schema/plint-agent.schema';
 import { PlintCoop } from 'src/plint-coop/schema/plint-coop.schema';
 import { PlintBuyer } from 'src/plintBuyer/schema/plint-buyer.schema';
 import { User } from 'src/user/schema/user.schema';
@@ -19,11 +20,19 @@ export class PlintOrder {
     @Prop()
     code: string;
     @Prop()
+    orderType: string;
+    @Prop()
     prepayment: number;
+    @Prop()
+    discount: number;
+    @Prop()
+    deliveryAddress: string;
+    @Prop()
+    deliveryPhone: string;
     @Prop({ default: 0 })
-    coopDiscount: number;
+    agentDiscount: number;
     @Prop({ default: 0 })
-    coopTotal: number;
+    agentTotal: number;
     @Prop()
     groundTotal: number;
     @Prop({ default: false })
@@ -40,6 +49,8 @@ export class PlintOrder {
     buyer: PlintBuyer;
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "PlintCoop" })
     coop: PlintCoop;
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "PlintAgent" })
+    agent: PlintAgent;
 
 }
 

@@ -15,14 +15,12 @@ const styles = StyleSheet.create({
         display: "flex",
         justifyContent: "space-around",
         flexDirection: "row",
-        textAlign: "center",
         marginBottom: 3,
         fontSize: 14,
         fontWeight: 'bold',
         fontFamily: 'ArmenianFont', // Use the custom font here
     },
     buyer: {
-        textAlign: "center",
         marginBottom: 5,
         fontSize: 14,
         fontWeight: 'bold',
@@ -100,9 +98,13 @@ const ViewPlintOrderPDF = ({ order, plint }: any) => {
                 <View style={styles.container}>
                     <View style={styles.buyer}>
                         <Text>
-                            Գնորդ - {order.buyer.name} /
-                            {order.buyer.region} {order.buyer.address} /-
-                            {order.buyer.phone1}-{order.buyer.phone2}
+                            Գնորդ - {order.buyer.name} / <br></br>
+                            Առ․ հեռ․ -  {order.deliveryPhone}
+                        </Text>
+                    </View>
+                    <View style={styles.buyer}>
+                        <Text>
+                            Առ․ հասցե - {order.deliveryAddress}
                         </Text>
                     </View>
                     <View style={styles.payment}>

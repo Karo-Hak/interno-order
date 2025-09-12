@@ -36,6 +36,8 @@ const BuyerSection: React.FC<any> = ({ register, setValue }: any) => {
         setValue('buyerPhone2', selectedBuyer.buyerPhone2)
         setValue('buyerRegion', selectedBuyer.buyerRegion)
         setValue('buyerAddress', selectedBuyer.buyerAddress)
+        setValue('address', selectedBuyer.buyerAddress)
+        setValue('region', selectedBuyer.buyerRegion)
         setValue('buyerName', selectedBuyer.buyerName)
     }
 

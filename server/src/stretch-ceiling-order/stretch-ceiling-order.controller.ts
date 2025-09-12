@@ -46,7 +46,10 @@ export class StretchCeilingOrderController {
       if (obj.buyer.buyerId) {
         orderBuyer = await this.stretchBuyerService.findOne(obj.buyer.buyerId);
       } else {
-        orderBuyer = await this.stretchBuyerService.findByPhone(obj.buyer.buyerPhone1);
+        orderBuyer = await this.stretchBuyerService.findByPhoneAndName(
+          obj.buyer.buyerPhone1,
+          obj.buyer.buyerName
+        );
         if (orderBuyer === null) {
           orderBuyer = await this.stretchBuyerService.create(obj.buyer);
         }
@@ -142,7 +145,10 @@ export class StretchCeilingOrderController {
   async findOne(@Param('id') id: string, @Res() res: Response) {
     try {
       const order = await this.stretchCeilingOrderService.findOne(id);
-      return res.status(HttpStatus.OK).json(order);
+      return res.status(HttpStatus.OK).json({
+        messege: "ok",
+        order
+      })
     } catch (e) {
       return res.status(HttpStatus.OK).json({
         error: e.message
@@ -154,7 +160,12 @@ export class StretchCeilingOrderController {
   async update(@Param('id') id: string, @Body() updateStretchCeilingOrderDto: UpdateStretchCeilingOrderDto, @Res() res: Response) {
     try {
       const updatingOrder: any = await this.stretchCeilingOrderService.findOne(id);
-      let orderBuyer = await this.stretchBuyerService.findByPhone(updateStretchCeilingOrderDto.buyer.buyerPhone1);
+      
+      let orderBuyer = await this.stretchBuyerService.findByPhoneAndName(
+        updateStretchCeilingOrderDto.buyer.buyerPhone1,
+        updateStretchCeilingOrderDto.buyer.buyerName
+      );
+      
       if (!orderBuyer) {
         orderBuyer = await this.stretchBuyerService.create(updateStretchCeilingOrderDto.buyer)
       }
