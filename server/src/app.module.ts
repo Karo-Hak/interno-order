@@ -37,10 +37,21 @@ import { CoopDebetKreditModule } from './coop-debet-kredit/coop-debet-kredit.mod
 import { PlintProductionModule } from './plint-production/plint-production.module';
 import { TelegramModule } from './telegram/telegram.module';
 import { ConfigModule } from '@nestjs/config';
+import { CoopReturnModule } from './coop-return/coop-return.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost:27017/order'),
+    MongooseModule.forRoot(
+      'mongodb://127.0.0.1:27017/order?replicaSet=rs0',
+      {
+        // не обязательно, но рекомендуется для транзакций:
+        // retryWrites: true,
+        // w: 'majority',
+        // serverSelectionTimeoutMS: 10000,
+      }
+    ),
+
+
     UserModule,
     OrderModule,
     BuyerModule,
@@ -78,7 +89,8 @@ import { ConfigModule } from '@nestjs/config';
     DebetKreditModule,
     CoopDebetKreditModule,
     TelegramModule,
-    ConfigModule.forRoot({ isGlobal: true })
+    ConfigModule.forRoot({ isGlobal: true }),
+    CoopReturnModule,
   ],
   controllers: [AppController],
   providers: [AppService],

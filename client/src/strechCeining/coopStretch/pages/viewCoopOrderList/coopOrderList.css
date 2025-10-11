@@ -1,0 +1,47 @@
+
+
+.toolbar {
+  display: grid;
+  grid-template-columns: auto auto 1fr auto;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  padding: 8px;
+  z-index: 1;
+  border-bottom: 1px solid #eee;
+}
+
+.toolbar__field {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.filters {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.toolbar__search {
+  min-width: 220px;
+}
+
+.toolbar__right {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+
+
+
+
+
+
+

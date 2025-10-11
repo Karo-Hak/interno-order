@@ -88,7 +88,6 @@ export const ViewMaterial: React.FC = (): JSX.Element => {
         setHandleChecked(event.target.checked);
     }
 
-    console.log(ordersList, orderSum);
 
 
     return (

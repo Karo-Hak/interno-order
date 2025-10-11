@@ -9,7 +9,7 @@ export type PlintDebetKreditDocument = HydratedDocument<PlintDebetKredit>;
 
 @Schema()
 export class PlintDebetKredit {
-    @Prop({ default: new Date() })
+    @Prop({ type: Date, default: () => new Date() })
     date: Date;
     @Prop()
     type: string;

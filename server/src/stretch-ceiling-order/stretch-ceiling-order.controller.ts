@@ -6,20 +6,18 @@ import { StretchBuyerService } from 'src/stretch-buyer/stretch-buyer.service';
 import { StretchWorkerService } from 'src/stretch-worker/stretch-worker.service';
 import { DebetKreditService } from 'src/debet-kredit/debet-kredit.service';
 
-
 const removeEmptyValues = (obj: any) => {
   for (const key in obj) {
-    if (typeof obj[key] === 'object') {
+    if (obj[key] && typeof obj[key] === 'object') {
       removeEmptyValues(obj[key]);
-    } else if (obj[key] === '' || obj[key] === null || obj[key] === undefined) {
-
+    } else if (obj[key] === '' || obj[key] == null) {
       delete obj[key];
     }
   }
 };
 const removeEmptyObjects = (obj: any) => {
   for (const key in obj) {
-    if (typeof obj[key] === 'object') {
+    if (obj[key] && typeof obj[key] === 'object') {
       removeEmptyObjects(obj[key]);
       if (Object.keys(obj[key]).length === 0) {
         delete obj[key];
@@ -28,7 +26,6 @@ const removeEmptyObjects = (obj: any) => {
   }
 };
 
-
 @Controller('stretch-ceiling-order')
 export class StretchCeilingOrderController {
   constructor(
@@ -36,42 +33,42 @@ export class StretchCeilingOrderController {
     private readonly stretchBuyerService: StretchBuyerService,
     private readonly stretchWorkerService: StretchWorkerService,
     private readonly debetKreditService: DebetKreditService,
-  ) { }
+  ) {}
 
   @Post()
   async create(@Body() obj: any, @Res() res: Response) {
-
     try {
-      let orderBuyer
-      if (obj.buyer.buyerId) {
+      let orderBuyer;
+      if (obj.buyer?.buyerId) {
         orderBuyer = await this.stretchBuyerService.findOne(obj.buyer.buyerId);
       } else {
         orderBuyer = await this.stretchBuyerService.findByPhoneAndName(
-          obj.buyer.buyerPhone1,
-          obj.buyer.buyerName
+          obj.buyer?.buyerPhone1,
+          obj.buyer?.buyerName,
         );
-        if (orderBuyer === null) {
+        if (!orderBuyer) {
           orderBuyer = await this.stretchBuyerService.create(obj.buyer);
         }
       }
-      if (obj.stretchTextureOrder.rooms) {
-        removeEmptyValues(obj.stretchTextureOrder.rooms)
-        removeEmptyObjects(obj.stretchTextureOrder.rooms)
+
+      if (obj.stretchTextureOrder?.rooms) {
+        removeEmptyValues(obj.stretchTextureOrder.rooms);
+        removeEmptyObjects(obj.stretchTextureOrder.rooms);
       }
-      if (obj.stretchTextureOrder.groupedWorks) {
-        removeEmptyValues(obj.stretchTextureOrder.groupedWorks)
-        removeEmptyObjects(obj.stretchTextureOrder.groupedWorks)
+      if (obj.stretchTextureOrder?.groupedWorks) {
+        removeEmptyValues(obj.stretchTextureOrder.groupedWorks);
+        removeEmptyObjects(obj.stretchTextureOrder.groupedWorks);
       }
-      const createdStretchOrder = { stretchTextureOrder: obj.stretchTextureOrder, orderBuyer, user: obj.user }
+
+      const createdStretchOrder = { stretchTextureOrder: obj.stretchTextureOrder, orderBuyer, user: obj.user };
       const stretchCeilingOrder = await this.stretchCeilingOrderService.create(createdStretchOrder);
+
       return res.status(HttpStatus.CREATED).json({
-        message: "created",
-        stretchCeilingOrder
-      })
-    } catch (e) {
-      return res.status(HttpStatus.BAD_REQUEST).json({
-        message: e.message
+        message: 'created',
+        stretchCeilingOrder,
       });
+    } catch (e: any) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: e.message });
     }
   }
 
@@ -80,59 +77,52 @@ export class StretchCeilingOrderController {
     try {
       const newOrders = await this.stretchCeilingOrderService.findNewOrders();
       return res.status(HttpStatus.OK).json(newOrders);
-    } catch (e) {
-      return res.status(HttpStatus.OK).json({
-        error: e.message
-      })
+    } catch (e: any) {
+      return res.status(HttpStatus.OK).json({ error: e.message });
     }
   }
+
   @Get('findNewMesur')
   async findMesurOrders(@Res() res: Response) {
     try {
       const newOrders = await this.stretchCeilingOrderService.findMesurOrders();
       return res.status(HttpStatus.OK).json(newOrders);
-    } catch (e) {
-      return res.status(HttpStatus.OK).json({
-        error: e.message
-      })
+    } catch (e: any) {
+      return res.status(HttpStatus.OK).json({ error: e.message });
     }
   }
+
   @Get('findNewInstal')
   async findInstalOrders(@Res() res: Response) {
     try {
       const newOrders = await this.stretchCeilingOrderService.findInstalOrders();
       return res.status(HttpStatus.OK).json(newOrders);
-    } catch (e) {
-      return res.status(HttpStatus.OK).json({
-        error: e.message
-      })
+    } catch (e: any) {
+      return res.status(HttpStatus.OK).json({ error: e.message });
     }
   }
 
   @Post('viewOrdersList')
   async filterOrder(@Body() obj: any, @Res() res: Response) {
     try {
-      const startDate = new Date(obj.dateFilter.startDate)
-      const endDate = new Date(obj.dateFilter.endDate)
-      const order = await this.stretchCeilingOrderService.filterOrder(startDate, endDate)
+      const startDate = new Date(obj.dateFilter.startDate);
+      const endDate = new Date(obj.dateFilter.endDate);
+      const order = await this.stretchCeilingOrderService.filterOrder(startDate, endDate);
       return res.status(HttpStatus.CREATED).json(order);
-    } catch (e) {
-      return res.status(HttpStatus.BAD_REQUEST).json({
-        message: e.message
-      });
+    } catch (e: any) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: e.message });
     }
   }
+
   @Post('viewMaterialList')
   async filterOrderMaterial(@Body() obj: any, @Res() res: Response) {
     try {
-      const startDate = new Date(obj.dateFilter.startDate)
-      const endDate = new Date(obj.dateFilter.endDate)
-      const order = await this.stretchCeilingOrderService.filterOrderMaterial(startDate, endDate)
+      const startDate = new Date(obj.dateFilter.startDate);
+      const endDate = new Date(obj.dateFilter.endDate);
+      const order = await this.stretchCeilingOrderService.filterOrderMaterial(startDate, endDate);
       return res.status(HttpStatus.CREATED).json(order);
-    } catch (e) {
-      return res.status(HttpStatus.BAD_REQUEST).json({
-        message: e.message
-      });
+    } catch (e: any) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: e.message });
     }
   }
 
@@ -145,69 +135,75 @@ export class StretchCeilingOrderController {
   async findOne(@Param('id') id: string, @Res() res: Response) {
     try {
       const order = await this.stretchCeilingOrderService.findOne(id);
-      return res.status(HttpStatus.OK).json({
-        messege: "ok",
-        order
-      })
-    } catch (e) {
-      return res.status(HttpStatus.OK).json({
-        error: e.message
-      })
+      return res.status(HttpStatus.OK).json({ message: 'ok', order });
+    } catch (e: any) {
+      return res.status(HttpStatus.OK).json({ error: e.message });
     }
   }
 
   @Post('updateStretchOrder/:id')
-  async update(@Param('id') id: string, @Body() updateStretchCeilingOrderDto: UpdateStretchCeilingOrderDto, @Res() res: Response) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateStretchCeilingOrderDto: UpdateStretchCeilingOrderDto,
+    @Res() res: Response,
+  ) {
     try {
       const updatingOrder: any = await this.stretchCeilingOrderService.findOne(id);
-      
+
       let orderBuyer = await this.stretchBuyerService.findByPhoneAndName(
         updateStretchCeilingOrderDto.buyer.buyerPhone1,
-        updateStretchCeilingOrderDto.buyer.buyerName
+        updateStretchCeilingOrderDto.buyer.buyerName,
       );
-      
       if (!orderBuyer) {
-        orderBuyer = await this.stretchBuyerService.create(updateStretchCeilingOrderDto.buyer)
-      }
-      await this.stretchBuyerService.deleteFromArray(updatingOrder.buyer._id, updatingOrder.id)
-      let orderWorker = undefined
-
-      if (updateStretchCeilingOrderDto.stretchTextureOrder.stWorkerId) {
-        orderWorker = await this.stretchWorkerService.findOne(updateStretchCeilingOrderDto.stretchTextureOrder.stWorkerId);
-      }
-      await this.stretchWorkerService.deleteFromArray(updatingOrder.stWorkerId, updatingOrder.id)
-
-      if (updateStretchCeilingOrderDto.stretchTextureOrder.rooms) {
-        removeEmptyValues(updateStretchCeilingOrderDto.stretchTextureOrder.rooms)
-        removeEmptyObjects(updateStretchCeilingOrderDto.stretchTextureOrder.rooms)
-      }
-      if (updateStretchCeilingOrderDto.stretchTextureOrder.groupedWorks) {
-        removeEmptyValues(updateStretchCeilingOrderDto.stretchTextureOrder.groupedWorks)
-        removeEmptyObjects(updateStretchCeilingOrderDto.stretchTextureOrder.groupedWorks)
+        orderBuyer = await this.stretchBuyerService.create(updateStretchCeilingOrderDto.buyer);
       }
 
-      const updatedSretchOrder = await this.stretchCeilingOrderService.update(id, updateStretchCeilingOrderDto.stretchTextureOrder, orderBuyer, orderWorker, updatingOrder)
+      // удалить ссылку на заказ у старого покупателя
+      await this.stretchBuyerService.deleteFromArray(updatingOrder.buyer._id, updatingOrder.id);
+
+      // найти нового рабочего (если передан)
+      let orderWorker = undefined;
+      if (updateStretchCeilingOrderDto.stretchTextureOrder?.stWorkerId) {
+        orderWorker = await this.stretchWorkerService.findOne(
+          updateStretchCeilingOrderDto.stretchTextureOrder.stWorkerId,
+        );
+      }
+
+      // удалить ссылку у старого работника (если был)
+      if (updatingOrder?.stWorker?._id) {
+        await this.stretchWorkerService.deleteFromArray(updatingOrder.stWorker._id, updatingOrder.id);
+      }
+
+      if (updateStretchCeilingOrderDto.stretchTextureOrder?.rooms) {
+        removeEmptyValues(updateStretchCeilingOrderDto.stretchTextureOrder.rooms);
+        removeEmptyObjects(updateStretchCeilingOrderDto.stretchTextureOrder.rooms);
+      }
+      if (updateStretchCeilingOrderDto.stretchTextureOrder?.groupedWorks) {
+        removeEmptyValues(updateStretchCeilingOrderDto.stretchTextureOrder.groupedWorks);
+        removeEmptyObjects(updateStretchCeilingOrderDto.stretchTextureOrder.groupedWorks);
+      }
+
+      const updatedSretchOrder = await this.stretchCeilingOrderService.update(
+        id,
+        updateStretchCeilingOrderDto.stretchTextureOrder,
+        orderBuyer,
+        orderWorker,
+        updatingOrder,
+      );
+
       return res.status(HttpStatus.OK).json(updatedSretchOrder);
-    } catch (e) {
-      return res.status(HttpStatus.OK).json({
-        error: e.message
-      })
+    } catch (e: any) {
+      return res.status(HttpStatus.OK).json({ error: e.message });
     }
-
   }
-  
+
   @Put('updateStretchOrderStatuse/:id')
   async updateStatus(@Param('id') id: string, @Body('status') status: string, @Res() res: Response) {
     try {
       const result = await this.stretchCeilingOrderService.updateStatus(id, status);
-      return res.status(HttpStatus.OK).json({
-        message: 'Status updated successfully',
-        result,
-      });
-    } catch (e) {
-      return res.status(HttpStatus.BAD_REQUEST).json({
-        error: e.message,
-      });
+      return res.status(HttpStatus.OK).json({ message: 'Status updated successfully', result });
+    } catch (e: any) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ error: e.message });
     }
   }
 
@@ -215,31 +211,20 @@ export class StretchCeilingOrderController {
   async updateStretchPayed(@Param('id') id: string, @Res() res: Response) {
     try {
       const result = await this.stretchCeilingOrderService.updateStretchPayed(id);
-      return res.status(HttpStatus.OK).json({
-        message: 'Status updated successfully',
-        result,
-      });
-    } catch (e) {
-      return res.status(HttpStatus.BAD_REQUEST).json({
-        error: e.message,
-      });
+      return res.status(HttpStatus.OK).json({ message: 'Status updated successfully', result });
+    } catch (e: any) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ error: e.message });
     }
   }
-
 
   @Delete(':id')
   async remove(@Param('id') id: string, @Res() res: Response) {
     try {
-      const deletedOrder = await this.stretchCeilingOrderService.remove(id);
-      return res.status(HttpStatus.OK).json({
-        message: "ok",
-      });
-
-    } catch (e) {
+      await this.stretchCeilingOrderService.remove(id);
+      return res.status(HttpStatus.OK).json({ message: 'ok' });
+    } catch (e: any) {
       console.error('An error occurred:', e);
-      return res.status(HttpStatus.BAD_REQUEST).json({
-        message: e.message,
-      });
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: e.message });
     }
   }
 }

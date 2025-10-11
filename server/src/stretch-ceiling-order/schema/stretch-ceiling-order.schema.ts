@@ -1,71 +1,71 @@
-import { Schema, Prop, SchemaFactory, raw } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument, ObjectId } from 'mongoose';
+import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
+import mongoose, { HydratedDocument, Types } from 'mongoose';
 import { StretchBuyer } from 'src/stretch-buyer/schema/stretch-buyer.schema';
 import { StretchWorker } from 'src/stretch-worker/schema/stretch-worker.schema';
 import { User } from 'src/user/schema/user.schema';
 
 export type StretchCeilingOrderDocument = HydratedDocument<StretchCeilingOrder>;
 
-@Schema()
+@Schema({ timestamps: false }) // у тебя уже есть собственное поле date
 export class StretchCeilingOrder {
-    @Prop({ type: Array })
-    rooms: {
-        name: string;
-        id: string;
-        groupedStretchCeilings: Record<string, any>;
-        groupedAdditionals: Record<string, any>;
-        groupedProfils: Record<string, any>;
-        groupedLightPlatforms: Record<string, any>;
-        groupedLightRings: Record<string, any>;
-        groupedBardutyuns: Record<string, any>;
-        groupedOthers: Record<string, any>;
-    };
-    @Prop({ type: Object })
-    groupedWorks: object
-    @Prop({ default: new Date() })
-    date: Date;
-    @Prop()
-    buyerComment: string;
-    @Prop()
-    address: string;
-    @Prop()
-    region: string;
-    @Prop()
-    balance: number;
-    @Prop()
-    prepayment: number;
-    @Prop()
-    groundTotal: number;
-    @Prop()
-    orderComment: string;
-    @Prop()
-    paymentMethod: string;
-    @Prop()
-    measureDate: Date;
-    @Prop()
-    installDate: Date;
-    @Prop()
-    status: string;
-    @Prop()
-    code: string;
-    @Prop()
-    salary: number;
-    @Prop()
-    roomSum: number;
-    @Prop({ default: false })
-    payed: boolean;
-    @Prop({ type: Array })
-    picUrl: Array<string>;
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "StretchBuyer" })
-    buyer: StretchBuyer;
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "StretchWorker" })
-    stWorker: StretchWorker;
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "User" })
-    user: User;
+  // В БД у тебя фактически хранится объект-словарь; Mixed — безопаснее, чем Array для таких случаев
+  @Prop({ type: mongoose.Schema.Types.Mixed })
+  rooms: any;
 
+  @Prop({ type: mongoose.Schema.Types.Mixed })
+  groupedWorks: Record<string, any>;
+
+  @Prop({ type: Date, default: () => new Date() })
+  date: Date;
+
+  @Prop() buyerComment: string;
+  @Prop() address: string;
+  @Prop() region: string;
+
+  @Prop({ type: Number, default: 0 })
+  balance: number;
+
+  @Prop({ type: Number, default: 0 })
+  prepayment: number;
+
+  @Prop({ type: Number, default: 0 })
+  groundTotal: number;
+
+  @Prop() orderComment: string;
+  @Prop() paymentMethod: string;
+
+  @Prop() measureDate: Date;
+  @Prop() installDate: Date;
+
+  @Prop({ default: 'progress' })
+  status: string;
+
+  @Prop() code: string;
+
+  @Prop({ type: Number, default: 0 })
+  salary: number;
+
+  @Prop({ type: Number, default: 0 })
+  roomSum: number;
+
+  @Prop({ default: false })
+  payed: boolean;
+
+  @Prop({ type: [String], default: [] })
+  picUrl: string[];
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'StretchWorker', default: null })
+  stWorker: StretchWorker | Types.ObjectId | null;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'StretchBuyer', required: true })
+  buyer: Types.ObjectId | StretchBuyer;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
+  user: Types.ObjectId | User;
 }
 
-
-
-
 export const StretchCeilingOrderSchema = SchemaFactory.createForClass(StretchCeilingOrder);
+
+StretchCeilingOrderSchema.index({ status: 1, date: -1 });
+StretchCeilingOrderSchema.index({ installDate: 1 });
+StretchCeilingOrderSchema.index({ buyer: 1 });

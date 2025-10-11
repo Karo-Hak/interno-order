@@ -62,6 +62,28 @@ export const findCoopDebetByBuyer = createAsyncThunk(
   }
 );
 
+export const deleteCoopPaymentByDkId = createAsyncThunk(
+  'coop/dk/deleteById',
+  async ({ cookies, dkId }: { cookies: any; dkId: string }) => {
+    const url = `${process.env.REACT_APP_SERVER_URL}/coop-debet-kredit/${dkId}`;
+    const res = await axios.delete(url, {
+      headers: { Authorization: `Bearer ${cookies.access_token}` },
+    });
+    return res.data as { deleted: boolean };
+  }
+);
+
+export const deleteCoopPaymentByDateSum = createAsyncThunk(
+  'coop/dk/deleteByDateSum',
+  async ({ cookies, buyerId, date, sum }: { cookies: any; buyerId: string; date: string; sum: number }) => {
+    const url = `${process.env.REACT_APP_SERVER_URL}/coop-debet-kredit/delete-by-date-sum`;
+    const res = await axios.post(url, { buyerId, date, sum }, {
+      headers: { Authorization: `Bearer ${cookies.access_token}` },
+    });
+    return res.data as { deleted: boolean };
+  }
+);
+
 // export const getDebetKredit = createAsyncThunk(
 //   'strechTexture/all/axios',
 //   async (cookie: any) => {

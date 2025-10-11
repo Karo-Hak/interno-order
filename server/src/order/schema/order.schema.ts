@@ -49,7 +49,7 @@ export class Order {
         }
     })
     deadline: Date;
-    @Prop({ default: new Date() })
+    @Prop({ type: Date, default: () => new Date() })
     date: Date;
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "User" })
     user: User;

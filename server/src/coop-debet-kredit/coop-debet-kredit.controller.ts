@@ -1,4 +1,4 @@
-import { Body, Controller, HttpStatus, Post, Res } from "@nestjs/common";
+import { Body, Controller, Delete, HttpStatus, Param, Post, Res } from "@nestjs/common";
 import { Response } from 'express';
 import { CoopDebetKreditService } from "./coop-debet-kredit.service";
 
@@ -10,11 +10,21 @@ export class CoopDebetKreditController {
         private readonly coopDebetKreditService: CoopDebetKreditService,
     ) { }
 
+    @Delete(':id')
+    async removeById(@Param('id') id: string) {
+        return this.coopDebetKreditService.removePaymentByDkId(id);
+    }
+
+    @Post('delete-by-date-sum')
+    async deleteByDateSum(@Body() body: { buyerId: string; date: string; sum: number }) {
+        return this.coopDebetKreditService.removePaymentByDateSum(body);
+    }
+
     @Post("pay")
     async create(@Body() data: any, @Res() res: Response) {
         try {
-            const payed = await this.coopDebetKreditService.creatPayment(data.params.id, data.sum)
-            return  res.status(HttpStatus.OK).json({
+            const payed = await this.coopDebetKreditService.createPayment(data.id, data.sum)
+            return res.status(HttpStatus.OK).json({
                 message: "ok",
                 payed
             });
@@ -26,54 +36,7 @@ export class CoopDebetKreditController {
         }
     }
 
-    @Post('view')
-    async findByDate(@Body() date: any, @Res() res: Response) {
-        try {
-            const startDate = new Date(date.dateFilter.startDate)
-            const endDate = new Date(date.dateFilter.endDate)
+    
 
-            const debetKreditByBuyers = await this.coopDebetKreditService.findAllByBuyer();
-            const debetKreditDataPlain: any = debetKreditByBuyers.map(item => item.toObject());
-            const debetKreditData = await this.coopDebetKreditService.findByDate(startDate, endDate);
-
-            if (debetKreditDataPlain && debetKreditDataPlain.length > 0) {
-                for (const element of debetKreditDataPlain) {
-                    let sumKredit = 0;
-                    for (const item of element.debetKredit) {
-                        if (item.type === "Գնում") {
-                            sumKredit += item.amount;
-                        } else {
-                            sumKredit -= item.amount;
-                        }
-                    }
-                    element.sumKredit = sumKredit;
-                }
-            }
-
-            for (const element of debetKreditDataPlain) {
-                element.debetKredit.splice(0, element.debetKredit.length)
-            }
-            for (const element of debetKreditDataPlain) {
-                for (const item of debetKreditData) {
-                    if (element._id.toString() === item.buyer.toString()) {
-                        element.debetKredit.push(item);
-                    }
-                }
-            }
-            const data = debetKreditDataPlain.filter(element => element.debetKredit.length > 0);
-
-            return res.status(HttpStatus.OK).json({
-                message: "ok",
-                data
-            });
-        } catch (e) {
-            console.error('An error occurred:', e);
-            return res.status(HttpStatus.BAD_REQUEST).json({
-                message: e.message,
-            });
-        }
-
-
-    }
 
 }

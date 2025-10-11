@@ -1,10 +1,11 @@
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { DebetKredit, DebetKreditSchema } from "./schema/debet-kredit.schema";
 import { MongooseModule } from "@nestjs/mongoose";
 import { DebetKreditController } from "./debet-kredit.controller";
 import { DebetKreditService } from "./debet-kredit.service";
 import { StretchBuyer, StretchBuyerSchema } from "src/stretch-buyer/schema/stretch-buyer.schema";
 import { StretchCeilingOrder, StretchCeilingOrderSchema } from "src/stretch-ceiling-order/schema/stretch-ceiling-order.schema";
+import { StretchBuyerModule } from "src/stretch-buyer/stretch-buyer.module";
 
 
 @Module({
@@ -14,6 +15,7 @@ import { StretchCeilingOrder, StretchCeilingOrderSchema } from "src/stretch-ceil
             { name: StretchBuyer.name, schema: StretchBuyerSchema },
             { name: StretchCeilingOrder.name, schema: StretchCeilingOrderSchema },
         ]),
+            forwardRef(() => StretchBuyerModule)
         
     ],
     controllers: [DebetKreditController],

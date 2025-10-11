@@ -1,41 +1,61 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument, Types } from 'mongoose';
 import { CoopStretchBuyer } from 'src/coop-stretch-buyer/schema/coop-stretch-buyer.schema';
-import { User } from 'src/user/schema/user.schema';
 
 export type CoopCeilingOrderDocument = HydratedDocument<CoopCeilingOrder>;
 
-@Schema()
-export class CoopCeilingOrder {
-    @Prop({ type: Array })
-    groupedStretchTextureData: Array<object>;
-    @Prop({ type: Array })
-    groupedStretchProfilData: Array<object>;
-    @Prop({ type: Array })
-    groupedLightPlatformData: Array<object>;
-    @Prop({ type: Array })
-    groupedLightRingData: Array<object>;
-    @Prop({ default: new Date() })
-    date: Date;
-    @Prop()
-    buyerComment: string;
-    @Prop()
-    balance: number;
-    @Prop()
-    prepayment: number;
-    @Prop()
-    groundTotal: number;
-    @Prop()
-    paymentMethod: string;
-    @Prop({ default: false })
-    payed: boolean;
-    @Prop({ type: Array })
-    picUrl: Array<string>;
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "User" })
-    user: User;
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "CoopStretchBuyer" })
-    buyer: CoopStretchBuyer;
+@Schema({ _id: false })
+class GroupedItem {
+  @Prop({ required: true, trim: true }) name: string;
+  @Prop({ type: Number, min: 0, default: 0 }) width?: number;
+  @Prop({ type: Number, min: 0, default: 0 }) height?: number;
+  @Prop({ type: Number, min: 0, default: 0 }) qty: number;
+  @Prop({ type: Number, min: 0, default: 0 }) price: number;
+  @Prop({ type: Number, min: 0, default: 0 }) sum: number;
+}
+const GroupedItemSchema = SchemaFactory.createForClass(GroupedItem);
 
+type PaymentMethod = 'cash' | 'card' | 'transfer' | 'other';
+
+@Schema({ timestamps: true, versionKey: false })
+export class CoopCeilingOrder {
+  @Prop({ type: [GroupedItemSchema], default: [] })
+  groupedStretchTextureData: GroupedItem[];
+
+  @Prop({ type: [GroupedItemSchema], default: [] })
+  groupedStretchProfilData: GroupedItem[];
+
+  @Prop({ type: [GroupedItemSchema], default: [] })
+  groupedLightPlatformData: GroupedItem[];
+
+  @Prop({ type: [GroupedItemSchema], default: [] })
+  groupedLightRingData: GroupedItem[];
+
+  @Prop({ type: Date, default: () => new Date() })
+  date: Date;
+
+  @Prop({ trim: true, default: '' })
+  buyerComment: string;
+
+  @Prop({ type: Number, min: 0, default: 0 })
+  balance: number;
+
+  @Prop({ type: String, enum: ['cash', 'card', 'transfer', 'other'], default: 'cash' })
+  paymentMethod: PaymentMethod;
+
+  @Prop({ type: [String], default: [] })
+  picUrl: string[];
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: CoopStretchBuyer.name, required: true })
+  buyer: Types.ObjectId;
+
+  // Просто храним ссылку на пользователя (валидность можно проверять в доменной логике)
+  @Prop({ type: mongoose.Schema.Types.ObjectId, required: true })
+  user: Types.ObjectId;
 }
 
 export const CoopCeilingOrderSchema = SchemaFactory.createForClass(CoopCeilingOrder);
+
+// Индексы
+CoopCeilingOrderSchema.index({ date: -1 });
+CoopCeilingOrderSchema.index({ buyer: 1, date: -1 });

@@ -2,6 +2,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { findDebetByBuyer } from '../../features/debetKredit/debetKreditApi';
 import { useCookies } from 'react-cookie';
 import { useAppDispatch } from '../../../app/hooks';
+import DeleteCredit from '../../../component/confirmButten/DeleteCredit';
 
 interface OrderDebetKreditListProps {
     order: any;
@@ -29,6 +30,8 @@ const BuyerDebetKreditSection: FC<OrderDebetKreditListProps> = ({
     const [buyerId, setBuyerId] = useState<string[]>([]);
     const dispatch = useAppDispatch();
     const [cookies, setCookie] = useCookies(['access_token']);
+    console.log(kredit);
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -64,6 +67,21 @@ const BuyerDebetKreditSection: FC<OrderDebetKreditListProps> = ({
         window.open('/stretchceiling/viewStretchOrder/' + id, '_blank');
     }
 
+    function deleteCredit(buyerId: string, creditSum: number, creditDate: string) {
+        const fetchData = async () => {
+            try {
+                if (buyerId[0] !== undefined) {
+                    const debetOrderResult = await dispatch(findDebetByBuyer({ buyerId, cookies })).unwrap();
+                }
+            } catch (error) {
+                console.error("An error occurred:", error);
+            };
+        };
+        fetchData();
+
+    }
+    console.log(order);
+
     return (
         <>
             {order &&
@@ -79,6 +97,7 @@ const BuyerDebetKreditSection: FC<OrderDebetKreditListProps> = ({
                                                 <th>Գնում</th>
                                                 <th>Վճարում</th>
                                                 <th>Դիտել</th>
+                                                <th>Հեռացնել</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -87,7 +106,22 @@ const BuyerDebetKreditSection: FC<OrderDebetKreditListProps> = ({
                                                     <td>{parseDate(element.date)}</td>
                                                     <td>{element.type === "Գնում" && element.amount}</td>
                                                     <td>{element.type === "Վճարում" && element.amount}</td>
-                                                    <td><button type='button' className='btn' style={{ color: "black" }} onClick={() => viewOrder(element.order)}>Ավելին</button></td>
+                                                    <td>
+                                                        <button type='button' className='btn' style={{ color: "black" }}
+                                                            onClick={() => viewOrder(element.order)}>
+                                                            Ավելին
+                                                        </button>
+                                                    </td>
+                                                    <td>
+                                                        {element.type !== 'Գնում' && (
+                                                            <DeleteCredit
+                                                                buyerId={element.buyer}
+                                                                creditSum={element.amount}
+                                                                creditDate={element.date?.toString()}
+                                                            />
+
+                                                        )}
+                                                    </td>
                                                 </tr>
                                             ))}
                                             <tr>

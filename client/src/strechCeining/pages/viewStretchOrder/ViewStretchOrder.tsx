@@ -133,7 +133,7 @@ export const ViewStretchOrder: React.FC = (): JSX.Element => {
                         className="admin_profile_Strech">
                         <p style={{ color: "white", marginTop: "10px" }}>կարգավիճակ -- {order.status}</p>
                         <button type="button" onClick={handleOpenModal}>Փոխել Կարգավիճակը</button>
-                        <AddPayment type={type} />
+                        <AddPayment variant="tag" />
                         <button type="button" onClick={editOrder}>Լրացնել</button>
                         <ConfirmationButton payed={order.payed} />
                         <DeletOrder />

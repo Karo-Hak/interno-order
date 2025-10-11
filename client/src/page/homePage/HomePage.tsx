@@ -70,7 +70,7 @@ export const HomePage: React.FC = (): JSX.Element => {
 
     const coopStretch = () => {
         if (sphere.includes("Stretch Ceiling Coop")) {
-            navigate("/coopStretchceiling");
+            navigate("/coopStretchceiling/report");
         } else {
             alert("Եսի քո տեղը չի");
         }

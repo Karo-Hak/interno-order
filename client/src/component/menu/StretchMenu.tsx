@@ -76,6 +76,12 @@ export const StretchMenu: React.FC<StretchMenuProps> = (): JSX.Element => {
     const viewDebetKreditNewWindow = () => {
         window.open("/stretchceiling/viewMaterial")
     }
+    const stretchWallet = () => {
+        navigate("/stretchceiling/stretch-wallet")
+    }
+    const stretchWalletNewWindow = () => {
+        window.open("/stretchceiling/stretch-wallet")
+    }
 
     return (
         <div className="admin_profile">
@@ -102,6 +108,7 @@ export const StretchMenu: React.FC<StretchMenuProps> = (): JSX.Element => {
                 <button className="btn" onClick={viewStretchOrders} onContextMenu={viewStretchOrdersNewWindow}>Դիտել Պատվերները</button>
                 <button className="btn" onClick={viewMaterialsOrders} onContextMenu={viewMaterialsOrdersNewWindow}>Նյութածախս</button>
                 <button className="btn" onClick={viewDebetKredit} onContextMenu={viewDebetKreditNewWindow}>Դեբետ/Կրեդիտ</button>
+                <button className="btn" onClick={stretchWallet} onContextMenu={stretchWalletNewWindow}>Դրամարկղ</button>
             </div>
             <div style={{width:"10%"}}></div>
         </div>

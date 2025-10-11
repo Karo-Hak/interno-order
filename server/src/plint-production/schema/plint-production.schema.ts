@@ -7,7 +7,7 @@ export type PlintgProductionDocument = HydratedDocument<PlintProduction>;
 
 @Schema()
 export class PlintProduction {
-    @Prop({ default: new Date() })
+    @Prop({ type: Date, default: () => new Date() })
     date: Date;
     @Prop()
     name: string;

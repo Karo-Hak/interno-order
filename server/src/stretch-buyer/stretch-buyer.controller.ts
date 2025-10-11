@@ -1,12 +1,15 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus } from '@nestjs/common';
 import { StretchBuyerService } from './stretch-buyer.service';
 import { CreateStretchBuyerDto } from './dto/create-stretch-buyer.dto';
-import { UpdateStretchBuyerDto } from './dto/update-stretch-buyer.dto';
 import { Response } from 'express'
+import { DebetKreditService } from 'src/debet-kredit/debet-kredit.service';
 
 @Controller('stretchBuyer')
 export class StretchBuyerController {
-  constructor(private readonly stretchBuyerService: StretchBuyerService) { }
+  constructor(
+    private readonly stretchBuyerService: StretchBuyerService,
+    private readonly debetKreditService: DebetKreditService,
+  ) { }
 
   @Post()
   async create(@Body() createStretchBuyerDto: CreateStretchBuyerDto, @Res() res: Response) {
@@ -30,7 +33,7 @@ export class StretchBuyerController {
   }
 
   @Get()
- async findAll( @Res() res: Response) {
+  async findAll(@Res() res: Response) {
     try {
       const buyer = await this.stretchBuyerService.findAll()
       return res.status(HttpStatus.OK).json({
@@ -49,13 +52,39 @@ export class StretchBuyerController {
     return this.stretchBuyerService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStretchBuyerDto: UpdateStretchBuyerDto) {
-    return this.stretchBuyerService.update(+id, updateStretchBuyerDto);
+  @Post('deleteCredit')
+  async deleteCredit(
+    @Body() dto: { id: string; prepayment: number | string; date: string | Date },
+    @Res() res: Response,
+  ) {
+    try {
+      const amount = Number(dto.prepayment) || 0;
+      const creditDate = typeof dto.date === 'string' ? new Date(dto.date) : dto.date;
+
+      // 1) cначала — удалить запись в buyer.credit (+ totalSum)
+      const creditResult = await this.stretchBuyerService.deleteCreditTx(dto.id, amount, creditDate);
+
+      // 2) затем — удалить соответствующую запись DK type="Վճարում"
+      const tries: Array<'minute' | 'hour' | 'day'> = ['minute', 'hour', 'day'];
+      let dkRemoved = false;
+      let dkId: string | undefined;
+
+      for (const matchBy of tries) {
+        const r = await this.debetKreditService.removeOnePaymentByCriteria(
+          { buyerId: dto.id, amount, date: creditDate, matchBy }
+        );
+        if (r.removed) { dkRemoved = true; dkId = r.dkId; break; }
+      }
+
+      return res.status(HttpStatus.OK).json({
+        removedCredit: creditResult.removed,
+        removedDK: dkRemoved,
+        dkId: dkId ?? null,
+      });
+    } catch (e: any) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: e.message });
+    }
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.stretchBuyerService.remove(+id);
-  }
 }
+

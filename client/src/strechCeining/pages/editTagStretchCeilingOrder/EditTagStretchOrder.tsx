@@ -165,7 +165,7 @@ export const EditTagStretchOrder: React.FC = (): JSX.Element => {
         setRoomSum(newRoomSum);
 
         // Автоматически обновляем итоговые поля формы
-        const prepay = Number(formValues.prepayment) || 0;
+        const prepay = Number(prepayment) || 0;
         // setValue("groundTotal", totalSum - prepay);
         // setValue("balance", totalSum);
     }, [watchedValues, room, workRowId, setValue]);
@@ -193,7 +193,7 @@ export const EditTagStretchOrder: React.FC = (): JSX.Element => {
             stretchWorkData
         );
 
-        stretchTextureOrder["prepayment"] = +updatingOrder.prepayment;
+        stretchTextureOrder["prepayment"] = Number(prepayment) || 0;
         stretchTextureOrder["paymentMethod"] = updatingOrder.paymentMethod;
         stretchTextureOrder["groundTotal"] = updatingOrder.groundTotal;
         stretchTextureOrder["balance"] = updatingOrder.balance;

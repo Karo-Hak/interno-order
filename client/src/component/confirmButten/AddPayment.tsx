@@ -1,60 +1,60 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useCookies } from 'react-cookie';
 import { useParams } from 'react-router-dom';
 import { useAppDispatch } from '../../app/hooks';
 import { addPayed } from '../../strechCeining/features/debetKredit/debetKreditApi';
 import { addCoopPayed } from '../../strechCeining/coopStretch/features/coopDebetKredit/coopDebetKreditApi';
 
+type AddPaymentProps = {
+  variant: 'tag' | 'coop';
+  id?: string;
+};
 
-const AddPayment: React.FC<any> = (type: any) => {
-    const [sum, setSum] = useState<number | string>('');
-    const [showInput, setShowInput] = useState<boolean>(false);
+const AddPayment: React.FC<AddPaymentProps> = ({ variant, id }) => {
+  const dispatch = useAppDispatch();
+  const [cookies] = useCookies(['access_token']);
+  const params = useParams<{ id?: string }>();
 
-    const dispatch = useAppDispatch();
-    const [cookies, setCookie] = useCookies(['access_token']);
-    const params = useParams()
+  const handleConfirmation: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
+    e.preventDefault();
 
-
-    const handleConfirmation = () => {
-        if (type.type === "tag") {
-            {
-                const sum = window.prompt()
-                const sumToSend: number = typeof sum === 'string' ? parseFloat(sum) : sum || 0;
-                if (sumToSend === 0) {
-                    alert("0 chi karox linel")
-
-                } else {
-                    dispatch(addPayed({ cookies, params, sum: sumToSend })).unwrap().then(res => {
-                        if ("error" in res) {
-                            alert(res.error)
-                        }
-                    });
-                }
-            };
-        } else if (type.type === "coop") {
-            {
-                const sum = window.prompt()
-                const sumToSend: number = typeof sum === 'string' ? parseFloat(sum) : sum || 0;
-                if (sumToSend === 0) {
-                    alert("0 chi karox linel")
-                } else {
-                    dispatch(addCoopPayed({ cookies, params, sum: sumToSend })).unwrap().then(res => {
-                        if ("error" in res) {
-                            alert(res.error)
-                        }
-                    });
-                }
-            };
-        }
-
+    const orderId = id ?? params.id ?? '';
+    if (!orderId) {
+      alert('Order id not found');
+      return;
     }
 
-    return (
-        <div>
-            <button onClick={handleConfirmation}>Կատարել Վճարում</button>
-        </div>
-    );
+    const input = window.prompt('Введите сумму платежа');
+    if (input === null) return; // Отмена
+    const sumToSend = Number.parseFloat(input);
+    if (!Number.isFinite(sumToSend) || sumToSend <= 0) {
+      alert('Сумма должна быть положительным числом');
+      return;
+    }
 
-}
+    try {
+      if (variant === 'tag') {
+        await dispatch(
+          addPayed({ cookies, id: orderId, sum: sumToSend })
+        ).unwrap();
+      } else {
+        await dispatch(
+          addCoopPayed({ cookies, id: orderId, sum: sumToSend })
+        ).unwrap();
+      }
+      alert('Платёж проведён');
+    } catch (err: any) {
+      alert(err?.message ?? 'Ошибка при проведении платежа');
+    }
+  };
 
-export default AddPayment
+  return (
+    <div>
+      <button type="button" onClick={handleConfirmation}>
+        Կատարել Վճարում
+      </button>
+    </div>
+  );
+};
+
+export default AddPayment;

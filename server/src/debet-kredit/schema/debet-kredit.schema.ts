@@ -9,8 +9,8 @@ export type DebetKreditDocument = HydratedDocument<DebetKredit>;
 
 @Schema()
 export class DebetKredit {
-    @Prop({ default: new Date() })
-    date: Date;
+  @Prop({ type: Date, default: () => new Date() })
+  date: Date;
     @Prop()
     type: string;
     @Prop()

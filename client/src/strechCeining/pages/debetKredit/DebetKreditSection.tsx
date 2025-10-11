@@ -1,7 +1,6 @@
 import React, { FC, useState } from 'react';
 import BuyerDebetKreditSection from './BuyerDebetKreditSection';
 import AddPayment from '../../../component/confirmButten/AddPayment';
-import AddStretchPayment from '../../../component/confirmButten/AddStretchPayment';
 
 interface DebetKredit {
     type: string;
@@ -16,7 +15,7 @@ interface Order {
     sumKredit: number;
     buy: number;
     payment: number;
-    order:[]
+    order: string[]
 }
 
 interface DebetKreditSectionProps {
@@ -27,6 +26,7 @@ interface DebetKreditSectionProps {
 const DebetKreditSection: FC<DebetKreditSectionProps> = ({ ordersList, parseDate }) => {
 
     const type = "tage"
+
 
     const updatedOrdersList = ordersList.map(order => {
         let sumBuy = 0;
@@ -64,7 +64,6 @@ const DebetKreditSection: FC<DebetKreditSectionProps> = ({ ordersList, parseDate
     function viewOrder(id: string) {
         window.open('/stretchceiling/viewStretchOrder/' + id, '_blank');
     }
-console.log(updatedOrdersList);
 
     return (
         <div>
@@ -118,7 +117,7 @@ console.log(updatedOrdersList);
                                                             <p>{e.sumKredit}</p>
                                                         </td>
                                                 }
-                                                <td><AddStretchPayment id={e.order} /></td>
+                                                <td><AddPayment id={e.order.toString()} variant="tag"/></td>
                                             </tr>
                                             {showOrderMaterialList[e._id] && (
                                                 <BuyerDebetKreditSection order={e.debetKredit} parseDate={parseDate} />

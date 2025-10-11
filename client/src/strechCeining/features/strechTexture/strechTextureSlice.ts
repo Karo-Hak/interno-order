@@ -7,8 +7,8 @@ export interface StretchTextureProps {
     name: string;
     width: number;
     price: number;
-    priceCoopGarpun: number;
-    priceCoopOtrez: number;
+    coopPrice: number;
+    // priceCoopOtrez: number;
 }
 
 export interface StretchTextureState {

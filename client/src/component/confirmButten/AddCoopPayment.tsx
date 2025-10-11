@@ -1,40 +1,69 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useCookies } from 'react-cookie';
 import { useParams } from 'react-router-dom';
 import { useAppDispatch } from '../../app/hooks';
 import { addCoopPayed } from '../../strechCeining/coopStretch/features/coopDebetKredit/coopDebetKreditApi';
 
+export type AddCoopPaymentProps = {
+  id?: string;                 // orderId (если не передан — возьмём из URL)
+  disabled?: boolean;          // дизейбл кнопки
+  className?: string;          // внешние стили
+  onDone?: () => void;         // колбэк после успешного платежа
+};
 
-const AddCoopPayment: React.FC<any> = () => {
-    const [sum, setSum] = useState<number | string>('');
-    const [showInput, setShowInput] = useState<boolean>(false);
+const AddCoopPayment: React.FC<AddCoopPaymentProps> = ({
+  id,
+  disabled,
+  className,
+  onDone,
+}) => {
+  const dispatch = useAppDispatch();
+  const [cookies] = useCookies(['access_token']);
+  const params = useParams<{ id?: string }>();
 
-    const dispatch = useAppDispatch();
-    const [cookies, setCookie] = useCookies(['access_token']);
-    const params = useParams()
+  const handleClick: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
+    e.stopPropagation(); // чтобы клик по кнопке не дергал onClick строки в таблице
 
+    if (disabled) return;
 
-    const handleConfirmation = () => {
-        {
-            const sum = window.prompt()
-            const sumToSend: number = typeof sum === 'string' ? parseFloat(sum) : sum || 0; 
-            dispatch(addCoopPayed({ cookies, params, sum: sumToSend })).unwrap().then(res => {
-                if ("error" in res) {
-                    alert(res.error)
-                }
-            });
-            
-
-        };
-
+    const orderId = id ?? params.id ?? '';
+    if (!orderId) {
+      window.alert('Order id not found');
+      return;
     }
 
-    return (
-        <div>
-            <button onClick={handleConfirmation}>Կատարել Վճարում</button>
-        </div>
-    );
+    const raw = window.prompt('Введите сумму платежа');
+    if (raw === null) return; // отмена
+    const sum = Number.parseFloat((raw ?? '').toString().trim());
+    if (!Number.isFinite(sum) || sum <= 0) {
+      window.alert('Сумма должна быть положительным числом');
+      return;
+    }
 
-}
+    try {
+      await dispatch(
+        addCoopPayed({ cookies, id: orderId, sum })
+      ).unwrap();
 
-export default AddCoopPayment
+      window.alert('Платёж проведён');
+      onDone?.();
+    } catch (err: any) {
+      window.alert(err?.message ?? 'Ошибка при проведении платежа');
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={handleClick}
+      disabled={disabled}
+      className={className}
+      title={!id && !params.id ? 'Պատվերը բացակայում է' : undefined}
+      style={{ padding: '4px 10px', borderRadius: 6 }}
+    >
+      Կատարել Վճարում
+    </button>
+  );
+};
+
+export default AddCoopPayment;

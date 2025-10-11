@@ -13,7 +13,7 @@ export class StretchTexture {
     @Prop()
     price: number;
     @Prop()
-    priceCoopGarpun: number;
+    coopPrice: number;
     @Prop()
     priceCoopOtrez: number;
     @Prop({

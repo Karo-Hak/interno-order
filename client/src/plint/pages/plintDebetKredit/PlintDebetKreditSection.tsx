@@ -1,7 +1,6 @@
 import React, { FC, useState } from 'react';
 import BuyerDebetKreditSection from './BuyerPlintDebetKreditSection';
 
-import AddStretchPayment from '../../../component/confirmButten/AddStretchPayment';
 import AddPlintPayment from '../../../component/confirmButten/AddPlintPayment';
 
 interface PlintDebetKredit {

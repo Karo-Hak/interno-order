@@ -1,0 +1,33 @@
+.compact-form .layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 12px;
+}
+
+.card.dense {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.groups.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.col-side .sticky-side {
+  position: sticky;
+  top: 64px;
+}
+
+.actions.sticky {
+  position: sticky;
+  bottom: 0;
+  background: #fff;
+  padding: 8px;
+  display: flex;
+  gap: 8px;
+  border-top: 1px solid #eee;
+}

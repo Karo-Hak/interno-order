@@ -11,7 +11,7 @@ export type PlintgOrderDocument = HydratedDocument<PlintOrder>;
 export class PlintOrder {
     @Prop({ type: Array })
     groupedPlintData: Array<object>;
-    @Prop({ default: new Date() })
+    @Prop({ type: Date, default: () => new Date() })
     date: Date;
     @Prop()
     buyerComment: string;

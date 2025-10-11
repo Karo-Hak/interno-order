@@ -90,8 +90,8 @@ export const StretchTexture: React.FC = (): JSX.Element => {
                 setValue("name", selectedTexture.name);
                 setValue("width", selectedTexture.width);
                 setValue("price", selectedTexture.price);
-                setValue("priceCoopGarpun", selectedTexture.priceCoopGarpun);
-                setValue("priceCoopOtrez", selectedTexture.priceCoopOtrez);
+                setValue("coopPrice", selectedTexture.coopPrice);
+                // setValue("priceCoopOtrez", selectedTexture.priceCoopOtrez);
             }
         }
     }
@@ -149,13 +149,13 @@ export const StretchTexture: React.FC = (): JSX.Element => {
                         </div>
 
                         <div className="divLabel">
-                            <label htmlFor="priceCoopGarpun">Համ․ Գին Գարպուն</label>
-                            <input id="priceCoopGarpun" type="number" placeholder="Price Garpun"  {...register("priceCoopGarpun", { required: true })} />
+                            <label htmlFor="coopPrice">Համ․ Գին Գարպուն</label>
+                            <input id="coopPrice" type="number" placeholder="Price Garpun"  {...register("coopPrice", { required: true })} />
                         </div>
-                        <div className="divLabel">
+                        {/* <div className="divLabel">
                             <label htmlFor="priceCoopOtrez">Համ․ Գին Կտրվածք</label>
                             <input id="priceCoopOtrez" type="number" placeholder="Price Otrez"  {...register("priceCoopOtrez", { required: true })} />
-                        </div>
+                        </div> */}
                         <button >Գրանցել</button>
                     </div>
                 </form>
@@ -171,8 +171,8 @@ export const StretchTexture: React.FC = (): JSX.Element => {
                                         <th scope="col">Անվանում</th>
                                         <th scope="col">Լայնություն</th>
                                         <th scope="col">Գին</th>
-                                        <th scope="col">Համ Գին Գարպուն </th>
-                                        <th scope="col">Համ Գին Ատրեզ</th>
+                                        <th scope="col">Համ Գին</th>
+                                        {/* <th scope="col">Համ Գին Ատրեզ</th> */}
 
                                     </tr>
                                 </thead>
@@ -184,8 +184,8 @@ export const StretchTexture: React.FC = (): JSX.Element => {
                                                     <td>{e.name}</td>
                                                     <td>{e.weight}</td>
                                                     <td>{e.price}</td>
-                                                    <td>{e.priceCoopGarpun}</td>
-                                                    <td>{e.priceCoopOtrez}</td>
+                                                    <td>{e.coopPrice}</td>
+                                                    {/* <td>{e.priceCoopOtrez}</td> */}
                                                 </tr>
                                             )
                                         })
