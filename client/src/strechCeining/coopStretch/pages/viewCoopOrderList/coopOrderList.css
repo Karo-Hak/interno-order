@@ -8,10 +8,10 @@
   margin-bottom: 8px;
   position: sticky;
   top: 0;
-  background: #fff;
+  background: #f0eaea;
   padding: 8px;
   z-index: 1;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #1a0808;
 }
 
 .toolbar__field {

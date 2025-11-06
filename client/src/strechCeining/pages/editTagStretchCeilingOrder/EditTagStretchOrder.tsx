@@ -21,6 +21,7 @@ import { allStretchWork } from "../../features/StrechWork/strechWorkApi";
 import EditWorkSection from "./EditWorkSection";
 import { StretchMenu } from "../../../component/menu/StretchMenu";
 import { Data } from "../addTagStretchCeilingOrder/TagStretchOrder";
+import { getProductsByCategory } from "../../features/product/productApi";
 
 export const EditTagStretchOrder: React.FC = (): JSX.Element => {
     const [cookies, setCookie] = useCookies(['access_token']);
@@ -29,7 +30,7 @@ export const EditTagStretchOrder: React.FC = (): JSX.Element => {
     const dispatch = useAppDispatch();
 
     const { register, handleSubmit, reset, setValue, getValues, watch, control } = useForm<any>();
-    
+
     const watchedValues = useWatch({ control }); // Следим за всеми полями формы
 
     const [user, setUser] = useState<any>();
@@ -50,6 +51,15 @@ export const EditTagStretchOrder: React.FC = (): JSX.Element => {
     const [order, setOrder] = useState<any>({});
     const { address, region } = order ?? {};
 
+    const dedupById = <T extends { _id: string }>(arr: T[]): T[] => {
+        const map = new Map<string, T>();
+        for (let i = 0; i < arr.length; i++) {
+            const it = arr[i];
+            map.set(it._id, it);
+        }
+        return Array.from(map.values());
+    };
+
     // Загрузка данных при монтировании
     useEffect(() => {
         const fetchData = async () => {
@@ -58,19 +68,46 @@ export const EditTagStretchOrder: React.FC = (): JSX.Element => {
                 const stretchOrderResult = await dispatch(findStretchOrder({ params, cookies })).unwrap();
                 const stretchTextureResult = await dispatch(getAllStretchTexture(cookies)).unwrap();
                 const stretchAdditionalResult = await dispatch(getAllStretchAdditional(cookies)).unwrap();
-                const stretchProfilResult = await dispatch(getAllStretchProfil(cookies)).unwrap();
-                const stretchLightPlatformResult = await dispatch(getAllStretchLightPlatform(cookies)).unwrap();
-                const stretchLightRingResult = await dispatch(getAllStretchLightRing(cookies)).unwrap();
                 const stretchBardutyunResult = await dispatch(getAllStretchBardutyun(cookies)).unwrap();
                 const allStretchWorkResult = await dispatch(allStretchWork(cookies)).unwrap();
+                const stretchProfilResult = await dispatch(getProductsByCategory({
+                    cookies,
+                    categoryId: '65a794201acb8962fc25c963',
+                }),
+                ).unwrap();
+                const stretchLightPlatformResult = await dispatch(getProductsByCategory({
+                    cookies,
+                    categoryId: '65a63e084452458093923a8f',
+                }),
+                ).unwrap();
+
+                const [lrA, lrB] = await Promise.all([
+                    dispatch(getProductsByCategory({ cookies, categoryId: '65a639cb4452458093923951' })).unwrap(), // Light Ring
+                    dispatch(getProductsByCategory({ cookies, categoryId: '65a639f04452458093923955' })).unwrap(), // Light Ring B
+                ]);
+
+                const lightRingMerged = dedupById([
+                    ...(Array.isArray(lrA?.items) ? lrA.items : []),
+                    ...(Array.isArray(lrB?.items) ? lrB.items : []),
+                ]);
+
+                const profilItems = Array.isArray(stretchProfilResult?.items)
+                    ? stretchProfilResult.items
+                    : (stretchProfilResult?.items ?? []);
+
+                const platformItems = Array.isArray(stretchLightPlatformResult?.items)
+                    ? stretchLightPlatformResult.items
+                    : (stretchLightPlatformResult?.items ?? []);
+
+                handleResult({ stretchProfil: profilItems });
+                handleResult({ lightPlatform: platformItems });
+                handleResult({ lightRing: lightRingMerged });
+
 
                 handleResult(userProfileResult);
                 handleResult(stretchOrderResult);
                 handleResult(stretchTextureResult);
                 handleResult(stretchAdditionalResult);
-                handleResult(stretchProfilResult);
-                handleResult(stretchLightPlatformResult);
-                handleResult(stretchLightRingResult);
                 handleResult(stretchBardutyunResult);
                 handleResult(allStretchWorkResult);
             } catch (error) {

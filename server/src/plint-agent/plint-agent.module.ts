@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PlintAgent, PlintAgentSchema } from './schema/plint-agent.schema';
-import { PlintAgentController } from './plint-agent.controller';
 import { PlintAgentService } from './plint-agent.service';
+import { PlintAgentController } from './plint-agent.controller';
 
 
 @Module({

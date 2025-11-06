@@ -5,10 +5,19 @@ import { CoopStretchBuyer } from 'src/coop-stretch-buyer/schema/coop-stretch-buy
 export type CoopCeilingOrderDocument = HydratedDocument<CoopCeilingOrder>;
 
 @Schema({ _id: false })
-class GroupedItem {
+class TextureItem {
   @Prop({ required: true, trim: true }) name: string;
   @Prop({ type: Number, min: 0, default: 0 }) width?: number;
   @Prop({ type: Number, min: 0, default: 0 }) height?: number;
+  @Prop({ type: Number, min: 0, default: 0 }) qty: number;
+  @Prop({ type: Number, min: 0, default: 0 }) price: number;
+  @Prop({ type: Number, min: 0, default: 0 }) sum: number;
+}
+const TextureItemSchema = SchemaFactory.createForClass(TextureItem);
+
+@Schema({ _id: false })
+class GroupedItem {
+  @Prop({ required: true, trim: true }) name: string;
   @Prop({ type: Number, min: 0, default: 0 }) qty: number;
   @Prop({ type: Number, min: 0, default: 0 }) price: number;
   @Prop({ type: Number, min: 0, default: 0 }) sum: number;
@@ -19,8 +28,8 @@ type PaymentMethod = 'cash' | 'card' | 'transfer' | 'other';
 
 @Schema({ timestamps: true, versionKey: false })
 export class CoopCeilingOrder {
-  @Prop({ type: [GroupedItemSchema], default: [] })
-  groupedStretchTextureData: GroupedItem[];
+  @Prop({ type: [TextureItemSchema], default: [] })
+  groupedStretchTextureData: TextureItem[];
 
   @Prop({ type: [GroupedItemSchema], default: [] })
   groupedStretchProfilData: GroupedItem[];

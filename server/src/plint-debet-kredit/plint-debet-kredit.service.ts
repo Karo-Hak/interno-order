@@ -1,117 +1,54 @@
-import { Injectable } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { Model, Types } from "mongoose";
-import { PlintDebetKredit } from "./schema/plint-debet-kredit.schema";
-import { PlintBuyer } from "src/plintBuyer/schema/plint-buyer.schema";
-import { PlintOrder } from "src/plint-order/schema/plint-order.schema";
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model, Types } from 'mongoose';
+import { PlintDebetKredit } from 'src/plint-debet-kredit/schema/plint-debet-kredit.schema';
+import { PlintRetailOrder } from 'src/plint-order/schema/plint-retail-order.schema';
+import { PlintBuyer } from 'src/plintBuyer/schema/plint-buyer.schema';
 
+
+
+const toNum = (v: any, d = 0) => {
+    const n = Number.parseFloat(String(v ?? ''));
+    return Number.isFinite(n) ? n : d;
+};
 
 @Injectable()
 export class PlintDebetKreditService {
     constructor(
-        @InjectModel(PlintDebetKredit.name) private plintDebetKreditModel: Model<PlintDebetKredit>,
-        @InjectModel(PlintBuyer.name) private plintBuyerModel: Model<PlintBuyer>,
-        @InjectModel(PlintOrder.name) private plintOrderModel: Model<PlintOrder>,
+        @InjectModel(PlintDebetKredit.name) private readonly model: Model<PlintDebetKredit>,
+        @InjectModel(PlintBuyer.name) private readonly buyerModel: Model<PlintBuyer>,
+        @InjectModel(PlintRetailOrder.name) private readonly orderModel: Model<PlintRetailOrder>,
     ) { }
 
-    async create(order: string, user: string, buyer: string, balance: number, prepayment: number) {
-
-        const orderBuyerDocument = await this.plintBuyerModel.findById(buyer);
-        if (!orderBuyerDocument) {
-            throw new Error('Order buyer not found');
-        }
-
-        if (balance > 0) {
-            const createdDebet = await this.plintDebetKreditModel.create({
-                type: "Գնում",
-                user,
-                buyer,
-                order,
-                amount: balance
-            })
-            orderBuyerDocument.debetKredit.push(createdDebet.id);
-            await createdDebet.save()
-        }
-
-        if (prepayment > 0) {
-            const createdKredit = await this.plintDebetKreditModel.create({
-                type: "Վճարում",
-                user,
-                buyer,
-                order,
-                amount: prepayment
-            })
-            orderBuyerDocument.debetKredit.push(createdKredit.id);
-            await createdKredit
-        }
-        await Promise.all([
-            orderBuyerDocument.save(),
-        ]);
+    /** Журнал: создать запись (без влияния на балансы) */
+    private async logDK(params: {
+        type: 'Գնում' | 'Վճարում';
+        amount: number;
+        buyerId: Types.ObjectId;
+        userId?: Types.ObjectId;
+        orderId?: Types.ObjectId;
+        date?: Date;
+    }) {
+        const { type, amount, buyerId, userId, orderId, date } = params;
+        await this.model.create({
+            type,
+            amount,
+            buyer: buyerId,
+            user: userId ?? undefined,
+            order: orderId ?? null,
+            date: date ?? new Date(),
+        });
     }
 
-    async creatPayment(orderId: Types.ObjectId, sum: number) {
-        const order = await this.plintOrderModel.findById(orderId)
-        const buyer = await this.plintBuyerModel.findById(order.buyer)
-
-        const createdKredit = await this.plintDebetKreditModel.create({
-            type: "Վճարում",
-            user: order.user.toString(),
-            buyer: order.buyer.toString(),
-            order: order._id.toString(),
-            amount: sum
-        })
-        buyer.debetKredit.push(createdKredit.id);
-        await createdKredit
-
-        await Promise.all([
-            buyer.save(),
-        ]);
-        return createdKredit.save()
+    /** Журнал: обновить сумму покупки по заказу (когда меняем totalSum) */
+    private async upsertOrderPurchaseDK(orderId: Types.ObjectId, buyerId: Types.ObjectId, amount: number, userId?: Types.ObjectId, date?: Date) {
+        // если запись покупки по этому заказу уже есть — обновим,
+        // если нет (теоретически) — создадим.
+        const res = await this.model.updateOne(
+            { order: orderId, type: 'Գնում' },
+            { $set: { amount, date: date ?? new Date(), buyer: buyerId, user: userId ?? undefined } },
+            { upsert: true }
+        );
+        return res;
     }
-
-    async findAllByBuyer() {
-        return await this.plintBuyerModel.find().populate("debetKredit")
-    }
-
-    async findByOrder(orderId: string) {
-        return await this.plintDebetKreditModel.find({ order: orderId })
-    }
-
-    async updateBalance(sum: number, id: string) {
-        return await this.plintDebetKreditModel.findByIdAndUpdate(id, { amount: sum });
-    }
-
-    async updateBuyer(oldId: string, newId: string) {
-        return await this.plintDebetKreditModel.updateMany({ buyer: oldId }, { $set: { buyer: newId } });
-    }
-
-    async findByDate(startDate: Date, endDate: Date) {
-        return await this.plintDebetKreditModel.find({
-            date: {
-                $gte: startDate,
-                $lte: endDate
-            },
-        })
-            .sort({ date: -1 });
-    }
-
-    async deleteDocuments(ids: string[]) {
-        try {
-            let deletedCount = 0;
-            
-            for (const id of ids) {
-                const deletedDoc = await this.plintDebetKreditModel.findByIdAndDelete(id).exec();
-                if (deletedDoc) {
-                    deletedCount++;
-                }
-            }
-            
-            return { deletedCount };
-        } catch (error) {
-            throw new Error('Failed to delete documents: ' + error.message);
-        }
-    }
-    
-    
-
 }

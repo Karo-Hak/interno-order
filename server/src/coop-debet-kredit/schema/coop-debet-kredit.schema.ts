@@ -1,4 +1,3 @@
-// coop-debet-kredit.schema.ts
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose, { HydratedDocument } from "mongoose";
 import { CoopCeilingOrder } from "src/coop-ceiling-order/schema/coop-ceiling-order.schema";

@@ -185,7 +185,7 @@ export const CoopBuyerTable: React.FC<Props> = ({ rows, onRowClick, onRefresh })
                   isOpen={expanded.has(r._id)}
                   toggle={() => toggleRow(r._id)}
                   onRowClick={onRowClick}
-                  onPaymentDeleted={onRefresh} // ← добавили
+                  onPaymentDeleted={onRefresh} 
                 />
               ))}
             </tbody>

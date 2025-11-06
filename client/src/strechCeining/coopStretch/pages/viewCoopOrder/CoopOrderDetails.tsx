@@ -6,6 +6,10 @@ import { CoopStretchMenu } from '../../../../component/menu/CoopStretchMenu';
 import { fetchCoopOrderById, deleteCoopOrderById } from '../../features/coopCeilingOrder/coopCeilingOrderApi';
 import AddCoopPayment from '../../../../component/confirmButten/AddCoopPayment';
 
+// ⬇️ для PDF
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+
 type TextureRow = {
   name?: string;
   height?: number;  // м
@@ -113,6 +117,9 @@ const CoopOrderDetails: React.FC = () => {
   const [error, setError] = React.useState<string | null>(null);
   const [deleting, setDeleting] = React.useState(false);
 
+  // ⬇️ ref для области, которую сохраняем в PDF
+  const pdfRef = React.useRef<HTMLDivElement | null>(null);
+
   const load = React.useCallback(async () => {
     if (!id) return;
     setLoad(true); setError(null);
@@ -148,6 +155,58 @@ const CoopOrderDetails: React.FC = () => {
     }
   };
 
+  const handleEdit = () => {
+    if (!id) return;
+    navigate(`/coopStretchceiling/orders/${id}/edit`);
+  };
+
+  // ⬇️ экспорт в PDF
+  const handleExportPdf = async () => {
+    if (!pdfRef.current) return;
+    // раскрываем все <details>, чтобы контент попал в PDF
+    const opened: HTMLDetailsElement[] = [];
+    pdfRef.current.querySelectorAll('details').forEach((d) => {
+      const det = d as HTMLDetailsElement;
+      if (!det.open) { det.open = true; opened.push(det); }
+    });
+
+    // небольшая задержка на рендер
+    await new Promise(r => setTimeout(r, 50));
+
+    const canvas = await html2canvas(pdfRef.current, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#ffffff'
+    });
+    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+
+    const imgWidth = pageWidth;
+    const imgHeight = canvas.height * imgWidth / canvas.width;
+
+    // разрезание на страницы
+    let heightLeft = imgHeight;
+    let position = 0;
+
+    pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+
+    while (heightLeft > 0) {
+      position -= pageHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+    }
+
+    pdf.save(`order_${id}.pdf`);
+
+    // вернуть исходное состояние details
+    opened.forEach(d => (d.open = false));
+  };
+
   return (
     <div>
       <CoopStretchMenu />
@@ -164,6 +223,23 @@ const CoopOrderDetails: React.FC = () => {
         <div style={{ fontWeight: 700, fontSize: 14 }}>Պատվեր № {id}</div>
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
           <div><AddCoopPayment id={order?._id} /></div>
+          <button
+            type="button"
+            onClick={handleEdit}
+            disabled={!order || !id}
+            style={{ padding: '4px 10px', border: '1px solid #ddd', background: '#eef6ff', borderRadius: 6 }}
+            title="Խմբագրել պատվերը"
+          >
+            Խմբագրել
+          </button>
+          <button
+            type="button"
+            onClick={handleExportPdf}
+            style={{ padding: '4px 10px', border: '1px solid #ddd', background: '#f7f7f7', borderRadius: 6 }}
+            title="Պահպանել PDF"
+          >
+            Պահպանել PDF
+          </button>
           <div style={{ fontWeight: 700, fontSize: 14, alignSelf: 'center' }}>
             Ընդհանուր: {money(grandTotal)} AMD
           </div>
@@ -179,7 +255,8 @@ const CoopOrderDetails: React.FC = () => {
         </div>
       </div>
 
-      <div style={{ padding: 8 }}>
+      {/* ⬇️ всё, что попадёт в PDF — оборачиваем в ref */}
+      <div ref={pdfRef} style={{ padding: 8 }}>
         {loading && <div style={{ fontSize: 13 }}>Բեռնվում է…</div>}
         {error && <div style={{ color: 'crimson', fontSize: 13 }}>{error}</div>}
         {!loading && !error && order && (
@@ -197,7 +274,7 @@ const CoopOrderDetails: React.FC = () => {
               </div>
             </MiniSection>
 
-            {/* Stretch Texture — всегда открыто, с Height/Width/Sq */}
+            {/* Stretch Texture */}
             {!!order.groupedStretchTextureData?.length && (
               <MiniSection
                 title="Stretch Texture"
@@ -232,7 +309,7 @@ const CoopOrderDetails: React.FC = () => {
             {/* Profil */}
             {!!order.groupedStretchProfilData?.length && (
               <MiniSection title="Profil" hint={`${order.groupedStretchProfilData.length} տող · ${money(profilTotal)} AMD`} defaultOpen>
-                <MiniTable headers={['Անվ.', 'Քան.', 'Գին', 'Գუმար']} rightCols={[1, 2, 3]}>
+                <MiniTable headers={['Անվ.', 'Քան.', 'Գին', 'Գումար']} rightCols={[1, 2, 3]}>
                   {order.groupedStretchProfilData!.map((r, i) => {
                     const line = r.sum != null ? num(r.sum) : num(r.qty) * num(r.price);
                     return (

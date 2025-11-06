@@ -1,81 +1,84 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { http } from '../../../api/http';
 
-export const myLink = (url: string) => {
-  return new Promise((resolve, reject) => {
-    axios.get(url).then(res => resolve(res.data)).catch(e => reject(e))
-  })
+type Tokened = { cookies: { access_token?: string } }; // <-- было string, стало optional
+
+function authHeader(token?: string) {
+  return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-
+// СОЗДАНИЕ
 export const addNewPlint = createAsyncThunk(
-  'plint/axios',
-  async (obj: any) => {
+  '/plint-products/create',
+  async (
+    obj: Tokened & {
+      plint: { name: string; retailPriceAMD: number; wholesalePriceAMD: number; stockBalance: number };
+    },
+    { rejectWithValue }
+  ) => {
     try {
-      const response = await axios.post(process.env.REACT_APP_SERVER_URL +"/plint", { ...obj.plint }, {
-        headers: {
-          Authorization: `Bearer ${obj.cookies.access_token}`
-        }
-      })
-
-      return response.data
-    } catch (e) {
-      return { error: "not found" }
-
+      if (!obj.cookies?.access_token) return rejectWithValue({ message: 'No token' });
+      const { data } = await http.post('/plint-products', obj.plint, {
+        headers: authHeader(obj.cookies.access_token),
+      });
+      return data;
+    } catch (e: any) {
+      return rejectWithValue(e?.response?.data ?? { message: 'create failed' });
     }
   }
 );
-export const updatePlint = createAsyncThunk(
-  'plint/update/axios',
-  async (obj: any) => {
-    try {
-      const response = await axios.post(process.env.REACT_APP_SERVER_URL +"/plint/update", { ...obj.filteredData }, {
-        headers: {
-          Authorization: `Bearer ${obj.cookies.access_token}`
-        }
-      })
 
-      return response.data
-    } catch (e) {
-      return { error: "not found" }
-
-    }
-  }
-);
+// ОБНОВЛЕНИЕ ЦЕН
 export const updatePlintPrice = createAsyncThunk(
-  'plint/updatePrice/axios',
-  async (obj: any) => {
-    console.log("api", obj);
-    
+  'plint-products/updatePrice',
+  async (
+    obj: Tokened & { plint: { _id: string; retailPriceAMD: number; wholesalePriceAMD: number } },
+    { rejectWithValue }
+  ) => {
     try {
-      const response = await axios.post(process.env.REACT_APP_SERVER_URL +"/plint/updatePrice", { ...obj.plint }, {
-        headers: {
-          Authorization: `Bearer ${obj.cookies.access_token}`
-        }
-      })
-
-      return response.data
-    } catch (e) {
-      return { error: "not found" }
-
+      if (!obj.cookies?.access_token) return rejectWithValue({ message: 'No token' });
+      const { data } = await http.post('/plint-products/updatePrice', obj.plint, {
+        headers: authHeader(obj.cookies.access_token),
+      });
+      return data;
+    } catch (e: any) {
+      return rejectWithValue(e?.response?.data ?? { message: 'updatePrice failed' });
     }
   }
 );
 
+// ВСЕ
 export const getAllPlint = createAsyncThunk(
-  'plint/all/axios',
-  async (cookie: any) => {
+  'plint-products/all',
+  async (cookie: { access_token?: string }, { rejectWithValue }) => {
     try {
-      const response = await axios.get(process.env.REACT_APP_SERVER_URL + "/plint/allPlint", {
-        headers: {
-          Authorization: `Bearer ${cookie.access_token}`
-        }
-      })
-      return response.data
-    } catch (e) {
-      return { error: "not found" }
-
+      if (!cookie?.access_token) return rejectWithValue({ message: 'No token' });
+      const { data } = await http.get('/plint-products/allPlint', {
+        headers: authHeader(cookie.access_token),
+      });
+      return data;
+    } catch (e: any) {
+      return rejectWithValue(e?.response?.data ?? { message: 'fetch all failed' });
     }
   }
 );
 
+export const adjustPlintStock = createAsyncThunk(
+  'plint-products/adjustStock',
+  async (
+    obj: Tokened & { id: string; delta: number },
+    { rejectWithValue }
+  ) => {
+    try {
+      if (!obj.cookies?.access_token) return rejectWithValue({ message: 'No token' });
+      const { data } = await http.post(
+        `/plint-products/${obj.id}/adjust-stock`,
+        { delta: obj.delta },
+        { headers: authHeader(obj.cookies.access_token) }
+      );
+      return data; // обновлённый документ товара
+    } catch (e: any) {
+      return rejectWithValue(e?.response?.data ?? { message: 'adjust stock failed' });
+    }
+  }
+);

@@ -121,6 +121,7 @@ export class StretchCeilingOrderService {
     await this.stretchBuyerService.addCreditIfNotExists(orderBuyerDocument._id.toString(), {
       date: new Date(),
       sum: Number(createdOrder.prepayment) || 0,
+      orderId: createdOrder._id.toString(),
     });
 
     return createdOrder;
@@ -320,6 +321,7 @@ export class StretchCeilingOrderService {
         await this.stretchBuyerService.addCreditIfNotExists(newBuyerId, {
           date: new Date(),
           sum: newPrepay,
+          orderId: updatedOrder._id.toString(),
         });
       }
     }

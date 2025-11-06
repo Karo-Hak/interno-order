@@ -1,0 +1,174 @@
+.plint-page {
+  font-size: 14px;
+  color: #111;
+}
+
+.toolbar {
+  display: grid;
+  grid-template-columns: auto auto 1fr auto;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+  position: sticky;
+  top: 0;
+  background: #f3f4f6;
+  padding: 8px;
+  z-index: 10;
+  border-bottom: 1px solid #d1d5db;
+}
+
+.toolbar__field {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 13px;
+}
+
+.filters {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.toolbar__search {
+  min-width: 150px;
+  font-size: 13px;
+}
+
+.toolbar__right {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  font-size: 13px;
+}
+
+.toolbar__total b {
+  font-size: 14px;
+}
+
+.btn {
+  padding: 4px 8px;
+  background: #1f2937;
+  color: #fff;
+  border: 1px solid #1f2937;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.btn[disabled] {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.btn--secondary {
+  background: #f3f4f6;
+  color: #111;
+  border: 1px solid #9ca3af;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.table thead th {
+  position: sticky;
+  top: 48px; /* подгон под sticky toolbar */
+  background: #fff;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+  font-weight: 600;
+  padding: 6px 8px;
+  white-space: nowrap;
+  z-index: 5;
+}
+
+.table tbody td {
+  border-bottom: 1px solid #f3f4f6;
+  padding: 6px 8px;
+  vertical-align: top;
+}
+
+.td-center {
+  text-align: center;
+  width: 32px;
+}
+
+.td-num {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.expand-cell {
+  background: #fafafa;
+  padding: 8px;
+}
+
+.muted {
+  opacity: 0.6;
+  padding: 8px;
+  font-style: italic;
+}
+
+.panel {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 8px;
+  margin-bottom: 8px;
+}
+
+.panel__title {
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+/* таблицы внутри раскрытия/панели */
+.inner-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.inner-table thead th {
+  background: #fff;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+  font-weight: 600;
+  padding: 4px 6px;
+  white-space: nowrap;
+}
+
+.inner-table tbody td {
+  border-bottom: 1px solid #f3f4f6;
+  padding: 4px 6px;
+  vertical-align: top;
+}
+
+.inner-table tfoot td {
+  border-top: 1px solid #e5e7eb;
+  padding: 4px 6px;
+  font-weight: 600;
+}
+
+.td-right {
+  text-align: right;
+}
+
+.strong {
+  font-weight: 600;
+}

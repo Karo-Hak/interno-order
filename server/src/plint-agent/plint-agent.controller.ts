@@ -1,57 +1,70 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Res, HttpStatus, Query, Req } from '@nestjs/common';
-import { Response } from 'express';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { UpdatePlintAgentDto } from './dto/update-plint-agent.dto';
-import { CreatePlintAgentDto } from './dto/create-plint-ahent.dto';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { PlintAgentService } from './plint-agent.service';
+import { CreatePlintAgentDto } from './dto/create-plint-agent.dto';
+import { QueryPlintAgentDto } from './dto/query-plint-agent.dto';
+import { UpdatePlintAgentDto } from './dto/update-plint-agent.dto';
+import { LinkAgentDebetKreditDto, LinkOrderDto } from './dto/link.dto';
+import { AdjustBalanceDto, SetBalanceDto } from './dto/balance.dto';
 
 
 @Controller('plint-agent')
 export class PlintAgentController {
-    constructor(private readonly plintAgentService: PlintAgentService) { }
+  constructor(private readonly service: PlintAgentService) {}
 
-    @UseGuards(JwtAuthGuard)
-    @Post()
-    async create(@Body() createPlintAgentDto: CreatePlintAgentDto, @Res() res: Response, @Request() req) {
-        
-        try {
-            const data = await this.plintAgentService.create(createPlintAgentDto);
-            return res.status(HttpStatus.CREATED).json({
-                message: "create agent",
-                data
-            })
-        } catch (e) {
-            return res.status(HttpStatus.BAD_REQUEST).json({
-                error: e.message
-            })
-        }
-    }
+  @Post()
+  create(@Body() dto: CreatePlintAgentDto) {
+    return this.service.create(dto);
+  }
 
-    @Get()
-    async findAll(@Request() req, @Res() res: Response) {
-        try {
-            const plintAgent = await this.plintAgentService.findAll();
-            return res.status(HttpStatus.OK).json({plintAgent});
-        } catch (e) {
-            return res.status(HttpStatus.OK).json({
-                error: e.message
-            })
-        }
-    }
+  @Get()
+  findAll(@Query() q: QueryPlintAgentDto) {
+    return this.service.findAll(q);
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.service.findOne(id);
+  }
+
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() dto: UpdatePlintAgentDto) {
+    return this.service.update(id, dto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.service.remove(id);
+  }
+
+  // Связи
+  @Post(':id/link-order')
+  linkOrder(@Param('id') id: string, @Body() dto: LinkOrderDto) {
+    return this.service.linkOrder(id, dto.orderId);
+  }
+
+  @Post(':id/link-dk')
+  linkDK(@Param('id') id: string, @Body() dto: LinkAgentDebetKreditDto) {
+    return this.service.linkDebetKredit(id, dto.dkId);
+  }
+
+  @Post(':id/unlink-order')
+  unlinkOrder(@Param('id') id: string, @Body() dto: LinkOrderDto) {
+    return this.service.unlinkOrder(id, dto.orderId);
+  }
+
+  @Post(':id/unlink-dk')
+  unlinkDK(@Param('id') id: string, @Body() dto: LinkAgentDebetKreditDto) {
+    return this.service.unlinkDebetKredit(id, dto.dkId);
+  }
+ @Post(':id/adjust-balance')
+  adjustBalance(@Param('id') id: string, @Body() dto: AdjustBalanceDto) {
+    return this.service.adjustBalance(id, dto.deltaAMD);
+  }
+
+  @Post(':id/set-balance')
+  setBalance(@Param('id') id: string, @Body() dto: SetBalanceDto) {
+    return this.service.setBalance(id, dto.valueAMD);
+  }
 
 
-    @Get(':id')
-    findOne(@Param('id') id: string) {
-        return this.plintAgentService.findOne(id);
-    }
-
-    @Patch(':id')
-    update(@Param('id') id: string, @Body() updatePlintAgentDto: UpdatePlintAgentDto) {
-        return this.plintAgentService.update(+id, updatePlintAgentDto);
-    }
-
-    @Delete(':id')
-    remove(@Param('id') id: string) {
-        return this.plintAgentService.remove(+id);
-    }
 }

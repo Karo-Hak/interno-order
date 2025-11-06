@@ -12,7 +12,6 @@ type Props = {
 
 export const BuyerRow: React.FC<Props> = ({ r, isOpen, toggle, onRowClick }) => {
   const handleCellClick = onRowClick ? () => onRowClick(r._id) : undefined;
-
   return (
     <>
       <tr
@@ -29,11 +28,8 @@ export const BuyerRow: React.FC<Props> = ({ r, isOpen, toggle, onRowClick }) => 
         </td>
         <td>{r.buyerName}</td>
         <td>{r.buyerPhone1}</td>
-        <td>{r.buyerPhone2}</td>
         <td>{r.buyerRegion || '—'}</td>
-        <td>{r.buyerAddress || '—'}</td>
         <td>{r.ordersCount}</td>
-        <td>{r.dkCount}</td>
         <td>{r.buyCount} / {fmtMoney(r.buySum)}</td>
         <td>{r.creditCount} / {fmtMoney(r.creditSum)}</td>
         <td style={{ fontWeight: 600 }}>{fmtMoney(r.total)}</td>

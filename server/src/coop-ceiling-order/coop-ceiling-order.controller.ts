@@ -15,8 +15,6 @@ export class CoopCeilingOrderController {
 
   @Post()
   async create(@Body() dto: CreateCoopOrderDto) {
-    console.log(dto.stretchTextureOrder);
-
     const order = await this.service.createWithBuyerResolution(dto);
     return { message: 'created', orderId: (order as any)._id };
   }

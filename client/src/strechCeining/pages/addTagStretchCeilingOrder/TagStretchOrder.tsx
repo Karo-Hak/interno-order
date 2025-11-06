@@ -13,14 +13,12 @@ import { v4 as uuidv4 } from 'uuid';
 import WorkSection from './WorkSection';
 import { getAllStretchTexture } from '../../features/strechTexture/strechTextureApi';
 import { getAllStretchAdditional } from '../../features/strechAdditional/strechAdditionalApi';
-import { getAllStretchProfil } from '../../features/strechProfil/strechProfilApi';
-import { getAllStretchLightPlatform } from '../../features/strechLightPlatform/strechLightPlatformApi';
-import { getAllStretchLightRing } from '../../features/strechLightRing/strechLightRingApi';
 import { getAllStretchBardutyun } from '../../features/strechBardutyun/strechBardutyunApi';
 import { allStretchWork } from '../../features/StrechWork/strechWorkApi';
 import { StretchMenu } from '../../../component/menu/StretchMenu';
 import './tagStretchOrder.css';
 import { addNewStretchOrder } from '../../features/stretchCeilingOrder/stretchOrderApi';
+import { getProductsByCategory } from '../../features/product/productApi';
 
 export interface Data {
   id: string;
@@ -31,7 +29,16 @@ export interface Data {
   sum: number;
 }
 
+
 const TagStretchOrder: React.FC = (): JSX.Element => {
+  const dedupById = <T extends { _id: string }>(arr: T[]): T[] => {
+    const map = new Map<string, T>();
+    for (let i = 0; i < arr.length; i++) {
+      const it = arr[i];
+      map.set(it._id, it);
+    }
+    return Array.from(map.values());
+  };
   const [cookies, setCookie] = useCookies(['access_token']);
   const navigate = useNavigate();
   const { register, handleSubmit, reset, setValue, watch, getValues } = useForm<any>();
@@ -71,18 +78,45 @@ const TagStretchOrder: React.FC = (): JSX.Element => {
         const userProfileResult = await dispatch(userProfile(cookies)).unwrap();
         const stretchTextureResult = await dispatch(getAllStretchTexture(cookies)).unwrap();
         const stretchAdditionalResult = await dispatch(getAllStretchAdditional(cookies)).unwrap();
-        const stretchProfilResult = await dispatch(getAllStretchProfil(cookies)).unwrap();
-        const stretchLightPlatformResult = await dispatch(getAllStretchLightPlatform(cookies)).unwrap();
-        const stretchLightRingResult = await dispatch(getAllStretchLightRing(cookies)).unwrap();
         const stretchBardutyunResult = await dispatch(getAllStretchBardutyun(cookies)).unwrap();
         const allStretchWorkResult = await dispatch(allStretchWork(cookies)).unwrap();
+
+        const stretchProfilResult = await dispatch(getProductsByCategory({
+          cookies,
+          categoryId: '65a794201acb8962fc25c963',
+        }),
+        ).unwrap();
+        const stretchLightPlatformResult = await dispatch(getProductsByCategory({
+          cookies,
+          categoryId: '65a63e084452458093923a8f',
+        }),
+        ).unwrap();
+
+        const [lrA, lrB] = await Promise.all([
+          dispatch(getProductsByCategory({ cookies, categoryId: '65a639cb4452458093923951' })).unwrap(), // Light Ring
+          dispatch(getProductsByCategory({ cookies, categoryId: '65a639f04452458093923955' })).unwrap(), // Light Ring B
+        ]);
+
+        const lightRingMerged = dedupById([
+          ...(Array.isArray(lrA?.items) ? lrA.items : []),
+          ...(Array.isArray(lrB?.items) ? lrB.items : []),
+        ]);
+
+        const profilItems = Array.isArray(stretchProfilResult?.items)
+          ? stretchProfilResult.items
+          : (stretchProfilResult?.items ?? []);
+
+        const platformItems = Array.isArray(stretchLightPlatformResult?.items)
+          ? stretchLightPlatformResult.items
+          : (stretchLightPlatformResult?.items ?? []);
+
+        handleResult({ stretchProfil: profilItems });
+        handleResult({ lightPlatform: platformItems });
+        handleResult({ lightRing: lightRingMerged });
 
         handleResult(userProfileResult);
         handleResult(stretchTextureResult);
         handleResult(stretchAdditionalResult);
-        handleResult(stretchProfilResult);
-        handleResult(stretchLightPlatformResult);
-        handleResult(stretchLightRingResult);
         handleResult(stretchBardutyunResult);
         handleResult(allStretchWorkResult);
       } catch (error) {
@@ -101,6 +135,7 @@ const TagStretchOrder: React.FC = (): JSX.Element => {
     };
 
     const processResult = (result: any) => {
+
       if (result.user) setUser(result.user);
       else if (result.stretchTexture) setStretchTextureData(result.stretchTexture);
       else if (result.stretchAdditional) setStretchAdditionalData(result.stretchAdditional);
@@ -115,47 +150,47 @@ const TagStretchOrder: React.FC = (): JSX.Element => {
   }, []);
 
   // ---------- totals: subscribe to form changes ----------
-// --- totals: subscribe to form changes (без setValue здесь!)
-useEffect(() => {
-  const recalc = (formValues: Record<string, any>) => {
-    let sumTotal = 0;
-    const newRoomSum: { [key: string]: number } = {};
+  // --- totals: subscribe to form changes (без setValue здесь!)
+  useEffect(() => {
+    const recalc = (formValues: Record<string, any>) => {
+      let sumTotal = 0;
+      const newRoomSum: { [key: string]: number } = {};
 
-    // room sums
-    room.forEach((roomObj) => {
-      let roomSumValue = 0;
+      // room sums
+      room.forEach((roomObj) => {
+        let roomSumValue = 0;
+        for (const [key, value] of Object.entries(formValues)) {
+          if (isRoomSumKey(key, roomObj.id)) {
+            roomSumValue += toNum(value);
+          }
+        }
+        newRoomSum[roomObj.id] = roomSumValue;
+        roomObj.sum = roomSumValue;
+        sumTotal += roomSumValue;
+      });
+
+      // work sums
       for (const [key, value] of Object.entries(formValues)) {
-        if (isRoomSumKey(key, roomObj.id)) {
-          roomSumValue += toNum(value);
+        if (key.startsWith('workSum_')) {
+          sumTotal += toNum(value);
         }
       }
-      newRoomSum[roomObj.id] = roomSumValue;
-      roomObj.sum = roomSumValue;
-      sumTotal += roomSumValue;
+
+      setRoomSum(newRoomSum);
+      setOrderSum(sumTotal);
+    };
+
+    // initial run
+    recalc(getValues());
+
+    // subscribe to all form changes
+    const subscription = watch((formValues) => {
+      recalc(formValues as Record<string, any>);
     });
 
-    // work sums
-    for (const [key, value] of Object.entries(formValues)) {
-      if (key.startsWith('workSum_')) {
-        sumTotal += toNum(value);
-      }
-    }
-
-    setRoomSum(newRoomSum);
-    setOrderSum(sumTotal);
-  };
-
-  // initial run
-  recalc(getValues());
-
-  // subscribe to all form changes
-  const subscription = watch((formValues) => {
-    recalc(formValues as Record<string, any>);
-  });
-
-  return () => subscription.unsubscribe();
-// eslint-disable-next-line react-hooks/exhaustive-deps
-}, [room, watch, getValues]);
+    return () => subscription.unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [room, watch, getValues]);
 
 
   // ---------- submit ----------
@@ -194,7 +229,7 @@ useEffect(() => {
       stretchBardutyunData,
       stretchWorkData
     );
-console.log(order);
+    console.log(order);
 
     stretchTextureOrder['prepayment'] = order.prepayment || 0;
     stretchTextureOrder['paymentMethod'] = order.paymentMethod;
@@ -264,21 +299,21 @@ console.log(order);
   };
 
   // --- groundTotal = balance - prepayment (отдельный эффект, без рекурсии)
-const prepaymentValue = toNum(watch('prepayment'));
+  const prepaymentValue = toNum(watch('prepayment'));
 
-useEffect(() => {
-  const next = balance - prepaymentValue;
-  const current = toNum(getValues('groundTotal'));
-  if (current !== next) {
-    setValue('groundTotal', next, {
-      shouldDirty: false,
-      shouldTouch: false,
-      shouldValidate: false,
-    });
-  }
-  // одновременно держим локальный state prepayment в актуальном виде, если он нужен
-// eslint-disable-next-line react-hooks/exhaustive-deps
-}, [balance, prepaymentValue, getValues, setValue]);
+  useEffect(() => {
+    const next = balance - prepaymentValue;
+    const current = toNum(getValues('groundTotal'));
+    if (current !== next) {
+      setValue('groundTotal', next, {
+        shouldDirty: false,
+        shouldTouch: false,
+        shouldValidate: false,
+      });
+    }
+    // одновременно держим локальный state prepayment в актуальном виде, если он нужен
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [balance, prepaymentValue, getValues, setValue]);
 
 
   return (

@@ -306,4 +306,3 @@ export const AddWallpaperOrder: React.FC = (): JSX.Element => {
         </>
     );
 }
-

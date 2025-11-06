@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { useParams } from 'react-router-dom';
 import { useAppDispatch } from '../../app/hooks';
-import { updatePlintDone } from '../../plint/features/plintOrder/plintOrderApi';
 
 interface PlintDoneProps {
     done?: boolean;
@@ -20,11 +19,11 @@ console.log(params);
         const isConfirmed = window.confirm("Հաստատ !!!!?");
         if (isConfirmed) {
             setConfirmed(true);
-            dispatch(updatePlintDone({ cookies, params })).unwrap().then(res => {
-                if ("error" in res) {
-                    alert(res.error)
-                }
-            });
+            // dispatch(updatePlintDone({ cookies, params })).unwrap().then(res => {
+            //     if ("error" in res) {
+            //         alert(res.error)
+            //     }
+            // });
         }
     };
 

@@ -7,6 +7,7 @@ export interface Cooperate {
     name: string;
     surname: string;
     cooperationSphere: string;
+    cooperateRate: number;
 }
 
 export interface CooperateState {

@@ -82,7 +82,7 @@ export const HomePage: React.FC = (): JSX.Element => {
     
     const plinth = () => {
         if (sphere.includes("Plinth") || sphere.includes("Plinth TAG") || sphere.includes("Plinth Interno")) {
-            navigate("/plint/homePage");
+            navigate("/plint/report/monthly");
         } else {
             alert("Եսի քո տեղը չի");
         }

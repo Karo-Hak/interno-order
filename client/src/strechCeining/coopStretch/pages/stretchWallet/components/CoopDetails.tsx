@@ -21,7 +21,6 @@ export const BuyerDetails: React.FC<Props> = ({
 
   const mkReturnLink = (id: any) =>
     (buildReturnLink ? buildReturnLink(String(id)) : `/coopStretchceiling/return/${String(id)}`);
-  console.log(credit);
 
   return (
     <div style={{ padding: 8 }}>
@@ -41,7 +40,7 @@ export const BuyerDetails: React.FC<Props> = ({
               {buy.map((b, i) => (
                 <tr key={i}>
                   <td>{new Date(b.date).toLocaleString('hy-AM')}</td>
-                  <td style={{ textAlign: 'right' }}>{fmtMoney(b.sum)}</td>
+                  <td >{fmtMoney(b.sum)}</td>
                   <td>
                     <Link to={`/coopStretchceiling/viewCoopStretchOrder/${b.orderId}`}>Դիտել</Link>
                   </td>
@@ -50,8 +49,8 @@ export const BuyerDetails: React.FC<Props> = ({
             </tbody>
             <tfoot>
               <tr>
-                <td style={{ textAlign: 'right', fontWeight: 700 }} colSpan={2}>Ընդհանուր</td>
-                <td style={{ textAlign: 'right', fontWeight: 700 }}>{fmtMoney(buySum)}</td>
+                <td style={{  fontWeight: 700 }} colSpan={2}>Ընդհանուր</td>
+                <td style={{ fontWeight: 700 }}>{fmtMoney(buySum)}</td>
               </tr>
             </tfoot>
           </table>

@@ -134,7 +134,7 @@ export class StretchBuyerService {
 
   async addCreditIfNotExists(
     buyerId: string,
-    payload: { date: Date; sum: number },
+    payload: { date: Date; sum: number; orderId: string },
     session?: ClientSession,
   ) {
     const res = await this.stretchBuyerModel.updateOne(

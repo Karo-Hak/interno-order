@@ -10,7 +10,6 @@ import stretchWorkerReducer from '../strechCeining/features/StrechWorker/strechW
 import stretchWorkReducer from '../strechCeining/features/StrechWork/strechWorkSlice';
 import stretchTextureReducer from '../strechCeining/features/strechTexture/strechTextureSlice';
 import coopCeilingOrdersReducer from '../strechCeining/coopStretch/features/coopCeilingOrder/cooppCeilingOrderSlice';
-import plintOrderReducer from '../plint/features/plintOrder/plintOrderSlice';
 import userSphereReducer from '../features/userSphere/userSphereSlice';
 import unytReducer from '../strechCeining/unyt/unytSlice';
 import coopStretchBuyerReducer from '../strechCeining/coopStretch/features/coopStrechBuyer/coopStrechBuyerSlice';
@@ -24,10 +23,13 @@ import categoryReducer from '../strechCeining/features/category/categorySlice';
 import productReducer from '../strechCeining/features/product/productSlice';
 import plintReducer from '../plint/features/plint/plintSlice';
 import plintBuyerReducer from '../plint/features/plintBuyer/plintBuyerSlice';
-import plintCoopReducer from '../plint/features/plintCoop/plintCoopSlice';
 import plintAgentReducer from '../plint/features/plintAgent/plintAgentSlice';
 import plintDebetKreditReducer from '../plint/features/plintDebetKredit/plintDebetKreditSlice';
 import stretchWalletReducer from '../strechCeining/features/wallet/stretchWalletSlice';
+import plintProductionReducer from '../plint/features/plintProduction/plintProductionSlice';
+import plintRetailOrderReducer from '../plint/features/plintRetailOrder/plintRetailOrderSlice';
+import plintWholesaleOrderReducer from '../plint/features/plintWholesaleOrder/plintWholesaleOrderSlice';
+
 
 export const store = configureStore({
   reducer: {
@@ -53,12 +55,14 @@ export const store = configureStore({
     product: productReducer,
     plint: plintReducer,
     plintBuyer: plintBuyerReducer,
-    plintOrder: plintOrderReducer,
-    plintCoop: plintCoopReducer,
     plintAgent: plintAgentReducer,
     plintDebetKredit: plintDebetKreditReducer,
     stretchWallet: stretchWalletReducer,
     coopCeilingOrders: coopCeilingOrdersReducer,
+    plintProduction: plintProductionReducer,
+    plintRetailOrder: plintRetailOrderReducer,
+    plintWholesaleOrder: plintWholesaleOrderReducer,
+
   },
 });
 

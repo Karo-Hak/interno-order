@@ -55,8 +55,8 @@ const AllProductsTable: React.FC<Props> = ({ items }) => {
   );
 
   return (
-    <div className="table-wrap">
-      <table className="table">
+    <div >
+      <table >
         <thead>
           <tr>
             {['Անվանում', 'Ընդ. քանակ', 'Միջին գին', 'Ընդ. գումար'].map((t) => (

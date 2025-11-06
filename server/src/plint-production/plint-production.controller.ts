@@ -1,124 +1,43 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus, Put } from '@nestjs/common';
-import { Response } from 'express';
-
-import { PlintProductService } from 'src/plint-product/plint-product.service';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { PlintProductionService } from './plint-production.service';
+import { CreatePlintProductionDto } from './dto/create-plint-production.dto';
+import { UpdatePlintProductionDto } from './dto/update-plint-production.dto';
+import { QueryPlintProductionDto } from './dto/query-plint-production.dto';
+import { BadRequestException } from '@nestjs/common';
 
-
-@Controller('plintProduction')
+@Controller('plint-production')
 export class PlintProductionController {
-  constructor(
-    private readonly plintProductionService: PlintProductionService,
-    private readonly plintProductService: PlintProductService
-
-  ) {
-  }
+  constructor(private readonly service: PlintProductionService) {}
 
   @Post()
-  async create(@Body() obj: any, @Res() res: Response) {
-    try {
-      let product
-      if (obj.plintProduction.productId) {
-        product = await this.plintProductService.findById(obj.plintProduction.productId);
-      } else {
-        return res.status(HttpStatus.CREATED).json({
-          message: "created",
-        })
-      }
-      
-      const createdPlinthProduction = { plintProduction: obj.plintProduction, plint: product.id, user: obj.user.userId }
-      const plintOrder = await this.plintProductionService.create(createdPlinthProduction);
-      return res.status(HttpStatus.CREATED).json({
-        message: "created",
-      })
-    } catch (e) {
-      return res.status(HttpStatus.BAD_REQUEST).json({
-        message: e.message
-      });
-    }
-
-    // return this.coopCeilingOrderService.create(createCoopCeilingOrderDto);
+  create(@Body() dto: CreatePlintProductionDto) {
+    
+    return this.service.create(dto);
   }
 
-  //   @Get('findNew')
-  //   async findNew(@Res() res: Response) {
-  //     try {
-  //       const newOrders = await this.plintOrderService.findNewOrders();
-  //       return res.status(HttpStatus.OK).json({ plint: newOrders });
-  //     } catch (e) {
-  //       return res.status(HttpStatus.OK).json({
-  //         error: e.message
-  //       })
-  //     }
-  //   }
+  @Get()
+  findAll(@Query() q: QueryPlintProductionDto) {
+    return this.service.findAll(q);
+  }
 
-  //   @Post('viewPlintOrdersList')
-  //   async filterOrder(@Body() obj: any, @Res() res: Response) {
-  //     try {
-  //       const startDate = new Date(obj.dateFilter.startDate)
-  //       const endDate = new Date(obj.dateFilter.endDate)
-  //       const order = await this.plintOrderService.filterOrder(startDate, endDate)
-  //       return res.status(HttpStatus.CREATED).json(order);
-  //     } catch (e) {
-  //       return res.status(HttpStatus.BAD_REQUEST).json({
-  //         message: e.message
-  //       });
-  //     }
-  //   }
+  @Get('stats/total')
+  stats(@Query('plint') plint?: string, @Query('dateFrom') dateFrom?: string, @Query('dateTo') dateTo?: string) {
+    return this.service.statsTotal({ plint, dateFrom, dateTo });
+  }
 
-  //   @Get('findPlintOrder/:id')
-  //   async findOne(@Param('id') id: string, @Res() res: Response) {
-  //     try {
-  //       const order = await this.plintOrderService.findOne(id);
-  //       return res.status(HttpStatus.OK).json({ order });
-  //     } catch (e) {
-  //       return res.status(HttpStatus.OK).json({
-  //         error: e.message
-  //       })
-  //     }
-  //   }
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.service.findOne(id);
+  }
 
-  //   @Put('updateStatus/:id')
-  //   async updateStretchPayed(@Param('id') id: string, @Res() res: Response) {
-  //     try {
-  //       const result = await this.plintOrderService.updateStatus(id);
-  //       const idArray = result.groupedPlintData.map((key: any) => key.id);
-  //       const products = await this.plintProductService.findByIds(idArray);
-  //       const updatingQuantity = {}
-  //       result.groupedPlintData.forEach((key: any) => {
-  //         products.forEach((product: any) => {
-  //           if (key.id.toString() === product._id.toString()) {
-  //             updatingQuantity[key.id] = product.quantity -= key.quantity;
-  //           }
-  //         });
-  //       });
-  //       const updatingProduct = await this.plintProductService.update(updatingQuantity)
-  //       return res.status(HttpStatus.OK).json({
-  //         message: 'Status updated successfully',
-  //         result,
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() dto: UpdatePlintProductionDto) {
+    if (!dto || Object.keys(dto).length === 0) throw new BadRequestException('Empty update payload');
+    return this.service.update(id, dto);
+  }
 
-  //       });
-  //     } catch (e) {
-  //       return res.status(HttpStatus.BAD_REQUEST).json({
-  //         error: e.message,
-  //       });
-  //     }
-  //   }
-
-
-  //   @Get()
-  //   findAll() {
-  //     return this.plintOrderService.findAll();
-  //   }
-
-
-  //   @Patch(':id')
-  //   update(@Param('id') id: string, @Body() updatePlintOrderDto: UpdatePlintOrderDto) {
-  //     return this.plintOrderService.update(+id, updatePlintOrderDto);
-  //   }
-
-  //   @Delete(':id')
-  //   remove(@Param('id') id: string) {
-  //     return this.plintOrderService.remove(+id);
-  //   }
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.service.remove(id);
+  }
 }

@@ -12,7 +12,7 @@ type Props = {
   isOpen: boolean;
   toggle: () => void;
   onRowClick?: (id: string) => void;
-  onPaymentDeleted?: () => void; // ← дернём после успешного удаления
+  onPaymentDeleted?: () => void; 
 };
 
 const COLS = 12;

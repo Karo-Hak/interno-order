@@ -1,46 +1,105 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { http } from '../../../api/http';
 
-export const myLink = (url: string) => {
-  return new Promise((resolve, reject) => {
-    axios.get(url).then(res => resolve(res.data)).catch(e => reject(e))
-  })
+type Tokened = { cookies: { access_token?: string } };
+
+function authHeader(token?: string) {
+  return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-
-
+// ✅ СОЗДАНИЕ ПРОИЗВОДСТВА
 export const newPlintProduction = createAsyncThunk(
-  'plintProduction/axios',
-  async (obj: any) => {
+  'plintProduction/new',
+  async (
+    obj: {
+      plintProduction: {
+        date?: string;
+        name?: string;
+        quantity: number;
+        plint: string;
+        user: string;
+      };
+      cookies: { access_token?: string };
+    },
+    { rejectWithValue }
+  ) => {
     try {
-      const response = await axios.post(process.env.REACT_APP_SERVER_URL + "/plintProduction", { ...obj }, {
-        headers: {
-          Authorization: `Bearer ${obj.cookies.access_token}`
-        }
-      })
-      return response.data
-    } catch (e) {
-      return { error: "not found" }
+      const { data } = await http.post('/plint-production', obj.plintProduction, {
+        headers: authHeader(obj.cookies.access_token),
+      });
+      return data;
+    } catch (e: any) {
+      return rejectWithValue(e?.response?.data ?? { message: 'create production failed' });
     }
   }
 );
 
-export const allPlintProduction = createAsyncThunk(
-  'plintProduction/allplintProduction/axios',
-  async (cookie: any) => {
+// ✅ ВСЕ ПРОИЗВОДСТВА
+export const getPlintProductions = createAsyncThunk(
+  'plintProduction/all',
+  async (
+    obj: { cookies: { access_token?: string }; query?: { limit?: number; skip?: number } },
+    { rejectWithValue }
+  ) => {
     try {
-      const response = await axios.get(process.env.REACT_APP_SERVER_URL +"/plintProduction", {
-        headers: {
-          Authorization: `Bearer ${cookie.access_token}`
-        }
-      })
-      return response.data
-    } catch (e) {
-      return { error: "not found" }
-
+      const { data } = await http.get('/plint-production', {
+        headers: authHeader(obj.cookies.access_token),
+      });
+      return data;
+    } catch (e: any) {
+      return rejectWithValue(e?.response?.data ?? { message: 'fetch productions failed' });
     }
   }
 );
 
+// ✅ УДАЛЕНИЕ
+export const removePlintProduction = createAsyncThunk(
+  'plintProduction/remove',
+  async (obj: { id: string; cookies: { access_token?: string } }, { rejectWithValue }) => {
+    try {
+      const { data } = await http.delete(`/plint-production/${obj.id}`, {
+        headers: authHeader(obj.cookies.access_token),
+      });
+      return { ...data, id: obj.id };
+    } catch (e: any) {
+      return rejectWithValue(e?.response?.data ?? { message: 'delete production failed' });
+    }
+  }
+);
 
+// ✅ ОБНОВЛЕНИЕ
+export const updatePlintProduction = createAsyncThunk(
+  'plintProduction/update',
+  async (
+    obj: {
+      id: string;
+      dto: Partial<{ date: string; name: string; quantity: number; plint: string }>;
+      cookies: { access_token?: string };
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      const { data } = await http.patch(`/plint-production/${obj.id}`, obj.dto, {
+        headers: authHeader(obj.cookies.access_token),
+      });
+      return data;
+    } catch (e: any) {
+      return rejectWithValue(e?.response?.data ?? { message: 'update production failed' });
+    }
+  }
+);
 
+// ✅ СТАТИСТИКА
+export const getPlintProductionStats = createAsyncThunk(
+  'plintProduction/stats',
+  async (cookies: { access_token?: string }, { rejectWithValue }) => {
+    try {
+      const { data } = await http.get('/plint-production/stats/total', {
+        headers: authHeader(cookies.access_token),
+      });
+      return data;
+    } catch (e: any) {
+      return rejectWithValue(e?.response?.data ?? { message: 'fetch stats failed' });
+    }
+  }
+);

@@ -10,6 +10,7 @@ import {
 import { FormValues } from '../AddCoopCeilinOrder';
 
 export type SimpleRow = {
+  sku: string;
   itemId?: string;
   name: string;
   qty: number;
@@ -50,14 +51,15 @@ const SimpleGroup: React.FC<Props> = ({
     return m;
   }, [catalog]);
 
-  const addRow = () => append({ itemId: '', name: '', qty: 0, price: 0, sum: 0 });
-
+  const addRow = () =>
+    append({ itemId: '', name: '', qty: 0, price: 0, sum: 0, sku: '' });
+  
   const recalcDerived = (idx: number) => {
     const base = getValues(`${name}.${idx}`) as SimpleRow | undefined;
     if (!base) return;
-    const qty   = Number(base.qty)   || 0;
+    const qty = Number(base.qty) || 0;
     const price = Number(base.price) || 0;
-    const sum   = +(qty * price).toFixed(2);
+    const sum = +(qty * price).toFixed(2);
     setValue(`${name}.${idx}.sum`, sum, { shouldDirty: true, shouldValidate: false });
   };
 
@@ -70,7 +72,7 @@ const SimpleGroup: React.FC<Props> = ({
   };
 
   return (
-    <section className="card" style={{ padding: 8, marginBottom: 8 }}>
+    <section className="card" >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h3>{title}</h3>
         <button type="button" onClick={addRow}>+ Add row</button>
@@ -80,7 +82,7 @@ const SimpleGroup: React.FC<Props> = ({
         <table className="table" style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead style={{ position: 'sticky', top: 0, background: '#fff' }}>
             <tr>
-              <th style={{ textAlign: 'left', minWidth: 220 }}>Item</th>
+              <th style={{ textAlign: 'left' }}>Item</th>
               <th>Qty</th>
               <th>Price</th>
               <th>Sum</th>
@@ -126,7 +128,7 @@ const SimpleGroup: React.FC<Props> = ({
                     defaultValue={(f as any).qty ?? 0}
                     render={({ field }) => (
                       <input
-                      className='inputButton'
+                        className='inputButton'
                         type="number"
                         inputMode="decimal"
                         min={0}
@@ -149,7 +151,7 @@ const SimpleGroup: React.FC<Props> = ({
                     defaultValue={(f as any).price ?? 0}
                     render={({ field }) => (
                       <input
-                      className='inputButton'
+                        className='inputButton'
                         type="number"
                         inputMode="decimal"
                         min={0}

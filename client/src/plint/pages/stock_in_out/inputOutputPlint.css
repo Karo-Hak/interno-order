@@ -1,0 +1,169 @@
+.inv-root {
+  width: 100%;
+  padding-bottom: 88px; /* под нижнюю панель */
+}
+
+/* Панель сверху */
+.inv-toolbar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 12px 0;
+}
+
+.search-wrap {
+  flex: 1;
+  max-width: 520px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  outline: none;
+}
+
+.toolbar-right {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.checkbox {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  user-select: none;
+  font-size: 14px;
+}
+
+/* ОДНА ТАБЛИЦА */
+.inv-grid-single {
+  padding: 12px;
+}
+
+.inv-table {
+  width: 100%;
+  max-width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.inv-table th,
+.inv-table td {
+  border-bottom: 1px solid #eef2f7;
+  padding: 8px 10px;
+  vertical-align: middle;
+}
+
+.inv-table thead th {
+  background: #f7f8fa;
+  font-weight: 600;
+  color: #374151;
+}
+
+.name-cell {
+  max-width: 520px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.th-num, .num-cell { text-align: right; }
+.th-actions, .actions-cell { text-align: right; white-space: nowrap; }
+
+/* Инпут с кнопками +/- */
+.fact-input-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mini-btn {
+  width: 28px;
+  height: 28px;
+  line-height: 26px;
+  text-align: center;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  cursor: pointer;
+}
+
+.fact-input {
+  width: 88px;
+  padding: 6px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+}
+
+/* Значки дельты */
+.badge {
+  display: inline-block;
+  min-width: 44px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.delta-pos { background: #e8f5e9; color: #2e7d32; }
+.delta-neg { background: #ffebee; color: #c62828; }
+.delta-zero { background: #f3f4f6; color: #6b7280; }
+
+/* Кнопки */
+.link-btn {
+  background: none;
+  border: none;
+  color: #2563eb;
+  cursor: pointer;
+  padding: 0 6px;
+}
+
+.ghost-btn {
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  color: #374151;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.primary-btn {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* Нижняя панель */
+.inv-footer {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffffcc;
+  backdrop-filter: blur(4px);
+  padding: 12px;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 8px;
+}
+
+.footer-stats {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.muted { color: #6b7280; }
+.sep { color: #cbd5e1; }

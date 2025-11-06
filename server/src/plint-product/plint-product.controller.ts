@@ -1,84 +1,64 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { PlintProductService } from './plint-product.service';
 import { CreatePlintProductDto } from './dto/create-plint-product.dto';
 import { UpdatePlintProductDto } from './dto/update-plint-product.dto';
-import { Response } from 'express';
-import { Types } from 'mongoose';
 
-
-
-@Controller('plint')
+@Controller('plint-products')
 export class PlintProductController {
-  constructor(private readonly plintProductService: PlintProductService) { }
+  constructor(private readonly service: PlintProductService) { }
 
   @Post()
-  async create(@Body() createPlintProductDto: CreatePlintProductDto, @Res() res: Response) {
-
-    try {
-      const name = await this.plintProductService.findByName(createPlintProductDto.name)
-      console.log(name);
-
-      if (name) {
-        return res.status(HttpStatus.BAD_REQUEST).json({
-          message: "already exists",
-          name
-        })
-      }
-      const data = await this.plintProductService.create(createPlintProductDto);
-      return res.status(HttpStatus.CREATED).json({
-        message: "create plint",
-        data
-      })
-    } catch (e) {
-      return res.status(HttpStatus.OK).json({
-        error: e.message
-      })
-    }
-  }
-  @Post('update')
-  async update(@Body() createPlintProductDto: Record<string, number>, @Res() res: Response) {
-    try {
-      await this.plintProductService.update(createPlintProductDto);
-      return res.status(HttpStatus.OK).json({ message: "ok" });
-    } catch (error) {
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: error.message });
-    }
+  create(@Body() dto: CreatePlintProductDto) {
+    return this.service.create(dto);
   }
 
+  /** UNIVERSAL UPDATE: PATCH /plint-products/:id  (любой апдейт по UpdatePlintProductDto) */
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() dto: UpdatePlintProductDto) {
+    return this.service.update(id, dto);
+  }
 
+  /**
+   * LEGACY UPDATE PRICE: POST /plint-products/updatePrice
+   * Тело: { _id: string, retailPriceAMD?: number, wholesalePriceAMD?: number }
+   * Использует тот же UpdatePlintProductDto, но обновляет только цены.
+   */
   @Post('updatePrice')
-  async updatePrice(
-    @Body() createPlintProductDto: any,
-    @Res() res: Response
-  ) {
-    try {
-      console.log('Полученные данные DTO:', createPlintProductDto);
-  
-      // Проверка _id перед запросом
-      if (!Types.ObjectId.isValid(createPlintProductDto._id)) {
-        return res.status(HttpStatus.BAD_REQUEST).json({ error: "Неверный формат ObjectId" });
-      }
-  
-      await this.plintProductService.updatePrice(createPlintProductDto);
-  
-      return res.status(HttpStatus.OK).json({ message: "Цены успешно обновлены" });
-    } catch (error) {
-      console.error('Ошибка при обновлении цен:', error);
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: error.message });
-    }
+  updatePricesLegacy(@Body() body: UpdatePlintProductDto & { _id: string }) {
+    const { _id, ...dto } = body;
+    return this.service.updatePrices(_id, dto);
   }
-  
-
-
 
   @Get('allPlint')
-  async findAll(@Res() res: Response) {
-    try {
-      const plints = await this.plintProductService.findAll();
-      return res.status(HttpStatus.OK).json({ plint: plints });
-    } catch (error) {
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: error.message });
-    }
+  allPlint(
+    @Query('q') q?: string,
+    @Query('limit') limit?: string,
+    @Query('skip') skip?: string,
+  ) {
+    return this.service.allPlint({
+      q,
+      limit: limit ? Number(limit) : undefined,
+      skip: skip ? Number(skip) : undefined,
+    });
   }
 
+  @Get()
+  findAll(@Query('q') q?: string) {
+    return this.service.findAll(q);
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.service.findOne(id);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.service.remove(id);
+  }
+
+  @Post(':id/adjust-stock')
+  adjust(@Param('id') id: string, @Body() body: { delta: number }) {
+    return this.service.adjustStock(id, body?.delta);
+  }
 }

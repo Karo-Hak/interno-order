@@ -31,6 +31,11 @@ export class StretchBuyer {
             _id: false,
             date: { type: Date, required: true },
             sum: { type: Number, required: true, min: 0 },
+            orderId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'StretchCeilingOrder',
+                required: true,
+            },
         }],
         default: [],
     })

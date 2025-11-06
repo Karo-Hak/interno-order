@@ -135,7 +135,7 @@ export const getCoopOrder = createAsyncThunk<
 >('coopCeilingOrder/getOne', async ({ cookies, id }, thunkAPI) => {
   try {
     const { data } = await axios.get(
-      `${BASE_URL}/coop-ceiling-order/${id}`,
+      `${BASE_URL}/coop-ceiling-order/findCoopStretchOrder/${id}`,
       { headers: authHeader(cookies) }
     );
     return data as { order: CoopCeilingOrderModel };

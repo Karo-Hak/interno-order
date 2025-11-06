@@ -1,6 +1,13 @@
+// src/strechCeining/.../BuyerDetails.tsx
 import React from 'react';
+import { useCookies } from 'react-cookie';
+
+
 import { StretchBuyerEntry } from './types';
 import { fmtDate, fmtMoney } from './utils';
+import { useAppDispatch } from '../../../../app/hooks';
+import { findStretchOrder } from '../../../features/stretchCeilingOrder/stretchOrderApi';
+import AddPayment from '../../../../component/confirmButten/AddPayment';
 
 type Props = {
   buy?: StretchBuyerEntry[];
@@ -10,17 +17,150 @@ type Props = {
   total: number;
 };
 
-export const BuyerDetails: React.FC<Props> = ({ buy, credit, buySum, creditSum, total }) => {
-  const sortedBuy = [...(buy ?? [])].sort((a, b) =>
-    new Date(a.date ?? 0).getTime() - new Date(b.date ?? 0).getTime()
-  );
-  const sortedCredit = [...(credit ?? [])].sort((a, b) =>
-    new Date(a.date ?? 0).getTime() - new Date(b.date ?? 0).getTime()
+/* ---------------- helpers ---------------- */
+
+// глубокий поиск строки по ключу "address"
+function deepFindAddress(obj: any, seen = new WeakSet()): string | undefined {
+  if (!obj || typeof obj !== 'object') return;
+  if (seen.has(obj)) return;
+  seen.add(obj);
+
+  if (Object.prototype.hasOwnProperty.call(obj, 'address')) {
+    const v = (obj as any).address;
+    if (typeof v === 'string' && v.trim()) return v.trim();
+  }
+
+  for (const key of Object.keys(obj)) {
+    const v = (obj as any)[key];
+    if (typeof v === 'string' && key.toLowerCase() === 'address' && v.trim()) {
+      return v.trim();
+    }
+    if (v && typeof v === 'object') {
+      const found = deepFindAddress(v, seen);
+      if (found) return found;
+    }
+  }
+  return;
+}
+
+// пытаемся достать адрес из типичных мест, иначе deep find
+function extractAddressRobust(payload: any): string {
+  const roots = [payload, payload?.data, payload?.order, payload?.result, payload?.payload];
+
+  for (const r of roots) {
+    const v =
+      r?.address ||
+      r?.buyerAddress ||
+      r?.objectAddress ||
+      r?.location ||
+      r?.buyer?.address;
+    if (typeof v === 'string' && v.trim()) return v.trim();
+  }
+  for (const r of roots) {
+    const deep = deepFindAddress(r);
+    if (deep) return deep;
+  }
+  return '—';
+}
+
+/* ---------------- component ---------------- */
+
+export const BuyerDetails: React.FC<Props> = ({
+  buy,
+  credit,
+  buySum,
+  creditSum,
+  total,
+}) => {
+  const dispatch = useAppDispatch();
+  const [cookies] = useCookies(['access_token']);
+
+  // кэш адресов по orderId и флаги загрузки
+  const [addrMap, setAddrMap] = React.useState<Record<string, string>>({});
+  const [loadingMap, setLoadingMap] = React.useState<Record<string, boolean>>({});
+
+  const sortedBuy = React.useMemo(
+    () =>
+      [...(buy ?? [])].sort(
+        (a, b) =>
+          new Date(a.date ?? 0).getTime() - new Date(b.date ?? 0).getTime(),
+      ),
+    [buy],
   );
 
-  function viewOrder(id: string) {
+  const sortedCredit = React.useMemo(
+    () =>
+      [...(credit ?? [])].sort(
+        (a, b) =>
+          new Date(a.date ?? 0).getTime() - new Date(b.date ?? 0).getTime(),
+      ),
+    [credit],
+  );
+
+  const viewOrder = (id: string) => {
+    if (!id) return;
     window.open('/stretchceiling/viewStretchOrder/' + id, '_blank');
-  }
+  };
+
+  // грузим адреса по уникальным orderId через findStretchOrder
+  React.useEffect(() => {
+    const ids = Array.from(
+      new Set(
+        (buy ?? [])
+          .map((x) => String(x.orderId || '').trim())
+          .filter(Boolean),
+      ),
+    );
+
+    const toLoad = ids.filter((id) => !addrMap[id] && !loadingMap[id]);
+    if (!toLoad.length) return;
+
+    let canceled = false;
+
+    (async () => {
+      setLoadingMap((m) => {
+        const next = { ...m };
+        for (const id of toLoad) next[id] = true;
+        return next;
+      });
+
+      for (const id of toLoad) {
+        try {
+          const action = await dispatch(
+            findStretchOrder({ cookies, params: { id } }),
+          );
+          if (canceled) break;
+
+          const payload: any = (action as any)?.payload;
+
+          // полезно увидеть реальную форму payload во время настройки
+          if (process.env.NODE_ENV !== 'production' && !addrMap[id]) {
+            // eslint-disable-next-line no-console
+            console.debug('[BuyerDetails] payload for', id, payload);
+          }
+
+          const addr = extractAddressRobust(payload);
+          setAddrMap((m) => ({ ...m, [id]: addr }));
+        } catch {
+          if (canceled) break;
+          setAddrMap((m) => ({ ...m, [id]: '—' }));
+        } finally {
+          if (canceled) break;
+          setLoadingMap((m) => {
+            const next = { ...m };
+            delete next[id];
+            return next;
+          });
+        }
+      }
+    })();
+
+    return () => {
+      canceled = true;
+    };
+    // НЕ добавляем addrMap/loadingMap в deps, чтобы не зациклиться
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [buy, cookies, dispatch]);
 
   return (
     <td colSpan={11} style={{ background: '#fafafa', padding: 12 }}>
@@ -33,29 +173,56 @@ export const BuyerDetails: React.FC<Props> = ({ buy, credit, buySum, creditSum, 
               <tr>
                 <th>Ամսաթիվ</th>
                 <th>Գումար</th>
+                <th>Հասցե</th>
                 <th>Պատվեր</th>
+                <th>Վճարել</th>
               </tr>
             </thead>
             <tbody>
               {sortedBuy.length === 0 ? (
-                <tr><td colSpan={3} style={{ opacity: 0.7 }}>—</td></tr>
-              ) : sortedBuy.map((b, i) => (
-                <tr key={`buy_${i}`}>
-                  <td>{fmtDate(b.date)}</td>
-                  <td>{fmtMoney(b.sum)}</td>
-                  <td>
-                    <button type='button' className='btn' style={{ color: "black" }}
-                      onClick={() => viewOrder(b.orderId || '—')}>
-                      Դիտել
-                    </button>
+                <tr>
+                  <td colSpan={4} style={{ opacity: 0.7 }}>
+                    —
                   </td>
                 </tr>
-              ))}
+              ) : (
+                sortedBuy.map((b, i) => {
+                  const id = String(b.orderId || '').trim();
+                  const loading = !!loadingMap[id];
+                  const addr = addrMap[id] ?? '—';
+
+                  return (
+                    <tr key={`buy_${i}`}>
+                      <td>{fmtDate(b.date)}</td>
+                      <td>{fmtMoney(b.sum)}</td>
+                      <td title={addr}>
+                        {loading ? '…' : addr?.trim() ? addr : '—'}
+                      </td>
+                      <td>
+                        <button
+                          type="button"
+                          className="btn"
+                          style={{ color: 'black' }}
+                          onClick={() => viewOrder(id)}
+                          disabled={!id}
+                          title={
+                            id ? 'Դիտել պատվերը' : 'Պատվերի ID չկա'
+                          }
+                        >
+                          Դիտել
+                        </button>
+                      </td>
+                      <td><AddPayment id={id.toString()} variant="tag"/></td>
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
             <tfoot>
               <tr>
                 <td style={{ fontWeight: 600 }}>Ընդամենը</td>
                 <td style={{ fontWeight: 600 }}>{fmtMoney(buySum)}</td>
+                <td />
                 <td />
               </tr>
             </tfoot>
@@ -69,18 +236,24 @@ export const BuyerDetails: React.FC<Props> = ({ buy, credit, buySum, creditSum, 
             <thead>
               <tr>
                 <th>Ամսաթիվ</th>
-                <th>Գումար</th>
+                <th>Գումар</th>
               </tr>
             </thead>
             <tbody>
               {sortedCredit.length === 0 ? (
-                <tr><td colSpan={2} style={{ opacity: 0.7 }}>—</td></tr>
-              ) : sortedCredit.map((c, i) => (
-                <tr key={`credit_${i}`}>
-                  <td>{fmtDate(c.date)}</td>
-                  <td>{fmtMoney(c.sum)}</td>
+                <tr>
+                  <td colSpan={2} style={{ opacity: 0.7 }}>
+                    —
+                  </td>
                 </tr>
-              ))}
+              ) : (
+                sortedCredit.map((c, i) => (
+                  <tr key={`credit_${i}`}>
+                    <td>{fmtDate(c.date)}</td>
+                    <td>{fmtMoney(c.sum)}</td>
+                  </tr>
+                ))
+              )}
             </tbody>
             <tfoot>
               <tr>
@@ -94,7 +267,9 @@ export const BuyerDetails: React.FC<Props> = ({ buy, credit, buySum, creditSum, 
 
       {/* Итоги */}
       <div style={{ marginTop: 8, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-        <div>Մնացորդ (totalSum): <b>{fmtMoney(total)}</b></div>
+        <div>
+          Մնացորդ (totalSum): <b>{fmtMoney(total)}</b>
+        </div>
         <div style={{ opacity: 0.7 }}>
           (Գնումներ − Վճարումներ = {fmtMoney(buySum - creditSum)})
         </div>

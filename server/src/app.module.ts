@@ -13,9 +13,6 @@ import { UploadModule } from './upload/upload.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { BardutyunModule } from './bardutyun/bardutyun.module';
-import { ProfilModule } from './profil/profil.module';
-import { LightPlatformModule } from './light-platform/light-platform.module';
-import { LightRingModule } from './light-ring/light-ring.module';
 import { CoopCeilingOrderModule } from './coop-ceiling-order/coop-ceiling-order.module';
 import { UnytModule } from './unyt/unyt.module';
 import { UserSphereModule } from './user-sphere/user-sphere.module';
@@ -30,7 +27,7 @@ import { ProductModule } from './product/product.module';
 import { CategoryProductModule } from './category-product/category-product.module';
 import { PlintProductModule } from './plint-product/plint-product.module';
 import { PlintBuyerModule } from './plintBuyer/plint-buyer.module';
-import { PlintOrderModule } from './plint-order/plint-order.module';
+import { PlintRetailOrderModule } from './plint-order/plint-retail-order.module';
 import { PlintDebetKreditModule } from './plint-debet-kredit/plint-debet-kredit.module';
 import { DebetKreditModule } from './debet-kredit/debet-kredit.module';
 import { CoopDebetKreditModule } from './coop-debet-kredit/coop-debet-kredit.module';
@@ -38,16 +35,18 @@ import { PlintProductionModule } from './plint-production/plint-production.modul
 import { TelegramModule } from './telegram/telegram.module';
 import { ConfigModule } from '@nestjs/config';
 import { CoopReturnModule } from './coop-return/coop-return.module';
+import { PlintAgentModule } from './plint-agent/plint-agent.module';
+import { PlintWholesaleOrderModule } from './plint-wholesale-order/plint-wholesale-order.module';
+import { PlintAgentDebetKreditModule } from './plint-agent-debet-kredit/plint-agent-debet-kredit.module';
+
 
 @Module({
   imports: [
     MongooseModule.forRoot(
       'mongodb://127.0.0.1:27017/order?replicaSet=rs0',
       {
-        // не обязательно, но рекомендуется для транзакций:
-        // retryWrites: true,
-        // w: 'majority',
-        // serverSelectionTimeoutMS: 10000,
+        serverSelectionTimeoutMS: 5000,
+        directConnection: false, // т.к. replicaSet=rs0
       }
     ),
 
@@ -64,17 +63,17 @@ import { CoopReturnModule } from './coop-return/coop-return.module';
     CategoryProductModule,
     PlintProductModule,
     PlintBuyerModule,
-    PlintOrderModule,
+    PlintAgentModule,
+    PlintRetailOrderModule,
+    PlintWholesaleOrderModule,
     PlintProductionModule,
     PlintDebetKreditModule,
+    PlintAgentDebetKreditModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'uploads'), // Путь к папке с загруженными изображениями
       serveRoot: '/uploads', // Корневой путь, по которому будут доступны изображения на сервере
     }),
     BardutyunModule,
-    ProfilModule,
-    LightPlatformModule,
-    LightRingModule,
     CoopCeilingOrderModule,
     UnytModule,
     UserSphereModule,

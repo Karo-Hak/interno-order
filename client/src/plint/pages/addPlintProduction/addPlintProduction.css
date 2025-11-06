@@ -1,8 +1,49 @@
 .divAddProduction {
     display: flex;
-    gap: 10px;
+    justify-content: space-around;
     margin: 5px 200px;
     border: 1px solid black;
     padding: 5px;
     width: auto
+}
+
+.productionTableContainer {
+  margin-top: 30px;
+  padding: 10px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 4px rgba(0,0,0,0.1);
+}
+
+.tableTitle {
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.productionTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.productionTable th, .productionTable td {
+  border: 1px solid #ddd;
+  padding: 6px 8px;
+  text-align: left;
+}
+
+.productionTable th {
+  background: #e9e9e9;
+}
+
+.btn-danger {
+  background: #e53935;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.btn-danger:disabled {
+  opacity: 0.6;
+  cursor: default;
 }

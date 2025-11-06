@@ -1,92 +1,189 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { User } from 'src/user/schema/user.schema';
-import { UserService } from 'src/user/user.service';
-import { PlintProduct } from 'src/plint-product/schema/plint-product.schema';
-import { PlintProduction } from './schema/plint-production.schema';
-import { PlintProductService } from 'src/plint-product/plint-product.service';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { InjectConnection, InjectModel } from '@nestjs/mongoose';
+import { Connection, Model, Types } from 'mongoose';
+import { PlintProduction, PlintProductionDocument } from './schema/plint-production.schema';
+import { CreatePlintProductionDto } from './dto/create-plint-production.dto';
+import { UpdatePlintProductionDto } from './dto/update-plint-production.dto';
+import { PlintProduct, PlintProductDocument } from 'src/plint-product/schema/plint-product.schema';
 
 @Injectable()
 export class PlintProductionService {
   constructor(
-    @InjectModel(PlintProduction.name) private plintProductionModel: Model<PlintProduction>,
-    @InjectModel('User') private userModel: Model<User>,
-    @InjectModel(PlintProduct.name) private plintProductModel: Model<PlintProduct>,
-
-
-    private readonly userService: UserService,
-    private readonly plintProductService: PlintProductService
+    @InjectModel(PlintProduction.name) private readonly model: Model<PlintProductionDocument>,
+    @InjectModel(PlintProduct.name) private readonly plintModel: Model<PlintProductDocument>,
+    @InjectConnection() private readonly connection: Connection,
   ) { }
-  async create(createPlintProductionDto: any) {
 
-    const orderUserDocument = await this.userModel.findById(createPlintProductionDto.user);
-    if (!orderUserDocument) {
-      throw new Error('Пользователь не найден');
+  async create(dto: CreatePlintProductionDto) {
+    const qty = Number(dto.quantity);
+
+    if (!Number.isFinite(qty)) {
+      throw new BadRequestException('quantity must be a number');
+    }
+    if (qty <= 0) {
+      throw new BadRequestException('quantity must be > 0');
+    }
+    if (!dto.plint) {
+      throw new BadRequestException('plint is required');
     }
 
-    const orderPlintDocument = await this.plintProductModel.findById(createPlintProductionDto.plint);
-    if (!orderPlintDocument) {
-      throw new Error('Плит не найден');
-    }
-
-    const createdOrder: any = await this.plintProductionModel.create({
-      ...createPlintProductionDto.plintProduction,
-      user: orderUserDocument.id,
-      plint: orderPlintDocument.id,
-    });
-
-    const quantity = {
-      [orderPlintDocument.id]: +createPlintProductionDto.plintProduction.quantity + +orderPlintDocument.quantity,
-    };
-
+    const session = await this.connection.startSession();
     try {
-      await this.plintProductService.update(quantity);
-    } catch (error) {
-      throw new Error('Ошибка при обновлении количества плита');
+      let created: PlintProductionDocument | null = null;
+
+      await session.withTransaction(async () => {
+        // 1) Проверяем, что плінт существует
+        const plint = await this.plintModel.findById(dto.plint).session(session);
+        if (!plint) {
+          throw new NotFoundException('Plint not found');
+        }
+
+        // 2) Атомарно увеличиваем остаток
+        const updatedPlint = await this.plintModel.findByIdAndUpdate(
+          plint._id,
+          { $inc: { stockBalance: qty } },
+          { new: true, session },
+        );
+        if (!updatedPlint) {
+          throw new NotFoundException('Plint not found after update');
+        }
+
+        // 3) Создаём запись производства в той же транзакции
+        const docs = await this.model.create(
+          [
+            {
+              ...dto,
+              plint: plint._id, // гарантируем корректный ObjectId
+              quantity: qty,
+            },
+          ],
+          { session },
+        );
+        created = docs[0];
+      });
+
+      // опционально — populate перед возвратом
+      return await this.model
+        .findById(created!._id)
+        .populate('plint') // если в схеме есть ref
+        .lean()
+        .exec();
+    } finally {
+      session.endSession();
     }
-    return createdOrder;
   }
 
+
+  async findAll(q?: any) {
+    const { skip = 0, limit = 200 } = q || {};
+    const items = await this.model
+      .find()
+      .populate('plint', 'name')
+      .populate('user', 'name')
+      .sort({ date: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean();
+    return { items, total: items.length };
+  }
 
   async findOne(id: string) {
-    const data = (await this.plintProductionModel.findById(id))
-    return data
+    const doc = await this.model.findById(id).populate('plint user').lean();
+    if (!doc) throw new NotFoundException('Production not found');
+    return doc;
   }
 
-  //   async findNewOrders() {
-  //     return await this.plintOrderModel.find({ done: false, }).populate("buyer").sort({ date: -1 })
-  //   }
+  async update(id: string, dto: UpdatePlintProductionDto) {
+    const updated = await this.model.findByIdAndUpdate(id, dto, { new: true });
+    if (!updated) throw new NotFoundException('Production not found');
+    return updated;
+  }
 
-  //   async filterOrder(startDate: Date, endDate: Date) {
-  //     return await this.plintOrderModel.find({
-  //       date: {
-  //         $gte: startDate,
-  //         $lte: endDate
-  //       }
-  //     }).populate("buyer").populate("user").sort({ date: -1 })
-  //   }
+  async remove(id: string) {
+    const session = await this.connection.startSession();
+    try {
+      let deleted = false;
 
-  //   async findOne(id: string) {
-  //     const data = (await this.plintOrderModel.findById(id).populate("buyer"))
-  //     return data
-  //   }
+      await session.withTransaction(async () => {
+        // 1) Находим запись производства (нужны plint и quantity)
+        const prod = await this.model.findById(id).session(session);
+        if (!prod) throw new NotFoundException('Production not found');
 
-  //   async updateStatus(id: string) {
-  //     return await this.plintOrderModel.findByIdAndUpdate(id, { done: true })
-  //   }
+        const qty = Number(prod.quantity) || 0;
+        const plintId = prod.plint;
 
-  //   findAll() {
-  //     return `This action returns all coopCeilingOrder`;
-  //   }
+        // 2) Атомарно уменьшаем остаток; не даём уйти в минус
+        if (qty > 0) {
+          const upd = await this.plintModel.findOneAndUpdate(
+            { _id: plintId, stockBalance: { $gte: qty } }, // защита от минуса
+            { $inc: { stockBalance: -qty } },
+            { new: true, session },
+          );
 
+          if (!upd) {
+            throw new BadRequestException('Not enough stock to remove production');
+          }
+        }
 
+        // 3) Удаляем сам документ производства
+        await this.model.deleteOne({ _id: id }).session(session);
+        deleted = true;
+      });
 
-  //   update(id: number, updatePlintOrderDto: UpdatePlintOrderDto) {
-  //     return `This action updates a #${id} coopCeilingOrder`;
-  //   }
+      if (!deleted) throw new NotFoundException('Production not found');
+      return { ok: true, id };
+    } finally {
+      session.endSession();
+    }
+  }
+  async statsTotal(params: { plint?: string; dateFrom?: string; dateTo?: string }) {
+    const { plint, dateFrom, dateTo } = params || {};
+    const match: any = {};
 
-  //   remove(id: number) {
-  //     return `This action removes a #${id} coopCeilingOrder`;
-  //   }
+    // фильтр по плинту
+    if (plint) {
+      if (!Types.ObjectId.isValid(plint)) {
+        throw new BadRequestException('Invalid plint id');
+      }
+      match.plint = new Types.ObjectId(plint);
+    }
+
+    // фильтр по дате (включая границы, день/дата без времени обрабатываются красиво)
+    if (dateFrom || dateTo) {
+      const range: any = {};
+      if (dateFrom) {
+        const from = new Date(dateFrom);
+        if (isNaN(from.getTime())) throw new BadRequestException('Invalid dateFrom');
+        // начало дня
+        from.setHours(0, 0, 0, 0);
+        range.$gte = from;
+      }
+      if (dateTo) {
+        const to = new Date(dateTo);
+        if (isNaN(to.getTime())) throw new BadRequestException('Invalid dateTo');
+        // конец дня
+        to.setHours(23, 59, 59, 999);
+        range.$lte = to;
+      }
+      match.date = range;
+    }
+
+    const [agg] = await this.model.aggregate([
+      { $match: match },
+      {
+        $group: {
+          _id: null,
+          totalQty: { $sum: { $ifNull: ['$quantity', 0] } },
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    return {
+      totalQty: agg?.totalQty ?? 0,
+      count: agg?.count ?? 0,
+      // опционально можно вернуть применённые фильтры для дебага:
+      // filters: { plint: plint ?? null, dateFrom: dateFrom ?? null, dateTo: dateTo ?? null },
+    };
+  }
 }

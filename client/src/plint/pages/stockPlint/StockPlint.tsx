@@ -62,7 +62,7 @@ export const StockPlint: React.FC = (): JSX.Element => {
                         <tbody key={productItem._id}>
                             <tr>
                                 <td>{productItem.name}</td>
-                                <td>{productItem.quantity}</td>
+                                <td>{productItem.stockBalance}</td>
                             </tr>
                         </tbody>
                     ))}
@@ -79,7 +79,7 @@ export const StockPlint: React.FC = (): JSX.Element => {
                         <tbody key={productItem._id}>
                             <tr>
                                 <td>{productItem.name}</td>
-                                <td>{productItem.quantity}</td>
+                                <td>{productItem.stockBalance}</td>
                             </tr>
                         </tbody>
                     ))}
@@ -96,7 +96,7 @@ export const StockPlint: React.FC = (): JSX.Element => {
                         <tbody key={productItem._id}>
                             <tr>
                                 <td>{productItem.name}</td>
-                                <td>{productItem.quantity}</td>
+                                <td>{productItem.stockBalance}</td>
                             </tr>
                         </tbody>
                     ))}

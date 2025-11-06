@@ -28,26 +28,13 @@ import { AddWallpaperOrder } from "../page/addWallpaperOrder/AddWallpaperOrder"
 import { StockProfile } from "../strechCeining/stock/stockProfile/StockProfile"
 import { AddCategory } from "../strechCeining/stock/addCategory/AddCategory"
 import { AddProduct } from "../strechCeining/stock/addProduct/AddProduct"
-import { Input_output } from "../strechCeining/stock/in_out/Input_output"
 import { HomePage } from "../page/homePage/HomePage"
 import { ViewStretchOrdersList } from "../strechCeining/pages/viewStretchOrdersList/ViewStretchOrdersList"
 import { ViewMaterial } from "../strechCeining/pages/material/ViewMaterial"
 import { ViewDebetKredit } from "../strechCeining/pages/debetKredit/ViewDebetKredit"
-import { PlintHonePage } from "../plint/pages/plintHomePage/PlintHomePage"
 import { AddPlint } from "../plint/pages/addPlint/AddPlint"
-import { PlintBuyer } from "../plint/pages/addPlintBuyer/AddPlintBuyer"
-import { PlintRetailOrder } from "../plint/pages/addPlintRetailOrder/PlintRetailOrder"
-import { ViewPlintOrder } from "../plint/pages/viewPlintOrder/ViewPlintOrder"
-import { EditPlintOrder } from "../plint/pages/editPlintOrder/EditPlintOrder"
 import { StockPlint } from "../plint/pages/stockPlint/StockPlint"
 import { InputOutputPlint } from "../plint/pages/stock_in_out/Input_outputPlint"
-import { AddPlintCoop } from "../plint/pages/addPlintCoop/AddPlintCoop"
-import { ViewPlintOrdersList } from "../plint/pages/viewPlintOrdersList/ViewPlintOrdersList"
-import { ViewPlintDebetKredit } from "../plint/pages/plintDebetKredit/ViewPlintDebetKredit"
-import { PlintProduction } from "../plint/pages/addPlintProduction/AddPlintProduction"
-import { PlintCoopOrder } from "../plint/pages/addPlintCoopOrder/PlintCoopOrder"
-import { ViewPlintMaterial } from "../plint/pages/plintMaterial/ViewPlintMaterial"
-import { AddPlintAgent } from "../plint/pages/addPlintAgent/AddPlintAgent"
 import { StretchBuyerWallet } from "../strechCeining/pages/stretchWallet/StretchBuyerWallet"
 import AddCoopCeilinOrder from "../strechCeining/coopStretch/pages/addCoopCeilingOrder/AddCoopCeilinOrder"
 import CoopMonthlyReport from "../strechCeining/coopStretch/pages/report/CoopMonthlyReport"
@@ -57,6 +44,19 @@ import { CoopBuyerWallet } from "../strechCeining/coopStretch/pages/stretchWalle
 import AddCoopReturn from "../strechCeining/coopStretch/pages/coopReturn/AddCoopReturn"
 import ViewCoopReturnList from "../strechCeining/coopStretch/pages/coopReturn/ViewCoopReturnList"
 import ViewCoopReturnDetails from "../strechCeining/coopStretch/pages/coopReturn/ViewCoopReturnDetails"
+import { AddPlintProduction } from "../plint/pages/addPlintProduction/AddPlintProduction"
+import PlintBuyer from "../plint/pages/addPlintBuyer/AddPlintBuyer"
+import RetailOrderPage from "../plint/pages/plintRetailOrder/RetailOrderPage"
+import PlintMonthlyReport from "../plint/pages/report/PlintMonthlyReport"
+import PlintAgent from "../plint/pages/addPlintAgent/AddPlintAgent"
+import AddPlintWholesaleOrder from "../plint/pages/plintWholesaleOrder/wholesaleOrderPage"
+import PlintRetailOrderDetails from "../plint/pages/view/PlintRetailOrderDetails"
+import PlintWholesaleOrderDetails from "../plint/pages/view/PlintWholesaleOrderDetails"
+import PlintOrderList from "../plint/pages/viewPlintOrderList/PlintOrderList"
+import PlintBuyerWallet from "../plint/pages/plintBuyerWallet/PlintBuyerWallet"
+import { InputOutput } from "../strechCeining/stock/in_out/InputOutput"
+import EditCoopCeilinOrder from "../strechCeining/coopStretch/pages/editCoopOrder/EditCoopCeilinOrder"
+import BuyProduct from "../strechCeining/stock/buyProduct/BuyProduct"
 
 
 
@@ -113,23 +113,24 @@ export const MyRouter: React.FC = (): JSX.Element => {
                     <Route path="/coopStretchceiling/addCoopReturn" element={<AddCoopReturn />} />
                     <Route path="/coopStretchceiling/viewCoopReturnList" element={<ViewCoopReturnList />} />
                     <Route path="/coopStretchceiling/return/:id" element={<ViewCoopReturnDetails />} />
+                    <Route path="/coopStretchceiling/orders/:id/edit" element={<EditCoopCeilinOrder />} />
 
 
-                    <Route path="/plint/homePage" element={<PlintHonePage />}></Route>
+
                     <Route path="/plint/addPlint" element={<AddPlint />}></Route>
                     <Route path="/plint/plintBuyer" element={<PlintBuyer />}></Route>
-                    <Route path="/plint/plintCoop" element={<AddPlintCoop />}></Route>
-                    <Route path="/plint/plintAgent" element={<AddPlintAgent />}></Route>
-                    <Route path="/plint/plintRetailOrder" element={<PlintRetailOrder />}></Route>
-                    <Route path="/plint/plintWholesaleOrder" element={<PlintCoopOrder />}></Route>
-                    <Route path="/plint/plintProduction" element={<PlintProduction />}></Route>
-                    <Route path="/plint/viewPlintOrder/:id" element={<ViewPlintOrder />}></Route>
-                    <Route path="/plint/editPlintOrder/:id" element={<EditPlintOrder />}></Route>
+                    <Route path="/plint/plintRetailOrder" element={<RetailOrderPage />}></Route>
+                    <Route path="/plint/plintWholesaleOrder" element={<AddPlintWholesaleOrder />}></Route>
+                    <Route path="/plint/report/monthly" element={<PlintMonthlyReport />} />
+                    <Route path="/plint/plintAgent" element={<PlintAgent />}></Route>
+                    <Route path="/plint/orders/view/:id" element={<PlintRetailOrderDetails />} />
+                    <Route path="/plint/wholesale/orders/view/:id" element={<PlintWholesaleOrderDetails />} />
+                    <Route path="/plint/plintProduction" element={<AddPlintProduction />}></Route>
                     <Route path="/plint/stockPlint" element={<StockPlint />}></Route>
+                    <Route path="/plint/viewPlintOrdersList" element={<PlintOrderList />}></Route>
+                    <Route path="/plint/debet-kredit" element={<PlintBuyerWallet />}></Route>
                     <Route path="/plint/inputOutputPlint" element={<InputOutputPlint />}></Route>
-                    <Route path="/plint/viewPlintOrdersList" element={<ViewPlintOrdersList />}></Route>
-                    <Route path="/plint/debet-kredit" element={<ViewPlintDebetKredit />}></Route>
-                    <Route path="/plint/viewMaterial" element={<ViewPlintMaterial />}></Route>
+
 
 
 
@@ -137,7 +138,8 @@ export const MyRouter: React.FC = (): JSX.Element => {
                     <Route path="/stock" element={<StockProfile />}></Route>
                     <Route path="/addCategory" element={<AddCategory />}></Route>
                     <Route path="/addProduct" element={<AddProduct />}></Route>
-                    <Route path="/in_out" element={<Input_output />}></Route>
+                    <Route path="/in_out" element={<InputOutput />}></Route>
+                    <Route path="/buyProduct" element={<BuyProduct />}></Route>
                 </Routes>
             </BrowserRouter>
         </>

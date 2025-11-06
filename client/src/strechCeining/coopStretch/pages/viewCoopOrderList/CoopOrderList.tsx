@@ -140,10 +140,7 @@ const CoopOrderList: React.FC = () => {
     });
   }, [rows, dateFrom, dateTo, buyerQuery]);
 
-  const filteredTotal = React.useMemo(
-    () => filteredRows.reduce((s, x) => s + Number(x.sum || 0), 0),
-    [filteredRows]
-  );
+
 
   // ===== Раскрытие строки =====
   const toggleExpand = async (id: string) => {

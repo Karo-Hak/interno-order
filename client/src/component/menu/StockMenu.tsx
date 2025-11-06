@@ -41,6 +41,9 @@ export const StockMenu: React.FC<StockMenuProps> = (): JSX.Element => {
     const btnIn_out = () => {
         navigate("/in_out")
     }
+    const btnBuy = () => {
+        navigate("/buyProduct")
+    }
 
     function goTo(event: ChangeEvent<HTMLSelectElement>): void {
         if (event.target.value !== "Ապրանք") {
@@ -66,6 +69,7 @@ export const StockMenu: React.FC<StockMenuProps> = (): JSX.Element => {
                 <button className="btn nav-link" onClick={btnAddCategoryProduct}>Ավելացնել Խումբ</button>
                 <button className="btn nav-link" onClick={btnAddProduct}>Ավելացնել ապրանք</button>
                 <button className="btn nav-link" onClick={btnIn_out}>Մուտք/Ելք</button>
+                <button className="btn nav-link" onClick={btnBuy}>Գնում</button>
             </div>
 
         </div>)

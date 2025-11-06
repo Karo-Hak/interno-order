@@ -120,7 +120,7 @@ const PlintDebetKreditSection: FC<DebetKreditSectionProps> = ({ ordersList, pars
                                                             <p>{e.sumKredit}</p>
                                                         </td>
                                                 }
-                                                <td><AddPlintPayment id={e.plintOrder} /></td>
+                                                {/* <td><AddPlintPayment id={e.plintOrder} /></td> */}
                                             </tr>
                                             {showOrderMaterialList[e._id] && (
                                                 <BuyerDebetKreditSection order={e.debetKredit} parseDate={parseDate} />

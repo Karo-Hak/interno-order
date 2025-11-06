@@ -1,8 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Res, Query } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Response } from 'express';
+import { QueryProductDto } from './dto/query-product.dto';
+import { BuyProductDto } from './dto/buy-product.dto';
 
 @Controller('product')
 export class ProductController {
@@ -30,6 +32,16 @@ export class ProductController {
     }
   }
 
+  @Get('by-category')
+  async byCategory(@Query() dto: QueryProductDto, @Res() res: Response) {
+    try {
+      const data = await this.productService.findByCategory(dto);
+      return res.status(HttpStatus.OK).json(data);
+    } catch (e: any) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ error: e?.message || 'Bad request' });
+    }
+  }
+
   @Get('allProduct')
   async findAll(@Res() res: Response) {
     try {
@@ -39,16 +51,29 @@ export class ProductController {
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: error.message });
     }
   }
-  
+
   @Post('updateQuantity')
   async updateQuantity(@Body() updateProductDto: UpdateProductDto, @Res() res: Response) {
     try {
       const updatedProducts = await this.productService.updateQuantity(updateProductDto)
-      return res.status(HttpStatus.OK)
+      return res.status(HttpStatus.OK).json(updatedProducts)
     } catch (error) {
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: error.message });
     }
   }
+
+  @Post('buy')
+  async buy(@Body() dto: BuyProductDto, @Res() res: Response) {
+    try {
+      // если есть auth-guard, можно достать userId из req.user
+      // @Req() req: any  -> const uid = req.user?.userId;
+      const result = await this.productService.buy(dto /*, uid */);
+      return res.status(HttpStatus.OK).json(result);
+    } catch (error: any) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ error: error?.message || 'Bad request' });
+    }
+  }
+
 
   @Get(':id')
   findOne(@Param('id') id: string) {

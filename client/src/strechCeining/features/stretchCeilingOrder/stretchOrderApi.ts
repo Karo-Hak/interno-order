@@ -1,6 +1,43 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
+type Cookies = { access_token?: string };
+type WithCookies<T> = T & { cookies: Cookies };
+
+const BASE_URL = process.env.REACT_APP_SERVER_URL;
+
+const authHeaders = (cookies: Cookies) => ({
+  Authorization: `Bearer ${cookies?.access_token ?? ""}`,
+});
+
+const getErr = (e: unknown) => {
+  const err = e as AxiosError<any>;
+  return {
+    error: err?.response?.data?.message ?? err?.message ?? "not found",
+    status: err?.response?.status,
+  };
+};
+
+// Короткая форма данных заказа, полезна для "показать по заказам"
+export type OrderBrief = {
+  _id: string;
+  buyerName?: string;
+  buyerPhone1?: string;
+  prepayment?: number;
+  groundTotal?: number;
+};
+
+// Полный объект заказа, если понадобятся детали
+export type StretchOrder = {
+  _id: string;
+  buyer?: string | { _id: string; name?: string; phone1?: string };
+  buyerName?: string;
+  buyerPhone1?: string;
+  prepayment?: number;
+  groundTotal?: number;
+  totalSum?: number;
+  // ...другие поля, которые есть у тебя на бэке
+};
 
 
 export const addNewStretchOrder = createAsyncThunk(
@@ -264,3 +301,59 @@ export const updateStretchOrderAll = createAsyncThunk(
       }
     }
   );
+
+  export const fetchOrdersBriefBatch = createAsyncThunk(
+  "stretchOrder/fetchOrdersBriefBatch",
+  async (
+    obj: WithCookies<{ orderIds: string[] }>,
+    { rejectWithValue }
+  ) => {
+    try {
+      const ids = Array.from(new Set(obj.orderIds || [])).filter(Boolean);
+      if (!ids.length) return [];
+
+      const results = await Promise.all(
+        ids.map(async (id) => {
+          try {
+            const res = await axios.get(
+              `${BASE_URL}/stretch-ceiling-order/findStretchOrder/${id}`,
+              { headers: authHeaders(obj.cookies) }
+            );
+            const o = res.data as StretchOrder;
+
+            // Нормализуем buyer name/phone
+            const buyerName =
+              o?.buyerName ??
+              (typeof o?.buyer === "object" ? o?.buyer?.name : undefined);
+            const buyerPhone1 =
+              o?.buyerPhone1 ??
+              (typeof o?.buyer === "object" ? o?.buyer?.phone1 : undefined);
+
+            const brief: OrderBrief = {
+              _id: o._id,
+              buyerName,
+              buyerPhone1,
+              prepayment: Number(o?.prepayment ?? 0),
+              groundTotal: Number(o?.groundTotal ?? o?.totalSum ?? 0),
+            };
+            return brief;
+          } catch (e) {
+            // Один неудачный заказ не валит весь батч — вернём плейсхолдер
+            return {
+              _id: id,
+              buyerName: undefined,
+              buyerPhone1: undefined,
+              prepayment: undefined,
+              groundTotal: undefined,
+              __error: getErr(e),
+            } as any;
+          }
+        })
+      );
+
+      return results as OrderBrief[];
+    } catch (e) {
+      return rejectWithValue(getErr(e));
+    }
+  }
+);

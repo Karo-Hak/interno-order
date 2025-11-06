@@ -1,4 +1,3 @@
-// src/strechCeining/coopStretch/pages/report/CoopMonthlyReport.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
@@ -69,11 +68,11 @@ const CoopMonthlyReport: React.FC = () => {
                     marginBottom: 8,
                     position: 'sticky',
                     top: 0,
-                    background: '#fff',
+                    background: '#d1dbd9ff',
                     paddingBlock: 8,
                     paddingInline: 8,
                     zIndex: 1,
-                    borderBottom: '1px solid #eee',
+                    borderBottom: '1px solid #312222ff',
                 }}
             >
                 <label>
@@ -108,10 +107,9 @@ const CoopMonthlyReport: React.FC = () => {
                                     style={{
                                         position: 'sticky',
                                         top: 0,                 // 👈 вместо 48
-                                        background: '#fff',     // 👈 чтобы не просвечивало
+                                        background: '#e9d8d8ff',     // 👈 чтобы не просвечивало
                                         zIndex: 2,              // 👈 поверх строк
-                                        textAlign: title === 'Գումար' ? 'right' : 'left',
-                                        borderBottom: '1px solid #eee',
+                                        borderBottom: '1px solid #241010ff',
                                         padding: 6,
                                     }}
                                 >
@@ -129,21 +127,25 @@ const CoopMonthlyReport: React.FC = () => {
                         )}
 
                         {rows.map((r) => (
-                            <tr key={r._id}>
-                                <td style={{ padding: 6, borderBottom: '1px solid #f2f2f2' }}>
+                            <tr key={r._id}
+                                style={{
+                                    borderBottom: '1px solid #161515ff',
+                                    background: '#e3e4e6ff'
+                                }}>
+                                <td style={{borderBottom: '1px solid #161515ff'}}>
                                     <Link to={`/coopStretchceiling/viewCoopStretchOrder/${r._id}`}>
                                         {new Date(r.date).toLocaleString('hy-AM', { year: 'numeric', month: '2-digit', day: '2-digit' })}
                                     </Link>
                                 </td>
-                                <td style={{ padding: 6, borderBottom: '1px solid #f2f2f2' }}>
+                                <td style={{borderBottom: '1px solid #161515ff'}}>
                                     <Link to={`/coopStretchceiling/viewCoopStretchOrder/${r._id}`}>
                                         {r.buyerName || '—'}
                                     </Link>
                                 </td>
-                                <td style={{ padding: 6, borderBottom: '1px solid #f2f2f2' }}>
+                                <td style={{borderBottom: '1px solid #161515ff'}}>
                                     {r.buyerPhone || '—'}
                                 </td>
-                                <td style={{ padding: 6, borderBottom: '1px solid #f2f2f2', textAlign: 'right' }}>
+                                <td style={{borderBottom: '1px solid #161515ff'}}>
                                     {Number(r.sum || 0).toLocaleString()}
                                 </td>
                             </tr>

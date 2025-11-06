@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAppDispatch } from '../../../app/hooks';
 import { useCookies } from 'react-cookie';
-import { allStretchBuyer, allStretchBuyerThunk, StretchBuyerModel } from '../../features/StrechBuyer/strechBuyerApi';
+import { allStretchBuyerThunk, StretchBuyerModel } from '../../features/StrechBuyer/strechBuyerApi';
 import { StretchBuyerTable } from './components/StretchBuyerTable';
 import { StretchMenu } from '../../../component/menu/StretchMenu';
 

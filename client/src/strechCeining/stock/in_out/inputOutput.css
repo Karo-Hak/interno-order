@@ -1,0 +1,224 @@
+:root {
+  --io-gap: 12px;
+  --io-card-h: 560px;
+  --io-th-bg: #f3f3f3;
+  --io-total-bg: #f7f7f7;
+  --io-topbar-bg: #ffffff;
+  --io-border: #c9c9c9;
+}
+
+/* Страница */
+.io-page {
+  width: 100%;
+  overflow-x: hidden; /* страховка от горизонтального скролла */
+}
+
+/* Липкая верхняя панель с Save/Cancel */
+.io-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--io-topbar-bg);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.io-topbar-left,
+.io-topbar-right {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.io-btn {
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--io-border);
+  border-radius: 6px;
+  background: #fafafa;
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+.io-btn:disabled {
+  opacity: .5;
+  cursor: default;
+}
+.io-btn-save {
+  background: #1e88e5;
+  border-color: #1e88e5;
+  color: #fff;
+}
+.io-btn-save:hover:not(:disabled) {
+  box-shadow: 0 0 0 3px rgba(30,136,229,.2);
+}
+.io-btn-cancel:hover:not(:disabled) {
+  background: #f3f3f3;
+}
+
+/* Иконка очистки в строке */
+.io-btn-clear {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Поиск */
+.io-search {
+  width: 260px;
+  height: 32px;
+  padding: 4px 8px;
+  box-sizing: border-box;
+  border: 1px solid var(--io-border);
+  border-radius: 6px;
+}
+
+/* Контейнер всех таблиц (2 в ряд) */
+.io-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--io-gap);
+  width: 100%;
+  align-items: stretch;
+  overflow-x: hidden;
+  padding: 8px 8px 12px;
+}
+
+/* Карточка категории (таблица) — 2 в ряд */
+.io-card {
+  flex: 0 0 calc(50% - var(--io-gap));
+  max-width: calc(50% - var(--io-gap));
+  margin: 0;
+  border: 2px solid black;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  max-height: var(--io-card-h);
+  overflow: hidden;
+}
+
+.io-title {
+  margin: 8px;
+}
+
+/* Внутренний скролл только по вертикали */
+.io-scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Таблица — фиксированная сетка; НИЧЕГО не распирает */
+.io-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;         /* фиксируем ширины колонок */
+  word-break: break-word;
+}
+
+/* Фиксируем ширины колонок:
+   внимание: последняя колонка действий фиксирована в пикселях, чтобы кнопка не раздвигала строку */
+.io-col-name  { width: 38%; }
+.io-col-qty   { width: 12%; }
+.io-col-in    { width: 12%; }
+.io-col-out   { width: 12%; }
+.io-col-new   { width: 16%; }
+.io-col-delta { width: 10%; }
+.io-col-act   { width: 72px; } /* фиксированная, небольшая */
+
+.io-table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--io-th-bg);
+  z-index: 1;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Клетки таблицы: ОБЯЗАТЕЛЬНО min-width:0 и обрезка контента */
+.io-table th,
+.io-table td {
+  padding: 6px;
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;               /* позволяет ячейке сжиматься */
+  white-space: nowrap;        /* не переносим текст, чтобы не распирало строку */
+}
+
+/* Имя товара можно переносить (только здесь) */
+.io-td-name {
+  width: 1000px;
+  white-space: normal;
+}
+
+/* Числа — всегда в одну строку и по правому краю */
+.io-td-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Ячейка действий фикс-ширины, центр */
+.io-td-act {
+  text-align: center;
+}
+
+.nameProduct{
+  width: 250px;
+}
+
+/* Инпуты: фикс размер, без «распухания» */
+.io-input {
+  width: 100%;
+  height: 32px;
+  padding: 4px 8px;
+  box-sizing: border-box;
+  border: 1px solid var(--io-border);
+  border-radius: 4px;
+  font-weight: 400;
+  transition: box-shadow .15s ease, border-color .15s ease, background-color .15s ease;
+}
+.io-input:focus {
+  outline: none;
+  border-color: #1e88e5;
+  box-shadow: 0 0 0 2px rgba(30,136,229,.2);
+}
+.io-input-changed {
+  border-color: #6aa84f;
+  background-color: rgba(106,168,79, .07);
+  box-shadow: inset 0 0 0 1px rgba(106,168,79, .35);
+}
+
+/* Подсветка изменённых строк */
+.io-row-changed {
+  background: rgba(255, 229, 100, 0.35);
+  transition: background 0.2s;
+}
+
+/* Дельта */
+.io-delta-up   { color: green;   font-weight: 600; }
+.io-delta-down { color: crimson; font-weight: 600; }
+
+/* Итоги */
+.io-total-row {
+  background: var(--io-total-bg);
+  font-weight: 600;
+}
+
+/* Подпись сортировки */
+.io-sortlabel { font-size: 12px; opacity: 0.8; }
+
+/* Адаптив: 1 таблица в ряд */
+@media (max-width: 900px) {
+  .io-card {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+}
+

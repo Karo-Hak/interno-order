@@ -2,6 +2,7 @@ import React from 'react';
 import { UseFormRegister, UseFormSetValue } from 'react-hook-form';
 import { FormValues } from '../AddCoopCeilinOrder';
 
+
 type Props = {
   total: number; // вычисленный total приходит сверху
   register: UseFormRegister<FormValues>;
@@ -24,27 +25,18 @@ const PaymentSection: React.FC<Props> = ({ total, register, setValue }) => {
     <section className="card" style={{ padding: 12, marginBottom: 12 }}>
       <h3>Վճարում / Payment</h3>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: 8,
-          alignItems: 'center',
-        }}
-      >
-        {/* Отображаемое поле: всегда равно total, readOnly */}
-        <div>
+      <div>
+        <div style={{margin: 10}}>
           <label>Balance (auto = Total)</label>
           <input value={display} readOnly />
         </div>
 
-        {/* Скрытое "истинное" поле формы, чтобы balance попал в submit */}
         <input
           type="hidden"
           {...register('balance', { valueAsNumber: true })}
         />
 
-        <div>
+        <div style={{margin: 10}}>
           <label>Payment method</label>
           <select {...register('paymentMethod')}>
             <option value="cash">Cash</option>
@@ -54,12 +46,12 @@ const PaymentSection: React.FC<Props> = ({ total, register, setValue }) => {
           </select>
         </div>
 
-        <div>
+        <div style={{margin: 10}}>
           <label>Date</label>
           <input type="datetime-local" {...register('date')} />
         </div>
 
-        <div style={{ gridColumn: '1 / span 2' }}>
+        <div style={{margin: 10}}>
           <label>Comment</label>
           <input placeholder="Buyer comment" {...register('buyerComment')} />
         </div>

@@ -95,17 +95,17 @@ function TextureGroup<TFormValues extends FieldValues>(props: Props<TFormValues>
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+      <div style={{ display: 'flex', paddingBottom: 10, justifyContent: 'space-between', alignItems: 'baseline' }}>
         <h3 style={{ margin: 0 }}>{title}</h3>
         <button type="button" onClick={addRow}>+ Ավելացնել</button>
       </div>
 
       <div style={{ overflowX: 'auto' }}>
-        <table style={{ width: '100%', minWidth: 720 }}>
+        <table style={{ width: '100%', }}>
           <thead>
             <tr>
               <th>Ապրանք</th>
-              <th>Անվանում</th>
+              <th></th>
               {!forceQtyVisible && <th>Երկ․</th>}
               {!forceQtyVisible && <th>Լայն․</th>}
               {forceQtyVisible && <th>Քանակ</th>}
@@ -140,6 +140,7 @@ function TextureGroup<TFormValues extends FieldValues>(props: Props<TFormValues>
                       {/* Название */}
                       <td>
                         <input
+                          type="hidden"
                           value={row.name ?? ''}
                           onChange={e => onFieldChange(idx, { name: e.target.value })}
                           placeholder="Անվանում"
@@ -151,6 +152,7 @@ function TextureGroup<TFormValues extends FieldValues>(props: Props<TFormValues>
                         <>
                           <td style={{ width: 100 }}>
                             <input
+                              className='inputcoop'
                               type="number"
                               step="0.001"
                               value={row.height ?? ''}
@@ -160,6 +162,8 @@ function TextureGroup<TFormValues extends FieldValues>(props: Props<TFormValues>
                           </td>
                           <td style={{ width: 100 }}>
                             <input
+                              className='inputcoop'
+
                               type="number"
                               step="0.001"
                               value={row.width ?? ''}
@@ -173,6 +177,8 @@ function TextureGroup<TFormValues extends FieldValues>(props: Props<TFormValues>
                       {forceQtyVisible && (
                         <td style={{ width: 120 }}>
                           <input
+                            className='inputcoop'
+
                             type="number"
                             step="0.001"
                             value={row.qty ?? ''}
@@ -185,6 +191,8 @@ function TextureGroup<TFormValues extends FieldValues>(props: Props<TFormValues>
                       {/* Цена */}
                       <td style={{ width: 120, textAlign: 'right' }}>
                         <input
+                          className='inputcoop'
+
                           type="number"
                           step="0.01"
                           value={row.price ?? ''}
@@ -197,6 +205,8 @@ function TextureGroup<TFormValues extends FieldValues>(props: Props<TFormValues>
                       {/* Сумма (read-only авторасчёт) */}
                       <td style={{ width: 140, textAlign: 'right' }}>
                         <input
+                          className='inputcoop'
+
                           type="number"
                           step="0.01"
                           value={row.sum ?? 0}
@@ -213,6 +223,9 @@ function TextureGroup<TFormValues extends FieldValues>(props: Props<TFormValues>
                 </>
               )}
             />
+            {rows.length === 0 && (
+              <tr><td colSpan={5} style={{ opacity: 0.6, padding: 8 }}>No rows</td></tr>
+            )}
           </tbody>
         </table>
       </div>

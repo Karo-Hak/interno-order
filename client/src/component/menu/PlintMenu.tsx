@@ -1,152 +1,167 @@
-import { useNavigate } from "react-router-dom"
-import { selectUser } from "../../features/user/userSlice";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import React, { useCallback, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../../app/hooks";
 import { userProfile } from "../../features/user/userApi";
-import { useCookies } from 'react-cookie'
-import { ChangeEvent, useEffect, useState } from "react";
-import ModalPlintOrderType from "../modal/ModalPlintOrderType";
+import { useCookies } from "react-cookie";
 
-interface PlintMenuProps {
+interface PlintMenuProps {}
 
-}
+export const PlintMenu: React.FC<PlintMenuProps> = () => {
+  const dispatch = useAppDispatch();
+  const [cookies, setCookie] = useCookies(["access_token"]);
+  const navigate = useNavigate();
 
-export const PlintMenu: React.FC<PlintMenuProps> = (): JSX.Element => {
-    const user = useAppSelector(selectUser)
-    const dispatch = useAppDispatch()
-    const [cookies, setCookie] = useCookies(['access_token']);
-    const navigate = useNavigate()
+  // Безопасное открытие в новом окне (правая кнопка)
+  const openInNewWindow = useCallback((path: string) => {
+    window.open(path, "_blank", "noopener,noreferrer");
+  }, []);
 
+  useEffect(() => {
+    let mounted = true;
 
-    useEffect(() => {
-        dispatch(userProfile(cookies)).unwrap().then(res => {
-            if ("error" in res) {
-                setCookie("access_token", '', { path: '/' })
-                navigate("/")
-            }
-        })
-
-
-    }, [])
-
-    const plintBuyer = () => {
-        navigate("/plint/plintBuyer")
-    }
-    const plintBuyerNewWindow = () => {
-        window.open("/plint/plintBuyer")
-    }
-    const plintCoop = () => {
-        navigate("/plint/plintCoop")
-    }
-    const plintCoopNewWindow = () => {
-        window.open("/plint/plintCoop")
-    }
-    const plintAgent = () => {
-        navigate("/plint/plintAgent")
-    }
-    const plintAgentNewWindow = () => {
-        window.open("/plint/plintAgent")
-    }
-    const addPlint = () => {
-        navigate("/plint/addPlint")
-    }
-    const addPlintNewWindow = () => {
-        window.open("/plint/addPlint")
-    }
-
-    function goTo(event: ChangeEvent<HTMLSelectElement>): void {
-        if (event.target.value !== "Ապրանք") {
-            navigate(event.target.value)
+    (async () => {
+      try {
+        // если нет токена — на логин
+        if (!cookies?.access_token) {
+          navigate("/");
+          return;
         }
 
-    }
+        await dispatch(userProfile(cookies)).unwrap();
+        // если нужно — можно выставить локальный стейт по mounted
+        if (!mounted) return;
+      } catch {
+        // невалидный токен — чистим и уходим на логин
+        setCookie("access_token", "", { path: "/" });
+        navigate("/");
+      }
+    })();
 
-    const newPlintOrder = () => {
-        navigate("/plint/plintOrder")
-    }
-    const newPlintOrderNewWindow = () => {
-        window.open("/plint/plintOrder")
-    }
-    const stockPlint = () => {
-        navigate("/plint/stockPlint")
-    }
-    const stockPlintNewWindow = () => {
-        window.open("/plint/stockPlint")
-    }
-    const Input_outputPlint = () => {
-        navigate("/plint/inputOutputPlint")
-    }
-    const Input_outputPlintNewWindow = () => {
-        window.open("/plint/inputOutputPlint")
-    }
-
-    const home = () => {
-        navigate("/plint/homepage")
-    }
-
-    const plintProduction = () => {
-        navigate("/plint/plintProduction")
-    }
-    const plintProductionNewWindow = () => {
-        window.open("/plint/plintProduction")
-    }
-    const viewPlintOrders = () => {
-        navigate("/plint/viewPlintOrdersList")
-    }
-
-    const viewPlintOrdersNewWindow = () => {
-        window.open("/plint/viewPlintOrdersList")
-    }
-
-    const viewMaterialsOrders = () => {
-        navigate("/plint/viewMaterial")
-    }
-
-    const viewMaterialsOrdersNewWindow = () => {
-        window.open("/plint/viewMaterial")
-    }
-
-    const viewDebetKredit = () => {
-        navigate("/plint/debet-kredit")
-    }
-
-    const viewDebetKreditNewWindow = () => {
-        window.open("/plint/viewMaterial")
-    }
-
-    const [isModalOpen, setIsModalOpen] = useState(false);
-
-    const handleOpenModal = () => {
-        setIsModalOpen(true);
+    return () => {
+      mounted = false;
     };
+    // ✅ все используемые зависимости в deps
+  }, [dispatch, cookies, navigate, setCookie]);
 
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-    };
+  // --- Навигация (левая кнопка)
+  const home = () => navigate("/plint/report/monthly");
 
-    return (
-        <div className="admin_profile">
-            <div style={{
-                textAlign: 'left',
-                width: "10%"
-            }}>
-                <button className="btn" onClick={home} >Գլխավոր Էջ</button>
-            </div>
-            <div className="admin_profile">
-                <button className="btn" onClick={handleOpenModal} >Նոր Պատվեր</button>
-                <button className="btn" onClick={plintBuyer} onContextMenu={plintBuyerNewWindow}> + Գնորդ</button>
-                <button className="btn" onClick={plintCoop} onContextMenu={plintCoopNewWindow}> + Գործընկեր</button>
-                <button className="btn" onClick={plintAgent} onContextMenu={plintAgentNewWindow}> + Միջնորդ</button>
-                <button className="btn" onClick={addPlint} onContextMenu={addPlintNewWindow}> + Շրիշակ</button>
-                <button className="btn" onClick={stockPlint} onContextMenu={stockPlintNewWindow}>Պահեստ</button>
-                <button className="btn" onClick={plintProduction} onContextMenu={plintProductionNewWindow}>Արտադրություն</button>
-                <button className="btn" onClick={Input_outputPlint} onContextMenu={Input_outputPlintNewWindow}>Գույքագրում</button>
-                <button className="btn" onClick={viewPlintOrders} onContextMenu={viewPlintOrdersNewWindow}>Դիտել Պատվերները</button>
-                <button className="btn" onClick={viewMaterialsOrders} onContextMenu={viewMaterialsOrdersNewWindow}>Նյութածախս</button>
-                <button className="btn" onClick={viewDebetKredit} onContextMenu={viewDebetKreditNewWindow}>Դեբետ/Կրեդիտ</button>
-            </div>
-            <div style={{ width: "10%" }}></div>
-            <ModalPlintOrderType isOpen={isModalOpen} onClose={handleCloseModal} />
+  const plintBuyer = () => navigate("/plint/plintBuyer");
+  const plintAgent = () => navigate("/plint/plintAgent");
+  const addPlint = () => navigate("/plint/addPlint");
+  const newPlintRetailOrder = () => navigate("/plint/plintRetailOrder");
+  const newPlintWholesaleOrder = () => navigate("/plint/plintWholesaleOrder");
+  const stockPlint = () => navigate("/plint/stockPlint");
+  const inputOutputPlint = () => navigate("/plint/inputOutputPlint");
+  const plintProduction = () => navigate("/plint/plintProduction");
+  const viewPlintOrders = () => navigate("/plint/viewPlintOrdersList");
+  const viewMaterialsOrders = () => navigate("/plint/viewMaterial");
+  const viewDebetKredit = () => navigate("/plint/debet-kredit");
 
-        </div>
-    )
-}
+  // --- Новое окно (правая кнопка). Не забываем preventDefault
+  const onCtx = (path: string) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    openInNewWindow(path);
+  };
+
+  return (
+    <div className="admin_profile">
+      <div style={{ textAlign: "left", width: "10%" }}>
+        <button className="btn" onClick={home}>
+          Գլխավոր Էջ
+        </button>
+      </div>
+
+      <div className="admin_profile">
+        <button
+          className="btn"
+          onClick={newPlintRetailOrder}
+          onContextMenu={onCtx("/plint/plintRetailOrder")}
+          title="ЛКМ — открыть, ПКМ — новое окно"
+        >
+          Մանրածախ
+        </button>
+
+        <button
+          className="btn"
+          onClick={newPlintWholesaleOrder}
+          onContextMenu={onCtx("/plint/plintWholesaleOrder")}
+        >
+          Մեծածախ
+        </button>
+
+        <button
+          className="btn"
+          onClick={plintBuyer}
+          onContextMenu={onCtx("/plint/plintBuyer")}
+        >
+          + Գնորդ
+        </button>
+
+        <button
+          className="btn"
+          onClick={plintAgent}
+          onContextMenu={onCtx("/plint/plintAgent")}
+        >
+          + Միջնորդ
+        </button>
+
+        <button
+          className="btn"
+          onClick={addPlint}
+          onContextMenu={onCtx("/plint/addPlint")}
+        >
+          + Շրիշակ
+        </button>
+
+        <button
+          className="btn"
+          onClick={stockPlint}
+          onContextMenu={onCtx("/plint/stockPlint")}
+        >
+          Պահեստ
+        </button>
+
+        <button
+          className="btn"
+          onClick={plintProduction}
+          onContextMenu={onCtx("/plint/plintProduction")}
+        >
+          Արտադրություն
+        </button>
+
+        <button
+          className="btn"
+          onClick={inputOutputPlint}
+          onContextMenu={onCtx("/plint/inputOutputPlint")}
+        >
+          Գույքագրում
+        </button>
+
+        <button
+          className="btn"
+          onClick={viewPlintOrders}
+          onContextMenu={onCtx("/plint/viewPlintOrdersList")}
+        >
+          Դիտել Պատվերները
+        </button>
+
+        <button
+          className="btn"
+          onClick={viewMaterialsOrders}
+          onContextMenu={onCtx("/plint/viewMaterial")}
+        >
+          Նյութածախս
+        </button>
+
+        <button
+          className="btn"
+          onClick={viewDebetKredit}
+          onContextMenu={onCtx("/plint/debet-kredit")}
+        >
+          Դեբետ/Կրեդիտ
+        </button>
+      </div>
+    </div>
+  );
+};

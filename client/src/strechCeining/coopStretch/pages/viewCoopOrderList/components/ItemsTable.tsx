@@ -18,8 +18,8 @@ const ItemsTable: React.FC<Props> = ({ items }) => {
   );
 
   return (
-    <div className="table-wrap">
-      <table className="table table--inner">
+    <div >
+      <table >
         <thead>
           <tr>
             {['Անվանում', 'Երկ․', 'Լայն․', 'Քանակ', 'Գին', 'Գումար'].map((t) => (

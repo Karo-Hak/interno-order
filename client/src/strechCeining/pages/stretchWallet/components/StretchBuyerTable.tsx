@@ -119,20 +119,12 @@ export const StretchBuyerTable: React.FC<Props> = ({ rows, onRowClick, onRefresh
                 </th>
 
                 <th style={{ position: 'sticky', top: 0, zIndex: 20, background: '#fff', boxShadow: 'inset 0 -1px #eee' }}>Հեռախոս 1</th>
-                <th style={{ position: 'sticky', top: 0, zIndex: 20, background: '#fff', boxShadow: 'inset 0 -1px #eee' }}>Հեռախոս 2</th>
 
                 <th onClick={() => onSort('buyerRegion')} style={{
                   cursor: 'pointer',
                   position: 'sticky', top: 0, zIndex: 20, background: '#fff', boxShadow: 'inset 0 -1px #eee'
                 }}>
                   Մարզ {sortIndicator(sortKey === 'buyerRegion', sortDir)}
-                </th>
-
-                <th onClick={() => onSort('buyerAddress')} style={{
-                  cursor: 'pointer',
-                  position: 'sticky', top: 0, zIndex: 20, background: '#fff', boxShadow: 'inset 0 -1px #eee'
-                }}>
-                  Հասցե {sortIndicator(sortKey === 'buyerAddress', sortDir)}
                 </th>
 
                 <th onClick={() => onSort('ordersCount')} style={{
@@ -142,12 +134,6 @@ export const StretchBuyerTable: React.FC<Props> = ({ rows, onRowClick, onRefresh
                   Պատվերներ {sortIndicator(sortKey === 'ordersCount', sortDir)}
                 </th>
 
-                <th onClick={() => onSort('dkCount')} style={{
-                  cursor: 'pointer',
-                  position: 'sticky', top: 0, zIndex: 20, background: '#fff', boxShadow: 'inset 0 -1px #eee'
-                }}>
-                  DK {sortIndicator(sortKey === 'dkCount', sortDir)}
-                </th>
 
                 <th onClick={() => onSort('buySum')} style={{
                   cursor: 'pointer',
