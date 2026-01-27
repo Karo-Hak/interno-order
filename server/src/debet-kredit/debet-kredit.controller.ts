@@ -12,8 +12,10 @@ export class DebetKreditController {
 
     @Post("pay")
     async create(@Body() data: any, @Res() res: Response) {
+        console.log(data);
+        
         try {
-            const payed = await this.debetKreditService.creatPayment(data.id, data.sum)
+            const payed = await this.debetKreditService.createPayment(data.id, data.sum)
             return res.status(HttpStatus.OK).json({
                 message: "ok",
                 payed

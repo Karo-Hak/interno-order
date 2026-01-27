@@ -3,7 +3,10 @@ import { Link } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 import { useAppDispatch } from '../../../../app/hooks';
 import { CoopStretchMenu } from '../../../../component/menu/CoopStretchMenu';
-import { fetchCoopMonthlyReport, fetchCoopOrderById } from '../../features/coopCeilingOrder/coopCeilingOrderApi';
+import {
+  fetchCoopMonthlyReport,
+  fetchCoopOrderById,
+} from '../../features/coopCeilingOrder/coopCeilingOrderApi';
 import './coopOrderList.css';
 import AllProductsTable from './components/AllProductsTable';
 import ItemsTable, { Item } from './components/ItemsTable';
@@ -33,7 +36,7 @@ const CoopOrderList: React.FC = () => {
 
   // фильтры
   const [dateFrom, setDateFrom] = React.useState<string>(''); // yyyy-mm-dd
-  const [dateTo, setDateTo] = React.useState<string>('');     // yyyy-mm-dd
+  const [dateTo, setDateTo] = React.useState<string>(''); // yyyy-mm-dd
   const [buyerQuery, setBuyerQuery] = React.useState<string>('');
 
   // раскрывашка/детали по строкам
@@ -59,20 +62,29 @@ const CoopOrderList: React.FC = () => {
       }));
       setRows(normRows);
       setShowAllProducts(false); // сброс при обновлении
+      setExpanded(new Set()); // сброс раскрытий
     } catch {
       alert('Չհաջողվեց բեռնել հաշվետվությունը');
       setRows([]);
+      setExpanded(new Set());
     } finally {
       setLoading(false);
     }
   }, [dispatch, cookies, month]);
 
-  React.useEffect(() => { load(); }, [load]);
+  React.useEffect(() => {
+    load();
+  }, [load]);
 
   // ===== Нормализация товаров =====
   const normalizeItems = React.useCallback((order: any): Item[] => {
     if (!order) return [];
     const items: Item[] = [];
+
+    function toNum(n: any): number | undefined {
+      const x = Number(n);
+      return Number.isFinite(x) ? x : undefined;
+    }
 
     // текстуры
     if (Array.isArray(order.groupedStretchTextureData)) {
@@ -82,74 +94,102 @@ const CoopOrderList: React.FC = () => {
         const width = toNum(v?.width);
         const height = toNum(v?.height);
         const price = toNum(v?.price);
-        const total = toNum(v?.sum ?? ((price ?? 0) * (qty ?? 1)));
+        const total = toNum(v?.sum ?? (Number(price ?? 0) * Number(qty ?? 1)));
         items.push({ name, height, width, qty, price, total });
       }
     }
 
     // простые (profil/platform/ring)
-    for (const key of ['groupedStretchProfilData','groupedLightPlatformData','groupedLightRingData']) {
+    for (const key of ['groupedStretchProfilData', 'groupedLightPlatformData', 'groupedLightRingData']) {
       const arr = order?.[key];
       if (Array.isArray(arr)) {
         for (const v of arr) {
-          const name  = String(v?.name ?? 'Ապրանք');
-          const qty   = toNum(v?.qty);
+          const name = String(v?.name ?? 'Ապրանք');
+          const qty = toNum(v?.qty);
           const price = toNum(v?.price);
-          const total = toNum(v?.sum ?? ((price ?? 0) * (qty ?? 1)));
+          const total = toNum(v?.sum ?? (Number(price ?? 0) * Number(qty ?? 1)));
           items.push({ name, qty, price, total });
         }
       }
     }
 
     return items;
-
-    function toNum(n: any): number | undefined {
-      const x = Number(n);
-      return Number.isFinite(x) ? x : undefined;
-    }
   }, []);
 
   // ===== Детали одного заказа =====
-  const loadOrderDetails = React.useCallback(async (id: string) => {
-    if (details[id] || loadingDetail[id]) return;
-    setLoadingDetail((s) => ({ ...s, [id]: true }));
-    try {
-      const order = await dispatch(fetchCoopOrderById({ cookies, id })).unwrap();
-      setDetails((s) => ({ ...s, [id]: normalizeItems(order) }));
-    } catch (e) {
-      console.error('Failed to load order details', e);
-      setDetails((s) => ({ ...s, [id]: [] }));
-    } finally {
-      setLoadingDetail((s) => ({ ...s, [id]: false }));
-    }
-  }, [dispatch, cookies, details, loadingDetail, normalizeItems]);
+  const loadOrderDetails = React.useCallback(
+    async (id: string) => {
+      if (details[id] || loadingDetail[id]) return;
+      setLoadingDetail((s) => ({ ...s, [id]: true }));
+      try {
+        const order = await dispatch(fetchCoopOrderById({ cookies, id })).unwrap();
+        setDetails((s) => ({ ...s, [id]: normalizeItems(order) }));
+      } catch (e) {
+        console.error('Failed to load order details', e);
+        setDetails((s) => ({ ...s, [id]: [] }));
+      } finally {
+        setLoadingDetail((s) => ({ ...s, [id]: false }));
+      }
+    },
+    [dispatch, cookies, details, loadingDetail, normalizeItems]
+  );
 
   // ===== Фильтрация по дате/покупателю =====
   const filteredRows = React.useMemo(() => {
     const q = buyerQuery.trim().toLowerCase();
     const fromTs = dateFrom ? new Date(dateFrom + 'T00:00:00').getTime() : -Infinity;
-    const toTs   = dateTo   ? new Date(dateTo   + 'T23:59:59').getTime() :  Infinity;
+    const toTs = dateTo ? new Date(dateTo + 'T23:59:59').getTime() : Infinity;
 
-    return rows.filter(r => {
+    return rows.filter((r) => {
       const ts = new Date(r.date).getTime();
       const inDate = ts >= fromTs && ts <= toTs;
-      const inBuyer = !q
-        || (r.buyerName ?? '').toLowerCase().includes(q)
-        || (r.buyerPhone ?? '').toLowerCase().includes(q);
+
+      const inBuyer =
+        !q ||
+        (r.buyerName ?? '').toLowerCase().includes(q) ||
+        (r.buyerPhone ?? '').toLowerCase().includes(q);
+
       return inDate && inBuyer;
     });
   }, [rows, dateFrom, dateTo, buyerQuery]);
 
-
-
   // ===== Раскрытие строки =====
   const toggleExpand = async (id: string) => {
-    setExpanded(prev => {
+    setExpanded((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id); else next.add(id);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
       return next;
     });
     if (!details[id]) await loadOrderDetails(id);
+  };
+
+  // ===== Открыть/закрыть все чекбоксы (для отфильтрованных строк) =====
+  const openAll = React.useCallback(async () => {
+    const ids = filteredRows.map((r) => r._id);
+
+    // открыть все
+    setExpanded(new Set(ids));
+
+    // подгрузить детали там, где их нет
+    const need = ids.filter((id) => !details[id] && !loadingDetail[id]);
+    if (need.length === 0) return;
+
+    await Promise.all(need.map((id) => loadOrderDetails(id)));
+  }, [filteredRows, details, loadingDetail, loadOrderDetails]);
+
+  const closeAll = React.useCallback(() => {
+    setExpanded(new Set());
+  }, []);
+
+  const allExpanded = React.useMemo(() => {
+    if (filteredRows.length === 0) return false;
+    return filteredRows.every((r) => expanded.has(r._id));
+  }, [filteredRows, expanded]);
+
+  const toggleAllExpanded = async () => {
+    if (allExpanded) closeAll();
+    else await openAll();
   };
 
   // ===== Глобальная кнопка: показать товары всех заказов =====
@@ -158,12 +198,15 @@ const CoopOrderList: React.FC = () => {
       setShowAllProducts(false);
       return;
     }
-    const ids = filteredRows.map(r => r._id);
-    const need = ids.filter(id => !details[id] && !loadingDetail[id]);
+
+    const ids = filteredRows.map((r) => r._id);
+    const need = ids.filter((id) => !details[id] && !loadingDetail[id]);
+
     if (need.length === 0) {
       setShowAllProducts(true);
       return;
     }
+
     setLoadingAllProducts(true);
     try {
       await Promise.all(
@@ -189,7 +232,7 @@ const CoopOrderList: React.FC = () => {
   // собрать товары по всем отфильтрованным заказам
   const allProducts = React.useMemo<Item[]>(() => {
     if (!showAllProducts) return [];
-    const ids = filteredRows.map(r => r._id);
+    const ids = filteredRows.map((r) => r._id);
     const combined: Item[] = [];
     for (const id of ids) {
       const arr = details[id];
@@ -206,15 +249,20 @@ const CoopOrderList: React.FC = () => {
       <div className="toolbar">
         <label className="toolbar__field">
           Ամիս:
-          <input
-            type="month"
-            value={month}
-            onChange={(e) => setMonth(e.target.value)}
-          />
+          <input type="month" value={month} onChange={(e) => setMonth(e.target.value)} />
         </label>
 
         <button type="button" className="btn" onClick={load} disabled={loading}>
           {loading ? 'Բեռնվում է…' : 'Թարմացնել'}
+        </button>
+
+        <button
+          type="button"
+          className="btn btn--secondary"
+          onClick={toggleAllExpanded}
+          disabled={loading || filteredRows.length === 0}
+        >
+          {allExpanded ? 'Փակել բոլորը' : 'Բացել բոլորը'}
         </button>
 
         <div className="filters">
@@ -241,15 +289,16 @@ const CoopOrderList: React.FC = () => {
             onClick={handleToggleAllProducts}
             disabled={loadingAllProducts || filteredRows.length === 0}
           >
-            {loadingAllProducts ? 'Ապրանքները բեռնվում են…' :
-              (showAllProducts ? 'Թաքցնել բոլոր ապրանքները' : 'Ցույց տալ բոլոր ապրանքները')}
+            {loadingAllProducts
+              ? 'Ապրանքները բեռնվում են…'
+              : showAllProducts
+              ? 'Թաքցնել բոլոր ապրանքները'
+              : 'Ցույց տալ բոլոր ապրանքները'}
           </button>
 
           <div className="toolbar__total">
-            Ընդհանուր ({filteredRows.length} պատվեր):{' '}
-            <b>
-              {filteredRows.reduce((s, x) => s + Number(x.sum || 0), 0).toLocaleString()}
-            </b>
+             ({filteredRows.length} պատվեր):{' '}
+            <b>{filteredRows.reduce((s, x) => s + Number(x.sum || 0), 0).toLocaleString()}</b>
           </div>
         </div>
       </div>
@@ -275,7 +324,11 @@ const CoopOrderList: React.FC = () => {
 
           <tbody>
             {filteredRows.length === 0 && !loading && (
-              <tr><td colSpan={5} className="muted">Տվյալներ չկան</td></tr>
+              <tr>
+                <td colSpan={5} className="muted">
+                  Տվյալներ չկան
+                </td>
+              </tr>
             )}
 
             {filteredRows.map((r) => {
@@ -294,10 +347,14 @@ const CoopOrderList: React.FC = () => {
                       />
                     </td>
                     <td>
-                      <Link to={`/coopStretchceiling/viewCoopStretchOrder/${r._id}`}>{fmtDate(r.date)}</Link>
+                      <Link to={`/coopStretchceiling/viewCoopStretchOrder/${r._id}`}>
+                        {fmtDate(r.date)}
+                      </Link>
                     </td>
                     <td>
-                      <Link to={`/coopStretchceiling/viewCoopStretchOrder/${r._id}`}>{r.buyerName || '—'}</Link>
+                      <Link to={`/coopStretchceiling/viewCoopStretchOrder/${r._id}`}>
+                        {r.buyerName || '—'}
+                      </Link>
                     </td>
                     <td>{r.buyerPhone || '—'}</td>
                     <td className="td-num">{Number(r.sum || 0).toLocaleString()}</td>
@@ -306,7 +363,9 @@ const CoopOrderList: React.FC = () => {
                   {isOpen && (
                     <tr>
                       <td colSpan={5} className="expand-cell">
-                        {loadingDetail[r._id] && <div className="muted">Բեռնվում է ապրանքների ցուցակը…</div>}
+                        {loadingDetail[r._id] && (
+                          <div className="muted">Բեռնվում է ապրանքների ցուցակը…</div>
+                        )}
 
                         {!loadingDetail[r._id] && (!items || items.length === 0) && (
                           <div className="muted">Ապրանքներ չկան</div>

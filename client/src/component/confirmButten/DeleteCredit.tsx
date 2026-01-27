@@ -7,9 +7,10 @@ interface DeleteCreditProps {
   buyerId: string;
   creditSum: number;
   creditDate: string; // лучше ISO
+  orderId: string;
 }
 
-const DeleteCredit: React.FC<DeleteCreditProps> = ({ buyerId, creditSum, creditDate }) => {
+const DeleteCredit: React.FC<DeleteCreditProps> = ({ buyerId, creditSum, creditDate, orderId }) => {
   const dispatch = useAppDispatch();
   const [cookies] = useCookies(['access_token']);
 
@@ -19,7 +20,7 @@ const DeleteCredit: React.FC<DeleteCreditProps> = ({ buyerId, creditSum, creditD
 
     try {
       const res = await dispatch(
-        deleteCredit({ cookies, buyerId, creditSum, creditDate })
+        deleteCredit({ cookies, buyerId, creditSum, creditDate, orderId })
       ).unwrap();
 
       // безопасная проверка, чтобы TS не ругался на `in`
@@ -32,7 +33,6 @@ const DeleteCredit: React.FC<DeleteCreditProps> = ({ buyerId, creditSum, creditD
         return;
       }
 
-      alert('Անսպասելի պատասխան սերվերից');
     } catch (err: any) {
       // unwrap бросает при rejectWithValue
       const msg = err?.error || err?.message || 'Սերվերի սխալ';

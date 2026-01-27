@@ -7,60 +7,60 @@ export type StretchBuyerDocument = HydratedDocument<StretchBuyer>;
 
 @Schema()
 export class StretchBuyer {
-    @Prop() buyerName: string;
-    @Prop() buyerPhone1: string;
-    @Prop() buyerPhone2: string;
-    @Prop() buyerRegion: string;
-    @Prop() buyerAddress: string;
+  @Prop() buyerName: string;
+  @Prop() buyerPhone1: string;
+  @Prop() buyerPhone2: string;
+  @Prop() buyerRegion: string;
+  @Prop() buyerAddress: string;
 
-    @Prop({
-        type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'StretchCeilingOrder' }],
-        default: [],
-    })
-    order: StretchCeilingOrder[];
+  @Prop({
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'StretchCeilingOrder' }],
+    default: [],
+  })
+  order: StretchCeilingOrder[];
 
-    @Prop({
-        type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'DebetKredit' }],
-        default: [],
-    })
-    debetKredit: DebetKredit[];
+  @Prop({
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'DebetKredit' }],
+    default: [],
+  })
+  debetKredit: DebetKredit[];
 
-    // 1) credit: [{ date, sum }]
-    @Prop({
-        type: [{
-            _id: false,
-            date: { type: Date, required: true },
-            sum: { type: Number, required: true, min: 0 },
-            orderId: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'StretchCeilingOrder',
-                required: true,
-            },
-        }],
-        default: [],
-    })
-    credit: { date: Date; sum: number }[];
+  // credit: [{ date, sum, orderId }]
+  @Prop({
+    type: [{
+      _id: false,
+      date: { type: Date, required: true },
+      sum: { type: Number, required: true, min: 0 },
+      orderId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'StretchCeilingOrder',
+        required: true,
+      },
+    }],
+    default: [],
+  })
+  credit: { date: Date; sum: number; orderId: mongoose.Types.ObjectId }[];
 
-    // 2) buy: [{ date, sum, orderId }]
-    @Prop({
-        type: [{
-            _id: false,
-            date: { type: Date, required: true },
-            sum: { type: Number, required: true, min: 0 },
-            orderId: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'StretchCeilingOrder',
-                required: true,
-            },
-        }],
-        default: [],
-    })
-    buy: { date: Date; sum: number; orderId: mongoose.Types.ObjectId }[];
+  // buy: [{ date, sum, orderId }]
+  @Prop({
+    type: [{
+      _id: false,
+      date: { type: Date, required: true },
+      sum: { type: Number, required: true, min: 0 },
+      orderId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'StretchCeilingOrder',
+        required: true,
+      },
+    }],
+    default: [],
+  })
+  buy: { date: Date; sum: number; orderId: mongoose.Types.ObjectId }[];
 
-    _id: any;
-    @Prop({ type: Number, default: 0 })
-    totalSum: number;
+  _id: any;
 
+  @Prop({ type: Number, default: 0 })
+  totalSum: number;
 }
 
 export const StretchBuyerSchema = SchemaFactory.createForClass(StretchBuyer);

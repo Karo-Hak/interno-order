@@ -19,7 +19,18 @@ const round2 = (n: number) => Math.round(n * 100) / 100;
 const idKey = (id: string | number) => String(id);
 const norm = (s?: string) => (s ?? "").toLocaleLowerCase().trim();
 
-type DraftById = Record<string, { in?: number; out?: number }>;
+// 🔢 аккуратный парсер чисел с поддержкой запятой
+const parseNum = (raw?: string): number | undefined => {
+  if (!raw) return undefined;
+  const s = raw.replace(",", ".").trim(); // "1,5" -> "1.5"
+  if (!s) return undefined;
+  const n = Number(s);
+  return Number.isFinite(n) ? n : undefined;
+};
+
+type DraftRow = { inRaw?: string; outRaw?: string };
+type DraftById = Record<string, DraftRow>;
+
 type SortKey = "name" | "qty" | "newQty" | "delta";
 type SortDir = "asc" | "desc";
 
@@ -50,20 +61,18 @@ export const InputOutput: React.FC = () => {
     })();
   }, [dispatch, cookies, navigate, setCookie]);
 
-  // изменение вход/выход
+  // изменение вход/выход — храним СТРОКУ
   const onInChange = useCallback((raw: string, id: string | number) => {
-    const val = Number(raw);
     setDraft((d) => ({
       ...d,
-      [idKey(id)]: { ...d[idKey(id)], in: Number.isFinite(val) ? val : undefined },
+      [idKey(id)]: { ...d[idKey(id)], inRaw: raw },
     }));
   }, []);
 
   const onOutChange = useCallback((raw: string, id: string | number) => {
-    const val = Number(raw);
     setDraft((d) => ({
       ...d,
-      [idKey(id)]: { ...d[idKey(id)], out: Number.isFinite(val) ? val : undefined },
+      [idKey(id)]: { ...d[idKey(id)], outRaw: raw },
     }));
   }, []);
 
@@ -83,7 +92,11 @@ export const InputOutput: React.FC = () => {
       const k = idKey(p._id);
       const ch = draft[k];
       const cur = Number(p.quantity ?? 0);
-      const next = ch ? round2(cur + (ch.in ?? 0) - (ch.out ?? 0)) : cur;
+
+      const inVal = ch ? parseNum(ch.inRaw) ?? 0 : 0;
+      const outVal = ch ? parseNum(ch.outRaw) ?? 0 : 0;
+
+      const next = round2(cur + inVal - outVal);
       map[k] = Math.max(0, next);
     }
     return map;
@@ -94,10 +107,17 @@ export const InputOutput: React.FC = () => {
     const all = (product?.arrProduct ?? []) as Product[];
     return all.reduce<Product[]>((acc, p) => {
       const ch = draft[idKey(p._id)];
-      if (!ch || (ch.in == null && ch.out == null)) return acc;
+      if (!ch) return acc;
+
+      const inVal = parseNum(ch.inRaw);
+      const outVal = parseNum(ch.outRaw);
+
+      // если ни одно число невалидно/пусто — нет изменений
+      if (inVal == null && outVal == null) return acc;
+
       const nextQty = Math.max(
         0,
-        round2((Number(p.quantity ?? 0)) + (ch.in ?? 0) - (ch.out ?? 0))
+        round2(Number(p.quantity ?? 0) + (inVal ?? 0) - (outVal ?? 0))
       );
       acc.push({ ...p, quantity: nextQty });
       return acc;
@@ -208,8 +228,8 @@ export const InputOutput: React.FC = () => {
             const sorted = [...filtered].sort((a, b) => {
               let va: string | number, vb: string | number;
               if (sortKey === "name") {
-                va = norm();
-                vb = norm();
+                va = norm(a.p.name);
+                vb = norm(b.p.name);
               } else if (sortKey === "qty") {
                 va = a.cur;
                 vb = b.cur;
@@ -245,57 +265,58 @@ export const InputOutput: React.FC = () => {
                         <th>Մուտք</th>
                         <th>Ելք</th>
                         <th onClick={() => toggleSort("newQty")}>
-                          Новый остаток{sortIndicator("newQty")}
+                          Ապ․ քանակ{sortIndicator("newQty")}
                         </th>
-                        <th onClick={() => toggleSort("delta")}>
-                          Δ{sortIndicator("delta")}
-                        </th>
-                        <th />
+                        <th>X</th>
                       </tr>
                     </thead>
                     <tbody>
                       {sorted.map(({ p, k, cur, next, delta }) => {
                         const changed = Math.abs(delta) > 0;
+                        const rowDraft = draft[k];
+
                         return (
-                          <tr key={p._id} className={changed ? "io-row-changed" : undefined}>
+                          <tr
+                            key={p._id}
+                            className={changed ? "io-row-changed" : undefined}
+                          >
                             <td>{p.name}</td>
                             <td>{cur}</td>
                             <td>
                               <input
                                 type="text"
-                                className={`io-input ${draft[k]?.in != null ? "io-input-changed" : ""}`}
-                                value={draft[k]?.in ?? ""}
-                                onChange={(e) => onInChange(e.target.value, p._id)}
+                                className={`io-input ${
+                                  rowDraft?.inRaw &&
+                                  rowDraft.inRaw.trim() !== ""
+                                    ? "io-input-changed"
+                                    : ""
+                                }`}
+                                value={rowDraft?.inRaw ?? ""}
+                                onChange={(e) =>
+                                  onInChange(e.target.value, p._id)
+                                }
                               />
                             </td>
                             <td>
                               <input
                                 type="text"
-                                className={`io-input ${draft[k]?.out != null ? "io-input-changed" : ""}`}
-                                value={draft[k]?.out ?? ""}
-                                onChange={(e) => onOutChange(e.target.value, p._id)}
+                                className={`io-input ${
+                                  rowDraft?.outRaw &&
+                                  rowDraft.outRaw.trim() !== ""
+                                    ? "io-input-changed"
+                                    : ""
+                                }`}
+                                value={rowDraft?.outRaw ?? ""}
+                                onChange={(e) =>
+                                  onOutChange(e.target.value, p._id)
+                                }
                               />
                             </td>
                             <td style={{ fontWeight: changed ? 600 : 400 }}>
                               {next}
                             </td>
-                            <td
-                              className={
-                                delta > 0
-                                  ? "io-delta-up"
-                                  : delta < 0
-                                  ? "io-delta-down"
-                                  : ""
-                              }
-                            >
-                              {delta > 0
-                                ? `↑ ${delta}`
-                                : delta < 0
-                                ? `↓ ${Math.abs(delta)}`
-                                : "—"}
-                            </td>
                             <td>
-                              {changed ? (
+                              {changed || rowDraft ? (
                                 <button
                                   onClick={() => clearRowDraft(p._id)}
                                   className="io-btn io-btn-clear"
@@ -312,7 +333,6 @@ export const InputOutput: React.FC = () => {
                       <tr className="io-total-row">
                         <td>ИТОГО</td>
                         <td>{totalCur}</td>
-                        <td />
                         <td />
                         <td>{totalNext}</td>
                         <td>{totalDelta}</td>

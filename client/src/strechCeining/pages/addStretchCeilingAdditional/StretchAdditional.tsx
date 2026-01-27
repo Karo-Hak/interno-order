@@ -11,6 +11,7 @@ import { selectUnyt } from "../../unyt/unytSlice";
 import { useForm } from "react-hook-form";
 import { addStretchAdditional, getAllStretchAdditional } from "../../features/strechAdditional/strechAdditionalApi";
 import { StretchMenu } from "../../../component/menu/StretchMenu";
+import { StockMenu } from "../../../component/menu/StockMenu";
 
 export const StretchAdditional: React.FC = (): JSX.Element => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm<any>()
@@ -54,7 +55,7 @@ export const StretchAdditional: React.FC = (): JSX.Element => {
 
     return (
         <>
-            <StretchMenu />
+            <StockMenu />
             <div >
                 <form onSubmit={handleSubmit(newStretchAdditional)} >
                     <div style={{

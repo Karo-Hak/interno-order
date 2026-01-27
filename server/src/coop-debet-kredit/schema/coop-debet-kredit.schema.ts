@@ -12,7 +12,7 @@ export class CoopDebetKredit {
   date: Date;
 
   @Prop({ required: true, trim: true })
-  type: string; // "Գնում" | "Վճարում" | ...
+  type: string; // "Գնում" | "Վճարում" | "Վերադարձ" | ...
 
   @Prop({ type: Number, required: true, min: 0 })
   amount: number;

@@ -31,7 +31,8 @@ type DeleteCreditReq = {
   cookies: any;
   buyerId: string;
   creditSum: number;
-  creditDate: string; // ISO строка или любой сериализуемый формат
+  creditDate: string;
+  orderId: string;
 };
 
 type DeleteCreditRes =
@@ -62,6 +63,7 @@ export const deleteCredit = createAsyncThunk<DeleteCreditRes, DeleteCreditReq>(
         id: obj.buyerId,
         prepayment: obj.creditSum,
         date: obj.creditDate,
+        orderId: obj.orderId,
       };
       const url = `${process.env.REACT_APP_SERVER_URL}/stretchBuyer/deleteCredit`;
       const response = await axios.post<DeleteCreditRes>(url, body, {
@@ -80,7 +82,7 @@ export const allStretchBuyer = createAsyncThunk(
   'stretchBuyer/allStretchBuyer/axios',
   async (cookie: any) => {
     try {
-      const response = await axios.get(process.env.REACT_APP_SERVER_URL +"/stretchBuyer", {
+      const response = await axios.get(process.env.REACT_APP_SERVER_URL + "/stretchBuyer", {
         headers: {
           Authorization: `Bearer ${cookie.access_token}`
         }
@@ -115,8 +117,8 @@ export const allStretchBuyerThunk = createAsyncThunk<
       const rows: StretchBuyerModel[] = Array.isArray(data?.buyer)
         ? data.buyer
         : Array.isArray(data)
-        ? data
-        : [];
+          ? data
+          : [];
 
       return rows;
     } catch (e: any) {

@@ -3,6 +3,10 @@ import { StretchBuyerService } from './stretch-buyer.service';
 import { CreateStretchBuyerDto } from './dto/create-stretch-buyer.dto';
 import { Response } from 'express'
 import { DebetKreditService } from 'src/debet-kredit/debet-kredit.service';
+import { Types } from 'mongoose';
+import { asObjectId } from 'src/common/mongo/objectid';
+
+type IdLike = string | Types.ObjectId;
 
 @Controller('stretchBuyer')
 export class StretchBuyerController {
@@ -54,15 +58,16 @@ export class StretchBuyerController {
 
   @Post('deleteCredit')
   async deleteCredit(
-    @Body() dto: { id: string; prepayment: number | string; date: string | Date },
+    @Body() dto: { id: string; prepayment: number | string; date: string | Date, orderId: IdLike },
     @Res() res: Response,
   ) {
     try {
       const amount = Number(dto.prepayment) || 0;
       const creditDate = typeof dto.date === 'string' ? new Date(dto.date) : dto.date;
+      const orderId = asObjectId("orderId", dto.orderId)
 
       // 1) cначала — удалить запись в buyer.credit (+ totalSum)
-      const creditResult = await this.stretchBuyerService.deleteCreditTx(dto.id, amount, creditDate);
+      const creditResult = await this.stretchBuyerService.deleteCreditTx(dto.id, amount, creditDate, orderId);
 
       // 2) затем — удалить соответствующую запись DK type="Վճարում"
       const tries: Array<'minute' | 'hour' | 'day'> = ['minute', 'hour', 'day'];
@@ -71,7 +76,7 @@ export class StretchBuyerController {
 
       for (const matchBy of tries) {
         const r = await this.debetKreditService.removeOnePaymentByCriteria(
-          { buyerId: dto.id, amount, date: creditDate, matchBy }
+          { buyerId: dto.id, amount, date: creditDate, matchBy, order: orderId }
         );
         if (r.removed) { dkRemoved = true; dkId = r.dkId; break; }
       }

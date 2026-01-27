@@ -2,15 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { ClientSession, Connection, Model, Types } from 'mongoose';
 import { StretchBuyer } from './schema/stretch-buyer.schema';
-import { DebetKreditService } from 'src/debet-kredit/debet-kredit.service';
 
 type ServiceOptions = { session?: ClientSession };
+type IdLike = string | Types.ObjectId;
 
 @Injectable()
 export class StretchBuyerService {
   constructor(
     @InjectModel(StretchBuyer.name)
     private stretchBuyerModel: Model<StretchBuyer>,
+    
     @InjectConnection()
     private readonly connection: Connection,
   ) { }
@@ -83,9 +84,9 @@ export class StretchBuyerService {
     );
   }
 
-  async upsertBuyMergeSum(
+  async addBuy(
     buyerId: string,
-    payload: { date: Date; sum: number; orderId: string },
+    payload: { date: Date; sum: number; orderId: IdLike },
     session?: ClientSession,
   ) {
     const _orderId = new Types.ObjectId(payload.orderId);
@@ -130,17 +131,15 @@ export class StretchBuyerService {
     return { action: ins.modifiedCount === 1 ? 'inserted' as const : 'noop' as const };
   }
 
-
-
-  async addCreditIfNotExists(
+  async addCredit(
     buyerId: string,
-    payload: { date: Date; sum: number; orderId: string },
+    payload: { date: Date; sum: number, orderId: IdLike },
     session?: ClientSession,
   ) {
     const res = await this.stretchBuyerModel.updateOne(
-      { _id: buyerId, credit: { $not: { $elemMatch: { date: payload.date, sum: payload.sum } } } },
+      { _id: buyerId, credit: { $not: { $elemMatch: { date: payload.date, sum: payload.sum, orderId: payload.orderId } } } },
       {
-        $push: { credit: { date: payload.date, sum: payload.sum } },
+        $push: { credit: { date: payload.date, sum: payload.sum, orderId: payload.orderId } },
         $inc: { totalSum: -payload.sum },
       },
       { session },
@@ -194,11 +193,12 @@ export class StretchBuyerService {
   // Удалить ровно ОДНУ запись из credit по сумме И дате (первую подходящую)
   // buyer.credit: [{ _id, sum: number, date: Date, source?: 'prepayment'|'manual'|'other', createdBy?: ObjectId, ... }]
 
-  async removeOneCreditByCriteriaAndIncTotal(
+  async removeOneCredit(
     buyerId: string | Types.ObjectId,
     criteria: {
       sum: number;
       date: Date | string;
+      orderId: string | Types.ObjectId;                 // ⬅️ обязательно передаём orderId
       matchBy?: 'exact' | 'minute' | 'hour' | 'day';
     },
     options?: ServiceOptions
@@ -213,14 +213,23 @@ export class StretchBuyerService {
     const buyerObjectId =
       buyerId instanceof Types.ObjectId ? buyerId : new Types.ObjectId(buyerId);
 
-    // 3) дата → валидный Date
+    // 3) orderId → ObjectId (обязателен)
+    if (!criteria.orderId) {
+      throw new Error('orderId is required for credit removal');
+    }
+    const orderObjectId =
+      criteria.orderId instanceof Types.ObjectId
+        ? criteria.orderId
+        : new Types.ObjectId(criteria.orderId);
+
+    // 4) дата → валидный Date
     const baseDate =
       typeof criteria.date === 'string' ? new Date(criteria.date) : criteria.date;
-    if (Number.isNaN(baseDate.getTime())) {
+    if (!(baseDate instanceof Date) || Number.isNaN(baseDate.getTime())) {
       throw new Error('Invalid date for credit removal');
     }
 
-    // 4) построить интервал даты по matchBy
+    // 5) интервал даты по matchBy
     const matchBy = criteria.matchBy ?? 'day';
     let dateCond: any;
     if (matchBy === 'exact') {
@@ -239,8 +248,8 @@ export class StretchBuyerService {
       dateCond = { $gte: start, $lte: end };
     }
 
-    // 5) матчим один элемент credit по sum + интервалу date
-    const elemMatch = { sum: sumNum, date: dateCond };
+    // 6) матчим один элемент credit по sum + dateCond + orderId
+    const elemMatch = { sum: sumNum, date: dateCond, orderId: orderObjectId };
 
     // Шаг 1: пометить ПЕРВЫЙ совпавший элемент как null + totalSum += sum
     const step1 = await this.stretchBuyerModel.updateOne(
@@ -249,7 +258,7 @@ export class StretchBuyerService {
       { session }
     );
 
-    if (step1.modifiedCount === 0) return { removed: false };
+    if ((step1 as any).modifiedCount === 0) return { removed: false };
 
     // Шаг 2: удалить null из массива
     const step2 = await this.stretchBuyerModel.updateOne(
@@ -259,9 +268,9 @@ export class StretchBuyerService {
     );
 
     return {
-      removed: step2.modifiedCount > 0,
-      step1: step1.modifiedCount,
-      step2: step2.modifiedCount,
+      removed: (step2 as any).modifiedCount > 0,
+      step1: (step1 as any).modifiedCount,
+      step2: (step2 as any).modifiedCount,
     };
   }
 
@@ -284,15 +293,17 @@ export class StretchBuyerService {
     return { updated: res.modifiedCount === 1, delta };
   }
 
-  async deleteCreditTx(buyerId: string, amount: number, date: Date) {
+  async deleteCreditTx(buyerId: string, amount: number, date: Date, orderId: IdLike) {
     const session = await this.connection.startSession();
+
     try {
       let removed = false;
       await session.withTransaction(async () => {
-        let r = await this.removeOneCreditByCriteriaAndIncTotal(buyerId, { sum: amount, date, matchBy: 'minute' }, { session });
-        if (!r.removed) r = await this.removeOneCreditByCriteriaAndIncTotal(buyerId, { sum: amount, date, matchBy: 'hour' }, { session });
-        if (!r.removed) r = await this.removeOneCreditByCriteriaAndIncTotal(buyerId, { sum: amount, date, matchBy: 'day' }, { session });
+        let r = await this.removeOneCredit(buyerId, { sum: amount, date, matchBy: 'minute', orderId }, { session });
+        if (!r.removed) r = await this.removeOneCredit(buyerId, { sum: amount, date, matchBy: 'hour', orderId }, { session });
+        if (!r.removed) r = await this.removeOneCredit(buyerId, { sum: amount, date, matchBy: 'day', orderId }, { session });
         removed = r.removed;
+
       });
       return { removed };
     } finally {

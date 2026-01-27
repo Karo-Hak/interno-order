@@ -1,16 +1,17 @@
+// AddPayment.tsx
 import React from 'react';
 import { useCookies } from 'react-cookie';
 import { useParams } from 'react-router-dom';
 import { useAppDispatch } from '../../app/hooks';
 import { addPayed } from '../../strechCeining/features/debetKredit/debetKreditApi';
-import { addCoopPayed } from '../../strechCeining/coopStretch/features/coopDebetKredit/coopDebetKreditApi';
 
 type AddPaymentProps = {
   variant: 'tag' | 'coop';
   id?: string;
+  onSuccess?: () => void;   // 👈 новый проп
 };
 
-const AddPayment: React.FC<AddPaymentProps> = ({ variant, id }) => {
+const AddPayment: React.FC<AddPaymentProps> = ({ variant, id, onSuccess }) => {
   const dispatch = useAppDispatch();
   const [cookies] = useCookies(['access_token']);
   const params = useParams<{ id?: string }>();
@@ -37,12 +38,13 @@ const AddPayment: React.FC<AddPaymentProps> = ({ variant, id }) => {
         await dispatch(
           addPayed({ cookies, id: orderId, sum: sumToSend })
         ).unwrap();
-      } else {
-        await dispatch(
-          addCoopPayed({ cookies, id: orderId, sum: sumToSend })
-        ).unwrap();
       }
-      alert('Платёж проведён');
+
+      alert('Պлатёж проведён');
+
+      // 👉 говорим родителю "обнови данные"
+      onSuccess?.();
+
     } catch (err: any) {
       alert(err?.message ?? 'Ошибка при проведении платежа');
     }
@@ -51,7 +53,7 @@ const AddPayment: React.FC<AddPaymentProps> = ({ variant, id }) => {
   return (
     <div>
       <button type="button" onClick={handleConfirmation}>
-        Կատարել Վճարում
+        Վճարում
       </button>
     </div>
   );

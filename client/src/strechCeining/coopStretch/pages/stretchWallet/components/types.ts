@@ -19,7 +19,7 @@ export type Credit = {
   sum: number;
   dkId?: string;
   returnId?: string;
-  type?: 'payment' | 'return'; // опционально — если бек уже присылает
+  type?: 'payment' | 'return' | 'returnPayment'; // опционально — если бек уже присылает
 };
 
 export type DerivedBuyer = {

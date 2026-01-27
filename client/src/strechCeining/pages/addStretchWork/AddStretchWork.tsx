@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form";
 import { allStretchWork, newStretchWork } from "../../features/StrechWork/strechWorkApi";
 import { selectStretchWork } from "../../features/StrechWork/strechWorkSlice";
 import { StretchMenu } from "../../../component/menu/StretchMenu";
+import { StockMenu } from "../../../component/menu/StockMenu";
 
 export const StretchWork: React.FC = (): JSX.Element => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm<any>()
@@ -47,7 +48,7 @@ export const StretchWork: React.FC = (): JSX.Element => {
 
     return (
         <>
-        <StretchMenu />
+        <StockMenu />
             <div className="addStretchBuyer_head">
                 <div className="addStretchBuyer_head_name">Աշխատակից</div>
                 <form onSubmit={handleSubmit(addStretchWork)} >

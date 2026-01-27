@@ -21,6 +21,7 @@ import { CoopStretchMenu } from '../../../component/menu/CoopStretchMenu';
 
 // ⚠️ наш API: по категории
 import { buyProducts, getProductsByCategory } from '../../features/product/productApi';
+import { StockMenu } from '../../../component/menu/StockMenu';
 
 
 
@@ -258,7 +259,7 @@ const BuyProduct: React.FC = () => {
 
   return (
     <div style={{ padding: 10, margin: '0 auto' }}>
-      <CoopStretchMenu />
+      <StockMenu />
       <h2>Ստեղծել պատվեր (Coop)</h2>
 
       <form onSubmit={handleSubmit(onSubmit)} className="compact-form">

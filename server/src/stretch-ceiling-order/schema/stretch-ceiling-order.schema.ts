@@ -6,9 +6,8 @@ import { User } from 'src/user/schema/user.schema';
 
 export type StretchCeilingOrderDocument = HydratedDocument<StretchCeilingOrder>;
 
-@Schema({ timestamps: false }) // у тебя уже есть собственное поле date
+@Schema({ timestamps: false }) // вручную контролируем даты
 export class StretchCeilingOrder {
-  // В БД у тебя фактически хранится объект-словарь; Mixed — безопаснее, чем Array для таких случаев
   @Prop({ type: mongoose.Schema.Types.Mixed })
   rooms: any;
 
@@ -22,37 +21,37 @@ export class StretchCeilingOrder {
   @Prop() address: string;
   @Prop() region: string;
 
-  @Prop({ type: Number, default: 0 })
-  balance: number;
-
-  @Prop({ type: Number, default: 0 })
-  prepayment: number;
-
-  @Prop({ type: Number, default: 0 })
-  groundTotal: number;
+  @Prop({ type: Number, default: 0 }) balance: number;
+  @Prop({ type: Number, default: 0 }) prepayment: number;
+  @Prop({ type: Number, default: 0 }) groundTotal: number;
 
   @Prop() orderComment: string;
   @Prop() paymentMethod: string;
 
-  @Prop() measureDate: Date;
-  @Prop() installDate: Date;
+  // ✅ если не пришло — ставим текущую дату
+  @Prop({
+    type: Date,
+    default: () => new Date(),
+    set: (v: any) => (v ? new Date(v) : new Date()),
+  })
+  measureDate: Date;
 
-  @Prop({ default: 'progress' })
-  status: string;
+  // ✅ то же самое
+  @Prop({
+    type: Date,
+    default: () => new Date(),
+    set: (v: any) => (v ? new Date(v) : new Date()),
+  })
+  installDate: Date;
 
+  @Prop({ default: 'progress' }) status: string;
   @Prop() code: string;
 
-  @Prop({ type: Number, default: 0 })
-  salary: number;
+  @Prop({ type: Number, default: 0 }) salary: number;
+  @Prop({ type: Number, default: 0 }) roomSum: number;
 
-  @Prop({ type: Number, default: 0 })
-  roomSum: number;
-
-  @Prop({ default: false })
-  payed: boolean;
-
-  @Prop({ type: [String], default: [] })
-  picUrl: string[];
+  @Prop({ default: false }) payed: boolean;
+  @Prop({ type: [String], default: [] }) picUrl: string[];
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'StretchWorker', default: null })
   stWorker: StretchWorker | Types.ObjectId | null;

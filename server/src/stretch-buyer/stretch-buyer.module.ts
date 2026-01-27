@@ -13,6 +13,7 @@ import { DebetKredit, DebetKreditSchema } from 'src/debet-kredit/schema/debet-kr
       { name: DebetKredit.name, schema: DebetKreditSchema },
     ]),
     forwardRef(() => DebetKreditModule),
+    
   ],
   controllers: [StretchBuyerController],
   providers: [StretchBuyerService],

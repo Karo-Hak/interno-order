@@ -1,21 +1,23 @@
 export const DebetKreditSearchLogic = (
-  ordersListFilter: Array<any>,
+  ordersListFilter: Array<object>,
   status: string,
-  ordersList: Array<any>,
-  setOrdersList: (rows: any[]) => void,
+  ordersList: Array<object>,
+  setOrdersList: any,
   searchBuyer: string
 ) => {
   let resultOrders = ordersListFilter;
 
-  if (searchBuyer !== '') {
-    const q = searchBuyer.toLowerCase();
-    resultOrders = resultOrders.filter((el: any) =>
-      el?.buyerName?.toLowerCase?.().includes(q) ||
-      el?.buyerPhone1?.toLowerCase?.().includes(q) ||
-      el?.buyerPhone2?.toLowerCase?.().includes(q)
+
+  if (searchBuyer !== "") {
+    const normalizedSearchName = searchBuyer.toLowerCase();
+    resultOrders = resultOrders.filter((element: any) =>
+      element.buyerName.toLowerCase().includes(normalizedSearchName) ||
+      element.buyerPhone1.toLowerCase().includes(normalizedSearchName) ||
+      element.buyerPhone2.toLowerCase().includes(normalizedSearchName) 
     );
   }
 
   setOrdersList(resultOrders);
+
   return { ordersList: resultOrders };
 };

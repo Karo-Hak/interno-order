@@ -1,40 +1,44 @@
+// ✅ AddCoopPayment.tsx
 import React from 'react';
 import { useCookies } from 'react-cookie';
-import { useParams } from 'react-router-dom';
-import { useAppDispatch } from '../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { addCoopPayed } from '../../strechCeining/coopStretch/features/coopDebetKredit/coopDebetKreditApi';
+import { selectUser } from '../../features/user/userSlice';
 
 export type AddCoopPaymentProps = {
-  id?: string;                 // orderId (если не передан — возьмём из URL)
-  disabled?: boolean;          // дизейбл кнопки
-  className?: string;          // внешние стили
-  onDone?: () => void;         // колбэк после успешного платежа
+  buyerId: string;          // ✅ ОБЯЗАТЕЛЬНО
+  orderId?: string;         // ✅ ОПЦИОНАЛЬНО
+  disabled?: boolean;
+  className?: string;
+  onDone?: () => void;
 };
 
 const AddCoopPayment: React.FC<AddCoopPaymentProps> = ({
-  id,
+  buyerId,
+  orderId,
   disabled,
   className,
   onDone,
 }) => {
   const dispatch = useAppDispatch();
   const [cookies] = useCookies(['access_token']);
-  const params = useParams<{ id?: string }>();
+  const user = useAppSelector(selectUser);
+  console.log(user.profile.userId);
+
 
   const handleClick: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
-    e.stopPropagation(); // чтобы клик по кнопке не дергал onClick строки в таблице
-
+    e.stopPropagation();
     if (disabled) return;
 
-    const orderId = id ?? params.id ?? '';
-    if (!orderId) {
-      window.alert('Order id not found');
+    if (!buyerId) {
+      window.alert('Buyer id not found');
       return;
     }
 
     const raw = window.prompt('Введите сумму платежа');
-    if (raw === null) return; // отмена
-    const sum = Number.parseFloat((raw ?? '').toString().trim());
+    if (raw === null) return;
+
+    const sum = Number.parseFloat(String(raw ?? '').trim());
     if (!Number.isFinite(sum) || sum <= 0) {
       window.alert('Сумма должна быть положительным числом');
       return;
@@ -42,13 +46,18 @@ const AddCoopPayment: React.FC<AddCoopPaymentProps> = ({
 
     try {
       await dispatch(
-        addCoopPayed({ cookies, id: orderId, sum })
+        addCoopPayed({
+          cookies,
+          buyerId,
+          sum,
+          ...(orderId ? { id: orderId } : {}),
+        })
       ).unwrap();
 
-      window.alert('Платёж проведён');
+      window.alert('Վճարումը հաջողությամբ կատարվեց');
       onDone?.();
     } catch (err: any) {
-      window.alert(err?.message ?? 'Ошибка при проведении платежа');
+      window.alert(err?.message ?? err ?? 'Ошибка при проведении платежа');
     }
   };
 
@@ -58,10 +67,10 @@ const AddCoopPayment: React.FC<AddCoopPaymentProps> = ({
       onClick={handleClick}
       disabled={disabled}
       className={className}
-      title={!id && !params.id ? 'Պատվերը բացակայում է' : undefined}
       style={{ padding: '4px 10px', borderRadius: 6 }}
+      title={orderId ? undefined : 'Վճարում առանց պատվերի'}
     >
-      Կատարել Վճարում
+      Վճարում
     </button>
   );
 };

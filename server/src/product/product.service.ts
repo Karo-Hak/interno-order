@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
@@ -139,6 +139,26 @@ export class ProductService {
     }
   }
 
+   async updateOne(id: string, dto: UpdateProductDto) {
+    const _id = new Types.ObjectId(id);
+
+    const updated = await this.productModel.findByIdAndUpdate(
+      _id,
+      {
+        $set: {
+          ...(dto.name !== undefined ? { name: dto.name.trim() } : {}),
+          ...(dto.price !== undefined ? { price: dto.price } : {}),
+          ...(dto.coopPrice !== undefined ? { coopPrice: dto.coopPrice } : {}),
+          ...(dto.quantity !== undefined ? { quantity: dto.quantity } : {}),
+          ...(dto.categoryProduct !== undefined ? { categoryProduct: new Types.ObjectId(dto.categoryProduct) } : {}),
+        },
+      },
+      { new: true }
+    );
+
+    if (!updated) throw new NotFoundException('product not found');
+    return updated;
+  }
 
 
   async findAll() {

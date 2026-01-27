@@ -1,4 +1,3 @@
-// CoopDetails.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { fmtMoney } from './utils';
@@ -49,16 +48,16 @@ export const BuyerDetails: React.FC<Props> = ({
             </tbody>
             <tfoot>
               <tr>
-                <td style={{  fontWeight: 700 }} colSpan={2}>Ընդհանուր</td>
+                <td style={{ fontWeight: 700 }} colSpan={2}>Ընդհանուր</td>
                 <td style={{ fontWeight: 700 }}>{fmtMoney(buySum)}</td>
               </tr>
             </tfoot>
           </table>
         </div>
 
-        {/* Վճարումներ / Վերադարձներ */}
+        {/* Վճարումներ / Վերադարձներ /  Վեր․ Գումար */}
         <div>
-          <div style={{ fontWeight: 700, marginBottom: 6 }}>Վճարումներ / Վերադարձներ</div>
+          <div style={{ fontWeight: 700, marginBottom: 6 }}>Վճարումներ / Վերադարձներ / Վեր․ Գումար</div>
           <table style={{ width: '100%' }}>
             <thead>
               <tr>
@@ -73,15 +72,19 @@ export const BuyerDetails: React.FC<Props> = ({
                 const anyC = c as any;
                 const returnId = anyC.returnId;
                 const dkId = anyC.dkId;
+                const typeCrefit = anyC.type
+
+
 
                 const isReturn = !!returnId;
-                const isPayment = !isReturn && !!dkId; // если нет returnId, но есть dkId — это платеж
+                const isPayment = !isReturn && !!dkId && typeCrefit === "payment"; 
+                const isReturnPayment = !isReturn && !!dkId && typeCrefit === "returnPayment";  
 
                 return (
                   <tr key={i}>
                     <td>{new Date(c.date).toLocaleString('hy-AM')}</td>
                     <td style={{ textAlign: 'right' }}>{fmtMoney(c.sum)}</td>
-                    <td>{isReturn ? 'Վերադարձ' : isPayment ? 'Վճարում' : '—'}</td>
+                    <td>{isReturn ? 'Վերադարձ' : isPayment ? 'Վճարում' : isReturnPayment ? 'Վճ․ Գումար' : '-'}</td>
                     <td style={{ width: 1, whiteSpace: 'nowrap' }}>
                       {isReturn ? (
                         <Link
@@ -113,7 +116,21 @@ export const BuyerDetails: React.FC<Props> = ({
                         >
                           Ջնջել
                         </button>
-                      ) : null}
+                      ) : <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); del(c, i)(); }}
+                        title="Ջնջել վճարումը"
+                        style={{
+                          padding: '2px 8px',
+                          border: '1px solid #f2b1b1',
+                          background: '#ffecec',
+                          borderRadius: 6,
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Ջնջել
+                      </button>
+                      }
                     </td>
                   </tr>
                 );

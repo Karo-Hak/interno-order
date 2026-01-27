@@ -6,6 +6,7 @@ import { fmtMoney } from './utils';
 import { BuyerDetails } from './CoopDetails';
 import AddCoopPayment from '../../../../../component/confirmButten/AddCoopPayment';
 import { deleteCoopPaymentByDkId, deleteCoopPaymentByDateSum } from '../../../features/coopDebetKredit/coopDebetKreditApi';
+import AddCoopReturnPayment from '../../../../../component/confirmButten/AddReturnPayment';
 
 type Props = {
   r: DerivedBuyer;
@@ -102,7 +103,6 @@ export const CoopRow: React.FC<Props> = ({ r, isOpen, toggle, onRowClick, onPaym
         </td>
         <td>{r.name}</td>
         <td>{r.phone1}</td>
-        <td>{r.phone2}</td>
         <td>{r.region || '—'}</td>
         <td>{r.address || '—'}</td>
         <td>{r.ordersCount}</td>
@@ -111,7 +111,10 @@ export const CoopRow: React.FC<Props> = ({ r, isOpen, toggle, onRowClick, onPaym
         <td>{r.creditCount} / {fmtMoney(r.creditSum)}</td>
         <td style={{ fontWeight: 600 }}>{fmtMoney(r.total)}</td>
         <td onClick={(e) => e.stopPropagation()}>
-          <AddCoopPayment id={lastOrderId} disabled={!lastOrderId} />
+          <AddCoopPayment buyerId={r._id} orderId={lastOrderId} />
+        </td>
+        <td onClick={(e) => e.stopPropagation()}>
+          <AddCoopReturnPayment id={lastOrderId}  />
         </td>
       </tr>
 

@@ -38,6 +38,7 @@ export class StretchCeilingOrderController {
   @Post()
   async create(@Body() obj: any, @Res() res: Response) {
     try {
+      
       let orderBuyer;
       if (obj.buyer?.buyerId) {
         orderBuyer = await this.stretchBuyerService.findOne(obj.buyer.buyerId);
@@ -108,7 +109,7 @@ export class StretchCeilingOrderController {
       const startDate = new Date(obj.dateFilter.startDate);
       const endDate = new Date(obj.dateFilter.endDate);
       const order = await this.stretchCeilingOrderService.filterOrder(startDate, endDate);
-      return res.status(HttpStatus.CREATED).json(order);
+      return res.status(HttpStatus.CREATED).json({ order });
     } catch (e: any) {
       return res.status(HttpStatus.BAD_REQUEST).json({ message: e.message });
     }
@@ -158,8 +159,8 @@ export class StretchCeilingOrderController {
         orderBuyer = await this.stretchBuyerService.create(updateStretchCeilingOrderDto.buyer);
       }
 
-      // удалить ссылку на заказ у старого покупателя
-      await this.stretchBuyerService.deleteFromArray(updatingOrder.buyer._id, updatingOrder.id);
+      // ❗️фикс: раньше было updatingOrder.id — заменено на updatingOrder._id
+      await this.stretchBuyerService.deleteFromArray(updatingOrder.buyer._id, updatingOrder._id);
 
       // найти нового рабочего (если передан)
       let orderWorker = undefined;
@@ -169,9 +170,9 @@ export class StretchCeilingOrderController {
         );
       }
 
-      // удалить ссылку у старого работника (если был)
+      // ❗️фикс: раньше было updatingOrder.id — заменено на updatingOrder._id
       if (updatingOrder?.stWorker?._id) {
-        await this.stretchWorkerService.deleteFromArray(updatingOrder.stWorker._id, updatingOrder.id);
+        await this.stretchWorkerService.deleteFromArray(updatingOrder.stWorker._id, updatingOrder._id);
       }
 
       if (updateStretchCeilingOrderDto.stretchTextureOrder?.rooms) {

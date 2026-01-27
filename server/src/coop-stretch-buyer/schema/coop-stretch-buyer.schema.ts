@@ -5,7 +5,7 @@ import { CoopCeilingOrder } from 'src/coop-ceiling-order/schema/coop-ceiling-ord
 
 export type CoopStretchBuyerDocument = HydratedDocument<CoopStretchBuyer>;
 
-export type CreditEntryType = 'payment' | 'return';
+export type CreditEntryType = 'payment' | 'return' | 'returnPayment';
 
 export interface CreditEntry {
   date: Date;
@@ -39,7 +39,7 @@ export class CoopStretchBuyer {
 
   /**
    * Кредит-лента: платежи и возвраты
-   * - type: 'payment' | 'return'
+   * - type: 'payment' | 'return' | 'returnPayment'
    * - dkId: ссылка на DK (для платежа)
    * - returnId: ссылка на документ возврата (для возврата)
    */
@@ -48,7 +48,7 @@ export class CoopStretchBuyer {
       _id: false,
       date:   { type: Date,   required: true },
       sum:    { type: Number, required: true, min: 0 },
-      type:   { type: String, enum: ['payment', 'return'], required: true },
+      type:   { type: String, enum: ['payment', 'return', 'returnPayment'], required: true },
       dkId:     { type: mongoose.Schema.Types.ObjectId, ref: 'CoopDebetKredit', default: null },
       returnId: { type: mongoose.Schema.Types.ObjectId, ref: 'CoopReturn',      default: null },
     }],

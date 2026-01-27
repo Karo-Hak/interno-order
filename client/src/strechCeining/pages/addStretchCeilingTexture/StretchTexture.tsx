@@ -9,6 +9,7 @@ import './stretchTexture.css';
 import { StretchTextureProps } from '../../features/strechTexture/strechTextureSlice';
 import { User } from '../../../features/user/userSlice';
 import { getAllStretchTexture, addStretchTexture, updateStretchTexture } from '../../features/strechTexture/strechTextureApi';
+import { StockMenu } from '../../../component/menu/StockMenu';
 
 
 
@@ -100,7 +101,7 @@ export const StretchTexture: React.FC = (): JSX.Element => {
 
     return (
         <>
-            <StretchMenu />
+            <StockMenu />
             <div style={{
                 margin: "20px"
             }}>

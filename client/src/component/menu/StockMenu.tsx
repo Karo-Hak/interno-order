@@ -60,9 +60,6 @@ export const StockMenu: React.FC<StockMenuProps> = (): JSX.Element => {
                     <option>Ապրանք</option>
                     <option value={"/stretchTexture"}>Ձգվող Առաստաղ</option>
                     <option value={"/stretchceiling/addStretchBardutyun"}>Բարդություն</option>
-                    <option value={"/stretchceiling/addStretchProfil"}>Պրոֆիլ</option>
-                    <option value={"/stretchceiling/addStretchLightPlatform"}>Լույսի Պլատֆորմ</option>
-                    <option value={"/stretchceiling/addStretchLightRing"}>Լույսի Օղակ</option>
                     <option value={"/stretchceiling/addTagStretchWork"}>Աշխատանք</option>
                     <option value={"/stretchceiling/addStretchAdditional"}>Այլ Ապրանք</option>
                 </select>

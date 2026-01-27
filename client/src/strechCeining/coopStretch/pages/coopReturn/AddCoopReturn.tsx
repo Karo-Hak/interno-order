@@ -19,6 +19,8 @@ import { getAllStretchProfil } from '../../../features/strechProfil/strechProfil
 import { getAllStretchLightPlatform } from '../../../features/strechLightPlatform/strechLightPlatformApi';
 import { getAllStretchLightRing } from '../../../features/strechLightRing/strechLightRingApi';
 import { createCoopReturn } from '../../features/coopReturn/coopReturnApi';
+import { log } from 'console';
+import { getProductsByCategory } from '../../../features/product/productApi';
 
 type BuyerMode = 'existing' | 'new';
 type BuyerShort = { _id: string; name: string; phone1?: string };
@@ -58,8 +60,18 @@ const normCatalog = (arr: any[]): CatalogItem[] =>
   (arr ?? []).map((x: any) => ({
     _id: String(x._id ?? x.id ?? crypto.randomUUID()),
     name: x.name ?? x.textureName ?? x.profilName ?? x.lightPlatformName ?? x.lightRingName ?? x.title ?? x.label ?? '',
-    price: Number(x.price ?? x.pricePerQty ?? x.unitPrice ?? x.cost ?? x.amount ?? 0),
+    price: Number(x.coopPrice ?? x.pricePerQty ?? x.unitPrice ?? x.cost ?? x.amount ?? 0),
   }));
+
+// дедупликация по _id (совместимо со старым target)
+const dedupById = <T extends { _id: string }>(arr: T[]): T[] => {
+  const map = new Map<string, T>();
+  for (let i = 0; i < arr.length; i++) {
+    const it = arr[i];
+    map.set(it._id, it);
+  }
+  return Array.from(map.values());
+};
 
 // мапперы
 const toGroupedFromTexture = (rows: any[]) =>
@@ -133,6 +145,9 @@ const AddCoopReturn: React.FC = () => {
   const [platforms, setPlatforms] = React.useState<CatalogItem[]>([]);
   const [rings, setRings] = React.useState<CatalogItem[]>([]);
 
+  console.log(textures);
+
+
   React.useEffect(() => {
     if (!ready) return;
     dispatch(allCoopStretchBuyerThunk(cookies)).unwrap()
@@ -143,20 +158,63 @@ const AddCoopReturn: React.FC = () => {
       .catch(() => setBuyers([]));
 
     dispatch(getAllStretchTexture(cookies)).unwrap()
-      .then((res: any) => setTextures(normCatalog(pickList(res, ['stretchTexture','textures','allStretchTexture','list','data','items']))))
+      .then((res: any) => setTextures(normCatalog(pickList(res, ['stretchTexture', 'textures', 'allStretchTexture', 'list', 'data', 'items']))))
       .catch(() => setTextures([]));
 
-    dispatch(getAllStretchProfil(cookies)).unwrap()
-      .then((res: any) => setProfils(normCatalog(pickList(res, ['stretchProfil','profils','allStretchProfil','list','data','items']))))
-      .catch(() => setProfils([]));
+    // Profil / Light Platform через product/by-category
+    (async () => {
+      try {
+        const [profRes, platRes] = await Promise.all([
+          dispatch(
+            getProductsByCategory({
+              cookies,
+              categoryId: '65a794201acb8962fc25c963', // Profil
 
-    dispatch(getAllStretchLightPlatform(cookies)).unwrap()
-      .then((res: any) => setPlatforms(normCatalog(pickList(res, ['stretchLightPlatform','lightPlatforms','allStretchLightPlatform','list','data','items']))))
-      .catch(() => setPlatforms([]));
+            }),
+          ).unwrap(),
+          dispatch(
+            getProductsByCategory({
+              cookies,
+              categoryId: '65a63e084452458093923a8f', // Light Platform
 
-    dispatch(getAllStretchLightRing(cookies)).unwrap()
-      .then((res: any) => setRings(normCatalog(pickList(res, ['stretchLightRing','lightRings','allStretchLightRing','list','data','items']))))
-      .catch(() => setRings([]));
+            }),
+          ).unwrap(),
+        ]);
+
+        setProfils(normCatalog(profRes?.items || []));
+        setPlatforms(normCatalog(platRes?.items || []));
+      } catch {
+        setProfils([]);
+        setPlatforms([]);
+      }
+    })();
+
+    (async () => {
+      try {
+        const [r1, r2] = await Promise.all([
+          dispatch(
+            getProductsByCategory({
+              cookies,
+              categoryId: '65a639cb4452458093923951', // Light Ring 
+
+            }),
+          ).unwrap(),
+          dispatch(
+            getProductsByCategory({
+              cookies,
+              categoryId: '65a639f04452458093923955', // Light Ring B
+
+            }),
+          ).unwrap(),
+        ]);
+
+        const merged = dedupById([...(r1?.items || []), ...(r2?.items || [])]
+        );
+        setRings(normCatalog(merged));
+      } catch {
+        setRings([]);
+      }
+    })();
   }, [dispatch, cookies, ready]);
 
   const buyerMode = watch('buyerMode');

@@ -27,10 +27,36 @@ export const viewCoopDebetKredit = createAsyncThunk(
 );
 export const addCoopPayed = createAsyncThunk(
   'coopDebetKredit/pay/axios',
+  async (
+    data: { cookies: any; sum: number; buyerId: string; id?: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await axios.post(
+        process.env.REACT_APP_SERVER_URL + "/coop-debet-kredit/pay",
+        {
+          sum: data.sum,
+          buyerId: data.buyerId,
+          ...(data.id ? { id: data.id } : {}),
+        },
+        {
+          headers: { Authorization: `Bearer ${data.cookies.access_token}` },
+        }
+      );
+
+      return response.data;
+    } catch (e: any) {
+      return rejectWithValue(e?.response?.data?.message ?? 'not found');
+    }
+  }
+);
+
+export const addCoopReturnPayed = createAsyncThunk(
+  'coopDebetKredit/pay/axios',
   async (data: any) => {
     
     try {
-      const response = await axios.post(process.env.REACT_APP_SERVER_URL +"/coop-debet-kredit/pay", { ...data}, {
+      const response = await axios.post(process.env.REACT_APP_SERVER_URL +"/coop-debet-kredit/payReturn", { ...data}, {
         headers: {
           Authorization: `Bearer ${data.cookies.access_token}`
         }

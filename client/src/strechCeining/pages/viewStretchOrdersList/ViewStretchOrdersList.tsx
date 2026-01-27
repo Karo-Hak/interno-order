@@ -19,7 +19,7 @@ export const ViewStretchOrdersList: React.FC = (): JSX.Element => {
     const [ordersListFilter, setOrdersListFilter] = useState([])
     const currentDate = new Date();
     const [startDate, setStartDate] = useState(new Date(currentDate.getFullYear(), currentDate.getMonth(), -29).toISOString().split('T')[0]);
-    const [endDate, setEndDate] = useState(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 2).toISOString().split('T')[0]);
+    const [endDate, setEndDate] = useState(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1,).toISOString().split('T')[0]);
     const [status, setStatus] = useState<string>("")
     const [searchBuyer, setSearchBuyer] = useState<string>("")
     const [listSum, setListSum] = useState("")
@@ -50,8 +50,8 @@ export const ViewStretchOrdersList: React.FC = (): JSX.Element => {
 
         const processResult = (result: any) => {
             if (result) {
-                setOrdersList(result)
-                setOrdersListFilter(result)
+                setOrdersList(result.order)
+                setOrdersListFilter(result.order)
             }
         };
 
@@ -184,9 +184,9 @@ export const ViewStretchOrdersList: React.FC = (): JSX.Element => {
                                         {
                                             ordersList.map((e: any) => {
                                                 let color = ""
-                                                if (e.status === "dane"){
+                                                if (e.status === "dane") {
                                                     color = "green"
-                                                } else if (e.payed === false){
+                                                } else if (e.payed === false) {
                                                     color = "lightBlue"
                                                 } else {
                                                     color = "#ebdc52"
@@ -239,7 +239,7 @@ export const ViewStretchOrdersList: React.FC = (): JSX.Element => {
                                                         </td>
                                                         <td>
                                                             <p>
-                                                            {e.region} -/- {e.address}
+                                                                {e.region} -/- {e.address}
                                                             </p>
                                                         </td>
                                                         <td >

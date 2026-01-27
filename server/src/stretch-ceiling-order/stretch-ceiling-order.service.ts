@@ -8,6 +8,7 @@ import { StretchWorker } from 'src/stretch-worker/schema/stretch-worker.schema';
 import { DebetKreditService } from 'src/debet-kredit/debet-kredit.service';
 import { StretchBuyerService } from 'src/stretch-buyer/stretch-buyer.service';
 import { UserService } from 'src/user/user.service';
+import { asObjectId } from 'src/common/mongo/objectid';
 
 @Injectable()
 export class StretchCeilingOrderService {
@@ -113,16 +114,19 @@ export class StretchCeilingOrderService {
     );
 
     // buyer.buy / buyer.credit (без завязки кредитов на заказ)
-    await this.stretchBuyerService.upsertBuyMergeSum(orderBuyerDocument._id.toString(), {
-      date: new Date(),
-      sum: Number(createdOrder.balance) || 0,
-      orderId: createdOrder._id.toString(),
-    });
-    await this.stretchBuyerService.addCreditIfNotExists(orderBuyerDocument._id.toString(), {
-      date: new Date(),
-      sum: Number(createdOrder.prepayment) || 0,
-      orderId: createdOrder._id.toString(),
-    });
+    if (Number(createdOrder.balance) > 0)
+      await this.stretchBuyerService.addBuy(orderBuyerDocument._id.toString(), {
+        date: new Date(),
+        sum: Number(createdOrder.balance) || 0,
+        orderId: createdOrder._id.toString(),
+      });
+    if (Number(createdOrder.prepayment) > 0) {
+      await this.stretchBuyerService.addCredit(orderBuyerDocument._id.toString(), {
+        date: new Date(),
+        sum: Number(createdOrder.prepayment) || 0,
+        orderId: createdOrder._id.toString(),
+      });
+    }
 
     return createdOrder;
   }
@@ -279,6 +283,7 @@ export class StretchCeilingOrderService {
     const newBalance = this.toNum(updateStretchCeilingOrderDto.balance, 0);
     const newPrepay = this.toNum(updateStretchCeilingOrderDto.prepayment, 0);
     const orderDate = (updatedOrder as any).date;
+    const orderId = asObjectId("orderId", updatingOrder._id)
 
     if (oldBuyerId && oldBuyerId !== newBuyerId) {
       // убрать у старого покупателя
@@ -286,23 +291,23 @@ export class StretchCeilingOrderService {
       if (oldPrepay > 0) {
         const session = await this.connection.startSession();
         await session.withTransaction(async () => {
-          let res = await this.stretchBuyerService.removeOneCreditByCriteriaAndIncTotal(
+          let res = await this.stretchBuyerService.removeOneCredit(
             oldBuyerId,
-            { sum: oldPrepay, date: orderDate, matchBy: 'minute' },
+            { sum: oldPrepay, date: orderDate, matchBy: 'minute', orderId },
             { session }
           );
 
           if (!res.removed) {
-            res = await this.stretchBuyerService.removeOneCreditByCriteriaAndIncTotal(
+            res = await this.stretchBuyerService.removeOneCredit(
               oldBuyerId,
-              { sum: oldPrepay, date: orderDate, matchBy: 'hour' },
+              { sum: oldPrepay, date: orderDate, matchBy: 'hour', orderId },
               { session }
             );
           }
           if (!res.removed) {
-            await this.stretchBuyerService.removeOneCreditByCriteriaAndIncTotal(
+            await this.stretchBuyerService.removeOneCredit(
               oldBuyerId,
-              { sum: oldPrepay, date: orderDate, matchBy: 'day' },
+              { sum: oldPrepay, date: orderDate, matchBy: 'day', orderId },
               { session }
             );
           }
@@ -312,13 +317,13 @@ export class StretchCeilingOrderService {
       }
 
       // добавить/обновить у нового покупателя
-      await this.stretchBuyerService.upsertBuyMergeSum(newBuyerId, {
+      await this.stretchBuyerService.addBuy(newBuyerId, {
         date: orderDate,
         sum: newBalance,
         orderId: updatedOrder._id.toString(),
       });
       if (newPrepay > 0) {
-        await this.stretchBuyerService.addCreditIfNotExists(newBuyerId, {
+        await this.stretchBuyerService.addCredit(newBuyerId, {
           date: new Date(),
           sum: newPrepay,
           orderId: updatedOrder._id.toString(),
@@ -343,7 +348,7 @@ export class StretchCeilingOrderService {
 
   // === УДАЛЕНИЕ С ТРАНЗАКЦИЕЙ ===
   async remove(id: string) {
-    const session = await this.connection.startSession(); // ⬅️ теперь поле есть
+    const session = await this.connection.startSession();
     try {
       let message = '';
       await session.withTransaction(async () => {
@@ -351,7 +356,7 @@ export class StretchCeilingOrderService {
         if (!order) throw new NotFoundException(`Order ${id} not found`);
 
         const buyerId = order.buyer.toString();
-
+        const orderId = asObjectId("orderId", id)
         // 1) удалить заказ
         await this.stretchCeilingOrderModel.deleteOne({ _id: id }).session(session);
 
@@ -367,23 +372,23 @@ export class StretchCeilingOrderService {
         if (preSum > 0) {
           const creditDate = order.prepaymentDate ?? order.createdAt ?? order.date;
           // сначала узкий интервал (минута), с метками
-          let res = await this.stretchBuyerService.removeOneCreditByCriteriaAndIncTotal(
+          let res = await this.stretchBuyerService.removeOneCredit(
             buyerId,
-            { sum: preSum, date: creditDate, matchBy: 'minute' },
+            { sum: preSum, date: creditDate, matchBy: 'minute', orderId },
             { session }
           );
 
           if (!res.removed) {
-            res = await this.stretchBuyerService.removeOneCreditByCriteriaAndIncTotal(
+            res = await this.stretchBuyerService.removeOneCredit(
               buyerId,
-              { sum: preSum, date: creditDate, matchBy: 'hour' },
+              { sum: preSum, date: creditDate, matchBy: 'hour', orderId },
               { session }
             );
           }
           if (!res.removed) {
-            await this.stretchBuyerService.removeOneCreditByCriteriaAndIncTotal(
+            await this.stretchBuyerService.removeOneCredit(
               buyerId,
-              { sum: preSum, date: creditDate, matchBy: 'day' },
+              { sum: preSum, date: creditDate, matchBy: 'day', orderId },
               { session }
             );
           }
@@ -406,4 +411,5 @@ export class StretchCeilingOrderService {
       await session.endSession();
     }
   }
+
 }

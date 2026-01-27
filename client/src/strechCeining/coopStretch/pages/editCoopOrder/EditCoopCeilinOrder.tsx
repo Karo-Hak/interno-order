@@ -54,7 +54,7 @@ export type FormValues = {
     address?: string;
   };
 
-  groupedStretchTextureData: TextureRow[]; // height + width + qty + price + sum
+  groupedStretchTextureData: TextureRow[];
   groupedStretchProfilData: SimpleRow[];
   groupedLightPlatformData: SimpleRow[];
   groupedLightRingData: SimpleRow[];
@@ -99,42 +99,52 @@ const normCatalog = (arr: any[]): CatalogItem[] =>
   }));
 
 const toSimpleRows = (arr: any[] = []): SimpleRow[] =>
-  arr.map((r) => ({
-    sku: '',
-    itemId: '',
-    name: String(r?.name ?? ''),
-    qty: Number(r?.qty ?? 0),
-    price: Number(r?.price ?? 0),
-    sum: Number(r?.sum ?? 0),
-  }));
+  arr.map((r) => {
+    const name = String(r?.name ?? '');
+    const price = Number(r?.price ?? 0);
+    const qty = Number(r?.qty ?? 0);
+    const sum = Number(r?.sum ?? +(qty * price).toFixed(2));
+    return {
+      sku: '',
+      itemId: String(r?.itemId ?? ''), // если вдруг сохранён
+      name,
+      qty,
+      price,
+      sum,
+      catalogQuery: name ? `${name} (${price})` : '', // ✅ важно для input+datalist
+    };
+  });
 
 // из модели → строки формы (сохранённые height & width)
 const toTextureRowsFromModel = (arr: any[] = []): TextureRow[] =>
   arr.map((r) => {
     const height = Number(r?.height ?? 0);
     const width = Number(r?.width ?? 0);
-    const qty = +((Number.isFinite(height) ? height : 0) * (Number.isFinite(width) ? width : 0)).toFixed(3);
+    const qty = Number.isFinite(Number(r?.qty))
+      ? Number(r?.qty)
+      : +((Number.isFinite(height) ? height : 0) * (Number.isFinite(width) ? width : 0)).toFixed(3);
     const price = Number(r?.price ?? 0);
-    const sum = +(qty * price).toFixed(2);
+    const sum = Number.isFinite(Number(r?.sum)) ? Number(r?.sum) : +(qty * price).toFixed(2);
+    const name = String(r?.name ?? '');
     return {
-      itemId: '',
-      name: String(r?.name ?? ''),
+      itemId: String(r?.itemId ?? ''), // если вдруг сохранён
+      name,
       height,
       width,
       qty,
       price,
       sum,
+      catalogQuery: name ? `${name} (${price})` : '', // ✅ важно для input+datalist
     };
   });
 
-// из формы → patch для API (кладём height/width/qty/sum)
 const toGroupedTextureForPatch = (rows: TextureRow[]) =>
   (rows ?? [])
     .filter((r) => (r.name?.trim() ?? '') !== '')
     .map((r) => {
       const height = Number(r?.height ?? 0);
       const width = Number(r?.width ?? 0);
-      const qty = +((height * width) || 0).toFixed(3);
+      const qty = +(((height/100) * (width/100)) || 0).toFixed(3);
       const price = Number(r?.price ?? 0);
       const sum = +(qty * price).toFixed(2);
       return { name: r.name ?? '', height, width, qty, price, sum };
@@ -291,7 +301,6 @@ const EditCoopCeilinOrder: React.FC = () => {
       try {
         const { order } = await dispatch(getCoopOrder({ cookies, id })).unwrap();
         hydrateForm(order);
-        tryAutofillAllByCatalog(); // после гидрации — сразу попытка найти хиты
       } catch (e: any) {
         alert(e?.message || 'Order not found');
         navigate(-1);
@@ -310,10 +319,10 @@ const EditCoopCeilinOrder: React.FC = () => {
 
     const buyerMode: BuyerMode = buyerId ? 'existing' : 'new';
 
-    const texRows = toTextureRowsFromModel(o.groupedStretchTextureData);
-    const profRows = toSimpleRows(o.groupedStretchProfilData);
-    const platRows = toSimpleRows(o.groupedLightPlatformData);
-    const ringRows = toSimpleRows(o.groupedLightRingData);
+    const texRows = toTextureRowsFromModel((o as any).groupedStretchTextureData);
+    const profRows = toSimpleRows((o as any).groupedStretchProfilData);
+    const platRows = toSimpleRows((o as any).groupedLightPlatformData);
+    const ringRows = toSimpleRows((o as any).groupedLightRingData);
 
     const dateLocal = o.date
       ? new Date(o.date).toISOString().slice(0, 16)
@@ -336,47 +345,56 @@ const EditCoopCeilinOrder: React.FC = () => {
       groupedLightRingData: ringRows,
 
       date: dateLocal,
-      buyerComment: o.buyerComment ?? '',
-      paymentMethod: o.paymentMethod ?? 'cash',
-      balance: Number(o.balance ?? 0),
-      picUrl: Array.isArray(o.picUrl) ? o.picUrl : [],
+      buyerComment: (o as any).buyerComment ?? '',
+      paymentMethod: (o as any).paymentMethod ?? 'cash',
+      balance: Number((o as any).balance ?? 0),
+      picUrl: Array.isArray((o as any).picUrl) ? (o as any).picUrl : [],
       _picUrlDraft: '',
     });
   };
 
-  /** Универсальная автоподстановка по каталогу: сначала byId, потом byName. */
+  /** Автоподстановка по каталогу: byId -> byName, и ещё обновляем catalogQuery */
   const tryAutofillGroup = React.useCallback(
-    (groupName: 'groupedStretchProfilData' | 'groupedLightPlatformData' | 'groupedLightRingData',
-     catalog: CatalogItem[]) => {
+    (
+      groupName: 'groupedStretchProfilData' | 'groupedLightPlatformData' | 'groupedLightRingData',
+      catalog: CatalogItem[]
+    ) => {
       if (!catalog.length) return;
       const byId = mapById(catalog);
       const byName = mapByName(catalog);
 
-      const rows = getValues(groupName) || [];
+      const rows = (getValues(groupName) || []) as SimpleRow[];
       rows.forEach((r: SimpleRow, idx: number) => {
         const idHit = r.itemId ? byId.get(String(r.itemId)) : undefined;
         const nameHit = r.name ? byName.get(norm(r.name)) : undefined;
         const hit = idHit || nameHit;
         if (!hit) return;
 
-        // itemId — чтобы селект отобразил имя
+        // itemId
         if (!r.itemId) {
           setValue(`${groupName}.${idx}.itemId` as const, hit._id, { shouldDirty: false });
         }
-        // name — только если пуст/пробелы
+
+        // name если пустой
         const curName = String(getValues(`${groupName}.${idx}.name` as const) ?? '').trim();
         if (!curName) {
           setValue(`${groupName}.${idx}.name` as const, hit.name, { shouldDirty: true });
         }
 
-        // price — уважаем пользовательский (>0)
+        // catalogQuery если пустой (✅ важное для input)
+        const curQuery = String(getValues(`${groupName}.${idx}.catalogQuery` as const) ?? '').trim();
+        if (!curQuery) {
+          setValue(`${groupName}.${idx}.catalogQuery` as const, `${hit.name} (${hit.price})`, { shouldDirty: false });
+        }
+
+        // price: не перетираем пользовательскую >0
         const curPrice = toNum(getValues(`${groupName}.${idx}.price` as const));
         const price = isEmptyPrice(curPrice) ? Number(hit.price || 0) : curPrice;
         if (price !== curPrice) {
           setValue(`${groupName}.${idx}.price` as const, price, { shouldDirty: true });
         }
 
-        // sum = qty * price
+        // sum
         const qty = toNum(getValues(`${groupName}.${idx}.qty` as const));
         const sum = +(qty * price).toFixed(2);
         setValue(`${groupName}.${idx}.sum` as const, sum, { shouldDirty: true });
@@ -390,31 +408,34 @@ const EditCoopCeilinOrder: React.FC = () => {
     const byId = mapById(textures);
     const byName = mapByName(textures);
 
-    const rows = getValues('groupedStretchTextureData') || [];
+    const rows = (getValues('groupedStretchTextureData') || []) as TextureRow[];
     rows.forEach((r: TextureRow, idx: number) => {
       const idHit = r.itemId ? byId.get(String(r.itemId)) : undefined;
       const nameHit = r.name ? byName.get(norm(r.name)) : undefined;
       const hit = idHit || nameHit;
       if (!hit) return;
 
-      // itemId для селекта
       if (!r.itemId) {
         setValue(`groupedStretchTextureData.${idx}.itemId`, hit._id, { shouldDirty: false });
       }
-      // name — только если пустой/пробельный
+
       const curName = String(getValues(`groupedStretchTextureData.${idx}.name`) ?? '').trim();
       if (!curName) {
         setValue(`groupedStretchTextureData.${idx}.name`, hit.name, { shouldDirty: true });
       }
 
-      // price — не перетираем свою (>0)
+      // ✅ catalogQuery для input
+      const curQuery = String(getValues(`groupedStretchTextureData.${idx}.catalogQuery`) ?? '').trim();
+      if (!curQuery) {
+        setValue(`groupedStretchTextureData.${idx}.catalogQuery`, `${hit.name} (${hit.price})`, { shouldDirty: false });
+      }
+
       const curPrice = toNum(getValues(`groupedStretchTextureData.${idx}.price`));
       const price = isEmptyPrice(curPrice) ? Number(hit.price || 0) : curPrice;
       if (price !== curPrice) {
         setValue(`groupedStretchTextureData.${idx}.price`, price, { shouldDirty: true });
       }
 
-      // qty: если пуст, height*width
       const h = toNum(getValues(`groupedStretchTextureData.${idx}.height`));
       const w = toNum(getValues(`groupedStretchTextureData.${idx}.width`));
       const curQty = toNum(getValues(`groupedStretchTextureData.${idx}.qty`));
@@ -424,7 +445,6 @@ const EditCoopCeilinOrder: React.FC = () => {
         setValue(`groupedStretchTextureData.${idx}.qty`, qty, { shouldDirty: true });
       }
 
-      // sum
       const sum = +(qty * price).toFixed(2);
       setValue(`groupedStretchTextureData.${idx}.sum`, sum, { shouldDirty: true });
     });
@@ -437,8 +457,9 @@ const EditCoopCeilinOrder: React.FC = () => {
     tryAutofillGroup('groupedLightRingData', rings);
   }, [tryAutofillTextures, tryAutofillGroup, profils, platforms, rings]);
 
-  // повторная автоподстановка при подгрузке любого каталога
-  React.useEffect(() => { tryAutofillAllByCatalog(); }, [tryAutofillAllByCatalog]);
+  React.useEffect(() => {
+    tryAutofillAllByCatalog();
+  }, [tryAutofillAllByCatalog]);
 
   /* total */
   const texRows = watch('groupedStretchTextureData');
@@ -503,7 +524,6 @@ const EditCoopCeilinOrder: React.FC = () => {
 
       <form onSubmit={handleSubmit(onSubmit)} className="compact-form">
         <div className="layout">
-          {/* MAIN */}
           <div className="col-main">
             <div className="card dense">
               <BuyerSection
@@ -515,16 +535,18 @@ const EditCoopCeilinOrder: React.FC = () => {
                 setValue={setValue as UseFormSetValue<FormValues>}
                 watch={watch as UseFormWatch<FormValues>}
               />
-              {buyerMode === 'existing' && (() => {
-                const selId = watch('buyerId');
-                const b = buyers.find(x => x._id === selId);
-                if (!b) return null;
-                return (
-                  <div style={{ marginTop: 6, fontSize: 13, opacity: 0.85 }}>
-                    Ընտրված գնորդը: <b>{b.name}</b>{b.phone1 ? ` · ${b.phone1}` : ''}
-                  </div>
-                );
-              })()}
+              {buyerMode === 'existing' &&
+                (() => {
+                  const selId = watch('buyerId');
+                  const b = buyers.find((x) => x._id === selId);
+                  if (!b) return null;
+                  return (
+                    <div style={{ marginTop: 6, fontSize: 13, opacity: 0.85 }}>
+                      Ընտրված գնորդը: <b>{b.name}</b>
+                      {b.phone1 ? ` · ${b.phone1}` : ''}
+                    </div>
+                  );
+                })()}
             </div>
 
             <div className="groups two-col">
@@ -574,7 +596,6 @@ const EditCoopCeilinOrder: React.FC = () => {
             </div>
           </div>
 
-          {/* SIDE */}
           <aside className="col-side">
             <div className="card dense sticky-side">
               <PaymentSection total={total} register={register} setValue={setValue} />

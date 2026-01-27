@@ -118,8 +118,7 @@ export const CoopBuyerTable: React.FC<Props> = ({ rows, onRowClick, onRefresh })
                 </th>
 
                 <th style={{ position: 'sticky', top: 0, zIndex: 20, background: '#fff', boxShadow: 'inset 0 -1px #eee' }}>Հեռախոս 1</th>
-                <th style={{ position: 'sticky', top: 0, zIndex: 20, background: '#fff', boxShadow: 'inset 0 -1px #eee' }}>Հեռախոս 2</th>
-
+                
                 <th onClick={() => onSort('buyerRegion')} style={{
                   cursor: 'pointer',
                   position: 'sticky', top: 0, zIndex: 20, background: '#fff', boxShadow: 'inset 0 -1px #eee'
@@ -173,6 +172,12 @@ export const CoopBuyerTable: React.FC<Props> = ({ rows, onRowClick, onRefresh })
                   position: 'sticky', top: 0, zIndex: 20, background: '#fff', boxShadow: 'inset 0 -1px #eee'
                 }}>
                   Վճարում
+                </th>
+                <th style={{
+                  cursor: 'pointer',
+                  position: 'sticky', top: 0, zIndex: 20, background: '#fff', boxShadow: 'inset 0 -1px #eee'
+                }}>
+                  Վերադարճ
                 </th>
               </tr>
             </thead>

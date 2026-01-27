@@ -222,7 +222,16 @@ const CoopOrderDetails: React.FC = () => {
         </button>
         <div style={{ fontWeight: 700, fontSize: 14 }}>Պատվեր № {id}</div>
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
-          <div><AddCoopPayment id={order?._id} /></div>
+          <div>
+            <AddCoopPayment
+              buyerId={String(order?.buyer?._id ?? '')}
+              orderId={String(order?._id ?? '')}
+              disabled={!order?.buyer?._id}
+              onDone={load}
+            />
+
+          </div>
+
           <button
             type="button"
             onClick={handleEdit}

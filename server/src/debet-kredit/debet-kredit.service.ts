@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { ClientSession, Model, Types } from "mongoose";
 import { DebetKredit, DebetKreditDocument } from "./schema/debet-kredit.schema";
@@ -95,81 +95,84 @@ export class DebetKreditService {
   }
 
   /**
-   * Добавляет оплату (Վճարում) по заказу и привязывает её к покупателю.
-   */
-  async createPayment(orderId: IdLike, sum: number, options?: ServiceOptions): Promise<DebetKreditDocument> {
-  const session = options?.session;
-  const _orderId = toObjectId(orderId);
+  * Добавляет оплату (Վճարում) по заказу и привязывает её к покупателю.
+  */
+  async createPayment(
+    orderId: IdLike,
+    sumRaw: number,
+    options?: ServiceOptions,
+  ): Promise<DebetKreditDocument> {
+    const session = options?.session ?? null;
 
-  const order = await this.stretchCeilingOrderModel.findById(_orderId).session(session ?? null);
-  if (!order) throw new NotFoundException("Order not found");
+    // нормализуем сумму
+    const sum = Number(sumRaw);
+    if (!Number.isFinite(sum) || sum <= 0) {
+      throw new BadRequestException('Неверная сумма платежа');
+    }
 
-  const buyerId = toObjectId(order.buyer as IdLike);
-  const userId = toObjectId(order.user as IdLike);
-  const amount = Number(sum) || 0;
+    const _orderId = toObjectId(orderId);
 
-  // 1) создаём документ платежа
-  const kreditDoc = new this.debetKreditModel({
-    type: "Վճարում",
-    user: userId,
-    buyer: buyerId,
-    order: _orderId,
-    amount,
-  });
-  await kreditDoc.save({ session });
+    const order = await this.stretchCeilingOrderModel
+      .findById(_orderId)
+      .session(session);
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+    if (!order.buyer) {
+      throw new BadRequestException('У заказа не указан покупатель');
+    }
+    if (!order.user) {
+      throw new BadRequestException('У заказа не указан пользователь');
+    }
 
-  // 2) обновляем кошелёк покупателя (твоя логика)
-  await this.stretchBuyerService.addCreditIfNotExists(buyerId._id.toString(), {
-    date: new Date(),
-    sum: amount,
-    orderId: _orderId.toString(),
-  });
+    const buyerId = toObjectId(order.buyer as IdLike);
+    const userId = toObjectId(order.user as IdLike);
 
-  await this.stretchBuyerModel.updateOne(
-    { _id: buyerId },
-    { $addToSet: { debetKredit: kreditDoc._id } },
-    { session },
-  );
+    const prepayment = Number(order.prepayment) || 0;
+    const groundTotal = Number(order.groundTotal) || 0;
 
-  await this.stretchCeilingOrderModel.updateOne(
-    { _id: _orderId },
-    [
-      {
-        $set: {
-          prepayment: { $add: [{ $ifNull: ["$prepayment", 0] }, amount] },
+    const newPrepayment = prepayment + sum;
+    const newGroundTotal = groundTotal - sum;
 
-          groundTotal: {
-            $max: [
-              0,
-              {
-                $subtract: [
-                  { $ifNull: ["$groundTotal", { $ifNull: ["$totalSum", 0] }] },
-                  amount,
-                ],
-              },
-            ],
-          },
+    const kreditDoc = new this.debetKreditModel({
+      type: 'Վճարում',
+      user: userId,
+      buyer: buyerId,
+      order: _orderId,
+      amount: sum,
+    });
 
-          updatedAt: new Date(),
-        },
-      },
-    ],
-    { session },
-  );
+    await kreditDoc.save({ session });
 
-  return kreditDoc;
-}
+    await this.stretchBuyerService.addCredit(
+      buyerId.toString(),
+      { date: new Date(), sum, orderId: _orderId },
+      session ?? undefined,   // ✔ без объекта
+    );
 
 
-  // Алиас для обратной совместимости с твоим именем метода
-  async creatPayment(orderId: IdLike, sum: number, options?: ServiceOptions) {
-    return this.createPayment(orderId, sum, options);
+    await this.stretchBuyerModel.updateOne(
+      { _id: buyerId },
+      { $addToSet: { debetKredit: kreditDoc._id } },
+      { session },
+    );
+
+    await this.stretchCeilingOrderModel.updateOne(
+      { _id: orderId },
+      { $inc: { prepayment: +sum, groundTotal: -sum } },
+      { session }
+    );
+
+    return kreditDoc;
   }
+
+
+
 
   async findAllByBuyer() {
     return this.stretchBuyerModel
       .find()
-      .populate("debetKredit").populate("order")
+      .populate("debetKredit")
       .sort({ _id: -1 });
   }
 
@@ -228,23 +231,39 @@ export class DebetKreditService {
       amount: number;
       date: Date | string;
       matchBy?: 'exact' | 'minute' | 'hour' | 'day';
+      order: IdLike; // id заказа, для которого удаляем платёж
     },
     options?: ServiceOptions
   ): Promise<{ removed: boolean; dkId?: string; pulled?: boolean }> {
     const session = options?.session ?? null;
 
-    // 1) нормализуем вход
+    // 1) нормализация входа
     const buyerId = toObjectId(criteria.buyerId);
+    const orderId = toObjectId(criteria.order);
     const amountNum = Number(criteria.amount);
+
     if (!Number.isFinite(amountNum) || amountNum <= 0) {
       return { removed: false };
     }
+
+    // NB: если у DK нет прямого поля order, уберите его из фильтра чуть ниже.
+    const order = await this.stretchCeilingOrderModel
+      .findById(orderId)
+      .session(session)
+      .select({ _id: 1 })
+      .lean()
+      .exec();
+
+    if (!order?._id) {
+      throw new Error('order not found');
+    }
+
+    // 2) разбор даты
     const baseDate = typeof criteria.date === 'string' ? new Date(criteria.date) : criteria.date;
     if (Number.isNaN(baseDate.getTime())) {
       throw new Error('Invalid date for payment removal');
     }
 
-    // 2) построим интервал даты
     const matchBy = criteria.matchBy ?? 'day';
     let dateCond: any;
     if (matchBy === 'exact') {
@@ -263,18 +282,22 @@ export class DebetKreditService {
       dateCond = { $gte: start, $lte: end };
     }
 
-    // 3) найдём ОДИН документ с type="Վճարում"
-    const filter = {
+    // 3) найдём ОДИН DK-документ платежа
+    const filter: any = {
       type: 'Վճարում',
       buyer: buyerId,
       amount: amountNum,
       date: dateCond,
     };
 
-    // берём ближайший по дате (на твой вкус: 1 — старший, -1 — младший)
+    // если в DebetKredit есть поле связи с заказом, используем его
+    // иначе закомментируй следующую строку
+    filter.order = orderId;
+
+    // можно выбирать ближайший (старший/младший). Ниже — старший по дате.
     const toDelete = await this.debetKreditModel
       .findOne(filter)
-      .sort({ date: 1 })
+      .sort({ date: 1 }) // или .sort({ date: -1 }) если нужен самый свежий
       .session(session)
       .select({ _id: 1 })
       .lean()
@@ -284,7 +307,7 @@ export class DebetKreditService {
 
     const dkId = toDelete._id as Types.ObjectId;
 
-    // 4) удаляем сам документ
+    // 4) удаляем сам платеж DK
     const delRes = await this.debetKreditModel
       .deleteOne({ _id: dkId })
       .session(session)
@@ -294,15 +317,28 @@ export class DebetKreditService {
       return { removed: false };
     }
 
-    // 5) убираем ссылку у покупателя
+    // 5) вытаскиваем ссылку у покупателя
     const pullRes = await this.stretchBuyerModel.updateOne(
       { _id: buyerId },
       { $pull: { debetKredit: dkId } },
       { session: session ?? undefined }
     );
 
-    return { removed: true, dkId: dkId.toString(), pulled: pullRes.modifiedCount > 0 };
+    // 6) корректируем суммы в заказе (атомарно через $inc)
+    // prepayment снижаем, groundTotal повышаем на ту же сумму
+    await this.stretchCeilingOrderModel.updateOne(
+      { _id: orderId },
+      { $inc: { prepayment: -amountNum, groundTotal: +amountNum } },
+      { session: session ?? undefined }
+    );
+
+    return {
+      removed: true,
+      dkId: dkId.toString(),
+      pulled: (pullRes.modifiedCount ?? 0) > 0,
+    };
   }
+
 
 
 
