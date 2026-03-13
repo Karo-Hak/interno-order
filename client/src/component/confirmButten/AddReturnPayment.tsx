@@ -5,10 +5,10 @@ import { useAppDispatch } from '../../app/hooks';
 import { addCoopReturnPayed } from '../../strechCeining/coopStretch/features/coopDebetKredit/coopDebetKreditApi';
 
 export type AddReturnPaymentProps = {
-  id?: string;                 // orderId (если не передан — возьмём из URL)
-  disabled?: boolean;          // дизейбл кнопки
-  className?: string;          // внешние стили
-  onDone?: () => void;         // колбэк после успешного платежа
+  id?: string;                 
+  disabled?: boolean;          
+  className?: string;          
+  onDone?: () => void;         
 };
 
 const AddCoopReturnPayment: React.FC<AddReturnPaymentProps> = ({
@@ -22,8 +22,7 @@ const AddCoopReturnPayment: React.FC<AddReturnPaymentProps> = ({
   const params = useParams<{ id?: string }>();
 
   const handleClick: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
-    e.stopPropagation(); // чтобы клик по кнопке не дергал onClick строки в таблице
-
+    e.stopPropagation(); 
     if (disabled) return;
 
     const orderId = id ?? params.id ?? '';
@@ -32,11 +31,11 @@ const AddCoopReturnPayment: React.FC<AddReturnPaymentProps> = ({
       return;
     }
 
-    const raw = window.prompt('Введите сумму платежа');
-    if (raw === null) return; // отмена
+    const raw = window.prompt('Մուտքագրեք գումարը');
+    if (raw === null) return; 
     const sum = Number.parseFloat((raw ?? '').toString().trim());
     if (!Number.isFinite(sum) || sum <= 0) {
-      window.alert('Сумма должна быть положительным числом');
+      window.alert('միայն դրական թիվ');
       return;
     }
 
@@ -45,10 +44,10 @@ const AddCoopReturnPayment: React.FC<AddReturnPaymentProps> = ({
         addCoopReturnPayed({ cookies, id: orderId, sum })
       ).unwrap();
 
-      window.alert('Платёж проведён');
+      window.alert('Գրանցված');
       onDone?.();
     } catch (err: any) {
-      window.alert(err?.message ?? 'Ошибка при проведении платежа');
+      window.alert(err?.message ?? 'Սխալ');
     }
   };
 

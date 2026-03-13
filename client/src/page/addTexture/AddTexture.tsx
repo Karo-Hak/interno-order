@@ -1,4 +1,3 @@
-// src/wallpaper/pages/texture/AddTexture.tsx
 import React, { useEffect, useMemo, useState } from "react";
 import { useCookies } from "react-cookie";
 import { useForm } from "react-hook-form";
@@ -16,7 +15,7 @@ import "./addTexture.css";
 
 type FormValues = {
   name: string;
-  price: string; // вводим как строку, конвертируем в number
+  price: string; 
 };
 
 export const AddTexture: React.FC = (): JSX.Element => {
@@ -63,7 +62,6 @@ export const AddTexture: React.FC = (): JSX.Element => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, cookies, navigate, setCookie, setFocus]);
 
-  // Массив имен для быстрой проверки дубликатов (необязательно, но удобно)
   const existingNames = useMemo(() => {
     const arr = textureState?.arrTexture ?? [];
     return new Set(arr.map((t: Texture) => (t.name ?? "").trim().toLocaleLowerCase()));
@@ -82,7 +80,6 @@ export const AddTexture: React.FC = (): JSX.Element => {
         return;
       }
 
-      // Простая фронт-проверка дубликата по имени
       if (existingNames.has(name.toLocaleLowerCase())) {
         setServerError("Նյութը արդեն գոյություն ունի այս անվանմամբ");
         setSubmitting(false);
@@ -99,7 +96,6 @@ export const AddTexture: React.FC = (): JSX.Element => {
         return;
       }
 
-      // Успех: очищаем форму и обновляем список
       reset({ name: "", price: "" });
       await dispatch(getAllTexture(cookies));
       setFocus("name");
@@ -110,7 +106,6 @@ export const AddTexture: React.FC = (): JSX.Element => {
     }
   };
 
-  // Можно отсортировать список по имени
   const textures = useMemo(() => {
     const arr = (textureState?.arrTexture ?? []) as Texture[];
     return [...arr].sort((a, b) => (a.name || "").localeCompare(b.name || "", "hy-AM"));

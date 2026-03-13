@@ -5,8 +5,8 @@ import { selectUser } from '../../features/user/userSlice';
 import { addPlintAgentPayment } from '../../plint/features/plintWholesaleOrder/plintWholesaleOrderApi';
 
 const AddPlintAgentPayment: React.FC<{
-  agentId?: string;   // можно оставить для локальной валидации/отображения
-  buyerId?: string;   // тоже можно оставить (не уходит на бэк)
+  agentId?: string;   
+  buyerId?: string;   
   orderId?: string;
   onDone?: () => void;
 }> = ({ agentId, buyerId, orderId, onDone }) => {
@@ -22,8 +22,6 @@ const AddPlintAgentPayment: React.FC<{
   const submit = async () => {
     const v = Number.parseFloat(amount);
     if (!orderId) { alert('Պատվեր отсутствует'); return; }
-    // agentId можно проверять, чтобы заранее подсказать пользователю,
-    // но на бэке он не требуется для этого роута:
     if (!agentId) { alert('Ագենտը բացակայում է'); return; }
 
     if (!Number.isFinite(v) || v <= 0) { alert('Մուտքագրեք ճիշտ գումար'); return; }
@@ -31,7 +29,7 @@ const AddPlintAgentPayment: React.FC<{
       await dispatch(
         addPlintAgentPayment({
           cookies,
-          orderId,           // ← отправляем только то, что ожидает thunk
+          orderId,         
           amount: v,
           date: date || undefined,
           userId,

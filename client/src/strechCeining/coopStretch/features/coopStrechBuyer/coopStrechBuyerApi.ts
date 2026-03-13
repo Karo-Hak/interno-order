@@ -44,7 +44,7 @@ export const allCoopStretchBuyerThunk = createAsyncThunk<
         headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       });
 
-      // ожидаем ответ вида: { messege?: string, buyer: [...] }
+      //  { messege?: string, buyer: [...] }
       const data = response.data;
       const rows: CoopStretchBuyerModel[] = Array.isArray(data?.buyer)
         ? data.buyer

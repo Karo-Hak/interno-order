@@ -6,14 +6,14 @@ import {
   UseFormGetValues,
   UseFormSetValue,
 } from 'react-hook-form';
-import { FormValues } from '../RetailOrderPage'; // <-- важно: retail page
+import { FormValues } from '../RetailOrderPage'; 
 
 export type SimpleRow = {
-  itemId?: string;   // productId из каталога (ObjectId)
+  itemId?: string;   // productId  (ObjectId)
   name: string;
   sku?: string;
   qty: number;
-  price: number;     // цена за штуку
+  price: number;     
   sum: number;       // qty * price
 };
 
@@ -38,29 +38,23 @@ const ItemsGroup: React.FC<Props> = ({
 }) => {
   const { fields, append, remove } = useFieldArray({ control, name });
 
-  // быстрый доступ к товару по id
   const byId = React.useMemo(() => {
     const m = new Map<string, CatalogItem>();
     catalog.forEach(c => m.set(c._id, c));
     return m;
   }, [catalog]);
 
-  // как будет выглядеть каждая option в datalist
   const optionText = (c: CatalogItem) =>
     `${c.name}${c.sku ? ` · ${c.sku}` : ''}${Number.isFinite(c.price) ? ` · ${c.price}` : ''}`;
 
-  // сопоставляем optionText -> id (чтобы по точному совпадению понять что выбрал юзер)
   const text2id = React.useMemo(() => {
     const m = new Map<string, string>();
     catalog.forEach(c => m.set(optionText(c), c._id));
     return m;
   }, [catalog, optionText]);
 
-  // локальное состояние строк поиска (по каждой строке таблицы)
   const [queryMap, setQueryMap] = React.useState<Record<string, string>>({});
 
-  // следим за количеством строк (fields). Когда поля меняются (append/remove),
-  // синхронизируем queryMap чтобы у новых была пустая строка.
   React.useEffect(() => {
     setQueryMap(prev => {
       const next: Record<string, string> = {};
@@ -74,15 +68,11 @@ const ItemsGroup: React.FC<Props> = ({
   const setRowQuery = (rowKey: string, val: string) =>
     setQueryMap(prev => ({ ...prev, [rowKey]: val }));
 
-  // добавить новую строку
   const addRow = () => {
     const newIdx = fields.length;
     append({ itemId: '', name: '', sku: '', qty: 0, price: 0, sum: 0 });
-    // подготовим текст поиска для новой строки
-    // (queryMap будет синкнут через useEffect, так что можно не сетать тут вручную)
   };
 
-  // пересчитать сумму строки (qty * price)
   const recalcDerived = (idx: number) => {
     const base = getValues(`${name}.${idx}`) as SimpleRow | undefined;
     if (!base) return;
@@ -92,36 +82,30 @@ const ItemsGroup: React.FC<Props> = ({
     setValue(`${name}.${idx}.sum`, sum, { shouldDirty: true, shouldValidate: false });
   };
 
-  // применяем выбранный из каталога товар в строку формы
-  // твоя логика для retail: sku = name, price = item.price
   const applyItem = (idx: number, item?: CatalogItem) => {
     setValue(`${name}.${idx}.itemId`, item?._id ?? '', { shouldDirty: true });
     setValue(`${name}.${idx}.name`, item?.name ?? '', { shouldDirty: true });
-    setValue(`${name}.${idx}.sku`, item?.name ?? '', { shouldDirty: true }); // sku = name в твоём UI
+    setValue(`${name}.${idx}.sku`, item?.name ?? '', { shouldDirty: true }); 
     setValue(`${name}.${idx}.price`, Number(item?.price ?? 0), { shouldDirty: true });
     recalcDerived(idx);
   };
 
-  // фильтр каталога по имени или sku (чтобы не показывать всю базу сразу)
   const filterCatalog = (q: string) => {
     const norm = (s: string) => s.toLowerCase().trim();
     const qq = norm(q);
-    if (!qq) return catalog.slice(0, 20); // первые 20 если пусто
+    if (!qq) return catalog.slice(0, 20); 
     return catalog
       .filter(c => [c.name, c.sku ?? ''].map(norm).some(x => x.includes(qq)))
       .slice(0, 20);
   };
 
-  // попытка выбрать товар по введённому тексту
   const tryResolveSelection = (idx: number, rowKey: string, text: string) => {
-    // 1) точное попадание в optionText
     const exactId = text2id.get(text);
     if (exactId) {
       applyItem(idx, byId.get(exactId));
-      setRowQuery(rowKey, text); // показываем красивую строку
+      setRowQuery(rowKey, text); 
       return;
     }
-    // 2) если по фильтру остался только один кандидат — тоже выбираем
     const candidates = filterCatalog(text);
     if (candidates.length === 1) {
       const one = candidates[0];
@@ -129,10 +113,8 @@ const ItemsGroup: React.FC<Props> = ({
       setRowQuery(rowKey, optionText(one));
       return;
     }
-    // иначе оставляем как есть, юзер будет уточнять вручную
   };
 
-  // очистить выбранный товар в строке
   const clearRowSelection = (idx: number) => {
     setValue(`${name}.${idx}.itemId`, '', { shouldDirty: true });
     setValue(`${name}.${idx}.name`, '', { shouldDirty: true });
@@ -170,7 +152,6 @@ const ItemsGroup: React.FC<Props> = ({
 
               return (
                 <tr key={rowKey}>
-                  {/* === Выбор товара через datalist === */}
                   <td style={{ minWidth: 220 }}>
                     <input
                       list={listId}
@@ -205,7 +186,6 @@ const ItemsGroup: React.FC<Props> = ({
                       ))}
                     </datalist>
 
-                    {/* скрытые реальные поля для сабмита */}
                     <Controller
                       name={`${name}.${idx}.itemId` as const}
                       control={control}
@@ -220,7 +200,6 @@ const ItemsGroup: React.FC<Props> = ({
                     />
                   </td>
 
-                  {/* КОД / SKU — можно поправить руками */}
                   <td style={{ width: 120 }}>
                     <Controller
                       name={`${name}.${idx}.sku` as const}
@@ -236,7 +215,6 @@ const ItemsGroup: React.FC<Props> = ({
                     />
                   </td>
 
-                  {/* Количество */}
                   <td style={{ width: 110 }}>
                     <Controller
                       name={`${name}.${idx}.qty` as const}
@@ -260,7 +238,6 @@ const ItemsGroup: React.FC<Props> = ({
                     />
                   </td>
 
-                  {/* Цена */}
                   <td style={{ width: 120 }}>
                     <Controller
                       name={`${name}.${idx}.price` as const}
@@ -284,7 +261,6 @@ const ItemsGroup: React.FC<Props> = ({
                     />
                   </td>
 
-                  {/* Сумма строки (readonly) */}
                   <td style={{ width: 120 }}>
                     <Controller
                       name={`${name}.${idx}.sum` as const}
@@ -301,7 +277,6 @@ const ItemsGroup: React.FC<Props> = ({
                     />
                   </td>
 
-                  {/* Удалить строку */}
                   <td style={{ width: 60, textAlign: 'right' }}>
                     <button
                       type="button"

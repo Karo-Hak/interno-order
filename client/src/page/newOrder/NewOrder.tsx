@@ -38,7 +38,6 @@ export const NewOrder: React.FC = (): JSX.Element => {
       setLoadError(null);
       try {
         const res = await dispatch(findNewOrder({ params, cookies }) as any).unwrap?.();
-        // Если твой thunk возвращает {error}, обработаем это
         if (res && typeof res === "object" && "error" in res) {
           if (isMounted) setLoadError(String((res as any).error ?? "Error loading order"));
         }
@@ -58,7 +57,6 @@ export const NewOrder: React.FC = (): JSX.Element => {
   const buyer = ord?.buyer ?? {};
   const texture = ord?.texture ?? {};
 
-  // вычислим красиво заголовок статуса и дату
   const titleLine = useMemo(() => {
     const d = fmtDate(ord?.date);
     const st = ord?.status ?? "—";
@@ -135,12 +133,10 @@ export const NewOrder: React.FC = (): JSX.Element => {
               </div>
             </div>
 
-            {/* Комментарий */}
             <div style={{ border: "2px solid white", padding: 8, marginTop: 8 }}>
               <h6 style={{ margin: 0 }}>{ord?.comment ?? ""}</h6>
             </div>
 
-            {/* Картинка */}
             <div>
               {ord?.picUrl ? (
                 <img

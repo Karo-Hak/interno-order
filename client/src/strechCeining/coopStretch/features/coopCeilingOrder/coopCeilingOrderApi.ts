@@ -8,6 +8,7 @@ const authHeader = (cookies: any) => ({
 
 export type PaymentMethod = 'cash' | 'card' | 'transfer' | 'other';
 
+export type DateFilter = { startDate: string; endDate: string };
 
 export type GroupedItem = {
   name: string;
@@ -29,11 +30,13 @@ export type StretchTextureOrderDto = {
   groupedStretchProfilData: GroupedItem[];
   groupedLightPlatformData: GroupedItem[];
   groupedLightRingData: GroupedItem[];
+  groupedAdditionalData: GroupedItem[];
   date?: string;
   buyerComment?: string;
   balance: number;
   paymentMethod: PaymentMethod;
   picUrl: string[];
+  status?: string;
 };
 
 export type BuyerInputDto = {
@@ -48,8 +51,8 @@ export type BuyerInputDto = {
 export type CreateCoopOrderDto = {
   stretchTextureOrder: StretchTextureOrderDto;
   buyer:
-    | { buyerId?: string }
-    | { name: string; phone1?: string; phone2?: string; region?: string; address?: string };
+  | { buyerId?: string }
+  | { name: string; phone1?: string; phone2?: string; region?: string; address?: string };
   userId: string;
 };
 
@@ -66,20 +69,21 @@ export type CoopCeilingOrderModel = {
   groupedStretchProfilData: GroupedItem[];
   groupedLightPlatformData: GroupedItem[];
   groupedLightRingData: GroupedItem[];
+  groupedAdditionalData: GroupedItem[];
   date: string;
   buyerComment: string;
   balance: number;
   paymentMethod: PaymentMethod;
   picUrl: string[];
-  buyer: any; // может прийти популяченный объект; если нужно — сузьте до string
+  buyer: any; 
   user: any;
   createdAt?: string;
   updatedAt?: string;
+  status?: string;
 };
 
 export type ApiError = { message: string };
 
-// helpers
 const toApiError = (e: unknown, fallback = 'Request failed'): ApiError => {
   const ax = e as AxiosError<any>;
   const msg =
@@ -108,6 +112,36 @@ export const createCoopOrder = createAsyncThunk<
     return thunkAPI.rejectWithValue(toApiError(e, 'Failed to create order'));
   }
 });
+
+export const fetchCoopOrdersByStatus = createAsyncThunk(
+  'coopOrder/reportByStatus',
+  async (obj: { cookies: any; status: string }) => {
+    const { cookies, status } = obj;
+
+    const url = `${process.env.REACT_APP_SERVER_URL}/coop-ceiling-order/report/by-status`;
+
+    const response = await axios.get(url, {
+      params: { status },
+      headers: {
+        Authorization: `Bearer ${cookies.access_token}`,
+      },
+    });
+
+    return response.data as {
+      rows: {
+        _id: string;
+        date: string;
+        buyerName?: string;
+        buyerPhone?: string;
+        sum: number;
+      }[];
+      total: number;
+      count: number;
+      status: string;
+      tz?: string;
+    };
+  }
+);
 
 export const listCoopOrders = createAsyncThunk<
   CoopCeilingOrderModel[],
@@ -177,25 +211,43 @@ export const deleteCoopOrder = createAsyncThunk<
     return thunkAPI.rejectWithValue(toApiError(e, 'Failed to delete order'));
   }
 });
+
+
+
 export const fetchCoopMonthlyReport = createAsyncThunk(
   'coopOrder/reportMonthly',
-  async (obj: { cookies: any; month?: string }) => {
-    const { cookies, month } = obj;
+  async (obj: { cookies: any; dateFilter: DateFilter }) => {
+    const { cookies, dateFilter } = obj;
+
     const url = `${process.env.REACT_APP_SERVER_URL}/coop-ceiling-order/report/monthly`;
+
     const response = await axios.get(url, {
-      params: month ? { month } : undefined,
+      params: {
+        startDate: dateFilter.startDate,
+        endDate: dateFilter.endDate,
+      },
       headers: {
         Authorization: `Bearer ${cookies.access_token}`,
       },
     });
+
     return response.data as {
-      rows: { _id: string; date: string; buyerName?: string; buyerPhone?: string; sum: number }[];
+      rows: {
+        _id: string;
+        date: string;
+        buyerName?: string;
+        buyerPhone?: string;
+        sum: number;
+      }[];
       total: number;
       count: number;
-      month: string;
+      month?: string;
+      startDate?: string;
+      endDate?: string;
     };
   }
 );
+
 
 export const fetchCoopOrderById = createAsyncThunk(
   'coopOrder/byId',
@@ -205,7 +257,7 @@ export const fetchCoopOrderById = createAsyncThunk(
     const res = await axios.get(url, {
       headers: { Authorization: `Bearer ${cookies.access_token}` },
     });
-    // контроллер возвращает { order }
+    // { order }
     return res.data.order;
   }
 );

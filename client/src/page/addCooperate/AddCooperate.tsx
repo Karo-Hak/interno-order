@@ -20,8 +20,8 @@ import "../addBuyer/addBuyer.css";
 type FormValues = {
   name: string;
   surname?: string;
-  phone?: string;           // нормализуем до цифр перед отправкой
-  cooperateRate: string;    // вводится как текст, отправим как number
+  phone?: string;          
+  cooperateRate: string;    
   cooperationSphere: string; // ObjectId
 };
 
@@ -56,14 +56,12 @@ export const AddCooperate: React.FC = (): JSX.Element => {
     mode: "onSubmit",
   });
 
-  // авто-очистка лишних символов в телефоне (оставляем цифры, пробелы/скобки/+- можно)
   const phoneVal = watch("phone");
   useEffect(() => {
     const cleaned = (phoneVal ?? "").replace(/[^\d\s()+\-]/g, "");
     if (cleaned !== (phoneVal ?? "")) setValue("phone", cleaned);
   }, [phoneVal, setValue]);
 
-  // первичная загрузка
   useEffect(() => {
     (async () => {
       try {
@@ -90,7 +88,6 @@ export const AddCooperate: React.FC = (): JSX.Element => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, cookies, navigate, setCookie]);
 
-  // быстрый набор сфер
   const spheres = useMemo(
     () => cooperateState?.cooperationSphere ?? [],
     [cooperateState?.cooperationSphere]
@@ -104,7 +101,6 @@ export const AddCooperate: React.FC = (): JSX.Element => {
         name: values.name?.trim(),
         surname: values.surname?.trim() || undefined,
         phone: normPhone(values.phone),
-        // percent → number
         cooperateRate: Number.parseFloat(values.cooperateRate),
         cooperationSphere: values.cooperationSphere, // ObjectId
       };
@@ -125,7 +121,6 @@ export const AddCooperate: React.FC = (): JSX.Element => {
         return;
       }
 
-      // успешное сохранение: очищаем форму и обновляем список
       reset({
         name: "",
         surname: "",

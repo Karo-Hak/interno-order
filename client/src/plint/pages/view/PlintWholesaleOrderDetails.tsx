@@ -1,4 +1,3 @@
-// pages/plintWholesaleOrder/PlintWholesaleOrderDetails.tsx
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
@@ -48,7 +47,6 @@ type WholesaleOrderDto = {
     buyer?: Buyer;
     items?: Item[];
 
-    // опциональные агентские поля
     agent?: Agent | null;
     agentDiscount?: number | null;
     agentSum?: number | null;
@@ -213,7 +211,6 @@ const PlintWholesaleOrderDetails: React.FC = () => {
         <div>
             <PlintMenu />
 
-            {/* Верхняя панель */}
             <div style={{
                 position: 'sticky', top: 0, background: '#fff', zIndex: 2,
                 padding: 6, borderBottom: '1px solid #eee',
@@ -225,9 +222,7 @@ const PlintWholesaleOrderDetails: React.FC = () => {
                 <div style={{ fontWeight: 700, fontSize: 14 }}>Wholesale պատվեր № {id}</div>
 
                 <div style={{ marginLeft: 'auto', display: 'flex', gap: 8, alignItems: 'center' }}>
-                    {/* 🔻 кнопка оплаты — режим wholesale */}
                     <AddPlintPayment kind="wholesale" id={order?._id} onDone={load} />
-                    {/* 🔻 оплата агенту — только если есть агент */}
                     {order?.agent?._id && (
                         <AddPlintAgentPayment
                             agentId={order.agent._id}
@@ -282,7 +277,6 @@ const PlintWholesaleOrderDetails: React.FC = () => {
                             </div>
                         </MiniSection>
 
-                        {/* Блок агента (если есть) */}
                         {(order.agent || order.agentDiscount || order.agentSum) && (
                             <MiniSection title="Ագենտ" defaultOpen>
                                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0,1fr))', gap: 6, fontSize: 13 }}>

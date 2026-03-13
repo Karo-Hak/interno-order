@@ -1,4 +1,3 @@
-// src/plint/pages/plintBuyerWallet/components/PlintBuyerDetails.tsx
 import React from 'react';
 import { fmtMoney } from './utilsPlint';
 import { PlintBuyEntry, PlintCreditEntry } from './typesPlint';

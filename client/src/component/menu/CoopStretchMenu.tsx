@@ -6,7 +6,6 @@ interface CoopStretchMenuProps {}
 export const CoopStretchMenu: React.FC<CoopStretchMenuProps> = (): JSX.Element => {
   const navigate = useNavigate();
 
-  // helper: open route in new window on right-click without showing context menu
   const openNewWindow =
     (url: string) =>
     (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -64,7 +63,6 @@ export const CoopStretchMenu: React.FC<CoopStretchMenuProps> = (): JSX.Element =
           Դեբետ/Կրեդիտ
         </button>
 
-        {/* ⬇️ Новая кнопка «Վերադարձ» */}
         <button
           className="btn"
           onClick={newReturnDoc}

@@ -1,4 +1,3 @@
-// src/strechCeining/coopStretch/pages/addCoopCeilinOrder/components/BuyerSection.tsx
 import React from 'react';
 import {
   UseFormRegister,
@@ -47,7 +46,6 @@ const BuyerSection: React.FC<Props> = ({
 
   const handleQueryChange = (val: string) => {
     setQuery(val);
-    // попытка авто-матча по точному value из option
     const exact = buyers.find(
       (b) => `${b.name} ${b.phone1 ?? ''}`.trim().toLowerCase() === val.trim().toLowerCase(),
     );
@@ -100,7 +98,6 @@ const BuyerSection: React.FC<Props> = ({
               ))}
             </datalist>
 
-            {/* скрытое поле для buyerId (контролируется кодом) */}
             <input type="hidden" {...register('buyerId', { required: true })} />
             {errors.buyerId && <span style={{ color: 'crimson' }}>Select a buyer from the list</span>}
 

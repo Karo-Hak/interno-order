@@ -34,7 +34,6 @@ type CoopReturnDto = {
   groupedLightRingData?: SimpleRow[];
 };
 
-/* ========= helpers ========= */
 const fmtDateTime = (s?: string | Date) =>
   s
     ? new Date(s).toLocaleString('hy-AM', {
@@ -52,13 +51,11 @@ const num = (v: unknown) => {
 };
 const money = (v?: number) => num(v).toLocaleString();
 
-// берём первое непустое строковое значение из набора ключей
 const pick = (obj: any, keys: string[], fallback = ''): string =>
   keys
     .map((k) => obj?.[k])
     .find((v) => typeof v === 'string' && v.trim() !== '') ?? fallback;
 
-/** Texture: высота/ширина ⇒ кв.м (если qty не задан), суммируем строку */
 const sumTexture = (rows: TextureRow[] = []) =>
   rows.reduce((acc, r) => {
     const h = num(r.height ?? r.h ?? r.haight);
@@ -152,7 +149,6 @@ const RowCell: React.FC<React.PropsWithChildren<{ right?: boolean }>> = ({
   </td>
 );
 
-/* ========= сам экран ========= */
 const ViewCoopReturnDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [cookies] = useCookies(['access_token']);
@@ -182,14 +178,12 @@ const ViewCoopReturnDetails: React.FC = () => {
     load();
   }, [load]);
 
-  // локальные подсчёты
   const textureTotal = sumTexture(ret?.groupedStretchTextureData);
   const profilTotal = sumSimple(ret?.groupedStretchProfilData);
   const platTotal = sumSimple(ret?.groupedLightPlatformData);
   const ringTotal = sumSimple(ret?.groupedLightRingData);
   const computedSum = textureTotal + profilTotal + platTotal + ringTotal;
 
-  // безопасно достаём разные названия полей покупателя
   const buyerAny = ret?.buyer as any;
   const buyerName = pick(buyerAny, ['name', 'buyerName', 'title'], '—');
   const buyerPhone = pick(buyerAny, ['phone1', 'phone', 'tel', 'phonePrimary'], '—');

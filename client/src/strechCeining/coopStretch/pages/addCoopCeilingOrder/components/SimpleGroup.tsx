@@ -14,8 +14,6 @@ export type SimpleRow = {
   qty: number;
   price: number;
   sum: number;
-
-  // UI-поиск (как BuyerSection)
   catalogQuery?: string;
 };
 
@@ -24,7 +22,8 @@ type CatalogItem = { _id: string; name: string; price: number };
 type GroupName =
   | 'groupedStretchProfilData'
   | 'groupedLightPlatformData'
-  | 'groupedLightRingData';
+  | 'groupedLightRingData'
+  | 'groupedAdditionalData';
 
 type Props = {
   title: string;
@@ -142,7 +141,6 @@ const SimpleGroup: React.FC<Props> = ({
   const rows: SimpleRow[] = (getValues(name) as SimpleRow[]) ?? [];
   const listIdBase = React.useId();
 
-  // фокус на поле товара последней строки после добавления
   const lastQueryRef = React.useRef<HTMLInputElement | null>(null);
 
   const addRowAndFocus = () => {
@@ -152,7 +150,6 @@ const SimpleGroup: React.FC<Props> = ({
     });
   };
 
-  // Enter добавляет строку (как в TextureGroup)
   const onEnterAddRow: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault(); // не сабмитим форму

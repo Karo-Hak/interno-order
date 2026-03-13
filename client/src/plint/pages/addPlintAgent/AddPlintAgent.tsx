@@ -165,7 +165,7 @@ export const PlintAgent: React.FC = (): JSX.Element => {
       <PlintMenu />
       <div className="agent-container">
         <div className="agent-header">
-          <h2>Նոր գործակալ</h2> {/* ⬅️ было “գնորդ” */}
+          <h2>Նոր գործակալ</h2>
           <div className="agent-actions">
             <button className="ghost-btn" type="button" onClick={() => navigate(-1)}>
               Վերադառնալ

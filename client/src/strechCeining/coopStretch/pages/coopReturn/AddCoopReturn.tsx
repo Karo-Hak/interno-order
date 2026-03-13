@@ -15,11 +15,7 @@ import ReturnSidebar from './components/ReturnSidebar';
 
 import { allCoopStretchBuyerThunk } from '../../features/coopStrechBuyer/coopStrechBuyerApi';
 import { getAllStretchTexture } from '../../../features/strechTexture/strechTextureApi';
-import { getAllStretchProfil } from '../../../features/strechProfil/strechProfilApi';
-import { getAllStretchLightPlatform } from '../../../features/strechLightPlatform/strechLightPlatformApi';
-import { getAllStretchLightRing } from '../../../features/strechLightRing/strechLightRingApi';
 import { createCoopReturn } from '../../features/coopReturn/coopReturnApi';
-import { log } from 'console';
 import { getProductsByCategory } from '../../../features/product/productApi';
 
 type BuyerMode = 'existing' | 'new';
@@ -63,7 +59,6 @@ const normCatalog = (arr: any[]): CatalogItem[] =>
     price: Number(x.coopPrice ?? x.pricePerQty ?? x.unitPrice ?? x.cost ?? x.amount ?? 0),
   }));
 
-// дедупликация по _id (совместимо со старым target)
 const dedupById = <T extends { _id: string }>(arr: T[]): T[] => {
   const map = new Map<string, T>();
   for (let i = 0; i < arr.length; i++) {
@@ -73,7 +68,6 @@ const dedupById = <T extends { _id: string }>(arr: T[]): T[] => {
   return Array.from(map.values());
 };
 
-// мапперы
 const toGroupedFromTexture = (rows: any[]) =>
   (rows ?? []).filter((r: any) => r.itemId && (r.name?.trim?.() ?? '') !== '')
     .map((r: any) => {

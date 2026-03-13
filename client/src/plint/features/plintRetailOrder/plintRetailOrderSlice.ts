@@ -31,7 +31,6 @@ type ListState = {
   items: PlintRetailOrderModel[];
   loading: boolean;
   error?: any;
-  // можно добавлять total/skip/limit если бэк будет отдавать
 };
 
 type CurrentState = {
@@ -68,7 +67,6 @@ const slice = createSlice({
   name: 'plintRetailOrder',
   initialState,
   reducers: {
-    // если нужно руками очистить current
     resetCurrent(state) {
       state.current = { data: null, loading: false, error: undefined };
     },
@@ -80,7 +78,7 @@ const slice = createSlice({
     });
     builder.addCase(createPlintRetailOrder.fulfilled, (s, { payload }) => {
       s.flags.creating = false;
-      s.current.data = payload; // только что созданный заказ
+      s.current.data = payload; 
       s.current.error = undefined;
     });
     builder.addCase(createPlintRetailOrder.rejected, (s, { payload }) => {
@@ -125,8 +123,6 @@ const slice = createSlice({
       // payload: { ok: true, id }
       const id = payload?.id as string | undefined;
       if (id && s.current.data && s.current.data._id === id) {
-        // после обновления — можно инициировать повторную загрузку на уровне компонента
-        // либо оставить как есть и доверять данным из формы
       }
     });
     builder.addCase(updatePlintRetailOrder.rejected, (s, { payload }) => {
@@ -145,7 +141,6 @@ const slice = createSlice({
       if (s.current.data && s.current.data._id === id) {
         s.current.data.balance = payload.newBalance;
         s.current.data.prepayment = payload.newPrepayment;
-        // totalSum не меняется
       }
     });
     builder.addCase(addPlintRetailOrderPayment.rejected, (s, { payload }) => {

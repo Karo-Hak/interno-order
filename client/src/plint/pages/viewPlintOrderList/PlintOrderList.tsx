@@ -14,7 +14,6 @@ import {
   getPlintWholesaleOrderById,
 } from '../../features/plintWholesaleOrder/plintWholesaleOrderApi';
 
-// ============ ВСПОМОГАТЕЛЬНЫЕ ТИПЫ ============
 
 type OrderType = 'retail' | 'wholesale';
 
@@ -27,7 +26,6 @@ type MonthlyRow = {
 };
 
 type UnifiedRow = {
-  // нормализованная строка для списка
   orderType: OrderType;
   orderId: string;
   date: string | Date;
@@ -43,7 +41,6 @@ type DetailItem = {
   total?: number;
 };
 
-// ============ УТИЛИТЫ ============
 
 const fmtDateShort = (s: string | Date) =>
   new Date(s).toLocaleDateString('hy-AM', { year: 'numeric', month: '2-digit', day: '2-digit' });
@@ -56,7 +53,6 @@ const toNum = (v: unknown): number => {
   return Number.isFinite(n) ? n : 0;
 };
 
-// ============ МАЛЕНЬКИЕ ТАБЛИЦЫ (встроенные, чтобы файл был самодостаточным) ============
 
 const ItemsTable: React.FC<{ items: DetailItem[] }> = ({ items }) => {
   const subtotal = React.useMemo(
@@ -168,33 +164,27 @@ const AllProductsTable: React.FC<{ items: DetailItem[] }> = ({ items }) => {
   );
 };
 
-// ============ ОСНОВНОЙ КОМПОНЕНТ ============
 
 const PlintOrderList: React.FC = () => {
   const dispatch = useAppDispatch();
   const [cookies] = useCookies(['access_token']);
 
-  // входные данные
   const [month, setMonth] = React.useState<string>(toMonthStr());
   const [rows, setRows] = React.useState<UnifiedRow[]>([]);
   const [loadingMonth, setLoadingMonth] = React.useState<boolean>(false);
 
-  // фильтры
   const [dateFrom, setDateFrom] = React.useState<string>(''); // yyyy-mm-dd
   const [dateTo, setDateTo] = React.useState<string>('');     // yyyy-mm-dd
   const [buyerQuery, setBuyerQuery] = React.useState<string>('');
   const [typeFilter, setTypeFilter] = React.useState<'all' | OrderType>('all'); // фильтр типа заказа
 
-  // раскрытие и детали
   const [expanded, setExpanded] = React.useState<Set<string>>(new Set());
   const [detailsMap, setDetailsMap] = React.useState<Record<string, DetailItem[]>>({});
   const [loadingDetailMap, setLoadingDetailMap] = React.useState<Record<string, boolean>>({});
 
-  // «показать все товары»
   const [showAllProducts, setShowAllProducts] = React.useState<boolean>(false);
   const [loadingAllProducts, setLoadingAllProducts] = React.useState<boolean>(false);
 
-  // ===== Загрузка списка по месяцу =====
   const loadMonth = React.useCallback(async () => {
     setLoadingMonth(true);
     try {
@@ -221,16 +211,15 @@ const PlintOrderList: React.FC = () => {
         sum: Number(r.sum ?? 0),
       }));
 
-      // объединённый и отсортированный список
       const merged = [...retailRows, ...wholesaleRows].sort((a, b) => {
         const ta = new Date(a.date).getTime();
         const tb = new Date(b.date).getTime();
         if (ta !== tb) return tb - ta;
-        return a.orderId.localeCompare(b.orderId); // стабильная сортировка
+        return a.orderId.localeCompare(b.orderId); 
       });
 
       setRows(merged);
-      setShowAllProducts(false); // сброс агрегатора при перезагрузке
+      setShowAllProducts(false); 
     } catch (e) {
       console.error(e);
       alert('Չհաջողվեց բեռնել հաշվետվությունը (Plint)');
@@ -242,12 +231,10 @@ const PlintOrderList: React.FC = () => {
 
   React.useEffect(() => { void loadMonth(); }, [loadMonth]);
 
-  // ===== Нормализация товаров для деталей =====
   const normalizeItems = React.useCallback((order: any): DetailItem[] => {
     if (!order) return [];
     const items: DetailItem[] = [];
 
-    // розничный/оптовый Plint-формат — у нас единые строки items
     if (Array.isArray(order.items)) {
       for (const v of order.items) {
         const name = String(v?.name ?? 'Ապրանք');
@@ -258,11 +245,9 @@ const PlintOrderList: React.FC = () => {
       }
     }
 
-    // если в будущем захотим тянуть ещё поля — добавим тут
     return items;
   }, []);
 
-  // ===== Детали заказа (подгрузка) =====
   const loadOrderDetails = React.useCallback(
     async (uniqueKey: string, row: UnifiedRow) => {
       if (detailsMap[uniqueKey] || loadingDetailMap[uniqueKey]) return;
@@ -286,7 +271,6 @@ const PlintOrderList: React.FC = () => {
     [dispatch, cookies, detailsMap, loadingDetailMap, normalizeItems],
   );
 
-  // ===== Фильтрация =====
   const filteredRows = React.useMemo(() => {
     const q = buyerQuery.trim().toLowerCase();
     const fromTs = dateFrom ? new Date(dateFrom + 'T00:00:00').getTime() : -Infinity;
@@ -303,7 +287,6 @@ const PlintOrderList: React.FC = () => {
     });
   }, [rows, dateFrom, dateTo, buyerQuery, typeFilter]);
 
-  // ===== Раскрытие строки =====
   const toggleExpand = async (uniqueKey: string, row: UnifiedRow) => {
     setExpanded(prev => {
       const next = new Set(prev);
@@ -315,7 +298,6 @@ const PlintOrderList: React.FC = () => {
     }
   };
 
-  // ===== «Показать все товары» =====
   const handleToggleAllProducts = async () => {
     if (showAllProducts) {
       setShowAllProducts(false);
@@ -347,7 +329,6 @@ const PlintOrderList: React.FC = () => {
     }
   };
 
-  // собрать товары по всем отфильтрованным заказам
   const allProducts = React.useMemo<DetailItem[]>(() => {
     if (!showAllProducts) return [];
     const ids = filteredRows.map(r => `${r.orderType}:${r.orderId}`);
@@ -359,13 +340,11 @@ const PlintOrderList: React.FC = () => {
     return combined;
   }, [showAllProducts, filteredRows, detailsMap]);
 
-  // ===== RENDER =====
 
   return (
     <div>
       <PlintMenu />
 
-      {/* Панель управления */}
       <div
         style={{
           display: 'grid',
@@ -432,7 +411,6 @@ const PlintOrderList: React.FC = () => {
         </div>
       </div>
 
-      {/* Глобальный агрегированный список */}
       {showAllProducts && (
         <div style={{ marginBottom: 8, border: '1px solid #eee', borderRadius: 8, padding: 8, background: '#fff' }}>
           <div style={{ fontWeight: 600, marginBottom: 6 }}>
@@ -442,7 +420,6 @@ const PlintOrderList: React.FC = () => {
         </div>
       )}
 
-      {/* Таблица заказов */}
       <div style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>

@@ -1,4 +1,3 @@
-// src/strechCeining/.../BuyerDetails.tsx
 import React from 'react';
 import { useCookies } from 'react-cookie';
 
@@ -19,7 +18,6 @@ type Props = {
 
 /* ---------------- helpers ---------------- */
 
-// глубокий поиск строки по ключу "address"
 function deepFindAddress(obj: any, seen = new WeakSet()): string | undefined {
   if (!obj || typeof obj !== 'object') return;
   if (seen.has(obj)) return;
@@ -43,7 +41,6 @@ function deepFindAddress(obj: any, seen = new WeakSet()): string | undefined {
   return;
 }
 
-// пытаемся достать адрес из типичных мест, иначе deep find
 function extractAddressRobust(payload: any): string {
   const roots = [payload, payload?.data, payload?.order, payload?.result, payload?.payload];
 
@@ -75,7 +72,6 @@ export const BuyerDetails: React.FC<Props> = ({
   const dispatch = useAppDispatch();
   const [cookies] = useCookies(['access_token']);
 
-  // кэш адресов по orderId и флаги загрузки
   const [addrMap, setAddrMap] = React.useState<Record<string, string>>({});
   const [loadingMap, setLoadingMap] = React.useState<Record<string, boolean>>({});
 
@@ -102,7 +98,6 @@ export const BuyerDetails: React.FC<Props> = ({
     window.open('/stretchceiling/viewStretchOrder/' + id, '_blank');
   };
 
-  // грузим адреса по уникальным orderId через findStretchOrder
   React.useEffect(() => {
     const ids = Array.from(
       new Set(
@@ -133,7 +128,6 @@ export const BuyerDetails: React.FC<Props> = ({
 
           const payload: any = (action as any)?.payload;
 
-          // полезно увидеть реальную форму payload во время настройки
           if (process.env.NODE_ENV !== 'production' && !addrMap[id]) {
             // eslint-disable-next-line no-console
             console.debug('[BuyerDetails] payload for', id, payload);
@@ -158,8 +152,6 @@ export const BuyerDetails: React.FC<Props> = ({
     return () => {
       canceled = true;
     };
-    // НЕ добавляем addrMap/loadingMap в deps, чтобы не зациклиться
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [buy, cookies, dispatch]);
 
   return (

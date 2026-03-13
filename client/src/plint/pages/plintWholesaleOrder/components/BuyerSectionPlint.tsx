@@ -95,7 +95,6 @@ const BuyerSectionPlint: React.FC<BuyerSectionPlintProps> = ({
   const clearAgent = () => {
     setAgentQuery('');
     setValue('agentId', '', { shouldDirty: true });
-    // При снятии агента чистим и связанные поля
     setValue('agentDiscount', '', { shouldDirty: true });
     setValue('agentSum', '', { shouldDirty: true });
   };
@@ -175,7 +174,6 @@ const BuyerSectionPlint: React.FC<BuyerSectionPlintProps> = ({
               ))}
             </datalist>
 
-            {/* агент НЕ обязателен */}
             <input type="hidden" {...register('agentId')} />
 
             {!!selectedAgentId && (
@@ -187,7 +185,6 @@ const BuyerSectionPlint: React.FC<BuyerSectionPlintProps> = ({
           <button type="button" onClick={clearAgent}>Clear</button>
         </div>
 
-        {/* Если выбран агент — показываем скидку и сумму */}
         {selectedAgentId ? (
           <div style={{ marginTop: 10, display: 'grid', gap: 6, gridTemplateColumns: 'repeat(2, minmax(0,1fr))' }}>
             <label style={{ display: 'grid', gap: 4 }}>
@@ -199,7 +196,6 @@ const BuyerSectionPlint: React.FC<BuyerSectionPlintProps> = ({
                 placeholder="0"
                 {...register('agentDiscount')}
                 onChange={(e) => {
-                  // храним как число/пусто, пересчёт agentSum сделает верхний useEffect
                   const v = e.target.value;
                   setValue('agentDiscount', v === '' ? '' : Number(v), { shouldDirty: true });
                 }}

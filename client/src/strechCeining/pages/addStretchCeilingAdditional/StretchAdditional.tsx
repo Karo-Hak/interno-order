@@ -6,11 +6,8 @@ import { useCookies } from 'react-cookie'
 import { userProfile } from "../../../features/user/userApi";
 import './stretchAdditional.css'
 import { selectStretchAdditional } from "../../features/strechAdditional/strechAdditionalSlice";
-import { getAllUnyt } from "../../unyt/unytApi";
-import { selectUnyt } from "../../unyt/unytSlice";
 import { useForm } from "react-hook-form";
 import { addStretchAdditional, getAllStretchAdditional } from "../../features/strechAdditional/strechAdditionalApi";
-import { StretchMenu } from "../../../component/menu/StretchMenu";
 import { StockMenu } from "../../../component/menu/StockMenu";
 
 export const StretchAdditional: React.FC = (): JSX.Element => {

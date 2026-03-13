@@ -90,7 +90,7 @@ export const linkPlintBuyerDK = createAsyncThunk(
 );
 
 
-// GET /plint-buyer/wallet  -> ты на бэке сделаешь, чтобы вернул всех покупателей
+// GET /plint-buyer/wallet  
 export const allPlintBuyerThunk = createAsyncThunk(
   'plint-buyer/allWallet',
   async (cookies: { access_token?: string }, { rejectWithValue }) => {
@@ -107,7 +107,6 @@ export const allPlintBuyerThunk = createAsyncThunk(
   }
 );
 
-// список покупателей (лайт)
 export const getPlintBuyers = createAsyncThunk(
   'plint-buyer/list',
   async (
@@ -120,7 +119,6 @@ export const getPlintBuyers = createAsyncThunk(
         headers: authHeader(cookies.access_token),
         params: { q, skip, limit },
       });
-      // backend возвращает { items, total, ... }
       return data;
     } catch (e: any) {
       return rejectWithValue(
@@ -130,7 +128,6 @@ export const getPlintBuyers = createAsyncThunk(
   }
 );
 
-// детали одного покупателя (тяжелые массивы buyRetail/buyWholesale/credit)
 export const getPlintBuyerById = createAsyncThunk(
   'plint-buyer/byId',
   async (obj: Tokened & { id: string }, { rejectWithValue }) => {

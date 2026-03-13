@@ -1,4 +1,3 @@
-// AddPayment.tsx
 import React from 'react';
 import { useCookies } from 'react-cookie';
 import { useParams } from 'react-router-dom';
@@ -8,7 +7,7 @@ import { addPayed } from '../../strechCeining/features/debetKredit/debetKreditAp
 type AddPaymentProps = {
   variant: 'tag' | 'coop';
   id?: string;
-  onSuccess?: () => void;   // 👈 новый проп
+  onSuccess?: () => void; 
 };
 
 const AddPayment: React.FC<AddPaymentProps> = ({ variant, id, onSuccess }) => {
@@ -25,11 +24,11 @@ const AddPayment: React.FC<AddPaymentProps> = ({ variant, id, onSuccess }) => {
       return;
     }
 
-    const input = window.prompt('Введите сумму платежа');
-    if (input === null) return; // Отмена
+    const input = window.prompt('Մուտքագրեք գումարը');
+    if (input === null) return; 
     const sumToSend = Number.parseFloat(input);
     if (!Number.isFinite(sumToSend) || sumToSend <= 0) {
-      alert('Сумма должна быть положительным числом');
+      alert('միայն թիվ');
       return;
     }
 
@@ -40,13 +39,13 @@ const AddPayment: React.FC<AddPaymentProps> = ({ variant, id, onSuccess }) => {
         ).unwrap();
       }
 
-      alert('Պлатёж проведён');
+      alert('Գրանցված');
 
-      // 👉 говорим родителю "обнови данные"
+     
       onSuccess?.();
 
     } catch (err: any) {
-      alert(err?.message ?? 'Ошибка при проведении платежа');
+      alert(err?.message ?? 'Սխալ');
     }
   };
 

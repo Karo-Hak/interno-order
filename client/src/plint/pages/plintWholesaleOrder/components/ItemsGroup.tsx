@@ -9,11 +9,11 @@ import {
 import { FormValues } from '../wholesaleOrderPage';
 
 export type SimpleRow = {
-  itemId?: string;   // productId из каталога (ObjectId)
+  itemId?: string;   // productId  (ObjectId)
   name: string;
   sku?: string;
   qty: number;
-  price: number;     // цена за штуку
+  price: number;     
   sum: number;       // qty * price
 };
 
@@ -38,18 +38,15 @@ const ItemsGroup: React.FC<Props> = ({
 }) => {
   const { fields, append, remove } = useFieldArray({ control, name });
 
-  // Быстрый доступ к товарам
   const byId = React.useMemo(() => {
     const m = new Map<string, CatalogItem>();
     catalog.forEach(c => m.set(c._id, c));
     return m;
   }, [catalog]);
 
-  // Текст опции (как видно в datalist)
   const optionText = (c: CatalogItem) =>
     `${c.name}${c.sku ? ` · ${c.sku}` : ''}${Number.isFinite(c.price) ? ` · ${c.price}` : ''}`;
 
-  // Map "текст → id" для точного совпадения
   const text2id = React.useMemo(() => {
     const m = new Map<string, string>();
     catalog.forEach(c => m.set(optionText(c), c._id));
@@ -68,16 +65,14 @@ const ItemsGroup: React.FC<Props> = ({
     setValue(`${name}.${idx}.sum`, sum, { shouldDirty: true, shouldValidate: false });
   };
 
-  // Автозаполнение, как у тебя было: sku = name; price = item.price (wholesalePriceAMD)
   const applyItem = (idx: number, item?: CatalogItem) => {
     setValue(`${name}.${idx}.itemId`, item?._id ?? '', { shouldDirty: true });
     setValue(`${name}.${idx}.name`, item?.name ?? '', { shouldDirty: true });
     setValue(`${name}.${idx}.sku`, item?.name ?? '', { shouldDirty: true });          // sku = name
-    setValue(`${name}.${idx}.price`, Number(item?.price ?? 0), { shouldDirty: true }); // price нормализован
+    setValue(`${name}.${idx}.price`, Number(item?.price ?? 0), { shouldDirty: true }); 
     recalcDerived(idx);
   };
 
-  // Поиск/фильтр по name/sku
   const filterCatalog = (q: string) => {
     const norm = (s: string) => s.toLowerCase().trim();
     const qq = norm(q);
@@ -87,7 +82,6 @@ const ItemsGroup: React.FC<Props> = ({
       .slice(0, 20);
   };
 
-  // Локальные поисковые строки по каждой строке
   const [queryMap, setQueryMap] = React.useState<Record<string, string>>({});
   React.useEffect(() => {
     setQueryMap(prev => {
@@ -100,16 +94,13 @@ const ItemsGroup: React.FC<Props> = ({
   const setRowQuery = (rowKey: string, val: string) =>
     setQueryMap(prev => ({ ...prev, [rowKey]: val }));
 
-  // Универсальная попытка выбрать товар по текущему тексту
   const tryResolveSelection = (idx: number, rowKey: string, text: string) => {
-    // 1) точное совпадение текста с опцией
     const exactId = text2id.get(text);
     if (exactId) {
       applyItem(idx, byId.get(exactId));
-      setRowQuery(rowKey, text); // зафиксируем красивый текст опции
+      setRowQuery(rowKey, text); 
       return;
     }
-    // 2) если остался единственный кандидат — выберем его
     const candidates = filterCatalog(text);
     if (candidates.length === 1) {
       const c = candidates[0];
@@ -117,10 +108,8 @@ const ItemsGroup: React.FC<Props> = ({
       setRowQuery(rowKey, optionText(c));
       return;
     }
-    // 3) иначе — ничего не выбираем (пользователь уточнит ввод)
   };
 
-  // Очистка выбранного товара
   const clearRowSelection = (idx: number) => {
     setValue(`${name}.${idx}.itemId`, '', { shouldDirty: true });
     setValue(`${name}.${idx}.name`, '', { shouldDirty: true });
@@ -158,7 +147,6 @@ const ItemsGroup: React.FC<Props> = ({
               return (
                 <tr key={rowKey}>
                   <td>
-                    {/* ТОЛЬКО поиск через datalist */}
                     <input
                       list={listId}
                       placeholder="Փնտրել ըստ անվանման կամ կոդի…"
@@ -189,7 +177,6 @@ const ItemsGroup: React.FC<Props> = ({
                       ))}
                     </datalist>
 
-                    {/* скрытые поля для бэка */}
                     <Controller
                       name={`${name}.${idx}.itemId` as const}
                       control={control}

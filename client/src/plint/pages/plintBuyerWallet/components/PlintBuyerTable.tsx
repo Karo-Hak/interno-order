@@ -1,4 +1,3 @@
-// src/plint/pages/plintBuyerWallet/components/PlintBuyerTable.tsx
 import React from 'react';
 import { PlintBuyerItem } from '../../../features/plintBuyer/plintBuyerSlice';
 import {
@@ -39,7 +38,6 @@ const PlintBuyerTable: React.FC<Props> = ({ rows, onRefresh }) => {
     [rows]
   );
 
-  // поиск по имени/региону/адресу/телефонам + фильтр по остатку
   const filtered = React.useMemo(() => {
     const q = normalizeStr(query);
     return derived.filter((b) => {
@@ -64,7 +62,6 @@ const PlintBuyerTable: React.FC<Props> = ({ rows, onRefresh }) => {
     return arr;
   }, [filtered, sortKey, sortDir]);
 
-  // видимые id (для "раскрыть всё" только по текущей выборке)
   const visibleIds = React.useMemo(() => sorted.map(b => b._id), [sorted]);
 
   const expandedAll = React.useMemo(() => {

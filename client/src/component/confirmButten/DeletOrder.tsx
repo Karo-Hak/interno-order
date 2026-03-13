@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch } from '../../app/hooks';
-import { deletOrder, updateStretchPayed } from '../../strechCeining/features/stretchCeilingOrder/stretchOrderApi';
+import { deletOrder } from '../../strechCeining/features/stretchCeilingOrder/stretchOrderApi';
 
 interface DeletOrderProps {
 

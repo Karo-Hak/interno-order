@@ -1,4 +1,3 @@
-// src/strechCeining/stock/buyProduct/BuyProduct.tsx
 import React from 'react';
 import {
   useForm,
@@ -55,7 +54,6 @@ const normCatalog = (arr: any[]): CatalogItem[] =>
       '',
   }));
 
-// ✅ Совместимая с ES5/ES2015 реализация без [...iter]
 const dedupById = <T extends { _id: string }>(arr: T[]): T[] => {
   const map = new Map<string, T>();
   for (let i = 0; i < arr.length; i++) {
@@ -65,11 +63,9 @@ const dedupById = <T extends { _id: string }>(arr: T[]): T[] => {
   return Array.from(map.values());
 };
 
-// Берём только валидные строки из SimpleGroup
 const toBuyItems = (rows: SimpleRow[] = []): BuyItem[] => {
   const out: BuyItem[] = [];
   for (const r of rows) {
-    // ВАЖНО: SimpleGroup должен класть выбранный id в r.itemId
     const id = String((r as any)?.itemId ?? '').trim();
     const qty = Number.parseFloat(String((r as any)?.qty ?? 0)) || 0;
     if (id && qty > 0) out.push({ productId: id, qty });
@@ -77,7 +73,6 @@ const toBuyItems = (rows: SimpleRow[] = []): BuyItem[] => {
   return out;
 };
 
-// Аггрегируем одинаковые productId (qty суммируем)
 const aggregateItems = (items: BuyItem[]): BuyItem[] => {
   const m = new Map<string, number>();
   for (const { productId, qty } of items) {
@@ -118,7 +113,6 @@ const BuyProduct: React.FC = () => {
 
   const [ready, setReady] = React.useState(false);
 
-  // bootstrap profile
   React.useEffect(() => {
     let mounted = true;
     (async () => {
@@ -143,7 +137,6 @@ const BuyProduct: React.FC = () => {
   const [platforms, setPlatforms] = React.useState<CatalogItem[]>([]);
   const [rings, setRings] = React.useState<CatalogItem[]>([]);
 
-  // load dictionaries (ТРИ категории, без StretchTexture)
   React.useEffect(() => {
     if (!ready) return;
 
@@ -186,7 +179,6 @@ const BuyProduct: React.FC = () => {
         const mergedRings = dedupById([...(r1?.items || []), ...(r2?.items || [])]);
         setRings(normCatalog(mergedRings));
       } catch {
-        // тихо гасим и чистим каталоги
         setProfils([]);
         setPlatforms([]);
         setRings([]);
@@ -194,7 +186,6 @@ const BuyProduct: React.FC = () => {
     })();
   }, [dispatch, cookies, ready]);
 
-  // наблюдаемые значения
   const profRows = watch('groupedStretchProfilData');
   const platRows = watch('groupedLightPlatformData');
   const ringRows = watch('groupedLightRingData');
@@ -217,14 +208,12 @@ const BuyProduct: React.FC = () => {
       return;
     }
 
-    // 1) Собираем три группы в один массив
     const itemsRaw: BuyItem[] = [
       ...toBuyItems(values.groupedStretchProfilData),
       ...toBuyItems(values.groupedLightPlatformData),
       ...toBuyItems(values.groupedLightRingData),
     ];
 
-    // 2) Схлопываем по productId (qty суммируется)
     const items = aggregateItems(itemsRaw);
 
     if (items.length === 0) {
@@ -232,7 +221,6 @@ const BuyProduct: React.FC = () => {
       return;
     }
 
-    // 3) Формируем payload
     const payload = {
       items, // [{ productId, qty }]
       date: values.date ? new Date(values.date).toISOString() : undefined,

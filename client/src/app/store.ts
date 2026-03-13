@@ -1,4 +1,3 @@
-// src/app/store.ts
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import userReducer from '../features/user/userSlice';
 import orderReducer from '../features/order/orderSlice';

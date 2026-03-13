@@ -78,7 +78,6 @@ export const AddPlint: React.FC = (): JSX.Element => {
 
     try {
       if (checkedPlint) {
-        // ОБНОВЛЕНИЕ ЦЕН
         if (!values._id) {
           setError('_id', { type: 'required', message: 'Ընտրեք ապրանք' });
           return;
@@ -103,7 +102,6 @@ export const AddPlint: React.FC = (): JSX.Element => {
         alert('Գինը թարմացվեց');
         reset({ name: '', retailPriceAMD: '', wholesalePriceAMD: '', _id: undefined });
       } else {
-        // СОЗДАНИЕ НОВОГО (без stockBalance в форме — шлём 0 временно)
         if (!name) {
           setError('name', { type: 'required', message: 'Մուտքագրեք անվանում' });
           return;
@@ -184,7 +182,6 @@ export const AddPlint: React.FC = (): JSX.Element => {
               )}
             </div>
 
-            {/* Поле stockBalance удалено */}
             <button disabled={isSubmitting}>Գրանցել</button>
           </div>
         </form>

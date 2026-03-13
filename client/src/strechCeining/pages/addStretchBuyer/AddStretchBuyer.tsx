@@ -42,7 +42,7 @@ export const StretchBuyer: React.FC = () => {
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // намеренно пусто (как у тебя), иначе можно добавить deps: [cookies, dispatch, navigate, setCookie]
+  }, []); 
 
   const onSubmit = async (form: CreateBuyerForm) => {
     const res = await dispatch(newStretchBuyer({ stretchBuyer: form, cookies })).unwrap();
@@ -50,7 +50,6 @@ export const StretchBuyer: React.FC = () => {
       alert((res as any).error);
       return;
     }
-    // обновляем список без перезагрузки страницы
     await dispatch(allStretchBuyer(cookies));
     reset();
   };

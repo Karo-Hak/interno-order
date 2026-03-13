@@ -7,7 +7,6 @@ import {
   getPlintProductionStats,
 } from './plintProductionApi';
 
-// 🔹 Интерфейсы
 export interface PlintProduction {
   _id: string;
   date: string;
@@ -34,7 +33,6 @@ export interface CreatePlintProductionDto {
   user: string;
 }
 
-// 🔹 Состояние модуля
 interface PlintProductionState {
   items: PlintProduction[];
   total: number;
@@ -59,7 +57,6 @@ export const plintProductionSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    // ======== СПИСОК ПРОИЗВОДСТВ ========
     builder
       .addCase(getPlintProductions.pending, (state) => {
         state.loading = true;
@@ -88,7 +85,6 @@ export const plintProductionSlice = createSlice({
         state.error = action.payload?.message ?? 'fetch productions failed';
       });
 
-    // ======== ДОБАВЛЕНИЕ ========
     builder
       .addCase(newPlintProduction.pending, (state) => {
         state.loading = true;
@@ -106,7 +102,6 @@ export const plintProductionSlice = createSlice({
         state.error = action.payload?.message ?? 'create production failed';
       });
 
-    // ======== ОБНОВЛЕНИЕ ========
     builder
       .addCase(updatePlintProduction.fulfilled, (state, action: any) => {
         const item = action.payload;
@@ -118,7 +113,6 @@ export const plintProductionSlice = createSlice({
         state.error = action.payload?.message ?? 'update production failed';
       });
 
-    // ======== УДАЛЕНИЕ ========
     builder
       .addCase(removePlintProduction.fulfilled, (state, action: any) => {
         const { ok, id } = action.payload || {};
@@ -130,7 +124,6 @@ export const plintProductionSlice = createSlice({
         state.error = action.payload?.message ?? 'remove production failed';
       });
 
-    // ======== СТАТИСТИКА ========
     builder.addCase(getPlintProductionStats.fulfilled, (state, action: any) => {
       const p = action.payload;
       if (p && !p.error) {
@@ -145,5 +138,4 @@ export const plintProductionSlice = createSlice({
 
 export const selectPlintProduction = (state: any) => state.plintProduction;
 
-// ✅ Экспорт по умолчанию
 export default plintProductionSlice.reducer;

@@ -1,4 +1,3 @@
-/* компактные переменные */
 .compact-form {
   --gap: 8px;
   --pad: 8px;
@@ -13,7 +12,6 @@
 .divInputPayment{
   margin: 100px;
 }
-/* сетка страницы: слева контент, справа сайдбар */
 .compact-form .layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 400px;
@@ -34,11 +32,10 @@
 
 
 .compact-form .groups.two-col > .card {
-  max-height: 420px;          /* ограничим высоту */
-  overflow: auto;             /* внутри прокрутка */
+  max-height: 420px;          
+  overflow: auto;             
 }
 
-/* липкие заголовки таблиц внутри групп */
 .compact-form .table thead {
   position: sticky;
   top: 0;
@@ -46,7 +43,6 @@
   z-index: 1;
 }
 
-/* правый сайдбар — липкий */
 .compact-form .col-side {
   position: sticky;
   top: calc(var(--topbar) + var(--gap));
@@ -54,7 +50,6 @@
   flex-direction: column;
 }
 
-/* футер с кнопками — липкий внизу */
 .compact-form .actions.sticky {
   position: sticky;
   bottom: 0;
@@ -68,7 +63,6 @@
 }
 
 
-/* адаптив: одна колонка */
 @media (max-width: 1100px) {
   .compact-form .layout {
     grid-template-columns: 1fr;

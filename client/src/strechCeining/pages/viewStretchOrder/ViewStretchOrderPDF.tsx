@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Page, View, Document, StyleSheet, Text, Font } from '@react-pdf/renderer';
 
-// Register the custom font
 Font.register({
     family: 'ArmenianFont',
-    src: '/ArmenianFont.ttf'  // Ensure this path matches where the font is hosted
+    src: '/ArmenianFont.ttf'  
 });
 
 const styles = StyleSheet.create({

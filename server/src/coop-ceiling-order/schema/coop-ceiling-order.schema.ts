@@ -40,8 +40,14 @@ export class CoopCeilingOrder {
   @Prop({ type: [GroupedItemSchema], default: [] })
   groupedLightRingData: GroupedItem[];
 
+  @Prop({ type: [GroupedItemSchema], default: [] })
+  groupedAdditionalData: GroupedItem[];
+
   @Prop({ type: Date, default: () => new Date() })
   date: Date;
+
+  @Prop({ default: 'progress' })
+  status: string;
 
   @Prop({ trim: true, default: '' })
   buyerComment: string;

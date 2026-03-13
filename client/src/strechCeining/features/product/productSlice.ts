@@ -1,4 +1,3 @@
-// src/strechCeining/stock/features/product/productSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { addProduct, getAllProduct, updateProductsLists, updateProduct } from "./productApi";
 
@@ -25,7 +24,6 @@ export const initialState: ProductState = {
 };
 
 const pickArray = (payload: any): Product[] => {
-  // сервер может вернуть Product[] или {product: Product[]} или {items: Product[]}
   if (Array.isArray(payload)) return payload as Product[];
   if (Array.isArray(payload?.product)) return payload.product as Product[];
   if (Array.isArray(payload?.items)) return payload.items as Product[];
@@ -33,7 +31,6 @@ const pickArray = (payload: any): Product[] => {
 };
 
 const pickOne = (payload: any): Product | null => {
-  // сервер может вернуть Product или {product: Product}
   if (payload && typeof payload === "object") {
     if (payload._id) return payload as Product;
     if (payload.product && payload.product._id) return payload.product as Product;
@@ -99,21 +96,18 @@ export const productSlice = createSlice({
       .addCase(updateProduct.fulfilled, (state, action: PayloadAction<any>) => {
         state.loading = false;
 
-        // 1) если сервер вернул список — заменим
         const arr = pickArray(action.payload);
         if (arr.length) {
           state.arrProduct = arr;
           return;
         }
 
-        // 2) если вернул один продукт — обновим его в массиве
         const one = pickOne(action.payload);
         if (one?._id) {
           state.product = one;
           const idx = state.arrProduct.findIndex((p) => p._id === one._id);
           if (idx >= 0) state.arrProduct[idx] = { ...state.arrProduct[idx], ...one };
         }
-        // 3) если вернул {ok:true} — ничего не делаем (UI обновляй через getAllProduct)
       })
       .addCase(updateProduct.rejected, (state, action: any) => {
         state.loading = false;

@@ -1,4 +1,3 @@
-// ✅ AddCoopPayment.tsx
 import React from 'react';
 import { useCookies } from 'react-cookie';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';

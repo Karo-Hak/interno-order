@@ -10,7 +10,6 @@ type Tokened = { cookies: { access_token?: string } };
 const auth = (t?: string) => (t ? { Authorization: `Bearer ${t}` } : {});
 const withAuth = (t?: string) => ({ headers: auth(t) });
 
-// ---- Types (минимально под бэк) ----
 export type WholesaleItem = {
   name?: string;
   sku?: string;
@@ -30,7 +29,6 @@ export type CreatePlintWholesaleOrderDto = {
   deliveryPhone?: string;
   deliverySum?: number;
   prepayment?: number;
-  // опционально, если на фронте передаёшь:
   agent?: string;
   agentDiscount?: number;
   agentSum?: number;
@@ -57,7 +55,7 @@ export const getPlintWholesaleOrderById = createAsyncThunk(
   async (obj: Tokened & { id: string }, { rejectWithValue }) => {
     try {
       const { data } = await http.get(`${PATH.wholesale}/${obj.id}`, withAuth(obj.cookies.access_token));
-      return data; // полный заказ
+      return data; 
     } catch (e: any) {
       return rejectWithValue(e?.response?.data ?? { message: 'fetch wholesale order failed' });
     }
@@ -73,7 +71,7 @@ export const listPlintWholesaleOrdersByBuyer = createAsyncThunk(
         ...withAuth(obj.cookies.access_token),
         params: { buyerId: obj.buyerId, limit: obj.limit ?? 100 },
       });
-      return data; // массив заказов
+      return data; 
     } catch (e: any) {
       return rejectWithValue(e?.response?.data ?? { message: 'fetch wholesale orders by buyer failed' });
     }
@@ -93,9 +91,6 @@ export const updatePlintWholesaleOrder = createAsyncThunk(
   }
 );
 
-// ---- ADD PAYMENT (поддержаны оба эндпоинта, выбирай один) ----
-
-// legacy: POST /:id/payment  { amount, date? }
 export const addPlintWholesaleOrderPaymentLegacy = createAsyncThunk(
   'plint-wholesale-order/addPaymentLegacy',
   async (obj: Tokened & { id: string; amount: number; date?: string }, { rejectWithValue }) => {
@@ -112,7 +107,6 @@ export const addPlintWholesaleOrderPaymentLegacy = createAsyncThunk(
   }
 );
 
-// рекомендуемый: POST /:id/payments  { amount, date?, userId? }
 export const addPlintWholesaleOrderPayment = createAsyncThunk(
   'plint-wholesale-order/addPayment',
   async (obj: Tokened & { id: string; amount: number; date?: string; userId?: string }, { rejectWithValue }) => {
@@ -158,19 +152,15 @@ export const deletePlintWholesaleOrderById = createAsyncThunk(
   }
 );
 
-/**
- * Агентский платёж, привязанный к заказу.
- * Бэк ожидает: POST /plint-wholesale-order/:id/agent-payments  { amount, date?, userId }
- */
+
 export const addPlintAgentPayment = createAsyncThunk(
   'plint-wholesale-order/addAgentPayment',
   async (
     obj: Tokened & {
-      orderId: string;     // обязательный: id wholesale-заказа
-      amount: number;      // обязательный: сумма платежа
-      date?: string;       // опционально: ISO datetime
-      userId?: string;     // опционально: кто провёл платёж
-      // agentId?/buyerId? — не требуются сервером для этого роута
+      orderId: string;     
+      amount: number;     
+      date?: string;      
+      userId?: string;     
     },
     { rejectWithValue }
   ) => {
@@ -184,7 +174,6 @@ export const addPlintAgentPayment = createAsyncThunk(
         },
         withAuth(obj.cookies.access_token)
       );
-      // сервер возвращает { ok: true, newAgentBalance? }
       return { ...data, orderId: obj.orderId };
     } catch (e: any) {
       return rejectWithValue(e?.response?.data ?? { message: 'agent payment failed' });

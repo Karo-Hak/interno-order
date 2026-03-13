@@ -157,7 +157,6 @@ export const EditTagStretchOrder: React.FC = (): JSX.Element => {
         fetchData();
     }, [cookies, dispatch, navigate, params, setCookie, setValue]);
 
-    // При изменении order.rooms подготавливаем локальный room
     useEffect(() => {
         if (order.rooms && typeof order.rooms === "object") {
             const roomsArray = Object.values(order.rooms);
@@ -171,13 +170,11 @@ export const EditTagStretchOrder: React.FC = (): JSX.Element => {
         }
     }, [rooms]);
 
-    // Автоматический пересчет суммы при изменении watchedValues
     useEffect(() => {
         const formValues = watchedValues;
         const newRoomSum: { [id: string]: number } = {};
         let totalSum = 0;
 
-        // Суммируем по комнатам
         room.forEach(roomObj => {
             for (const [key, value] of Object.entries(formValues)) {
                 if (roomObj.id.slice(-15) === key.slice(-15) && key.includes("Sum")) {
@@ -201,10 +198,7 @@ export const EditTagStretchOrder: React.FC = (): JSX.Element => {
         setOrderSum(totalSum);
         setRoomSum(newRoomSum);
 
-        // Автоматически обновляем итоговые поля формы
         const prepay = Number(prepayment) || 0;
-        // setValue("groundTotal", totalSum - prepay);
-        // setValue("balance", totalSum);
     }, [watchedValues, room, workRowId, setValue]);
 
     // Отправка формы
@@ -259,12 +253,10 @@ export const EditTagStretchOrder: React.FC = (): JSX.Element => {
         });
     };
 
-    // Управление модалкой
     const [isModalOpen, setIsModalOpen] = useState(false);
     const handleOpenModal = () => setIsModalOpen(true);
     const handleCloseModal = () => setIsModalOpen(false);
 
-    // Управление комнатами
     function handleCheckboxRoom(event: ChangeEvent<HTMLInputElement>, el: any, index: number) {
         const updatedRoom = [...room];
         updatedRoom[index] = { ...el, isChecked: event.target.checked };
@@ -276,7 +268,6 @@ export const EditTagStretchOrder: React.FC = (): JSX.Element => {
         setRoom(updatedRoom);
     };
 
-    // Управление работами
     const addWorkNewRow = () => {
         setWorkRowId(prevRowId => [...prevRowId, uuidv4()]);
     };

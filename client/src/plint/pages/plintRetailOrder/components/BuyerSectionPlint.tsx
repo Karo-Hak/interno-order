@@ -9,7 +9,6 @@ import { BuyerMode, FormValues } from '../RetailOrderPage';
 
 type BuyerShort = { _id: string; name: string; phone1?: string };
 
-// 👇 Явно называем тип пропсов уникальным именем, экспортим
 export type BuyerSectionPlintProps = {
   buyerMode: BuyerMode;
   setBuyerMode: (m: BuyerMode) => void;

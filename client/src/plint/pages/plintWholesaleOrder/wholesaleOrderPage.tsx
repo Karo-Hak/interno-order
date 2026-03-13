@@ -31,7 +31,6 @@ type BuyerShort = { _id: string; name: string; phone1?: string };
 type AgentShort = { _id: string; name: string; phone1?: string };
 type CatalogItem = { _id: string; name: string; price: number; sku?: string };
 
-// ---------- ФОРМА ----------
 export type FormValues = {
     buyerMode: BuyerMode;
     buyerId?: string;
@@ -53,7 +52,7 @@ export type FormValues = {
     balance: number | '';
 
     agentDiscount: number | ''; // %
-    agentSum: number | '';      // вычисляемое поле = (balance - deliverySum) * (agentDiscount/100)
+    agentSum: number | '';      // (balance - deliverySum) * (agentDiscount/100)
 };
 
 const pickList = (res: any, keys: string[] = []): any[] => {
@@ -112,7 +111,7 @@ const AddPlintWholesaleOrder: React.FC = () => {
                 .slice(0, 16),
             buyerComment: '',
             paymentMethod: 'cash',
-            balance: '',              // будет синхронизироваться с total
+            balance: '',              //  total
             agentDiscount: '',        // %
             agentSum: '',             // = (balance - deliverySum) * agentDiscount%
         },
@@ -165,7 +164,7 @@ const AddPlintWholesaleOrder: React.FC = () => {
         return () => { mounted = false; };
     }, [dispatch, cookies, navigate, setCookie]);
 
-    // ---- ИТОГО (total) ----
+    // ----  (total) ----
     const total = React.useMemo(() => {
         const n = (v: unknown) => Number.parseFloat(String(v ?? 0)) || 0;
         const itemsSum = (watch('items') || []).reduce((a, r) => a + n(r.sum), 0);
@@ -174,10 +173,9 @@ const AddPlintWholesaleOrder: React.FC = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [JSON.stringify(watch('items')), watch('deliverySum')]);
 
-    // Синхронизируем balance = total (раз предоплаты нет)
+    //  balance = total 
     React.useEffect(() => {
         setValue('balance', total, { shouldDirty: true, shouldValidate: false });
-        // также пересчитаем агентскую сумму при изменении total
         const agentId = watch('agentId');
         const disc = Number(watch('agentDiscount')) || 0;
         const delSum = Number(watch('deliverySum')) || 0;
@@ -190,7 +188,6 @@ const AddPlintWholesaleOrder: React.FC = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [total]);
 
-    // Когда меняется agentId или agentDiscount — пересчитать agentSum
     React.useEffect(() => {
         const agentId = watch('agentId');
         const discRaw = watch('agentDiscount');
@@ -276,7 +273,7 @@ const AddPlintWholesaleOrder: React.FC = () => {
                 sum: num(r.sum ?? num(r.qty) * num(r.price)),
             }));
 
-        // agentId → agent (бэкенд ожидает agent, и он опционален)
+        // agentId → agent 
         const agent = isHex24(values.agentId) ? values.agentId : undefined;
 
         const dto: any = {
@@ -349,7 +346,6 @@ const AddPlintWholesaleOrder: React.FC = () => {
                         <aside className="col-side">
                             <div className="card dense sticky-side">
                                 <PaymentSectionPlint total={total} register={register} setValue={setValue} />
-                                {/* Показать текущий баланс для наглядности */}
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
                                     <span style={{ opacity: 0.75 }}>Balance (UI)</span>
                                     <strong>{(Number(watch('balance')) || total).toLocaleString()}</strong>

@@ -1,4 +1,3 @@
-// types.ts (или блок типов рядом с utils)
 
 export type CoopBuyerEntry = {
   date?: string;   // ISO
@@ -13,13 +12,12 @@ export type CoopBuyerEntry = {
 
 export type Buy = { date: string | Date; sum: number; orderId: string };
 
-// теперь кредит может содержать returnId (для возврата) и dkId (для платежа)
 export type Credit = {
   date: string | Date;
   sum: number;
   dkId?: string;
   returnId?: string;
-  type?: 'payment' | 'return' | 'returnPayment'; // опционально — если бек уже присылает
+  type?: 'payment' | 'return' | 'returnPayment'; 
 };
 
 export type DerivedBuyer = {

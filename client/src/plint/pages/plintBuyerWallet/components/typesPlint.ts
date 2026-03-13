@@ -5,7 +5,6 @@ export type PlintBuyEntry = {
   orderId: string;
 };
 
-// одно событие "платёж" для деталки
 export type PlintCreditEntry = {
   date: Date;
   sum: number;
@@ -25,8 +24,8 @@ export type DerivedPlintBuyer = {
   buyCount: number;     // buyRetail.length + buyWholesale.length
   creditCount: number;  // credit.length
 
-  buySum: number;       // сумма amount по buyRetail + buyWholesale
-  creditSum: number;    // сумма amount по credit
+  buySum: number;       //  buyRetail + buyWholesale
+  creditSum: number;    //  amount 
   total: number;        // balanceAMD
 
   buyRetail?: any[];

@@ -1,7 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { http } from '../../../api/http';
 
-/** ===== DRY: пути и хедеры ===== */
 const PATHS = {
   retailBase: '/plint-retail-order',
 };
@@ -22,7 +21,7 @@ export type RetailItem = {
 export type CreatePlintRetailOrderDto = {
   buyer: string;               // buyerId
   items: RetailItem[];
-  date?: string;               // ISO
+  date?: string;               
   buyerComment?: string;
   paymentMethod?: string;
   delivery?: boolean;
@@ -89,7 +88,7 @@ export const updatePlintRetailOrder = createAsyncThunk(
   }
 );
 
-/** ===== ADD PAYMENT (оба варианта как у тебя) ===== */
+/** ===== ADD PAYMENT  ===== */
 export const addPlintRetailOrderPayment = createAsyncThunk(
   'plint-retail-order/addPayment',
   async (obj: Tokened & { id: string; amount: number; date?: string }, { rejectWithValue }) => {
@@ -138,7 +137,6 @@ export const fetchPlintMonthlyReportRetail = createAsyncThunk(
   }
 );
 
-/** ===== ALIASES (совместимость с текущими импортами) ===== */
 export const fetchPlintOrderById = getPlintRetailOrderById;
 
 export const deletePlintOrderById = createAsyncThunk(

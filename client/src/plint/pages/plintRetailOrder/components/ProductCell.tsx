@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { http } from '../../../../api/http';
 import { PlintProps } from '../../../features/plint/plintSlice';
 import { useAppDispatch } from '../../../../app/hooks';
 import { getAllPlint } from '../../../features/plint/plintApi';
@@ -79,7 +78,6 @@ const ProductSelect: React.FC<Props> = ({ value, onSelect, limit = 500 }) => {
             </select>
             {loading && <div style={{ fontSize: 12, color: '#6b7280', marginTop: 6 }}>Загрузка списка…</div>}
 
-            {/* Показать текущее выбранное значение (read-only) */}
             {value?.name && (
                 <div style={{ fontSize: 12, color: '#6b7280', marginTop: 6 }}>
                     Выбрано: <b>{value.name}</b>  {value.price ? `· ${value.price} ֏` : ''}

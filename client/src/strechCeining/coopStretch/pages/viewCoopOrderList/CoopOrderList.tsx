@@ -20,39 +20,91 @@ type Row = {
 };
 
 const fmtDate = (s: string | Date) =>
-  new Date(s).toLocaleString('hy-AM', { year: 'numeric', month: '2-digit', day: '2-digit' });
+  new Date(s).toLocaleString('hy-AM', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
 
-const toMonthStr = (d = new Date()) =>
-  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+const firstDayOfMonth = (d = new Date()) =>
+  new Date(d.getFullYear(), d.getMonth(), 1).toISOString().split('T')[0];
+
+const lastDayOfMonth = (d = new Date()) =>
+  new Date(d.getFullYear(), d.getMonth() + 1, 0).toISOString().split('T')[0];
+
+const LS_RANGE_KEY = 'coopOrderList.range';
 
 const CoopOrderList: React.FC = () => {
   const dispatch = useAppDispatch();
   const [cookies] = useCookies(['access_token']);
 
-  // исходные данные
-  const [month, setMonth] = React.useState<string>(toMonthStr());
+  const [startDate, setStartDate] = React.useState<string>(() => {
+    try {
+      const raw = localStorage.getItem(LS_RANGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (typeof parsed?.startDate === 'string') return parsed.startDate;
+      }
+    } catch {}
+    return firstDayOfMonth();
+  });
+
+  const [endDate, setEndDate] = React.useState<string>(() => {
+    try {
+      const raw = localStorage.getItem(LS_RANGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (typeof parsed?.endDate === 'string') return parsed.endDate;
+      }
+    } catch {}
+    return lastDayOfMonth();
+  });
+
+  React.useEffect(() => {
+    try {
+      localStorage.setItem(LS_RANGE_KEY, JSON.stringify({ startDate, endDate }));
+    } catch {}
+  }, [startDate, endDate]);
+
   const [rows, setRows] = React.useState<Row[]>([]);
   const [loading, setLoading] = React.useState<boolean>(false);
 
-  // фильтры
   const [dateFrom, setDateFrom] = React.useState<string>(''); // yyyy-mm-dd
   const [dateTo, setDateTo] = React.useState<string>(''); // yyyy-mm-dd
   const [buyerQuery, setBuyerQuery] = React.useState<string>('');
 
-  // раскрывашка/детали по строкам
+  const [dateError, setDateError] = React.useState<string>('');
+
+  React.useEffect(() => {
+    if (!startDate || !endDate) {
+      setDateError('');
+      return;
+    }
+    const from = new Date(startDate).getTime();
+    const to = new Date(endDate).getTime();
+    if (Number.isFinite(from) && Number.isFinite(to) && from > to) {
+      setDateError('Սկիզբը չի կարող մեծ լինել վերջից');
+    } else {
+      setDateError('');
+    }
+  }, [startDate, endDate]);
+
   const [expanded, setExpanded] = React.useState<Set<string>>(new Set());
   const [details, setDetails] = React.useState<Record<string, Item[]>>({});
   const [loadingDetail, setLoadingDetail] = React.useState<Record<string, boolean>>({});
 
-  // глобальный список товаров
   const [showAllProducts, setShowAllProducts] = React.useState<boolean>(false);
   const [loadingAllProducts, setLoadingAllProducts] = React.useState<boolean>(false);
 
-  // ===== Загрузка отчёта =====
   const load = React.useCallback(async () => {
+    if (!startDate || !endDate) return;
+    if (new Date(startDate) > new Date(endDate)) return;
+
     setLoading(true);
     try {
-      const data = await dispatch(fetchCoopMonthlyReport({ cookies, month })).unwrap();
+      const dateFilter = { startDate, endDate };
+      const data = await dispatch(fetchCoopMonthlyReport({ cookies, dateFilter })).unwrap();
+
       const normRows: Row[] = (data?.rows ?? []).map((r: any) => ({
         _id: String(r._id),
         date: r.date,
@@ -60,9 +112,11 @@ const CoopOrderList: React.FC = () => {
         buyerPhone: r.buyerPhone ?? r.phone1 ?? r?.buyer?.phone1 ?? '',
         sum: Number(r.sum ?? 0),
       }));
+
       setRows(normRows);
-      setShowAllProducts(false); // сброс при обновлении
-      setExpanded(new Set()); // сброс раскрытий
+
+      setShowAllProducts(false);
+      setExpanded(new Set());
     } catch {
       alert('Չհաջողվեց բեռնել հաշվետվությունը');
       setRows([]);
@@ -70,23 +124,22 @@ const CoopOrderList: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [dispatch, cookies, month]);
+  }, [dispatch, cookies, startDate, endDate]);
 
   React.useEffect(() => {
+    if (dateError) return;
     load();
-  }, [load]);
+  }, [load, dateError]);
 
-  // ===== Нормализация товаров =====
   const normalizeItems = React.useCallback((order: any): Item[] => {
     if (!order) return [];
     const items: Item[] = [];
 
-    function toNum(n: any): number | undefined {
+    const toNum = (n: any): number | undefined => {
       const x = Number(n);
       return Number.isFinite(x) ? x : undefined;
-    }
+    };
 
-    // текстуры
     if (Array.isArray(order.groupedStretchTextureData)) {
       for (const v of order.groupedStretchTextureData) {
         const name = String(v?.name ?? 'Ապրանք');
@@ -94,20 +147,23 @@ const CoopOrderList: React.FC = () => {
         const width = toNum(v?.width);
         const height = toNum(v?.height);
         const price = toNum(v?.price);
-        const total = toNum(v?.sum ?? (Number(price ?? 0) * Number(qty ?? 1)));
+        const total = toNum(v?.sum ?? Number(price ?? 0) * Number(qty ?? 1));
         items.push({ name, height, width, qty, price, total });
       }
     }
 
-    // простые (profil/platform/ring)
-    for (const key of ['groupedStretchProfilData', 'groupedLightPlatformData', 'groupedLightRingData']) {
+    for (const key of [
+      'groupedStretchProfilData',
+      'groupedLightPlatformData',
+      'groupedLightRingData',
+    ]) {
       const arr = order?.[key];
       if (Array.isArray(arr)) {
         for (const v of arr) {
           const name = String(v?.name ?? 'Ապրանք');
           const qty = toNum(v?.qty);
           const price = toNum(v?.price);
-          const total = toNum(v?.sum ?? (Number(price ?? 0) * Number(qty ?? 1)));
+          const total = toNum(v?.sum ?? Number(price ?? 0) * Number(qty ?? 1));
           items.push({ name, qty, price, total });
         }
       }
@@ -116,7 +172,6 @@ const CoopOrderList: React.FC = () => {
     return items;
   }, []);
 
-  // ===== Детали одного заказа =====
   const loadOrderDetails = React.useCallback(
     async (id: string) => {
       if (details[id] || loadingDetail[id]) return;
@@ -134,7 +189,6 @@ const CoopOrderList: React.FC = () => {
     [dispatch, cookies, details, loadingDetail, normalizeItems]
   );
 
-  // ===== Фильтрация по дате/покупателю =====
   const filteredRows = React.useMemo(() => {
     const q = buyerQuery.trim().toLowerCase();
     const fromTs = dateFrom ? new Date(dateFrom + 'T00:00:00').getTime() : -Infinity;
@@ -153,7 +207,6 @@ const CoopOrderList: React.FC = () => {
     });
   }, [rows, dateFrom, dateTo, buyerQuery]);
 
-  // ===== Раскрытие строки =====
   const toggleExpand = async (id: string) => {
     setExpanded((prev) => {
       const next = new Set(prev);
@@ -164,14 +217,11 @@ const CoopOrderList: React.FC = () => {
     if (!details[id]) await loadOrderDetails(id);
   };
 
-  // ===== Открыть/закрыть все чекбоксы (для отфильтрованных строк) =====
   const openAll = React.useCallback(async () => {
     const ids = filteredRows.map((r) => r._id);
 
-    // открыть все
     setExpanded(new Set(ids));
 
-    // подгрузить детали там, где их нет
     const need = ids.filter((id) => !details[id] && !loadingDetail[id]);
     if (need.length === 0) return;
 
@@ -192,7 +242,6 @@ const CoopOrderList: React.FC = () => {
     else await openAll();
   };
 
-  // ===== Глобальная кнопка: показать товары всех заказов =====
   const handleToggleAllProducts = async () => {
     if (showAllProducts) {
       setShowAllProducts(false);
@@ -229,7 +278,6 @@ const CoopOrderList: React.FC = () => {
     }
   };
 
-  // собрать товары по всем отфильтрованным заказам
   const allProducts = React.useMemo<Item[]>(() => {
     if (!showAllProducts) return [];
     const ids = filteredRows.map((r) => r._id);
@@ -245,20 +293,40 @@ const CoopOrderList: React.FC = () => {
     <div className="coop-page">
       <CoopStretchMenu />
 
-      {/* Панель управления */}
       <div className="toolbar">
-        <label className="toolbar__field">
-          Ամիս:
-          <input type="month" value={month} onChange={(e) => setMonth(e.target.value)} />
-        </label>
+        {/* Server-range */}
+        <div className="filters">
+          <label className="toolbar__field">
+            StartDate:
+            <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+          </label>
 
-        <button type="button" className="btn" onClick={load} disabled={loading}>
+          <label className="toolbar__field">
+            EndDate:
+            <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+          </label>
+
+          <button
+            type="button"
+            className="btn btn--secondary btnToolbar"
+            onClick={() => {
+              setStartDate(firstDayOfMonth());
+              setEndDate(lastDayOfMonth());
+            }}
+          >
+            Այս ամիս
+          </button>
+        </div>
+
+        {dateError && <div className="toolbar__error">{dateError}</div>}
+
+        <button type="button" className="btn btnToolbar" onClick={load} disabled={loading || !!dateError}>
           {loading ? 'Բեռնվում է…' : 'Թարմացնել'}
         </button>
 
         <button
           type="button"
-          className="btn btn--secondary"
+          className="btn btn--secondary btnToolbar"
           onClick={toggleAllExpanded}
           disabled={loading || filteredRows.length === 0}
         >
@@ -266,14 +334,6 @@ const CoopOrderList: React.FC = () => {
         </button>
 
         <div className="filters">
-          <label className="toolbar__field">
-            Սկիզբ:
-            <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
-          </label>
-          <label className="toolbar__field">
-            Վերջ:
-            <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
-          </label>
           <input
             className="toolbar__search"
             placeholder="Գնորդ / Հեռախոս"
@@ -285,25 +345,24 @@ const CoopOrderList: React.FC = () => {
         <div className="toolbar__right">
           <button
             type="button"
-            className="btn btn--secondary"
+            className="btn btn--secondary btnToolbar"
             onClick={handleToggleAllProducts}
             disabled={loadingAllProducts || filteredRows.length === 0}
           >
             {loadingAllProducts
               ? 'Ապրանքները բեռնվում են…'
               : showAllProducts
-              ? 'Թաքցնել բոլոր ապրանքները'
-              : 'Ցույց տալ բոլոր ապրանքները'}
+                ? 'Թաքցնել բոլոր ապրանքները'
+                : 'Ցույց տալ բոլոր ապրանքները'}
           </button>
 
           <div className="toolbar__total">
-             ({filteredRows.length} պատվեր):{' '}
+            ({filteredRows.length} պատվեր):{' '}
             <b>{filteredRows.reduce((s, x) => s + Number(x.sum || 0), 0).toLocaleString()}</b>
           </div>
         </div>
       </div>
 
-      {/* Глобальный агрегированный список */}
       {showAllProducts && (
         <div className="panel">
           <div className="panel__title">Բոլոր ապրանքները (ընտրված պատվերների համար)</div>
@@ -311,7 +370,6 @@ const CoopOrderList: React.FC = () => {
         </div>
       )}
 
-      {/* Таблица заказов */}
       <div className="table-wrap">
         <table className="table">
           <thead>

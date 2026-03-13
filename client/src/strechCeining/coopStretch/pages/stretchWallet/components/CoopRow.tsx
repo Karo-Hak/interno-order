@@ -48,7 +48,7 @@ function toCreditRows(arr: any[] | undefined): Credit[] {
       sum : Number(c?.sum ?? 0),
       dkId: rawDk ? String(rawDk) : undefined,
       returnId: rawRet ? String(rawRet) : undefined,
-      type, // не обязателен; BuyerDetails работает по returnId/dkId
+      type, 
     };
   });
 }
@@ -77,11 +77,10 @@ export const CoopRow: React.FC<Props> = ({ r, isOpen, toggle, onRowClick, onPaym
       if (c.dkId) {
         await dispatch(deleteCoopPaymentByDkId({ cookies, dkId: c.dkId })).unwrap();
       } else {
-        // fallback — удаление по дате/сумме
         const iso = (c.date instanceof Date ? c.date : new Date(c.date)).toISOString();
         await dispatch(deleteCoopPaymentByDateSum({ cookies, buyerId: r._id, date: iso, sum: c.sum })).unwrap();
       }
-      onPaymentDeleted?.(); // ← дёрнем перезагрузку наверх
+      onPaymentDeleted?.(); 
     } catch (e: any) {
       alert(e?.message || 'Չհաջողվեց ջնջել վճարումը');
     }

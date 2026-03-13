@@ -71,7 +71,6 @@ export const deleteCredit = createAsyncThunk<DeleteCreditRes, DeleteCreditReq>(
       });
       return response.data;
     } catch (e: any) {
-      // если сервер вернул тело ошибки — пробрасываем его
       const data = e?.response?.data ?? { error: 'not found' };
       return rejectWithValue(data as DeleteCreditRes);
     }

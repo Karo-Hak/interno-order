@@ -73,6 +73,7 @@ const StretchOrderBalanceList: FC<DebetKreditSectionProps> = ({
                   <th>Վճարում</th>
                   <th>Մնացորդ</th>
                   <th>Մուտք</th>
+                  <th>Դիտել</th>
                 </tr>
               </thead>
               <tbody>
@@ -111,6 +112,12 @@ const StretchOrderBalanceList: FC<DebetKreditSectionProps> = ({
                           variant="tag"
                           onSuccess={onReloadOrders} // 👈 сюда
                         />
+                      </td>
+                      <td>
+                        <button type='button' className='btn' style={{ color: "black" }}
+                          onClick={() => viewOrder(e._id)}>
+                          Ավելին
+                        </button>
                       </td>
                     </tr>
                   </React.Fragment>

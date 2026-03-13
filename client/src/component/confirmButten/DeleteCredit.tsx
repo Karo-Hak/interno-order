@@ -6,7 +6,7 @@ import { deleteCredit } from '../../strechCeining/features/StrechBuyer/strechBuy
 interface DeleteCreditProps {
   buyerId: string;
   creditSum: number;
-  creditDate: string; // лучше ISO
+  creditDate: string; 
   orderId: string;
 }
 
@@ -23,7 +23,6 @@ const DeleteCredit: React.FC<DeleteCreditProps> = ({ buyerId, creditSum, creditD
         deleteCredit({ cookies, buyerId, creditSum, creditDate, orderId })
       ).unwrap();
 
-      // безопасная проверка, чтобы TS не ругался на `in`
       if (res && typeof res === 'object' && 'error' in res) {
         alert((res as any).error ?? 'Սխալ');
         return;
@@ -34,7 +33,6 @@ const DeleteCredit: React.FC<DeleteCreditProps> = ({ buyerId, creditSum, creditD
       }
 
     } catch (err: any) {
-      // unwrap бросает при rejectWithValue
       const msg = err?.error || err?.message || 'Սերվերի սխալ';
       alert(msg);
     }

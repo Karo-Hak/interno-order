@@ -17,7 +17,6 @@ class TextureItemDto {
   @IsNumber() @Min(0) height: number;
   @IsNumber() @Min(0) width: number;
 
-  // sq и sum можем принимать опционально — сервер при сохранении досчитает
   @IsOptional() @IsNumber() @Min(0) sq?: number;
   @IsOptional() @IsNumber() @Min(0) price?: number;
   @IsOptional() @IsNumber() @Min(0) sum?: number;
@@ -42,11 +41,9 @@ export class BuyerInputDto {
 }
 
 export class StretchTextureOrderDto {
-  // 👉 Только текстуры используют height/width/sq
   @IsOptional() @IsArray() @ValidateNested({ each: true }) @Type(() => TextureItemDto)
   groupedStretchTextureData?: TextureItemDto[];
 
-  // 👉 Простые группы не требуют height/width
   @IsOptional() @IsArray() @ValidateNested({ each: true }) @Type(() => SimpleItemDto)
   groupedStretchProfilData?: SimpleItemDto[];
 
@@ -55,6 +52,9 @@ export class StretchTextureOrderDto {
 
   @IsOptional() @IsArray() @ValidateNested({ each: true }) @Type(() => SimpleItemDto)
   groupedLightRingData?: SimpleItemDto[];
+
+  @IsOptional() @IsArray() @ValidateNested({ each: true }) @Type(() => SimpleItemDto)
+  groupedAdditionalData?: SimpleItemDto[];
 
   @IsOptional() @IsDateString() date?: string;
   @IsOptional() @IsString() buyerComment?: string;

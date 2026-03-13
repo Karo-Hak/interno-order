@@ -25,7 +25,7 @@ export class StretchCeilingOrderService {
     @InjectModel('User')
     private readonly userModel: Model<User>,
 
-    @InjectConnection() // ⬅️ добавлено: подключение mongoose
+    @InjectConnection() 
     private readonly connection: Connection,
 
     private readonly debetKreditService: DebetKreditService,
@@ -48,7 +48,6 @@ export class StretchCeilingOrderService {
   async create(createStretchCeilingOrderDto: any) {
     const { orderBuyer, user } = createStretchCeilingOrderDto;
 
-    // buyer может прийти объектом — достанем id
     const buyerId = this.idOf(orderBuyer);
     const orderBuyerDocument = await this.stretchBuyerModel.findById(buyerId).exec();
     if (!orderBuyerDocument) {
@@ -60,7 +59,6 @@ export class StretchCeilingOrderService {
       throw new Error('Order user not found');
     }
 
-    // worker опционально
     let stWorker: string | null = null;
     const rawWorkerId = createStretchCeilingOrderDto?.stretchTextureOrder?.stWorkerId;
     if (rawWorkerId && rawWorkerId !== 'Աշխատակից') {
@@ -71,7 +69,6 @@ export class StretchCeilingOrderService {
       stWorker = orderWorkerDocument._id.toString();
     }
 
-    // нормализуем числовые поля
     const patch = {
       ...createStretchCeilingOrderDto.stretchTextureOrder,
       balance: this.toNum(createStretchCeilingOrderDto.stretchTextureOrder?.balance, 0),
@@ -86,7 +83,6 @@ export class StretchCeilingOrderService {
       stWorker: stWorker,
     });
 
-    // привязки без дублей
     const tasks: Promise<any>[] = [
       this.userModel
         .updateOne({ _id: orderUserDocument._id }, { $addToSet: { order: createdOrder._id } })
@@ -104,7 +100,6 @@ export class StretchCeilingOrderService {
     }
     await Promise.all(tasks);
 
-    // DK
     await this.debetKreditService.create(
       createdOrder._id,
       orderUserDocument._id,
@@ -113,7 +108,6 @@ export class StretchCeilingOrderService {
       createdOrder.prepayment,
     );
 
-    // buyer.buy / buyer.credit (без завязки кредитов на заказ)
     if (Number(createdOrder.balance) > 0)
       await this.stretchBuyerService.addBuy(orderBuyerDocument._id.toString(), {
         date: new Date(),
@@ -198,20 +192,18 @@ export class StretchCeilingOrderService {
     updateStretchCeilingOrderDto: { balance: number; prepayment: number } & Record<string, any>,
     buyer: any,
     orderWorker: any | undefined,
-    updatingOrder: any, // популяченный findOne(id)
+    updatingOrder: any, 
   ) {
-    // проверить покупателя
     const buyerCheck: any = await this.stretchBuyerModel.findById(buyer._id).exec();
     if (!buyerCheck) {
       throw new Error('Buyer not found for update');
     }
 
-    // Debet/Kredit
     const dk = await this.debetKreditService.findByOrder(id.toString());
     if (dk.length === 0) {
       await this.debetKreditService.create(
         id,
-        updatingOrder.user.toString(), // user — ObjectId в текущем методе
+        updatingOrder.user.toString(), 
         buyer._id.toString(),
         this.toNum(updateStretchCeilingOrderDto.balance, 0),
         this.toNum(updateStretchCeilingOrderDto.prepayment, 0),
@@ -224,7 +216,6 @@ export class StretchCeilingOrderService {
           debetDoc._id.toString(),
         );
       }
-      // перенос DK на нового покупателя
       if (updatingOrder?.buyer?._id && updatingOrder.buyer._id.toString() !== buyer._id.toString()) {
         await this.debetKreditService.updateBuyer(updatingOrder.buyer._id.toString(), buyer._id.toString());
         const dkIds = dk.map((e: any) => e._id.toString());
@@ -234,13 +225,11 @@ export class StretchCeilingOrderService {
       }
     }
 
-    // привязка заказа к новому buyer
     await this.stretchBuyerModel.updateOne(
       { _id: buyerCheck._id },
       { $addToSet: { order: id } },
     );
 
-    // обработка работника
     let stWorkerUpdate: any = {};
     if (orderWorker) {
       await this.stretchWorkerModel.updateOne(
@@ -252,7 +241,6 @@ export class StretchCeilingOrderService {
       stWorkerUpdate.stWorker = null;
     }
 
-    // обновление заказа
     const patch = {
       ...updateStretchCeilingOrderDto,
       balance: this.toNum(updateStretchCeilingOrderDto.balance, 0),
@@ -269,7 +257,6 @@ export class StretchCeilingOrderService {
       throw new Error('Order not found on update');
     }
 
-    // Жёстко выставить сумму buy для этого заказа + скорректировать totalSum
     await this.stretchBuyerService.setBuySumForOrder(
       buyer._id.toString(),
       updatedOrder._id.toString(),
@@ -286,7 +273,6 @@ export class StretchCeilingOrderService {
     const orderId = asObjectId("orderId", updatingOrder._id)
 
     if (oldBuyerId && oldBuyerId !== newBuyerId) {
-      // убрать у старого покупателя
       await this.stretchBuyerService.removeOneBuyByOrderIdAndDecTotal(oldBuyerId, id, oldBalance);
       if (oldPrepay > 0) {
         const session = await this.connection.startSession();
@@ -316,7 +302,6 @@ export class StretchCeilingOrderService {
 
       }
 
-      // добавить/обновить у нового покупателя
       await this.stretchBuyerService.addBuy(newBuyerId, {
         date: orderDate,
         sum: newBalance,
@@ -346,7 +331,6 @@ export class StretchCeilingOrderService {
       .exec();
   }
 
-  // === УДАЛЕНИЕ С ТРАНЗАКЦИЕЙ ===
   async remove(id: string) {
     const session = await this.connection.startSession();
     try {
@@ -357,21 +341,16 @@ export class StretchCeilingOrderService {
 
         const buyerId = order.buyer.toString();
         const orderId = asObjectId("orderId", id)
-        // 1) удалить заказ
         await this.stretchCeilingOrderModel.deleteOne({ _id: id }).session(session);
 
-        // 2) убрать ссылку на заказ у покупателя
         await this.stretchBuyerService.deleteFromArray(buyerId, id, { session });
 
-        // 3) buy: удалить ровно один buy по orderId и totalSum -= balance
         const balance = Number(order.balance) || 0;
         await this.stretchBuyerService.removeOneBuyByOrderIdAndDecTotal(buyerId, id, balance, { session });
 
-        // 4) credit: удалить ровно один credit по сумме предоплаты и дате (без привязки к заказу)
         const preSum = Number(order.prepayment) || 0;
         if (preSum > 0) {
           const creditDate = order.prepaymentDate ?? order.createdAt ?? order.date;
-          // сначала узкий интервал (минута), с метками
           let res = await this.stretchBuyerService.removeOneCredit(
             buyerId,
             { sum: preSum, date: creditDate, matchBy: 'minute', orderId },
@@ -395,7 +374,6 @@ export class StretchCeilingOrderService {
 
         }
 
-        // 5) DebetKredit, связанные с заказом
         const dk = await this.debetKreditService.findByOrder(id, { session });
         if (dk.length > 0) {
           const dkIds = dk.map((e: any) => e._id.toString());

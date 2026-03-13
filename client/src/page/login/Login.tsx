@@ -1,4 +1,3 @@
-// src/wallpaper/pages/auth/Login.tsx
 import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -8,7 +7,6 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useCookies } from "react-cookie";
 
 import { loginUser } from "../../features/user/userApi";
-// ❌ НЕ импортируй тут User из userSlice — он тебе не нужен для формы
 
 import { getAllUserSphere } from "../../features/userSphere/userSphereApi";
 import { selectUserSphere } from "../../features/userSphere/userSphereSlice";
@@ -71,11 +69,9 @@ export const Login: React.FC = (): JSX.Element => {
     setServerError(null);
     setSubmitting(true);
     try {
-      // ✅ используем узкий тип для логина
       const payload: LoginCredentials = {
         username: data.username.trim(),
         password: data.password,
-        // sphere по желанию, если нужно слать на бэк — добавь в payload
       };
 
       const res = await dispatch(loginUser(payload as any)).unwrap();

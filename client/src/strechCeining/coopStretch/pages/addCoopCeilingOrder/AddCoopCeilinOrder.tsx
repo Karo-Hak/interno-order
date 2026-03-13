@@ -1,4 +1,3 @@
-// src/strechCeining/coopStretch/pages/addCoopCeilingOrder/AddCoopCeilinOrder.tsx
 import React from 'react';
 import {
   useForm,
@@ -16,22 +15,17 @@ import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
 import { selectUser } from '../../../../features/user/userSlice';
 import { userProfile } from '../../../../features/user/userApi';
 import './addCoopCeilinOrder.css';
-
 import { allCoopStretchBuyerThunk } from '../../features/coopStrechBuyer/coopStrechBuyerApi';
 import { createCoopOrder, type PaymentMethod } from '../../features/coopCeilingOrder/coopCeilingOrderApi';
-
 import BuyerSection from './components/BuyerSection';
 import TextureGroup, { TextureRow } from './components/TextureGroup';
 import SimpleGroup, { SimpleRow } from './components/SimpleGroup';
 import PaymentSection from './components/PaymentSection';
 import PhotoUrls from './components/PhotoUrls';
-
-// ✅ оставляем текстуры как было
 import { getAllStretchTexture } from '../../../features/strechTexture/strechTextureApi';
-// ✅ новые выборки по категориям (как в buy)
 import { getProductsByCategory } from '../../../features/product/productApi';
-
 import { CoopStretchMenu } from '../../../../component/menu/CoopStretchMenu';
+import { getAllStretchAdditional } from '../../../features/strechAdditional/strechAdditionalApi';
 
 export type BuyerMode = 'existing' | 'new';
 
@@ -53,6 +47,7 @@ export type FormValues = {
   groupedStretchProfilData: SimpleRow[];
   groupedLightPlatformData: SimpleRow[];
   groupedLightRingData: SimpleRow[];
+  groupedAdditionalData: SimpleRow[];
 
   date: string; // ISO yyyy-mm-ddTHH:mm
   buyerComment: string;
@@ -78,7 +73,6 @@ const pickList = (res: any, keys: string[] = []): any[] => {
   return [];
 };
 
-// нормализация товара к { _id, name, price }
 const normCatalog = (arr: any[]): CatalogItem[] =>
   (arr ?? []).map((x: any) => ({
     _id: String(x._id ?? x.id ?? crypto.randomUUID()),
@@ -94,7 +88,6 @@ const normCatalog = (arr: any[]): CatalogItem[] =>
     price: Number(x.coopPrice ?? x.pricePerQty ?? x.unitPrice ?? x.cost ?? x.amount ?? 0),
   }));
 
-// дедупликация по _id (совместимо со старым target)
 const dedupById = <T extends { _id: string }>(arr: T[]): T[] => {
   const map = new Map<string, T>();
   for (let i = 0; i < arr.length; i++) {
@@ -104,7 +97,6 @@ const dedupById = <T extends { _id: string }>(arr: T[]): T[] => {
   return Array.from(map.values());
 };
 
-// DTO mappers (qty для texture = height * width; цена и сумма учитываем, если заданы)
 const toGroupedFromTexture = (rows: TextureRow[]) =>
   rows
     .filter((r) => r.itemId && (r.name?.trim() ?? '') !== '')
@@ -161,6 +153,7 @@ const AddCoopCeilinOrder: React.FC = () => {
       groupedStretchProfilData: [],
       groupedLightPlatformData: [],
       groupedLightRingData: [],
+      groupedAdditionalData: [],
       date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16),
       buyerComment: '',
       paymentMethod: 'cash',
@@ -172,7 +165,6 @@ const AddCoopCeilinOrder: React.FC = () => {
 
   const [ready, setReady] = React.useState(false);
 
-  // bootstrap profile
   React.useEffect(() => {
     let mounted = true;
     (async () => {
@@ -198,8 +190,8 @@ const AddCoopCeilinOrder: React.FC = () => {
   const [profils, setProfils] = React.useState<CatalogItem[]>([]);
   const [platforms, setPlatforms] = React.useState<CatalogItem[]>([]);
   const [rings, setRings] = React.useState<CatalogItem[]>([]);
+  const [additionals, setAdditionals] = React.useState<CatalogItem[]>([]);
 
-  // load dictionaries (как в buy)
   React.useEffect(() => {
     if (!ready) return;
 
@@ -212,7 +204,7 @@ const AddCoopCeilinOrder: React.FC = () => {
       })
       .catch(() => setBuyers([]));
 
-    // Textures — оставляем старый источник
+    // Textures 
     dispatch(getAllStretchTexture(cookies))
       .unwrap()
       .then((res: any) =>
@@ -222,7 +214,16 @@ const AddCoopCeilinOrder: React.FC = () => {
       )
       .catch(() => setTextures([]));
 
-    // Profil / Light Platform через product/by-category
+    // Additional 
+    dispatch(getAllStretchAdditional(cookies))
+      .unwrap()
+      .then((res: any) =>
+        setAdditionals(
+          normCatalog(pickList(res, ['stretchAdditional'])),
+        ),
+      )
+      .catch(() => setTextures([]));
+
     (async () => {
       try {
         const [profRes, platRes] = await Promise.all([
@@ -250,7 +251,6 @@ const AddCoopCeilinOrder: React.FC = () => {
       }
     })();
 
-    // Light Ring — объединяем 2 категории
     (async () => {
       try {
         const [r1, r2] = await Promise.all([
@@ -281,17 +281,17 @@ const AddCoopCeilinOrder: React.FC = () => {
 
   const buyerMode = watch('buyerMode');
 
-  // наблюдаемые значения
   const texRows = watch('groupedStretchTextureData');
   const profRows = watch('groupedStretchProfilData');
   const platRows = watch('groupedLightPlatformData');
   const ringRows = watch('groupedLightRingData');
+  const additionalRows = watch('groupedAdditionalData');
 
-  // стабильные ключи (чтобы пересчитывать total корректно)
   const texKey = React.useMemo(() => JSON.stringify(texRows ?? []), [texRows]);
   const profKey = React.useMemo(() => JSON.stringify(profRows ?? []), [profRows]);
   const platKey = React.useMemo(() => JSON.stringify(platRows ?? []), [platRows]);
   const ringKey = React.useMemo(() => JSON.stringify(ringRows ?? []), [ringRows]);
+  const additionalRow = React.useMemo(() => JSON.stringify(additionalRows ?? []), [ringRows]);
 
   const total = React.useMemo(() => {
     const n = (v: unknown) => Number.parseFloat(String(v ?? 0)) || 0;
@@ -299,8 +299,9 @@ const AddCoopCeilinOrder: React.FC = () => {
     const t2 = (profRows ?? []).reduce((a: number, r: any) => a + n(r.sum), 0);
     const t3 = (platRows ?? []).reduce((a: number, r: any) => a + n(r.sum), 0);
     const t4 = (ringRows ?? []).reduce((a: number, r: any) => a + n(r.sum), 0);
-    return +(t1 + t2 + t3 + t4).toFixed(2);
-  }, [texKey, profKey, platKey, ringKey, texRows, profRows, platRows, ringRows]);
+    const t5 = (additionalRows ?? []).reduce((a: number, r: any) => a + n(r.sum), 0);
+    return +(t1 + t2 + t3 + t4 + t5).toFixed(2);
+  }, [texKey, profKey, platKey, ringKey, additionalRow, texRows, profRows, platRows, ringRows, additionalRows ]);
 
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
     if (!userId) {
@@ -313,6 +314,7 @@ const AddCoopCeilinOrder: React.FC = () => {
       groupedStretchProfilData: toGrouped(values.groupedStretchProfilData),
       groupedLightPlatformData: toGrouped(values.groupedLightPlatformData),
       groupedLightRingData: toGrouped(values.groupedLightRingData),
+      groupedAdditionalData: toGrouped(values.groupedAdditionalData),
 
       date: values.date ? new Date(values.date).toISOString() : undefined,
       buyerComment: values.buyerComment || '',
@@ -417,6 +419,16 @@ const AddCoopCeilinOrder: React.FC = () => {
                   control={control as Control<FormValues>}
                   name="groupedLightRingData"
                   catalog={rings}
+                  setValue={setValue as UseFormSetValue<FormValues>}
+                  getValues={getValues as UseFormGetValues<FormValues>}
+                />
+              </div>
+              <div className="card dense">
+                <SimpleGroup
+                  title="Additional"
+                  control={control as Control<FormValues>}
+                  name="groupedAdditionalData"
+                  catalog={additionals}
                   setValue={setValue as UseFormSetValue<FormValues>}
                   getValues={getValues as UseFormGetValues<FormValues>}
                 />

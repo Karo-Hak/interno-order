@@ -1,4 +1,3 @@
-// Типы данных
 
 export type StretchBuyerEntry = {
   date?: string;   // ISO
@@ -20,7 +19,6 @@ export type StretchBuyerModel = {
   totalSum?: number;
 };
 
-// Удобные производные поля для сортировки/отображения
 export type DerivedBuyer = StretchBuyerModel & {
   ordersCount: number;
   dkCount: number;

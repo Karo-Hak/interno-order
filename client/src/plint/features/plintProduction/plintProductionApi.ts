@@ -7,7 +7,6 @@ function authHeader(token?: string) {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-// ✅ СОЗДАНИЕ ПРОИЗВОДСТВА
 export const newPlintProduction = createAsyncThunk(
   'plintProduction/new',
   async (
@@ -34,7 +33,6 @@ export const newPlintProduction = createAsyncThunk(
   }
 );
 
-// ✅ ВСЕ ПРОИЗВОДСТВА
 export const getPlintProductions = createAsyncThunk(
   'plintProduction/all',
   async (
@@ -52,7 +50,6 @@ export const getPlintProductions = createAsyncThunk(
   }
 );
 
-// ✅ УДАЛЕНИЕ
 export const removePlintProduction = createAsyncThunk(
   'plintProduction/remove',
   async (obj: { id: string; cookies: { access_token?: string } }, { rejectWithValue }) => {
@@ -67,7 +64,6 @@ export const removePlintProduction = createAsyncThunk(
   }
 );
 
-// ✅ ОБНОВЛЕНИЕ
 export const updatePlintProduction = createAsyncThunk(
   'plintProduction/update',
   async (
@@ -89,7 +85,6 @@ export const updatePlintProduction = createAsyncThunk(
   }
 );
 
-// ✅ СТАТИСТИКА
 export const getPlintProductionStats = createAsyncThunk(
   'plintProduction/stats',
   async (cookies: { access_token?: string }, { rejectWithValue }) => {

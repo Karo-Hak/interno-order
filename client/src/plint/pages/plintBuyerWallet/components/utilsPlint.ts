@@ -1,4 +1,3 @@
-// src/plint/pages/plintBuyerWallet/components/utilsPlint.ts
 import { PlintBuyerItem } from '../../../features/plintBuyer/plintBuyerSlice';
 import { DerivedPlintBuyer } from './typesPlint';
 
@@ -7,7 +6,6 @@ export const fmtMoney = (n = 0) =>
 
 export const normalizeStr = (s?: string) => (s ?? '').toLocaleLowerCase();
 
-/** Нормализация любых id: string | { $oid } | ObjectId-like */
 export const toId = (x: any): string => {
   if (typeof x === 'string') return x;
   if (x && typeof x === 'object') {
@@ -17,7 +15,6 @@ export const toId = (x: any): string => {
   return String(x ?? '');
 };
 
-/** Безопасный парсер дат: string | Date | { $date } | Date-like */
 export const toSafeDate = (d: any): Date => {
   if (d instanceof Date && !Number.isNaN(d.getTime())) return d;
 
@@ -49,17 +46,14 @@ export const toSafeDate = (d: any): Date => {
   return new Date(0);
 };
 
-// безопасная длина массива
 const safeLen = (arr: unknown[] | undefined) =>
   Array.isArray(arr) ? arr.length : 0;
 
-// сумма .amount в массивах покупок
 const sumBuyArr = (arr: any[] | undefined) =>
   Array.isArray(arr)
     ? arr.reduce((acc, x) => acc + (Number(x?.amount) || 0), 0)
     : 0;
 
-// сумма .amount в кредитах
 const sumCreditArr = (arr: any[] | undefined) =>
   Array.isArray(arr)
     ? arr.reduce((acc, x) => acc + (Number(x?.amount) || 0), 0)
@@ -84,7 +78,7 @@ export const deriveBuyer = (b: PlintBuyerItem): DerivedPlintBuyer => {
   const total = Number(b.balanceAMD ?? 0);
 
   return {
-    _id: toId(b._id), // ВАЖНО: всегда строка
+    _id: toId(b._id), 
     name: String(b.name ?? ''),
     phone1: b.phone1,
     phone2: b.phone2,

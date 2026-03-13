@@ -17,7 +17,6 @@ export type TextureRow = {
   price?: number;
   sum?: number;
 
-  // UI-строка поиска как у BuyerSection (value input)
   catalogQuery?: string;
 };
 
@@ -26,7 +25,7 @@ type CatalogItem = { _id: string; name: string; price: number };
 type Props<TFormValues extends FieldValues> = {
   title: string;
   control: Control<TFormValues>;
-  name: Path<TFormValues>; // массив TextureRow[] в форме
+  name: Path<TFormValues>; 
   catalog: CatalogItem[];
   setValue: UseFormSetValue<TFormValues>;
   getValues: UseFormGetValues<TFormValues>;
@@ -82,7 +81,6 @@ function TextureGroup<TFormValues extends FieldValues>(props: Props<TFormValues>
     row.name = item.name;
     row.catalogQuery = `${item.name} (${item.price})`;
 
-    // если цена не задана вручную — подставим
     if (!row.price || row.price === 0) row.price = item.price;
 
     row.sum = recalcSum(row, !!forceQtyVisible);
@@ -114,9 +112,8 @@ function TextureGroup<TFormValues extends FieldValues>(props: Props<TFormValues>
   };
 
   const rows: TextureRow[] = ((getValues(name) as TextureRow[]) ?? []);
-  const listIdBase = React.useId(); // чтобы datalist id был уникален на странице
+  const listIdBase = React.useId(); 
 
-  // фокус на поле товара последней строки после добавления
   const lastQueryRef = React.useRef<HTMLInputElement | null>(null);
 
   const addRowAndFocus = () => {
@@ -126,10 +123,9 @@ function TextureGroup<TFormValues extends FieldValues>(props: Props<TFormValues>
     });
   };
 
-  // Enter добавляет строку (как просил)
   const onEnterAddRow: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
     if (e.key === 'Enter') {
-      e.preventDefault(); // не сабмитим форму
+      e.preventDefault(); 
       addRowAndFocus();
     }
   };

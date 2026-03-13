@@ -15,8 +15,8 @@ type Props = {
   total: number;
   count: number;
   loading: boolean;
-  viewPathPrefix: string; // общий роут: "/plint/orders/view"
-  height?: number;        // по умолчанию 33vh
+  viewPathPrefix: string; 
+  height?: number;       
 };
 
 const PlintReportSection: React.FC<Props> = ({

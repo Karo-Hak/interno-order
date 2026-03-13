@@ -1,4 +1,3 @@
-// src/strechCeining/stock/features/product/productApi.ts
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -12,13 +11,13 @@ type ProductByCatResponse<T = any> = {
 };
 
 export type BuyItem = {
-  productId: string; // _id товара
-  qty: number;       // на сколько увеличить остаток
+  productId: string; 
+  qty: number;      
 };
 
 export type BuyPayload = {
   items: BuyItem[];
-  date?: string;     // ISO строка (опционально)
+  date?: string;    
 };
 
 export type BuyResponse = { ok: boolean };
@@ -49,7 +48,6 @@ export const addProduct = createAsyncThunk<any, { product: any; cookies: any }, 
   }
 );
 
-// ✅ Обновление списка товаров (старый endpoint /product/updateQuantity)
 export const updateProductsLists = createAsyncThunk<any, { updatedProductLists: any; cookies: any }, { rejectValue: Reject }>(
   "product/updateProductsLists",
   async ({ updatedProductLists, cookies }, thunkAPI) => {
@@ -73,7 +71,6 @@ export const updateProductsLists = createAsyncThunk<any, { updatedProductLists: 
   }
 );
 
-// ✅ Получение всех товаров
 export const getAllProduct = createAsyncThunk<any, any, { rejectValue: Reject }>(
   "product/getAll",
   async (cookies, thunkAPI) => {
@@ -96,7 +93,6 @@ export const getAllProduct = createAsyncThunk<any, any, { rejectValue: Reject }>
   }
 );
 
-// ✅ Выборка по категории
 export const getProductsByCategory = createAsyncThunk<
   ProductByCatResponse,
   { cookies: any; categoryId: string; q?: string },
@@ -124,7 +120,6 @@ export const getProductsByCategory = createAsyncThunk<
   }
 );
 
-// ✅ Закупка
 export const buyProducts = createAsyncThunk<
   BuyResponse,
   { cookies: any; body: BuyPayload },
@@ -155,7 +150,6 @@ export const buyProducts = createAsyncThunk<
   }
 );
 
-// ✅ UPDATE одного продукта (quantity / price / coopPrice)
 export const updateProduct = createAsyncThunk<
   any,
   {
@@ -187,7 +181,6 @@ export const updateProduct = createAsyncThunk<
         }
       );
 
-      // data может быть Product | {product: Product} | {ok:true}
       return data;
     } catch (e: any) {
       const msg =
@@ -198,4 +191,21 @@ export const updateProduct = createAsyncThunk<
       return thunkAPI.rejectWithValue({ message: String(msg) });
     }
   }
+  
 );
+
+export const getProductsByCategoryApi = async (
+  categoryId: string,
+  token: string,
+  q?: string
+): Promise<ProductByCatResponse> => {
+  const { data } = await axios.get<ProductByCatResponse>(
+    `${baseUrl()}/product/by-category`,
+    {
+      headers: { Authorization: `Bearer ${token ?? ""}` },
+      params: { categoryId, q },
+    }
+  );
+
+  return data;
+};

@@ -54,8 +54,6 @@ export const ViewDebetKredit: React.FC = (): JSX.Element => {
     }, [startDate, endDate]); // при смене дат тоже обновляем
 
     const handleResult = (result: any) => {
-        console.log(result.data);
-
         if ("error" in result) {
             alert(result);
             setCookie("access_token", "", { path: "/" });
@@ -93,6 +91,9 @@ export const ViewDebetKredit: React.FC = (): JSX.Element => {
             ""
         );
     }
+
+console.log(ordersList);
+
 
     return (
         <div>
@@ -135,15 +136,15 @@ export const ViewDebetKredit: React.FC = (): JSX.Element => {
                 </div>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", padding: "50px" }}>
-                <DebetKreditSection
+                {/* <DebetKreditSection
                     ordersList={ordersList}
                     parseDate={parseDate}
                     orders={orders}
-                />
+                /> */}
                 <StretchOrderBalanceList
                     parseDate={parseDate}
                     orders={orders}
-                    onReloadOrders={fetchData}   // 👈 вот это главное
+                    onReloadOrders={fetchData}  
                 />
             </div>
         </div>

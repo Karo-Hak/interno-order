@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -10,15 +10,15 @@ import { StockMenu } from "../../../component/menu/StockMenu";
 import { selectCategory } from "../../features/category/categorySlice";
 import { getAllCategory } from "../../features/category/categoryApi";
 
-import { addProduct, getAllProduct, updateProduct } from "../../features/product/productApi"; // 👈 updateProduct заменишь если иначе
+import { addProduct, getAllProduct, updateProduct } from "../../features/product/productApi";
 import { selectProduct } from "../../features/product/productSlice";
 
 type FormInput = {
   categoryProduct: string;
   name: string;
-  quantity?: string | number;
-  price?: string | number;
-  coopPrice?: string | number;
+  quantity?: string;
+  price?: string;
+  coopPrice?: string;
 };
 
 const toNum = (v: unknown, d = 0) => {
@@ -28,7 +28,33 @@ const toNum = (v: unknown, d = 0) => {
   return Number.isFinite(n) ? n : d;
 };
 
+// ✅ разрешаем ввод: цифры + один разделитель (.,) + опционально минус в начале
+const sanitizeDecimal = (raw: string) => {
+  let s = String(raw ?? "");
+
+  // оставить только цифры, . , -
+  s = s.replace(/[^\d.,-]/g, "");
+
+  // минус только в начале
+  s = s.replace(/(?!^)-/g, "");
+
+  // только один разделитель: первый попавшийся . или , оставляем, остальные убираем
+  const idxDot = s.indexOf(".");
+  const idxComma = s.indexOf(",");
+  const idx =
+    idxDot === -1 ? idxComma : idxComma === -1 ? idxDot : Math.min(idxDot, idxComma);
+
+  if (idx !== -1) {
+    const head = s.slice(0, idx + 1);
+    const tail = s.slice(idx + 1).replace(/[.,]/g, "");
+    s = head + tail;
+  }
+
+  return s;
+};
+
 type EditDraft = {
+  name: string;
   quantity: string;
   price: string;
   coopPrice: string;
@@ -39,7 +65,13 @@ export const AddProduct: React.FC = (): JSX.Element => {
   const navigate = useNavigate();
   const [cookies, setCookie] = useCookies(["access_token"]);
 
-  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<FormInput>({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm<FormInput>({
     defaultValues: { categoryProduct: "", name: "", quantity: "", price: "", coopPrice: "" },
   });
 
@@ -87,43 +119,47 @@ export const AddProduct: React.FC = (): JSX.Element => {
   }, [dispatch, cookies]);
 
   // ---------- CREATE ----------
-  const saveProduct = useCallback(async (form: FormInput) => {
-    try {
-      const payloadProduct = {
-        categoryProduct: form.categoryProduct,
-        name: form.name?.trim(),
-        quantity: toNum(form.quantity, 0),
-        price: toNum(form.price, 0),
-        coopPrice: toNum(form.coopPrice, 0),
-      };
+  const saveProduct = useCallback(
+    async (form: FormInput) => {
+      try {
+        const payloadProduct = {
+          categoryProduct: form.categoryProduct,
+          name: form.name?.trim(),
+          quantity: toNum(form.quantity, 0),
+          price: toNum(form.price, 0),
+          coopPrice: toNum(form.coopPrice, 0),
+        };
 
-      const res = await dispatch(addProduct({ product: payloadProduct, cookies })).unwrap();
-      if ((res as any)?.error) {
-        alert((res as any).error);
-        return;
+        const res = await dispatch(addProduct({ product: payloadProduct, cookies })).unwrap();
+        if ((res as any)?.error) {
+          alert((res as any).error);
+          return;
+        }
+
+        await refresh();
+        reset({ categoryProduct: "", name: "", quantity: "", price: "", coopPrice: "" });
+      } catch (e: any) {
+        alert(e?.error || e?.message || "Չստացվեց ավելացնել ապրանքը");
       }
-
-      await refresh();
-      reset({ categoryProduct: "", name: "", quantity: "", price: "", coopPrice: "" });
-    } catch (e: any) {
-      alert(e?.error || e?.message || "Չստացվեց ավելացնել ապրանքը");
-    }
-  }, [dispatch, cookies, refresh, reset]);
+    },
+    [dispatch, cookies, refresh, reset]
+  );
 
   // ---------- EDIT ----------
   const startEdit = useCallback((p: any) => {
-    setEditing(prev => ({
+    setEditing((prev) => ({
       ...prev,
       [p._id]: {
+        name: String(p.name ?? ""),
         quantity: String(p.quantity ?? ""),
         price: String(p.price ?? ""),
         coopPrice: String(p.coopPrice ?? ""),
-      }
+      },
     }));
   }, []);
 
   const cancelEdit = useCallback((id: string) => {
-    setEditing(prev => {
+    setEditing((prev) => {
       const cp = { ...prev };
       delete cp[id];
       return cp;
@@ -131,38 +167,57 @@ export const AddProduct: React.FC = (): JSX.Element => {
   }, []);
 
   const setDraft = useCallback((id: string, key: keyof EditDraft, value: string) => {
-    setEditing(prev => ({
+    const v = key === "name" ? value : sanitizeDecimal(value);
+
+    setEditing((prev) => ({
       ...prev,
-      [id]: { ...(prev[id] ?? { quantity: "", price: "", coopPrice: "" }), [key]: value }
+      [id]: {
+        ...(prev[id] ?? { name: "", quantity: "", price: "", coopPrice: "" }),
+        [key]: v,
+      },
     }));
   }, []);
 
-  const saveEdit = useCallback(async (p: any) => {
-    try {
-      const d = editing[p._id];
-      if (!d) return;
+  const saveEdit = useCallback(
+    async (p: any) => {
+      try {
+        const d = editing[p._id];
+        if (!d) return;
 
-      const payload = {
-        id: p._id, // или _id — зависит от твоего backend
-        quantity: toNum(d.quantity, toNum(p.quantity, 0)),
-        price: toNum(d.price, toNum(p.price, 0)),
-        coopPrice: toNum(d.coopPrice, toNum(p.coopPrice, 0)),
-      };
+        const payload = {
+          id: p._id, // или _id — зависит от backend
+          name: (d.name ?? "").trim(),
+          quantity: toNum(d.quantity, toNum(p.quantity, 0)),
+          price: toNum(d.price, toNum(p.price, 0)),
+          coopPrice: toNum(d.coopPrice, toNum(p.coopPrice, 0)),
+        };
 
-      // 👇 если у тебя сигнатура другая — поменяй
-      const res = await dispatch(updateProduct({ cookies, payload })).unwrap();
+        const res = await dispatch(updateProduct({ cookies, payload })).unwrap();
 
-      if ((res as any)?.error) {
-        alert((res as any).error);
-        return;
+        if ((res as any)?.error) {
+          alert((res as any).error);
+          return;
+        }
+
+        await refresh();
+        cancelEdit(p._id);
+      } catch (e: any) {
+        alert(e?.error || e?.message || "Չստացվեց պահպանել փոփոխությունները");
       }
+    },
+    [dispatch, cookies, editing, refresh, cancelEdit]
+  );
 
-      await refresh();
-      cancelEdit(p._id);
-    } catch (e: any) {
-      alert(e?.error || e?.message || "Չստացվեց պահպանել փոփոխությունները");
-    }
-  }, [dispatch, cookies, editing, refresh, cancelEdit]);
+  // ✅ регистраторы числовых строк с санитайзером (CREATE form)
+  const qtyReg = register("quantity", {
+    onChange: (e) => setValue("quantity", sanitizeDecimal(e.target.value)),
+  });
+  const priceReg = register("price", {
+    onChange: (e) => setValue("price", sanitizeDecimal(e.target.value)),
+  });
+  const coopReg = register("coopPrice", {
+    onChange: (e) => setValue("coopPrice", sanitizeDecimal(e.target.value)),
+  });
 
   return (
     <div style={{ width: "100%" }}>
@@ -171,7 +226,13 @@ export const AddProduct: React.FC = (): JSX.Element => {
       {/* CREATE FORM */}
       <form
         onSubmit={handleSubmit(saveProduct)}
-        style={{ display: "flex", justifyContent: "center", padding: "20px", gap: "20px", flexWrap: "wrap" }}
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          padding: "20px",
+          gap: "20px",
+          flexWrap: "wrap",
+        }}
       >
         <div className="divLabel">
           <label htmlFor="category">Խումբ</label>
@@ -183,32 +244,65 @@ export const AddProduct: React.FC = (): JSX.Element => {
             <option value=""></option>
             {category?.arrCategory?.length
               ? category.arrCategory.map((e: any) => (
-                  <option key={e._id} value={e._id}>{e.name}</option>
+                  <option key={e._id} value={e._id}>
+                    {e.name}
+                  </option>
                 ))
               : null}
           </select>
-          {errors.categoryProduct && <div style={{ color: "red", fontSize: 12 }}>{String(errors.categoryProduct.message)}</div>}
+          {errors.categoryProduct && (
+            <div style={{ color: "red", fontSize: 12 }}>
+              {String(errors.categoryProduct.message)}
+            </div>
+          )}
         </div>
 
         <div className="divLabel">
           <label htmlFor="addProduct">Ապրանք</label>
-          <input id="addProduct" type="text" placeholder="Name" {...register("name", { required: "Պարտադիր է" })} />
-          {errors.name && <div style={{ color: "red", fontSize: 12 }}>{String(errors.name.message)}</div>}
+          <input
+            id="addProduct"
+            type="text"
+            placeholder="Name"
+            {...register("name", { required: "Պարտադիր է" })}
+          />
+          {errors.name && (
+            <div style={{ color: "red", fontSize: 12 }}>
+              {String(errors.name.message)}
+            </div>
+          )}
         </div>
 
         <div className="divLabel">
           <label htmlFor="quantity">Քանակ</label>
-          <input id="quantity" type="text" inputMode="decimal" placeholder="quantity" {...register("quantity")} />
+          <input
+            id="quantity"
+            type="text"
+            inputMode="decimal"
+            placeholder="quantity"
+            {...qtyReg}
+          />
         </div>
 
         <div className="divLabel">
           <label htmlFor="price">Price</label>
-          <input id="price" type="text" inputMode="decimal" placeholder="price" {...register("price")} />
+          <input
+            id="price"
+            type="text"
+            inputMode="decimal"
+            placeholder="price"
+            {...priceReg}
+          />
         </div>
 
         <div className="divLabel">
           <label htmlFor="coopPrice">CoopPrice</label>
-          <input id="coopPrice" type="text" inputMode="decimal" placeholder="coopPrice" {...register("coopPrice")} />
+          <input
+            id="coopPrice"
+            type="text"
+            inputMode="decimal"
+            placeholder="coopPrice"
+            {...coopReg}
+          />
         </div>
 
         <button disabled={isSubmitting}>{isSubmitting ? "Գրանցում..." : "Գրանցել"}</button>
@@ -221,7 +315,6 @@ export const AddProduct: React.FC = (): JSX.Element => {
             <div
               key={c._id}
               style={{
-                width: "520px",
                 margin: "10px",
                 border: "2px solid black",
                 padding: "5px",
@@ -249,7 +342,18 @@ export const AddProduct: React.FC = (): JSX.Element => {
 
                       return (
                         <tr key={p._id}>
-                          <td>{p.name}</td>
+                          <td>
+                            {isEdit ? (
+                              <input
+                                style={{ width: 180 }}
+                                type="text"
+                                value={d.name}
+                                onChange={(e) => setDraft(p._id, "name", e.target.value)}
+                              />
+                            ) : (
+                              p.name
+                            )}
+                          </td>
 
                           <td>
                             {isEdit ? (
@@ -295,11 +399,17 @@ export const AddProduct: React.FC = (): JSX.Element => {
 
                           <td style={{ whiteSpace: "nowrap" }}>
                             {!isEdit ? (
-                              <button type="button" onClick={() => startEdit(p)}>Edit</button>
+                              <button type="button" onClick={() => startEdit(p)}>
+                                Edit
+                              </button>
                             ) : (
                               <>
-                                <button type="button" onClick={() => saveEdit(p)}>Save</button>
-                                <button type="button" onClick={() => cancelEdit(p._id)}>Cancel</button>
+                                <button type="button" onClick={() => saveEdit(p)}>
+                                  Save
+                                </button>
+                                <button type="button" onClick={() => cancelEdit(p._id)}>
+                                  Cancel
+                                </button>
                               </>
                             )}
                           </td>

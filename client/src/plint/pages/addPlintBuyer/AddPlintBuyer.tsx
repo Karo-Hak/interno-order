@@ -36,12 +36,10 @@ export const PlintBuyer: React.FC = (): JSX.Element => {
   const [cookies] = useCookies(["access_token"]);
   const navigate = useNavigate();
 
-  // список покупателей в локальном состоянии
   const [buyers, setBuyers] = useState<BuyerItem[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [search, setSearch] = useState<string>("");
 
-  // пагинация (простая)
   const [limit] = useState<number>(100);
   const [skip, setSkip] = useState<number>(0);
 
@@ -69,7 +67,6 @@ export const PlintBuyer: React.FC = (): JSX.Element => {
     setFocus("name");
   }, [setFocus]);
 
-  // загрузка списка покупателей
   const fetchBuyers = async (q?: string, s?: number) => {
     const res: any = await dispatch(
       getPlintBuyers({
@@ -91,20 +88,17 @@ export const PlintBuyer: React.FC = (): JSX.Element => {
   };
 
   useEffect(() => {
-    // стартовая загрузка
     fetchBuyers(search, 0);
     setSkip(0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
 
-  // сабмит формы с проверкой phone1
   const onSubmit = async (form: FormValues) => {
     try {
       const formPhone = form.phone1?.trim();
       let exists = false;
 
       if (formPhone) {
-        // 1) точечный серверный поиск по номеру (по полю q)
         const queryRes: any = await dispatch(
           getPlintBuyers({ cookies, q: formPhone, limit: 10, skip: 0 })
         ).unwrap();
@@ -126,7 +120,6 @@ export const PlintBuyer: React.FC = (): JSX.Element => {
         return;
       }
 
-      // 2) создаём нового
       const res: any = await dispatch(
         createPlintBuyer({
           buyer: {
@@ -146,7 +139,6 @@ export const PlintBuyer: React.FC = (): JSX.Element => {
       }
 
       alert("✅ Գնորդը ստեղծված է");
-      // обновляем список по текущему поиску
       await fetchBuyers(search, 0);
       reset();
       setFocus("name");
@@ -188,7 +180,6 @@ export const PlintBuyer: React.FC = (): JSX.Element => {
           </div>
         </div>
 
-        {/* Форма создания */}
         <form className="buyer-form" onSubmit={handleSubmit(onSubmit)}>
           <div className="form-grid">
             {/* Անուն */}
@@ -272,7 +263,6 @@ export const PlintBuyer: React.FC = (): JSX.Element => {
             </div>
           </div>
 
-          {/* Քայլեր */}
           <div className="form-footer">
             <div className="muted">
               {nameValue?.trim()
@@ -295,7 +285,6 @@ export const PlintBuyer: React.FC = (): JSX.Element => {
           </div>
         </form>
 
-        {/* Поиск и список покупателей */}
         <div className="buyer-list-card">
           <div className="buyer-list-toolbar">
             <div className="search-wrap">

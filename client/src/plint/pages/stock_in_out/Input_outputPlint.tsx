@@ -33,7 +33,6 @@ export const InputOutputPlint: React.FC = (): JSX.Element => {
     formState: { isDirty },
   } = useForm<Record<string, number | string>>({ mode: "onChange" });
 
-  // следим за всеми инпутами (для живых подсчётов)
   const watchedAll = watch();
 
   useEffect(() => {
@@ -63,7 +62,6 @@ export const InputOutputPlint: React.FC = (): JSX.Element => {
         ? result
         : [];
       setPlint(list);
-      // дефолт фактов — пусто
       const defaults: Record<string, number | string> = {};
       for (const p of list) defaults[p._id] = "";
       reset(defaults, { keepDirty: false });
@@ -78,7 +76,6 @@ export const InputOutputPlint: React.FC = (): JSX.Element => {
     return Number.isFinite(n) ? n : 0;
   };
 
-  // фильтр + «только изменённые»
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     let arr = plint;
@@ -96,7 +93,6 @@ export const InputOutputPlint: React.FC = (): JSX.Element => {
     return arr;
   }, [plint, search, showChangedOnly, watchedAll]);
 
-  // setActual теперь допускает и число, и пустую строку — чтобы можно было очищать поле
   const setActual = (id: string, v: number | "") => {
     const val = v === "" ? "" : Math.max(0, Number(v) || 0);
     setValue(id, val as any, { shouldDirty: true, shouldTouch: true });
@@ -174,7 +170,6 @@ export const InputOutputPlint: React.FC = (): JSX.Element => {
       setIsSaving(true);
       await Promise.all(tasks);
       alert(`✅ Թարմացվել է ${changed} դիրք`);
-      // обновляем остатки и оставляем факты, чтобы видеть результат (можно очистить вручную)
       const res = await dispatch(getAllPlint(cookies)).unwrap();
       const list: PlintLean[] = Array.isArray(res?.plint)
         ? res.plint
@@ -288,7 +283,6 @@ export const InputOutputPlint: React.FC = (): JSX.Element => {
     <div className="inv-root">
       <PlintMenu />
 
-      {/* Панель фильтров / поиска */}
       <div className="inv-toolbar">
         <div className="search-wrap">
           <input
@@ -328,13 +322,11 @@ export const InputOutputPlint: React.FC = (): JSX.Element => {
         </div>
       </div>
 
-      {/* ОДНА ТАБЛИЦА */}
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="inv-grid-single">
           {renderTable(filtered)}
         </div>
 
-        {/* Нижняя панель действий */}
         <div className="inv-footer">
           <div className="footer-stats">
             <span className="muted">

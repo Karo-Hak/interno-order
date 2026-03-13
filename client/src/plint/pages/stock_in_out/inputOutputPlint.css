@@ -3,7 +3,6 @@
   padding-bottom: 88px; /* под нижнюю панель */
 }
 
-/* Панель сверху */
 .inv-toolbar {
   display: flex;
   gap: 12px;
@@ -103,7 +102,6 @@
   border-radius: 8px;
 }
 
-/* Значки дельты */
 .badge {
   display: inline-block;
   min-width: 44px;

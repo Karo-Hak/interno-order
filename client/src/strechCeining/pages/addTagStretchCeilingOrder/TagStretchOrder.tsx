@@ -1,7 +1,10 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 import { useForm } from 'react-hook-form';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+
 import { userProfile } from '../../../features/user/userApi';
 import BuyerSection from './BuyerSection';
 import PaymentSection from './PaymentSection';
@@ -12,13 +15,13 @@ import ModalRoom from '../../../component/modal/ModalRoom';
 import { v4 as uuidv4 } from 'uuid';
 import WorkSection from './WorkSection';
 import { getAllStretchTexture } from '../../features/strechTexture/strechTextureApi';
-import { getAllStretchAdditional } from '../../features/strechAdditional/strechAdditionalApi';
 import { getAllStretchBardutyun } from '../../features/strechBardutyun/strechBardutyunApi';
 import { allStretchWork } from '../../features/StrechWork/strechWorkApi';
 import { StretchMenu } from '../../../component/menu/StretchMenu';
 import './tagStretchOrder.css';
 import { addNewStretchOrder } from '../../features/stretchCeilingOrder/stretchOrderApi';
-import { getProductsByCategory } from '../../features/product/productApi';
+
+import { getProductsByCategoryApi } from '../../features/product/productApi';
 
 export interface Data {
   id: string;
@@ -29,6 +32,13 @@ export interface Data {
   sum: number;
 }
 
+const ADDITIONAL_CAT = '69944f434f4494db597e55fa';
+const PROFIL_CAT = '65a794201acb8962fc25c963';
+const PLATFORM_CAT = '65a63e084452458093923a8f';
+const LIGHT_RING_A = '65a639cb4452458093923951';
+const LIGHT_RING_B = '65a639f04452458093923955';
+
+type RoomT = { id: string; name: string; isChecked: boolean; sum: number };
 
 const TagStretchOrder: React.FC = (): JSX.Element => {
   const dedupById = <T extends { _id: string }>(arr: T[]): T[] => {
@@ -39,129 +49,181 @@ const TagStretchOrder: React.FC = (): JSX.Element => {
     }
     return Array.from(map.values());
   };
+
   const [cookies, setCookie] = useCookies(['access_token']);
+  const token = cookies?.access_token as string | undefined;
+
   const navigate = useNavigate();
   const { register, handleSubmit, reset, setValue, watch, getValues } = useForm<any>();
   const dispatch = useAppDispatch();
 
   const [user, setUser] = useState<any>(null);
   const [stretchTextureData, setStretchTextureData] = useState<any>(null);
-  const [stretchAdditionalData, setStretchAdditionalData] = useState<any>(null);
-  const [stretchProfilData, setStretchProfilData] = useState<any>(null);
-  const [stretchLightPlatformData, setStretchLightPlatformData] = useState<any>(null);
-  const [stretchLightRingData, setStretchLightRingData] = useState<any>(null);
   const [stretchBardutyunData, setStretchBardutyunData] = useState<any>(null);
   const [stretchWorkData, setStretchWorkData] = useState<any>(null);
 
-  const [roomSum, setRoomSum] = useState<{ [key: string]: number }>({});
+  const [roomSum, setRoomSum] = useState<Record<string, number>>({});
   const [orderSum, setOrderSum] = useState(0);
   const [prepayment, setPrepayment] = useState(0);
   const [balance, setBalance] = useState(0);
 
-  const [room, setRoom] = useState<{ id: string; name: string; isChecked: boolean; sum: number }[]>([]);
+  const [room, setRoom] = useState<RoomT[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // ---------- helpers ----------
+  const logout = () => {
+    setCookie('access_token', '', { path: '/' });
+    navigate('/');
+  };
+
   function isRoomSumKey(key: string, roomId: string) {
     const suffix15 = roomId.slice(-15);
     return key.includes('Sum') && (key.endsWith(suffix15) || key.endsWith(`/${roomId}`));
   }
-  function toNum(value: unknown): number {
-    const n = Number(value);
+
+  function toNumDecimal(value: unknown): number {
+    const s = String(value ?? '').trim();
+    if (!s) return 0;
+    const n = Number(s.replace(',', '.'));
     return Number.isFinite(n) ? n : 0;
   }
 
-  // ---------- load data ----------
+  // ---------- TanStack helper ----------
+  const useProductsByCat = (catId: string, label: string) =>
+    useQuery({
+      queryKey: ['productsByCategory', catId], // ✅ единый шаблон
+      queryFn: () => getProductsByCategoryApi(catId, token as string),
+      enabled: Boolean(token),
+      staleTime: 5 * 60 * 1000,
+      retry: 1, 
+      refetchOnWindowFocus: false,
+      meta: { label },
+    });
+
+  // ---------- TanStack: products by categories ----------
+  const qAdditional = useProductsByCat(ADDITIONAL_CAT, 'additional');
+  const qProfil = useProductsByCat(PROFIL_CAT, 'profil');
+  const qPlatform = useProductsByCat(PLATFORM_CAT, 'platform');
+  const qLightRingA = useProductsByCat(LIGHT_RING_A, 'lightRingA');
+  const qLightRingB = useProductsByCat(LIGHT_RING_B, 'lightRingB');
+
+  const stretchAdditionalItems = useMemo(() => {
+    const data: any = qAdditional.data;
+    return Array.isArray(data?.items) ? data.items : [];
+  }, [qAdditional.data]);
+
+  const stretchProfilItems = useMemo(() => {
+    const data: any = qProfil.data;
+    return Array.isArray(data?.items) ? data.items : [];
+  }, [qProfil.data]);
+
+  const stretchLightPlatformItems = useMemo(() => {
+    const data: any = qPlatform.data;
+    return Array.isArray(data?.items) ? data.items : [];
+  }, [qPlatform.data]);
+
+  const stretchLightRingItems = useMemo(() => {
+    const a: any = qLightRingA.data;
+    const b: any = qLightRingB.data;
+    const aItems = Array.isArray(a?.items) ? a.items : [];
+    const bItems = Array.isArray(b?.items) ? b.items : [];
+    return dedupById([...(aItems || []), ...(bItems || [])]);
+  }, [qLightRingA.data, qLightRingB.data]);
+
+  // ---------- logout only on auth errors ----------
+  useEffect(() => {
+    if (!token) {
+      navigate('/');
+      return;
+    }
+
+    const errs = [qAdditional.error, qProfil.error, qPlatform.error, qLightRingA.error, qLightRingB.error].filter(Boolean);
+
+    if (!errs.length) return;
+
+    // TanStack error часто axios error
+    const isAuthError = errs.some((e: any) => {
+      const status = e?.response?.status;
+      return status === 401 || status === 403;
+    });
+
+    if (isAuthError) logout();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, qAdditional.error, qProfil.error, qPlatform.error, qLightRingA.error, qLightRingB.error]);
+
+  useEffect(() => {
+    const e: any = qAdditional.error || qProfil.error || qPlatform.error || qLightRingA.error || qLightRingB.error;
+    if (!e) return;
+
+    const status = e?.response?.status;
+    const msg = e?.response?.data?.message || e?.message || 'Ошибка загрузки товаров';
+    if (status && status !== 401 && status !== 403) {
+      console.error('Products query error:', status, msg);
+      alert(msg); 
+    }
+  }, [qAdditional.error, qProfil.error, qPlatform.error, qLightRingA.error, qLightRingB.error]);
+
+  // ---------- load redux data (user/texture/bardutyun/work) ----------
   useEffect(() => {
     const fetchData = async () => {
       try {
+        if (!cookies?.access_token) {
+          navigate('/');
+          return;
+        }
+
         const userProfileResult = await dispatch(userProfile(cookies)).unwrap();
+        if (userProfileResult?.error) {
+          alert(userProfileResult.error || userProfileResult);
+          logout();
+          return;
+        }
+        if (userProfileResult?.user) setUser(userProfileResult.user);
+
         const stretchTextureResult = await dispatch(getAllStretchTexture(cookies)).unwrap();
-        const stretchAdditionalResult = await dispatch(getAllStretchAdditional(cookies)).unwrap();
+        if (stretchTextureResult?.error) {
+          alert(stretchTextureResult.error || stretchTextureResult);
+          logout();
+          return;
+        }
+        if (stretchTextureResult?.stretchTexture) setStretchTextureData(stretchTextureResult.stretchTexture);
+
         const stretchBardutyunResult = await dispatch(getAllStretchBardutyun(cookies)).unwrap();
+        if (stretchBardutyunResult?.error) {
+          alert(stretchBardutyunResult.error || stretchBardutyunResult);
+          logout();
+          return;
+        }
+        if (stretchBardutyunResult?.stretchBardutyun) setStretchBardutyunData(stretchBardutyunResult.stretchBardutyun);
+
         const allStretchWorkResult = await dispatch(allStretchWork(cookies)).unwrap();
-
-        const stretchProfilResult = await dispatch(getProductsByCategory({
-          cookies,
-          categoryId: '65a794201acb8962fc25c963',
-        }),
-        ).unwrap();
-        const stretchLightPlatformResult = await dispatch(getProductsByCategory({
-          cookies,
-          categoryId: '65a63e084452458093923a8f',
-        }),
-        ).unwrap();
-
-        const [lrA, lrB] = await Promise.all([
-          dispatch(getProductsByCategory({ cookies, categoryId: '65a639cb4452458093923951' })).unwrap(), // Light Ring
-          dispatch(getProductsByCategory({ cookies, categoryId: '65a639f04452458093923955' })).unwrap(), // Light Ring B
-        ]);
-
-        const lightRingMerged = dedupById([
-          ...(Array.isArray(lrA?.items) ? lrA.items : []),
-          ...(Array.isArray(lrB?.items) ? lrB.items : []),
-        ]);
-
-        const profilItems = Array.isArray(stretchProfilResult?.items)
-          ? stretchProfilResult.items
-          : (stretchProfilResult?.items ?? []);
-
-        const platformItems = Array.isArray(stretchLightPlatformResult?.items)
-          ? stretchLightPlatformResult.items
-          : (stretchLightPlatformResult?.items ?? []);
-
-        handleResult({ stretchProfil: profilItems });
-        handleResult({ lightPlatform: platformItems });
-        handleResult({ lightRing: lightRingMerged });
-
-        handleResult(userProfileResult);
-        handleResult(stretchTextureResult);
-        handleResult(stretchAdditionalResult);
-        handleResult(stretchBardutyunResult);
-        handleResult(allStretchWorkResult);
+        if (allStretchWorkResult?.error) {
+          alert(allStretchWorkResult.error || allStretchWorkResult);
+          logout();
+          return;
+        }
+        if (allStretchWorkResult?.work) setStretchWorkData(allStretchWorkResult.work);
       } catch (error) {
         console.error('An error occurred:', error);
+        logout();
       }
-    };
-
-    const handleResult = (result: any) => {
-      if (result?.error) {
-        alert(result.error || result);
-        setCookie('access_token', '', { path: '/' });
-        navigate('/');
-      } else {
-        processResult(result);
-      }
-    };
-
-    const processResult = (result: any) => {
-
-      if (result.user) setUser(result.user);
-      else if (result.stretchTexture) setStretchTextureData(result.stretchTexture);
-      else if (result.stretchAdditional) setStretchAdditionalData(result.stretchAdditional);
-      else if (result.stretchProfil) setStretchProfilData(result.stretchProfil);
-      else if (result.lightPlatform) setStretchLightPlatformData(result.lightPlatform);
-      else if (result.lightRing) setStretchLightRingData(result.lightRing);
-      else if (result.stretchBardutyun) setStretchBardutyunData(result.stretchBardutyun);
-      else if (result.work) setStretchWorkData(result.work);
     };
 
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ---------- totals: subscribe to form changes ----------
-  // --- totals: subscribe to form changes (без setValue здесь!)
   useEffect(() => {
     const recalc = (formValues: Record<string, any>) => {
       let sumTotal = 0;
-      const newRoomSum: { [key: string]: number } = {};
+      const newRoomSum: Record<string, number> = {};
 
-      // room sums
       room.forEach((roomObj) => {
         let roomSumValue = 0;
         for (const [key, value] of Object.entries(formValues)) {
           if (isRoomSumKey(key, roomObj.id)) {
-            roomSumValue += toNum(value);
+            roomSumValue += toNumDecimal(value);
           }
         }
         newRoomSum[roomObj.id] = roomSumValue;
@@ -169,10 +231,9 @@ const TagStretchOrder: React.FC = (): JSX.Element => {
         sumTotal += roomSumValue;
       });
 
-      // work sums
       for (const [key, value] of Object.entries(formValues)) {
         if (key.startsWith('workSum_')) {
-          sumTotal += toNum(value);
+          sumTotal += toNumDecimal(value);
         }
       }
 
@@ -180,10 +241,8 @@ const TagStretchOrder: React.FC = (): JSX.Element => {
       setOrderSum(sumTotal);
     };
 
-    // initial run
     recalc(getValues());
 
-    // subscribe to all form changes
     const subscription = watch((formValues) => {
       recalc(formValues as Record<string, any>);
     });
@@ -191,7 +250,6 @@ const TagStretchOrder: React.FC = (): JSX.Element => {
     return () => subscription.unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [room, watch, getValues]);
-
 
   // ---------- submit ----------
   const qountTotal = (order: any) => {
@@ -202,7 +260,7 @@ const TagStretchOrder: React.FC = (): JSX.Element => {
       let roomSumValue = 0;
       for (const [key, value] of Object.entries(formValues)) {
         if (isRoomSumKey(key, roomObj.id)) {
-          roomSumValue += toNum(value);
+          roomSumValue += toNumDecimal(value);
         }
       }
       roomObj.sum = roomSumValue;
@@ -222,14 +280,13 @@ const TagStretchOrder: React.FC = (): JSX.Element => {
       order,
       room,
       stretchTextureData,
-      stretchAdditionalData,
-      stretchProfilData,
-      stretchLightPlatformData,
-      stretchLightRingData,
+      stretchAdditionalItems,
+      stretchProfilItems,
+      stretchLightPlatformItems,
+      stretchLightRingItems,
       stretchBardutyunData,
       stretchWorkData
     );
-    console.log(order);
 
     stretchTextureOrder['prepayment'] = order.prepayment || 0;
     stretchTextureOrder['paymentMethod'] = order.paymentMethod;
@@ -271,7 +328,7 @@ const TagStretchOrder: React.FC = (): JSX.Element => {
     setRoom(updatedRoom);
   }
 
-  // ---------- works (без reset, чтобы не ронять форму) ----------
+  // ---------- works ----------
   const [workRowId, setWorkRowId] = useState<string[]>([]);
   const addWorkNewRow = () => setWorkRowId((prev) => [...prev, uuidv4()]);
   const removeWorkRow = (index: string) => {
@@ -298,12 +355,11 @@ const TagStretchOrder: React.FC = (): JSX.Element => {
     setRoom(updated);
   };
 
-  // --- groundTotal = balance - prepayment (отдельный эффект, без рекурсии)
-  const prepaymentValue = toNum(watch('prepayment'));
+  const prepaymentValue = toNumDecimal(watch('prepayment'));
 
   useEffect(() => {
     const next = balance - prepaymentValue;
-    const current = toNum(getValues('groundTotal'));
+    const current = toNumDecimal(getValues('groundTotal'));
     if (current !== next) {
       setValue('groundTotal', next, {
         shouldDirty: false,
@@ -311,14 +367,23 @@ const TagStretchOrder: React.FC = (): JSX.Element => {
         shouldValidate: false,
       });
     }
-    // одновременно держим локальный state prepayment в актуальном виде, если он нужен
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [balance, prepaymentValue, getValues, setValue]);
 
+  // ---------- loading states ----------
+  const isAnyLoading =
+    qAdditional.isLoading ||
+    qProfil.isLoading ||
+    qPlatform.isLoading ||
+    qLightRingA.isLoading ||
+    qLightRingB.isLoading;
 
   return (
     <div className=''>
       <StretchMenu />
+
+      {isAnyLoading ? <div style={{ padding: 20 }}>Loading...</div> : null}
+
       <form onSubmit={handleSubmit(qountTotal)}>
         <div>
           <BuyerSection register={register} setValue={setValue} />
@@ -340,11 +405,7 @@ const TagStretchOrder: React.FC = (): JSX.Element => {
         <div style={{ height: '20px' }} className="admin_profile_Strech" />
 
         <div style={{ display: 'flex', gap: '20px', margin: '5px' }}>
-          <select
-            style={{ border: '1px solid black' }}
-            id="status"
-            {...register('status', { required: true })}
-          >
+          <select style={{ border: '1px solid black' }} id="status" {...register('status', { required: true })}>
             <option value={'progress'}>Գրանցված</option>
             <option value={'measurement'}>Չափագրում</option>
             <option value={'installation'}>Տեղադրում</option>
@@ -398,10 +459,10 @@ const TagStretchOrder: React.FC = (): JSX.Element => {
                   roomId={e.id}
                   room={e}
                   stretchTextureData={stretchTextureData}
-                  stretchAdditionalData={stretchAdditionalData}
-                  stretchProfilData={stretchProfilData}
-                  stretchLightPlatformData={stretchLightPlatformData}
-                  stretchLightRingData={stretchLightRingData}
+                  stretchAdditionalData={stretchAdditionalItems}
+                  stretchProfilData={stretchProfilItems}
+                  stretchLightPlatformData={stretchLightPlatformItems}
+                  stretchLightRingData={stretchLightRingItems}
                   stretchBardutyunData={stretchBardutyunData}
                 />
               ))}

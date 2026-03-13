@@ -36,7 +36,6 @@ export class CoopDebetKreditService {
         amount: balance,
       });
 
-      // лучше _id чем id
       orderBuyerDocument.debetKredit.push(createdDebet._id as any);
       await orderBuyerDocument.save();
     }

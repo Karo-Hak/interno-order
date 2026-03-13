@@ -6,8 +6,6 @@ import { useCookies } from 'react-cookie'
 import { userProfile } from "../../../features/user/userApi";
 import './stretchProfil.css'
 import { StretchProfilProps, selectStretchProfil } from "../../features/strechProfil/strechProfilSlice";
-import { getAllUnyt } from "../../unyt/unytApi";
-import { selectUnyt } from "../../unyt/unytSlice";
 import { useForm } from "react-hook-form";
 import { addStretchProfil, getAllStretchProfil } from "../../features/strechProfil/strechProfilApi";
 import { StretchMenu } from "../../../component/menu/StretchMenu";

@@ -8,7 +8,6 @@ import './addStretchWork.css'
 import { useForm } from "react-hook-form";
 import { allStretchWork, newStretchWork } from "../../features/StrechWork/strechWorkApi";
 import { selectStretchWork } from "../../features/StrechWork/strechWorkSlice";
-import { StretchMenu } from "../../../component/menu/StretchMenu";
 import { StockMenu } from "../../../component/menu/StockMenu";
 
 export const StretchWork: React.FC = (): JSX.Element => {

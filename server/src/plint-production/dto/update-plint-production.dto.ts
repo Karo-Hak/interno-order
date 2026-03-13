@@ -1,4 +1,4 @@
-import { PartialType } from '@nestjs/swagger';
+import { PartialType } from '@nestjs/mapped-types';
 import { CreatePlintProductionDto } from './create-plint-production.dto';
 import { IsInt, Min, IsOptional } from 'class-validator';
 

@@ -15,11 +15,10 @@ import "./addBuyer.css";
 
 type FormValues = {
   name: string;
-  phone: string;   // будет нормализован в цифры
-  adress: string;  // намеренно 'adress' (как у тебя на бэке)
+  phone: string;   
+  adress: string;  
 };
 
-// нормализуем телефон: только цифры
 const normPhone = (s: string) => (s ?? "").replace(/\D+/g, "");
 
 export const AddBuyer: React.FC = (): JSX.Element => {
@@ -44,15 +43,12 @@ export const AddBuyer: React.FC = (): JSX.Element => {
     mode: "onSubmit",
   });
 
-  // авто-нормализация телефона при вводе (без смены каретки)
   const phoneValue = watch("phone");
   useEffect(() => {
-    // если пользователь вставил текст с пробелами/скобками — чистим
     const cleaned = phoneValue.replace(/[^\d\s()+\-]/g, "");
     if (cleaned !== phoneValue) setValue("phone", cleaned);
   }, [phoneValue, setValue]);
 
-  // первичная загрузка
   useEffect(() => {
     (async () => {
       try {
@@ -67,16 +63,13 @@ export const AddBuyer: React.FC = (): JSX.Element => {
           console.warn(res2);
         }
       } catch (e) {
-        // если thunk бросил, аккуратно игнорируем
         console.warn(e);
       }
     })();
   }, [dispatch, cookies, setCookie, navigate]);
 
-  // для быстрой проверки дубликатов на фронте
   const existingPhones = useMemo(() => {
     const arr = buyerState?.arrBuyer ?? [];
-    // приводим к "только цифры"
     return new Set(arr.map((b: any) => normPhone(b?.phone ?? "")));
   }, [buyerState?.arrBuyer]);
 
@@ -91,7 +84,6 @@ export const AddBuyer: React.FC = (): JSX.Element => {
         name: values.name?.trim(),
       };
 
-      // простая фронт-проверка дубликатов по телефону
       if (payload.phone && existingPhones.has(payload.phone)) {
         setServerError("Գնորդ արդեն կա այս հեռախոսահամարով (дубликат по телефону).");
         setSubmitting(false);
@@ -106,7 +98,6 @@ export const AddBuyer: React.FC = (): JSX.Element => {
         return;
       }
 
-      // успешное создание — чистим форму и обновляем список
       reset({ name: "", phone: "", adress: "" });
       await dispatch(allBuyer(cookies));
     } catch (e: any) {

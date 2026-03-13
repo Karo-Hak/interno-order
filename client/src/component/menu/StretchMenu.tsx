@@ -93,16 +93,6 @@ export const StretchMenu: React.FC<StretchMenuProps> = (): JSX.Element => {
             </div>
             <div className="admin_profile">
                 <button className="btn" onClick={newTagStretchOrder} onContextMenu={newTagStretchOrderNewWindow} >Նոր Պատվեր</button>
-                {/* <select onChange={(e) => goTo(e)} className="btn" style={{ height: "35px" }}>
-                    <option>Ապրանք</option>
-                    <option value={"/stretchTexture"}>Ձգվող Առաստաղ</option>
-                    <option value={"/stretchceiling/addStretchBardutyun"}>Բարդություն</option>
-                    <option value={"/stretchceiling/addStretchProfil"}>Պրոֆիլ</option>
-                    <option value={"/stretchceiling/addStretchLightPlatform"}>Լույսի Պլատֆորմ</option>
-                    <option value={"/stretchceiling/addStretchLightRing"}>Լույսի Օղակ</option>
-                    <option value={"/stretchceiling/addTagStretchWork"}>Աշխատանք</option>
-                    <option value={"/stretchceiling/addStretchAdditional"}>Այլ Ապրանք</option>
-                </select> */}
                 <button className="btn" onClick={tagStretchBuyer} onContextMenu={tagStretchBuyerNewWindow}>Ավելացնել Գնորդ</button>
                 <button className="btn" onClick={tagStretchWorker} onContextMenu={tagStretchWorkerNewWindow}>Ավելացնել Աշխատակից</button>
                 <button className="btn" onClick={viewStretchOrders} onContextMenu={viewStretchOrdersNewWindow}>Դիտել Պատվերները</button>

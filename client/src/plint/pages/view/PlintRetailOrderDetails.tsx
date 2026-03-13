@@ -5,8 +5,6 @@ import { PlintMenu } from '../../../component/menu/PlintMenu';
 import { http } from '../../../api/http';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-
-// ⬇️ твоя кнопка добавления платежа
 import AddPlintPayment from '../../../component/confirmButten/AddPlintPayment';
 
 type Buyer = {
@@ -237,7 +235,6 @@ const PlintRetailOrderDetails: React.FC = () => {
     <div>
       <PlintMenu />
 
-      {/* Верхняя панель */}
       <div
         style={{
           position: 'sticky',
@@ -257,7 +254,6 @@ const PlintRetailOrderDetails: React.FC = () => {
         <div style={{ fontWeight: 700, fontSize: 14 }}>Պատվեր № {id}</div>
 
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 8, alignItems: 'center' }}>
-          {/* ⬇️ Добавление платежа — перезагружаем заказ после успеха */}
           <AddPlintPayment kind="retail" id={order?._id} onDone={load} />
 
           <button

@@ -5,11 +5,11 @@ type AggRow = {
   name: string;
   qty: number;
   total: number;
-  price?: number; // средняя цена (total/qty)
+  price?: number; 
 };
 
 type Props = {
-  items: Item[]; // несгруппированные товары со всех выбранных заказов
+  items: Item[]; 
 };
 
 const aggregate = (items: Item[]): AggRow[] => {

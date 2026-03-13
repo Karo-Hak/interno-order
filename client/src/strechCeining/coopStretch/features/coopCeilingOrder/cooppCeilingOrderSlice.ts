@@ -87,7 +87,6 @@ const slice = createSlice({
     builder.addCase(createCoopOrder.fulfilled, (state, { payload }) => {
       state.loading = false;
       state.lastCreatedId = payload.orderId || null;
-      // при необходимости можно сразу вызвать getCoopOrder(orderId) из компонента
     });
     builder.addCase(createCoopOrder.rejected, (state, action) => {
       state.loading = false;

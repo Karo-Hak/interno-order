@@ -4,7 +4,6 @@ import { useCookies } from 'react-cookie';
 import { useForm } from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { userProfile } from '../../../features/user/userApi';
-import { StretchMenu } from '../../../component/menu/StretchMenu';
 import './stretchTexture.css';
 import { StretchTextureProps } from '../../features/strechTexture/strechTextureSlice';
 import { User } from '../../../features/user/userSlice';

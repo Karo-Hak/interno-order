@@ -1,4 +1,3 @@
-// coop-credit.controller.ts
 import { Controller, Patch, Param, Body, Post } from "@nestjs/common";
 import { CoopCreditService } from "./coop-credit-service";
 

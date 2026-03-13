@@ -65,7 +65,6 @@ export const fetchCoopReturnById = createAsyncThunk(
   }
 );
 
-// Удалить возврат по id
 export const deleteCoopReturnById = createAsyncThunk(
   'coopReturn/delete',
   async ({ cookies, id }: { cookies: any; id: string }) => {

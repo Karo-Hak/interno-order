@@ -24,9 +24,9 @@ export const TableControls: React.FC<Props> = (props) => {
     <div
       style={{
         position: 'sticky',
-        top: 0,                 // фиксируем к верху вьюпорта
-        zIndex: 30,             // поверх шапки таблицы
-        background: '#fff',     // фон, чтобы не просвечивало
+        top: 0,                
+        zIndex: 30,             
+        background: '#fff',    
         borderBottom: '1px solid #eee',
         display: 'flex',
         gap: 8,

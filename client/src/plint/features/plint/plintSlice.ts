@@ -1,4 +1,3 @@
-// src/features/plint/plintSlice.ts
 import { createSlice } from '@reduxjs/toolkit';
 import { addNewPlint, adjustPlintStock, getAllPlint, updatePlintPrice } from './plintApi';
 

@@ -1,4 +1,3 @@
-// component/confirmButten/AddPlintPayment.tsx
 import React from 'react';
 import { useCookies } from 'react-cookie';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
@@ -14,7 +13,7 @@ type Kind = 'retail' | 'wholesale';
 const AddPlintPayment: React.FC<{
   id?: string;
   onDone?: () => void;
-  kind: Kind;                     // 🔴 ОБЯЗАТЕЛЬНО: розница или опт
+  kind: Kind;                     
 }> = ({ id, onDone, kind }) => {
   const [cookies] = useCookies(['access_token']);
   const dispatch = useAppDispatch();

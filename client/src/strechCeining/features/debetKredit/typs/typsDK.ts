@@ -1,11 +1,10 @@
-// Общий тип для движений дебет/кредит
 export type DebetKreditItem = {
-  _id?: string;                // может отсутствовать
+  _id?: string;               
   date: string | Date;
   type: 'Գնում' | 'Վճարում' | string;
   amount: number;
-  order: any;                  // строка или объект {_id}
-  buyer: string;               // buyerId
+  order: any;                 
+  buyer: string;              
   sumDebet?: number;
   kredit?: number;
 };

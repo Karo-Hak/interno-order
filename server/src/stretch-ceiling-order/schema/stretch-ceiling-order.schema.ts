@@ -6,7 +6,7 @@ import { User } from 'src/user/schema/user.schema';
 
 export type StretchCeilingOrderDocument = HydratedDocument<StretchCeilingOrder>;
 
-@Schema({ timestamps: false }) // вручную контролируем даты
+@Schema({ timestamps: false }) 
 export class StretchCeilingOrder {
   @Prop({ type: mongoose.Schema.Types.Mixed })
   rooms: any;
@@ -28,7 +28,6 @@ export class StretchCeilingOrder {
   @Prop() orderComment: string;
   @Prop() paymentMethod: string;
 
-  // ✅ если не пришло — ставим текущую дату
   @Prop({
     type: Date,
     default: () => new Date(),
@@ -36,7 +35,6 @@ export class StretchCeilingOrder {
   })
   measureDate: Date;
 
-  // ✅ то же самое
   @Prop({
     type: Date,
     default: () => new Date(),

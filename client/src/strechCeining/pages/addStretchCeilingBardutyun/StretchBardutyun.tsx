@@ -10,7 +10,6 @@ import { getAllUnyt } from "../../unyt/unytApi";
 import { selectUnyt } from "../../unyt/unytSlice";
 import { useForm } from "react-hook-form";
 import { addStretchBardutyun, getAllStretchBardutyun } from "../../features/strechBardutyun/strechBardutyunApi";
-import { StretchMenu } from "../../../component/menu/StretchMenu";
 import { StockMenu } from "../../../component/menu/StockMenu";
 
 export const StretchBardutyun: React.FC = (): JSX.Element => {

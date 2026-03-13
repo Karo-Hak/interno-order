@@ -11,7 +11,6 @@ export const PlintMenu: React.FC<PlintMenuProps> = () => {
   const [cookies, setCookie] = useCookies(["access_token"]);
   const navigate = useNavigate();
 
-  // Безопасное открытие в новом окне (правая кнопка)
   const openInNewWindow = useCallback((path: string) => {
     window.open(path, "_blank", "noopener,noreferrer");
   }, []);
@@ -21,17 +20,14 @@ export const PlintMenu: React.FC<PlintMenuProps> = () => {
 
     (async () => {
       try {
-        // если нет токена — на логин
         if (!cookies?.access_token) {
           navigate("/");
           return;
         }
 
         await dispatch(userProfile(cookies)).unwrap();
-        // если нужно — можно выставить локальный стейт по mounted
         if (!mounted) return;
       } catch {
-        // невалидный токен — чистим и уходим на логин
         setCookie("access_token", "", { path: "/" });
         navigate("/");
       }
@@ -40,10 +36,8 @@ export const PlintMenu: React.FC<PlintMenuProps> = () => {
     return () => {
       mounted = false;
     };
-    // ✅ все используемые зависимости в deps
   }, [dispatch, cookies, navigate, setCookie]);
 
-  // --- Навигация (левая кнопка)
   const home = () => navigate("/plint/report/monthly");
 
   const plintBuyer = () => navigate("/plint/plintBuyer");
@@ -58,7 +52,6 @@ export const PlintMenu: React.FC<PlintMenuProps> = () => {
   const viewMaterialsOrders = () => navigate("/plint/viewMaterial");
   const viewDebetKredit = () => navigate("/plint/debet-kredit");
 
-  // --- Новое окно (правая кнопка). Не забываем preventDefault
   const onCtx = (path: string) => (e: React.MouseEvent) => {
     e.preventDefault();
     openInNewWindow(path);

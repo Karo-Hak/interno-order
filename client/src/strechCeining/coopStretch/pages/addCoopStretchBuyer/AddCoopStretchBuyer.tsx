@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import { useForm } from "react-hook-form";
 import "./addCoopStretchBuyer.css";
-
 import { CoopStretchMenu } from "../../../../component/menu/CoopStretchMenu";
 import {
   allCoopStretchBuyerThunk,
@@ -61,7 +60,6 @@ export const CoopStretchBuyer: React.FC = (): JSX.Element => {
       ).unwrap();
 
       if (res && !("error" in res)) {
-        // сервер обычно возвращает { message, buyer }
         const created = (res.buyer || res) as CoopStretchBuyerProps;
         setRows((prev) => [created, ...prev]);
         reset();
@@ -83,7 +81,6 @@ export const CoopStretchBuyer: React.FC = (): JSX.Element => {
     <>
       <CoopStretchMenu />
 
-      {/* Липкая панель: заголовок + форма */}
       <div
         style={{
           position: "sticky",
@@ -129,7 +126,6 @@ export const CoopStretchBuyer: React.FC = (): JSX.Element => {
           </div>
         </form>
 
-        {/* Поиск */}
         <div style={{ display: "flex", gap: 8, alignItems: "center", marginTop: 8 }}>
           <input
             type="search"
@@ -149,7 +145,6 @@ export const CoopStretchBuyer: React.FC = (): JSX.Element => {
         </div>
       </div>
 
-      {/* Прокручиваемая таблица с липкой шапкой */}
       <div
         className="addStretchBuyer_table"
         style={{ maxHeight: "70vh", overflow: "auto", border: "1px solid #eee", borderRadius: 8, marginTop: 10 }}

@@ -11,17 +11,14 @@ type Props = {
 };
 
 export const StretchBuyerTable: React.FC<Props> = ({ rows, onRowClick, onRefresh }) => {
-  // фильтры и состояние
   const [query, setQuery] = React.useState('');
   const [mode, setMode] = React.useState<FilterMode>('nonzero');
   const [expanded, setExpanded] = React.useState<Set<string>>(new Set());
   const [sortKey, setSortKey] = React.useState<SortKey>('total');
   const [sortDir, setSortDir] = React.useState<SortDir>('desc');
 
-  // деривация полей
   const derived: DerivedBuyer[] = React.useMemo(() => rows.map(derive), [rows]);
 
-  // фильтрация
   const filtered = React.useMemo(() => {
     const q = normalize(query.trim());
     return derived.filter((r) => {
@@ -31,12 +28,10 @@ export const StretchBuyerTable: React.FC<Props> = ({ rows, onRowClick, onRefresh
     });
   }, [derived, query, mode]);
 
-  // сортировка
   const sorted = React.useMemo(() => {
     return [...filtered].sort((a, b) => compare(a, b, sortKey, sortDir));
   }, [filtered, sortKey, sortDir]);
 
-  // раскрыватель
   const allExpanded = sorted.length > 0 && sorted.every((r) => expanded.has(r._id));
   const toggleAll = (expand: boolean) => {
     setExpanded((prev) => {
@@ -52,17 +47,13 @@ export const StretchBuyerTable: React.FC<Props> = ({ rows, onRowClick, onRefresh
       s.has(id) ? s.delete(id) : s.add(id);
       return s;
     });
-
-  // клик по заголовку сортировки
   const onSort = (key: SortKey) => {
     setSortKey((prevKey) => {
       if (prevKey !== key) {
-        // новое поле — ставим у числовых desc по умолчанию, у строк asc
         const numericKeys: SortKey[] = ['ordersCount', 'dkCount', 'buySum', 'creditSum', 'total'];
         setSortDir(numericKeys.includes(key) ? 'desc' : 'asc');
         return key;
       } else {
-        // то же поле — переворот направления
         setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
         return key;
       }
@@ -86,10 +77,9 @@ export const StretchBuyerTable: React.FC<Props> = ({ rows, onRowClick, onRefresh
       {sorted.length === 0 ? (
         <div style={{ padding: 12, opacity: 0.8 }}>Գրառություններ չկան…</div>
       ) : (
-        // ⬇️ прокручиваемый контейнер таблицы
         <div
           style={{
-            maxHeight: '70vh',     // нужная высота области прокрутки
+            maxHeight: '70vh',     
             overflow: 'auto',
             border: '1px solid #eee',
             borderRadius: 8,
@@ -98,7 +88,6 @@ export const StretchBuyerTable: React.FC<Props> = ({ rows, onRowClick, onRefresh
           <table className="table" style={{ width: '100%', borderCollapse: 'separate', borderSpacing: 0 }}>
             <thead>
               <tr>
-                {/* на КАЖДОМ th — position: sticky; top: 0 */}
                 <th style={{
                   width: 36,
                   position: 'sticky', top: 0, zIndex: 20, background: '#fff', boxShadow: 'inset 0 -1px #eee'

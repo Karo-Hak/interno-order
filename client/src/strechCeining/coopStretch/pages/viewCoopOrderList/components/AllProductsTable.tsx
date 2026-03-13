@@ -5,17 +5,16 @@ type AggRow = {
   name: string;
   qty: number;
   total: number;
-  price?: number; // вычислим как total/qty, если qty>0
+  price?: number; 
 };
 
 type Props = {
-  items: Item[]; // несгруппированные товары со всех заказов
+  items: Item[]; 
 };
 
 const aggregate = (items: Item[]): AggRow[] => {
   const map = new Map<string, { qty: number; total: number }>();
 
-  // массивы можно итерировать for..of, проблема только с Map
   for (let i = 0; i < items.length; i++) {
     const it = items[i];
     const key = (it.name || '').trim();

@@ -1,4 +1,3 @@
-// components/ReturnTable.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -63,7 +62,6 @@ const ReturnTable: React.FC<Props> = ({ rows, loading, onDelete }) => {
                 <td style={td}>{r.buyer?.phone1 || '—'}</td>
                 <td style={{ ...td, textAlign: 'right' }}>{money(Number(r.amount || 0))}</td>
 
-                {/* Ссылка на детальный просмотр возврата */}
                 <td style={td}>
                   <Link to={`/coopStretchceiling/return/${r._id}`}>Դիտել</Link>
                 </td>

@@ -18,7 +18,6 @@ const getErr = (e: unknown) => {
   };
 };
 
-// Короткая форма данных заказа, полезна для "показать по заказам"
 export type OrderBrief = {
   _id: string;
   buyerName?: string;
@@ -27,7 +26,6 @@ export type OrderBrief = {
   groundTotal?: number;
 };
 
-// Полный объект заказа, если понадобятся детали
 export type StretchOrder = {
   _id: string;
   buyer?: string | { _id: string; name?: string; phone1?: string };
@@ -36,7 +34,6 @@ export type StretchOrder = {
   prepayment?: number;
   groundTotal?: number;
   totalSum?: number;
-  // ...другие поля, которые есть у тебя на бэке
 };
 
 

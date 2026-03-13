@@ -1,13 +1,12 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { http } from '../../../api/http';
 
-type Tokened = { cookies: { access_token?: string } }; // <-- было string, стало optional
+type Tokened = { cookies: { access_token?: string } }; 
 
 function authHeader(token?: string) {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-// СОЗДАНИЕ
 export const addNewPlint = createAsyncThunk(
   '/plint-products/create',
   async (
@@ -28,7 +27,6 @@ export const addNewPlint = createAsyncThunk(
   }
 );
 
-// ОБНОВЛЕНИЕ ЦЕН
 export const updatePlintPrice = createAsyncThunk(
   'plint-products/updatePrice',
   async (
@@ -76,7 +74,7 @@ export const adjustPlintStock = createAsyncThunk(
         { delta: obj.delta },
         { headers: authHeader(obj.cookies.access_token) }
       );
-      return data; // обновлённый документ товара
+      return data; 
     } catch (e: any) {
       return rejectWithValue(e?.response?.data ?? { message: 'adjust stock failed' });
     }

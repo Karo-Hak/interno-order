@@ -12,7 +12,13 @@
   padding: 8px;
   z-index: 1;
   border-bottom: 1px solid #1a0808;
+  
 }
+
+.btnToolbar{
+  color: black;
+}
+
 
 .toolbar__field {
   display: flex;
@@ -24,10 +30,12 @@
   display: flex;
   gap: 8px;
   justify-content: flex-end;
+
 }
 
 .toolbar__search {
   min-width: 220px;
+
 }
 
 .toolbar__right {
@@ -36,6 +44,7 @@
   gap: 8px;
   align-items: center;
   justify-content: flex-end;
+
 }
 
 

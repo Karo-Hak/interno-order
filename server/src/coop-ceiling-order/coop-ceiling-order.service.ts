@@ -65,7 +65,6 @@ export class CoopCeilingOrderService {
     private readonly coopBuyerService: CoopStretchBuyerService,
   ) { }
 
-  // ───────────── helper: найти/создать покупателя
   private async resolveBuyer(
     buyer: { buyerId?: string; phone1?: string; name?: string; phone2?: string; region?: string; address?: string },
     session?: ClientSession,
@@ -89,13 +88,11 @@ export class CoopCeilingOrderService {
     return (created as any)._id.toString();
   }
 
-  // ───────────── нормализация групп
-  /** TEXTURE: храним height/width/sq/price/sum, пересчитываем sq/sum при необходимости */
   private mapTextureRows(arr: any[] = []) {
     return (arr ?? []).map((row) => {
       const height = num(row?.height, 0);
       const width = num(row?.width, 0);
-      const qty = r2(num(row?.qty, height * width)); // 👈 qty = пришло | height*width
+      const qty = r2(num(row?.qty, height * width)); 
       const price = num(row?.price, 0);
       const sum = r2(num(row?.sum, qty * price));
       return {
@@ -109,7 +106,6 @@ export class CoopCeilingOrderService {
     });
   }
 
-  /** SIMPLE (profil/platform/ring): { name, qty, price, sum }, сумма досчитывается при необходимости */
   private mapSimpleRows(arr: any[] = []) {
     return (arr ?? []).map((row) => {
       const qty = num(row?.qty, 0);
@@ -124,13 +120,13 @@ export class CoopCeilingOrderService {
     });
   }
 
-  // ───────────── собрать патч заказа из DTO (create)
   private buildPatch(o: StretchTextureOrderDto, buyerId: IdLike, userId: IdLike) {
     return {
       groupedStretchTextureData: this.mapTextureRows(o.groupedStretchTextureData),
       groupedStretchProfilData: this.mapSimpleRows(o.groupedStretchProfilData),
       groupedLightPlatformData: this.mapSimpleRows(o.groupedLightPlatformData),
       groupedLightRingData: this.mapSimpleRows(o.groupedLightRingData),
+      groupedAdditionalData: this.mapSimpleRows(o.groupedAdditionalData),
 
       date: o.date ? new Date(o.date) : new Date(),
       buyerComment: o.buyerComment ?? '',
@@ -143,7 +139,6 @@ export class CoopCeilingOrderService {
     };
   }
 
-  // ───────────── create with transaction
   async createWithBuyerResolution(dto: CreateCoopOrderDto) {
     const session = await this.connection.startSession();
     try {
@@ -154,17 +149,14 @@ export class CoopCeilingOrderService {
 
         created = await this.orderModel.create([patch], { session }).then((r) => r[0]);
 
-        // привязка заказа к покупателю
         await this.buyerModel.updateOne(
           { _id: toId(buyerId) },
           { $addToSet: { order: created._id } },
           { session },
         );
 
-        // баланс заказа
         const bal = Number(patch.balance || 0);
 
-        // 1) учёт у покупателя (как и было)
         if (bal > 0) {
           await this.coopBuyerService.upsertBuyMergeSum(
             buyerId,
@@ -173,12 +165,11 @@ export class CoopCeilingOrderService {
           );
         }
 
-        // 2) ✅ записываем Debet/Kredit (и ссылку в покупателя)
         if (bal > 0) {
           const dk = await this.dkModel.create(
             [{
               date: patch.date,
-              type: 'Գնում',                            // наименование операции
+              type: 'Գնում',                           
               amount: bal,
               user: toId(dto.userId),
               buyer: toId(buyerId),
@@ -228,7 +219,6 @@ export class CoopCeilingOrderService {
     return doc;
   }
 
-  // ───────────── update (перенос заказа между покупателями + синхронизация buy)
   async update(id: string, dto: UpdateCoopOrderDto) {
     const current: any = await this.orderModel.findById(id).exec();
     if (!current) throw new NotFoundException('Order not found');
@@ -237,14 +227,11 @@ export class CoopCeilingOrderService {
     try {
       let updated: any;
       await session.withTransaction(async () => {
-        // возможно — смена покупателя
         let nextBuyerId: string | undefined;
         if (dto.buyerId) nextBuyerId = dto.buyerId;
 
-        // собираем патч
         const patch: any = {};
 
-        // если пришли массивы — нормализуем так же, как при create
         if (dto.groupedStretchTextureData) patch.groupedStretchTextureData = this.mapTextureRows(dto.groupedStretchTextureData as any[]);
         if (dto.groupedStretchProfilData) patch.groupedStretchProfilData = this.mapSimpleRows(dto.groupedStretchProfilData as any[]);
         if (dto.groupedLightPlatformData) patch.groupedLightPlatformData = this.mapSimpleRows(dto.groupedLightPlatformData as any[]);
@@ -262,7 +249,6 @@ export class CoopCeilingOrderService {
         updated = await this.orderModel.findByIdAndUpdate(id, patch, { new: true, session }).exec();
         if (!updated) throw new NotFoundException('Order not found after update');
 
-        // баланс изменился → синхронизируем запись buy у текущего покупателя
         if (balanceProvided) {
           await this.coopBuyerService.upsertBuyMergeSum(
             (updated.buyer as Types.ObjectId).toString(),
@@ -271,24 +257,20 @@ export class CoopCeilingOrderService {
           );
         }
 
-        // перенос между покупателями
         const oldBuyerId = (current.buyer as Types.ObjectId).toString();
         const newBuyerId = (updated.buyer as Types.ObjectId).toString();
         if (oldBuyerId !== newBuyerId) {
-          // убрать ссылку у старого
           await this.buyerModel.updateOne(
             { _id: toId(oldBuyerId) },
             { $pull: { order: updated._id } },
             { session },
           );
-          // добавить ссылку новому
           await this.buyerModel.updateOne(
             { _id: toId(newBuyerId) },
             { $addToSet: { order: updated._id } },
             { session },
           );
 
-          // удалить buy у старого (на сумму старого баланса)
           const oldBalance = num(current.balance, 0);
           if (oldBalance > 0) {
             await this.coopBuyerService.removeOneBuyByOrderIdAndDecTotal(
@@ -299,7 +281,6 @@ export class CoopCeilingOrderService {
             );
           }
 
-          // поставить buy у нового покупателя (на новую сумму баланса)
           await this.coopBuyerService.upsertBuyMergeSum(
             newBuyerId,
             { date: updated.date, sum: num(updated.balance, 0), orderId: updated._id.toString() },
@@ -314,7 +295,6 @@ export class CoopCeilingOrderService {
     }
   }
 
-  // ───────────── remove (с чисткой ссылок и buy)
   async remove(id: string) {
     const session = await this.connection.startSession();
     try {
@@ -328,13 +308,10 @@ export class CoopCeilingOrderService {
         const buyerId = (order.buyer as Types.ObjectId).toString();
         const balance = num(order.balance, 0);
 
-        // удалить заказ
         await this.orderModel.deleteOne({ _id: toId(id) }).session(session);
 
-        // убрать ссылку у покупателя
         await this.coopBuyerService.deleteFromOrderArray(buyerId, id, { session });
 
-        // удалить ровно одну запись buy по этому orderId + скорректировать totalSum
         if (balance > 0) {
           await this.coopBuyerService.removeOneBuyByOrderIdAndDecTotal(buyerId, id, balance, { session });
         }
@@ -348,74 +325,108 @@ export class CoopCeilingOrderService {
     }
   }
 
-  /**
-   * Отчёт за месяц (таймзона учитывается через $dateToString).
-   */
-  async getMonthlyReport(month?: string, tz = 'Asia/Yerevan') {
-    const monthTag = month ?? currentMonthTag(tz);
 
-    const [facet] = await this.orderModel.aggregate([
-      {
-        $match: {
-          $expr: {
-            $eq: [
-              { $dateToString: { format: '%Y-%m', date: '$date', timezone: tz } },
-              monthTag,
+
+  async getMonthlyReport(startDate: string, endDate: string, tz = 'Asia/Yerevan') {
+
+    const matchStage = {
+      $match: {
+        $expr: {
+          $and: [
+            {
+              $gte: [
+                '$date',
+                {
+                  $dateFromString: {
+                    dateString: startDate,
+                    format: '%Y-%m-%d',
+                    timezone: tz,
+                  },
+                },
+              ],
+            },
+            {
+              $lt: [
+                '$date',
+                {
+                  $dateFromString: {
+                    dateString: endDate,
+                    format: '%Y-%m-%d',
+                    timezone: tz,
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      },
+    } as const;
+
+    const [facet] = await this.orderModel
+      .aggregate([
+        matchStage,
+        {
+          $lookup: {
+            from: 'coopstretchbuyers',
+            localField: 'buyer',
+            foreignField: '_id',
+            as: 'buyer',
+          },
+        },
+        { $unwind: { path: '$buyer', preserveNullAndEmptyArrays: true } },
+        {
+          $addFields: {
+            _sumTexture: { $ifNull: [{ $sum: '$groupedStretchTextureData.sum' }, 0] },
+            _sumProfil: { $ifNull: [{ $sum: '$groupedStretchProfilData.sum' }, 0] },
+            _sumPlat: { $ifNull: [{ $sum: '$groupedLightPlatformData.sum' }, 0] },
+            _sumRing: { $ifNull: [{ $sum: '$groupedLightRingData.sum' }, 0] },
+          },
+        },
+        {
+          $addFields: {
+            computedSum: { $add: ['$_sumTexture', '$_sumProfil', '$_sumPlat', '$_sumRing'] },
+          },
+        },
+        {
+          $facet: {
+            rows: [
+              {
+                $project: {
+                  _id: { $toString: '$_id' },
+                  date: 1,
+                  name: '$buyer.name',
+                  phone1: '$buyer.phone1',
+                  buyerName: '$buyer.name',
+                  buyerPhone: '$buyer.phone1',
+                  sum: { $ifNull: ['$balance', '$computedSum'] },
+                },
+              },
+              { $sort: { date: 1 } },
+            ],
+            totals: [
+              { $project: { sum: { $ifNull: ['$balance', '$computedSum'] } } },
+              { $group: { _id: null, total: { $sum: '$sum' }, count: { $sum: 1 } } },
             ],
           },
         },
-      },
-      {
-        $lookup: {
-          from: 'coopstretchbuyers',
-          localField: 'buyer',
-          foreignField: '_id',
-          as: 'buyer',
-        },
-      },
-      { $unwind: { path: '$buyer', preserveNullAndEmptyArrays: true } },
-      {
-        $addFields: {
-          _sumTexture: { $ifNull: [{ $sum: '$groupedStretchTextureData.sum' }, 0] },
-          _sumProfil: { $ifNull: [{ $sum: '$groupedStretchProfilData.sum' }, 0] },
-          _sumPlat: { $ifNull: [{ $sum: '$groupedLightPlatformData.sum' }, 0] },
-          _sumRing: { $ifNull: [{ $sum: '$groupedLightRingData.sum' }, 0] },
-        },
-      },
-      { $addFields: { computedSum: { $add: ['$_sumTexture', '$_sumProfil', '$_sumPlat', '$_sumRing'] } } },
-      {
-        $facet: {
-          rows: [
-            {
-              $project: {
-                _id: { $toString: '$_id' },
-                date: 1,
-                name: '$buyer.name',
-                phone1: '$buyer.phone1',
-                buyerName: '$buyer.name',
-                buyerPhone: '$buyer.phone1',
-                sum: { $ifNull: ['$balance', '$computedSum'] },
-              },
-            },
-            { $sort: { date: 1 } },
-          ],
-          totals: [
-            { $project: { sum: { $ifNull: ['$balance', '$computedSum'] } } },
-            { $group: { _id: null, total: { $sum: '$sum' }, count: { $sum: 1 } } },
-          ],
-        },
-      },
-    ]).exec();
+      ])
+      .exec();
 
     const total = facet?.totals?.[0]?.total ?? 0;
     const count = facet?.totals?.[0]?.count ?? 0;
 
-    return { rows: facet?.rows ?? [], total, count, month: monthTag, tz };
+    return {
+      rows: facet?.rows ?? [],
+      total,
+      count,
+      startDate,
+      endDate,
+      tz,
+    };
   }
 
-  /**
-   * Детальный заказ с популяцией покупателя.
-   */
+
+
   async findOneDetailed(id: string) {
     const doc = await this.orderModel
       .findById(id)
@@ -460,9 +471,7 @@ export class CoopCeilingOrderService {
     };
   }
 
-  /**
-   * Полное удаление заказа в транзакции.
-   */
+
   async removeTx(id: string): Promise<{ removed: boolean }> {
     const session = await this.connection.startSession();
     try {
@@ -476,17 +485,14 @@ export class CoopCeilingOrderService {
         const orderId = new Types.ObjectId(id);
         const balance = num(order.balance, 0);
 
-        // 1) удалить заказ
         await this.orderModel.deleteOne({ _id: orderId }).session(session);
 
-        // 2) убрать ссылку заказа у покупателя
         await this.buyerModel.updateOne(
           { _id: buyerId },
           { $pull: { order: orderId } },
           { session },
         );
 
-        // 3) удалить 1 запись buy по orderId и откатить totalSum на сумму баланса
         const step1 = await this.buyerModel.updateOne(
           {
             _id: buyerId,
@@ -504,7 +510,6 @@ export class CoopCeilingOrderService {
           );
         }
 
-        // 4) ✅ удалить связанные проводки CoopDebetKredit и их ссылки у покупателя
         const dkDocs = await this.dkModel
           .find({ order: orderId, buyer: buyerId })
           .session(session)
@@ -514,10 +519,8 @@ export class CoopCeilingOrderService {
         if (dkDocs.length > 0) {
           const dkIds = dkDocs.map(d => d._id);
 
-          // удалить проводки
           await this.dkModel.deleteMany({ _id: { $in: dkIds } }).session(session);
 
-          // убрать их ссылки у покупателя
           await this.buyerModel.updateOne(
             { _id: buyerId },
             { $pull: { debetKredit: { $in: dkIds } } },
@@ -533,5 +536,67 @@ export class CoopCeilingOrderService {
       await session.endSession();
     }
   }
+
+  async getReportByStatus(status: string, tz = 'Asia/Yerevan') {
+    const [facet] = await this.orderModel
+      .aggregate([
+        { $match: { status } },
+        {
+          $lookup: {
+            from: 'coopstretchbuyers',
+            localField: 'buyer',
+            foreignField: '_id',
+            as: 'buyer',
+          },
+        },
+        { $unwind: { path: '$buyer', preserveNullAndEmptyArrays: true } },
+        {
+          $addFields: {
+            _sumTexture: { $ifNull: [{ $sum: '$groupedStretchTextureData.sum' }, 0] },
+            _sumProfil: { $ifNull: [{ $sum: '$groupedStretchProfilData.sum' }, 0] },
+            _sumPlat: { $ifNull: [{ $sum: '$groupedLightPlatformData.sum' }, 0] },
+            _sumRing: { $ifNull: [{ $sum: '$groupedLightRingData.sum' }, 0] },
+          },
+        },
+        {
+          $addFields: {
+            computedSum: { $add: ['$_sumTexture', '$_sumProfil', '$_sumPlat', '$_sumRing'] },
+          },
+        },
+        {
+          $facet: {
+            rows: [
+              {
+                $project: {
+                  _id: { $toString: '$_id' },
+                  date: 1,
+                  buyerName: '$buyer.name',
+                  buyerPhone: '$buyer.phone1',
+                  sum: { $ifNull: ['$balance', '$computedSum'] },
+                },
+              },
+              { $sort: { date: 1 } },
+            ],
+            totals: [
+              { $project: { sum: { $ifNull: ['$balance', '$computedSum'] } } },
+              { $group: { _id: null, total: { $sum: '$sum' }, count: { $sum: 1 } } },
+            ],
+          },
+        },
+      ])
+      .exec();
+
+    const total = facet?.totals?.[0]?.total ?? 0;
+    const count = facet?.totals?.[0]?.count ?? 0;
+
+    return {
+      rows: facet?.rows ?? [],
+      total,
+      count,
+      status,
+      tz,
+    };
+  }
+
 
 }

@@ -1,4 +1,3 @@
-// coop-credit.service.ts
 import { Injectable, NotFoundException, BadRequestException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, isValidObjectId, Types } from "mongoose";
@@ -33,7 +32,6 @@ export class CoopCreditService {
     }
 
     async createRaw(body: CreatePayload) {
-        // 1) Проверяем обязательные связи
         if (!body?.userId || !isValidObjectId(body.userId)) {
             throw new BadRequestException("userId is required and must be a valid ObjectId");
         }
@@ -44,12 +42,10 @@ export class CoopCreditService {
         const user = new Types.ObjectId(body.userId);
         const coop = new Types.ObjectId(body.coopId);
 
-        // 2) Готовим стартовые массивы
         const buy: any[] = [];
         const credit: any[] = [];
         const orders: Types.ObjectId[] = [];
 
-        // Стартовая покупка (если передали)
         if (body.firstBuyAmount != null) {
             const amount = Number(body.firstBuyAmount);
             if (!Number.isFinite(amount) || amount < 0) {
@@ -69,7 +65,6 @@ export class CoopCreditService {
             buy.push(entry);
         }
 
-        // Стартовый платёж (если передали)
         if (body.firstCreditAmount != null) {
             const amount = Number(body.firstCreditAmount);
             if (!Number.isFinite(amount) || amount < 0) {
@@ -79,12 +74,10 @@ export class CoopCreditService {
             credit.push({ amount, date });
         }
 
-        // 3) Баланс = сумма(buy) - сумма(credit)
         const totalBuy = buy.reduce((s, x) => s + (x.amount || 0), 0);
         const totalCredit = credit.reduce((s, x) => s + (x.amount || 0), 0);
         const balance = totalBuy - totalCredit;
 
-        // 4) Создаём документ
         const doc = await this.creditModel.create({
             user,
             coop,
@@ -97,7 +90,6 @@ export class CoopCreditService {
         return doc;
     }
 
-    /** ПЛАТЁЖ: push в credit[], balance -= amount. НИКАКОГО orderId. */
     async addPaymentRaw(id: string, body: AnyPayload) {
         const { amount, date } = this.parseMoney(body);
 
@@ -111,7 +103,6 @@ export class CoopCreditService {
         return updated;
     }
 
-    /** ПОКУПКА: push в buy[], balance += amount, и если есть валидный orderId — addToSet в orders[]. */
     async addBuyRaw(id: string, body: AnyPayload) {
         const { amount, date } = this.parseMoney(body);
 
@@ -139,7 +130,6 @@ export class CoopCreditService {
         return updated;
     }
 
-    /** Рекомпьют баланса на всякий случай */
     async recomputeBalance(id: string) {
         const doc = await this.creditModel.findById(id).lean();
         if (!doc) throw new NotFoundException("CoopCredit not found");

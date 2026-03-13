@@ -1,4 +1,3 @@
-// src/strechCeining/coopStretch/pages/editCoopOrder/EditCoopCeilinOrder.tsx
 import React from 'react';
 import {
   useForm,
@@ -37,6 +36,7 @@ import PaymentSection from '../addCoopCeilingOrder/components/PaymentSection';
 import PhotoUrls from '../addCoopCeilingOrder/components/PhotoUrls';
 import SimpleGroup, { SimpleRow } from '../addCoopCeilingOrder/components/SimpleGroup';
 import TextureGroup, { TextureRow } from '../addCoopCeilingOrder/components/TextureGroup';
+import { getAllStretchAdditional } from '../../../features/strechAdditional/strechAdditionalApi';
 
 export type BuyerMode = 'existing' | 'new';
 
@@ -58,6 +58,7 @@ export type FormValues = {
   groupedStretchProfilData: SimpleRow[];
   groupedLightPlatformData: SimpleRow[];
   groupedLightRingData: SimpleRow[];
+  groupedAdditionalData: SimpleRow[];
 
   date: string; // yyyy-mm-ddTHH:mm
   buyerComment: string;
@@ -67,7 +68,6 @@ export type FormValues = {
   _picUrlDraft?: string;
 };
 
-/* ---------------- helpers ---------------- */
 
 const pickList = (res: any, keys: string[] = []): any[] => {
   if (Array.isArray(res)) return res;
@@ -115,7 +115,6 @@ const toSimpleRows = (arr: any[] = []): SimpleRow[] =>
     };
   });
 
-// из модели → строки формы (сохранённые height & width)
 const toTextureRowsFromModel = (arr: any[] = []): TextureRow[] =>
   arr.map((r) => {
     const height = Number(r?.height ?? 0);
@@ -144,7 +143,7 @@ const toGroupedTextureForPatch = (rows: TextureRow[]) =>
     .map((r) => {
       const height = Number(r?.height ?? 0);
       const width = Number(r?.width ?? 0);
-      const qty = +(((height/100) * (width/100)) || 0).toFixed(3);
+      const qty = +(((height / 100) * (width / 100)) || 0).toFixed(3);
       const price = Number(r?.price ?? 0);
       const sum = +(qty * price).toFixed(2);
       return { name: r.name ?? '', height, width, qty, price, sum };
@@ -160,7 +159,6 @@ const toGroupedSimpleForPatch = (rows: SimpleRow[]) =>
       sum: Number(r.sum ?? 0),
     }));
 
-// нормализация
 const norm = (s?: string) => (s ?? '').toLocaleLowerCase().trim();
 const mapByName = (catalog: CatalogItem[]) => {
   const m = new Map<string, CatalogItem>();
@@ -173,7 +171,6 @@ const mapById = (catalog: CatalogItem[]) => {
   return m;
 };
 
-// числа
 const toNum = (v: any) => {
   const n = Number.parseFloat(String(v ?? ''));
   return Number.isFinite(n) ? n : 0;
@@ -183,7 +180,6 @@ const isEmptyPrice = (v: any) => {
   return !Number.isFinite(n) || n <= 0;
 };
 
-/* ---------------- Component ---------------- */
 
 const EditCoopCeilinOrder: React.FC = () => {
   const { id = '' } = useParams<{ id: string }>();
@@ -208,6 +204,7 @@ const EditCoopCeilinOrder: React.FC = () => {
       groupedStretchProfilData: [],
       groupedLightPlatformData: [],
       groupedLightRingData: [],
+      groupedAdditionalData: [],
       date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16),
       buyerComment: '',
       paymentMethod: 'cash',
@@ -223,6 +220,8 @@ const EditCoopCeilinOrder: React.FC = () => {
   const [profils, setProfils] = React.useState<CatalogItem[]>([]);
   const [platforms, setPlatforms] = React.useState<CatalogItem[]>([]);
   const [rings, setRings] = React.useState<CatalogItem[]>([]);
+  const [additionals, setAdditionals] = React.useState<CatalogItem[]>([]);
+
 
   // auth/profile
   React.useEffect(() => {
@@ -245,7 +244,6 @@ const EditCoopCeilinOrder: React.FC = () => {
     };
   }, [dispatch, cookies, navigate, setCookie]);
 
-  // dictionaries
   React.useEffect(() => {
     if (!ready) return;
 
@@ -263,6 +261,16 @@ const EditCoopCeilinOrder: React.FC = () => {
         setTextures(
           normCatalog(pickList(res, ['stretchTexture', 'textures', 'allStretchTexture', 'list', 'data', 'items']))
         )
+      )
+      .catch(() => setTextures([]));
+
+    // Additional 
+    dispatch(getAllStretchAdditional(cookies))
+      .unwrap()
+      .then((res: any) =>
+        setAdditionals(
+          normCatalog(pickList(res, ['stretchAdditional'])),
+        ),
       )
       .catch(() => setTextures([]));
 
@@ -314,8 +322,8 @@ const EditCoopCeilinOrder: React.FC = () => {
       typeof (o as any)?.buyer === 'string'
         ? String((o as any).buyer)
         : (o as any)?.buyer?._id
-        ? String((o as any).buyer._id)
-        : '';
+          ? String((o as any).buyer._id)
+          : '';
 
     const buyerMode: BuyerMode = buyerId ? 'existing' : 'new';
 
@@ -323,6 +331,8 @@ const EditCoopCeilinOrder: React.FC = () => {
     const profRows = toSimpleRows((o as any).groupedStretchProfilData);
     const platRows = toSimpleRows((o as any).groupedLightPlatformData);
     const ringRows = toSimpleRows((o as any).groupedLightRingData);
+    const additionalRows = toSimpleRows((o as any).groupedAdditionalData);
+
 
     const dateLocal = o.date
       ? new Date(o.date).toISOString().slice(0, 16)
@@ -343,6 +353,7 @@ const EditCoopCeilinOrder: React.FC = () => {
       groupedStretchProfilData: profRows,
       groupedLightPlatformData: platRows,
       groupedLightRingData: ringRows,
+      groupedAdditionalData: additionalRows,
 
       date: dateLocal,
       buyerComment: (o as any).buyerComment ?? '',
@@ -353,10 +364,9 @@ const EditCoopCeilinOrder: React.FC = () => {
     });
   };
 
-  /** Автоподстановка по каталогу: byId -> byName, и ещё обновляем catalogQuery */
   const tryAutofillGroup = React.useCallback(
     (
-      groupName: 'groupedStretchProfilData' | 'groupedLightPlatformData' | 'groupedLightRingData',
+      groupName: 'groupedStretchProfilData' | 'groupedLightPlatformData' | 'groupedLightRingData' | 'groupedAdditionalData',
       catalog: CatalogItem[]
     ) => {
       if (!catalog.length) return;
@@ -375,19 +385,16 @@ const EditCoopCeilinOrder: React.FC = () => {
           setValue(`${groupName}.${idx}.itemId` as const, hit._id, { shouldDirty: false });
         }
 
-        // name если пустой
         const curName = String(getValues(`${groupName}.${idx}.name` as const) ?? '').trim();
         if (!curName) {
           setValue(`${groupName}.${idx}.name` as const, hit.name, { shouldDirty: true });
         }
 
-        // catalogQuery если пустой (✅ важное для input)
         const curQuery = String(getValues(`${groupName}.${idx}.catalogQuery` as const) ?? '').trim();
         if (!curQuery) {
           setValue(`${groupName}.${idx}.catalogQuery` as const, `${hit.name} (${hit.price})`, { shouldDirty: false });
         }
 
-        // price: не перетираем пользовательскую >0
         const curPrice = toNum(getValues(`${groupName}.${idx}.price` as const));
         const price = isEmptyPrice(curPrice) ? Number(hit.price || 0) : curPrice;
         if (price !== curPrice) {
@@ -439,7 +446,7 @@ const EditCoopCeilinOrder: React.FC = () => {
       const h = toNum(getValues(`groupedStretchTextureData.${idx}.height`));
       const w = toNum(getValues(`groupedStretchTextureData.${idx}.width`));
       const curQty = toNum(getValues(`groupedStretchTextureData.${idx}.qty`));
-      const calcQty = +((h * w) || 0).toFixed(3);
+      const calcQty = +(((h / 100) * (w / 100)) || 0).toFixed(3);
       const qty = curQty > 0 ? curQty : calcQty;
       if (qty !== curQty) {
         setValue(`groupedStretchTextureData.${idx}.qty`, qty, { shouldDirty: true });
@@ -455,7 +462,8 @@ const EditCoopCeilinOrder: React.FC = () => {
     tryAutofillGroup('groupedStretchProfilData', profils);
     tryAutofillGroup('groupedLightPlatformData', platforms);
     tryAutofillGroup('groupedLightRingData', rings);
-  }, [tryAutofillTextures, tryAutofillGroup, profils, platforms, rings]);
+    tryAutofillGroup('groupedAdditionalData', additionals);
+  }, [tryAutofillTextures, tryAutofillGroup, profils, platforms, rings, additionals]);
 
   React.useEffect(() => {
     tryAutofillAllByCatalog();
@@ -466,11 +474,13 @@ const EditCoopCeilinOrder: React.FC = () => {
   const profRows = watch('groupedStretchProfilData');
   const platRows = watch('groupedLightPlatformData');
   const ringRows = watch('groupedLightRingData');
+  const additionalRows = watch('groupedAdditionalData');
 
   const kTex = React.useMemo(() => JSON.stringify(texRows ?? []), [texRows]);
   const kProf = React.useMemo(() => JSON.stringify(profRows ?? []), [profRows]);
   const kPlat = React.useMemo(() => JSON.stringify(platRows ?? []), [platRows]);
   const kRing = React.useMemo(() => JSON.stringify(ringRows ?? []), [ringRows]);
+  const kAddit = React.useMemo(() => JSON.stringify(additionalRows ?? []), [additionalRows]);
 
   const total = React.useMemo(() => {
     const n = (v: unknown) => Number.parseFloat(String(v ?? 0)) || 0;
@@ -478,8 +488,9 @@ const EditCoopCeilinOrder: React.FC = () => {
     const t2 = (profRows ?? []).reduce((a: number, r: any) => a + n(r.sum), 0);
     const t3 = (platRows ?? []).reduce((a: number, r: any) => a + n(r.sum), 0);
     const t4 = (ringRows ?? []).reduce((a: number, r: any) => a + n(r.sum), 0);
-    return +(t1 + t2 + t3 + t4).toFixed(2);
-  }, [kTex, kProf, kPlat, kRing, texRows, profRows, platRows, ringRows]);
+    const t5 = (additionalRows ?? []).reduce((a: number, r: any) => a + n(r.sum), 0);
+    return +(t1 + t2 + t3 + t4 + t5).toFixed(2);
+  }, [kTex, kProf, kPlat, kRing, kAddit, texRows, profRows, platRows, ringRows, additionalRows]);
 
   const buyerMode = watch('buyerMode');
 
@@ -490,6 +501,7 @@ const EditCoopCeilinOrder: React.FC = () => {
         groupedStretchProfilData: toGroupedSimpleForPatch(values.groupedStretchProfilData),
         groupedLightPlatformData: toGroupedSimpleForPatch(values.groupedLightPlatformData),
         groupedLightRingData: toGroupedSimpleForPatch(values.groupedLightRingData),
+        groupedAdditionalData: toGroupedSimpleForPatch(values.groupedAdditionalData),
 
         date: values.date ? new Date(values.date).toISOString() : undefined,
         buyerComment: values.buyerComment || '',
@@ -589,6 +601,16 @@ const EditCoopCeilinOrder: React.FC = () => {
                   control={control}
                   name="groupedLightRingData"
                   catalog={rings}
+                  setValue={setValue}
+                  getValues={getValues}
+                />
+              </div>
+              <div className="card dense">
+                <SimpleGroup
+                  title="Additional"
+                  control={control}
+                  name="groupedAdditionalData"
+                  catalog={additionals}
                   setValue={setValue}
                   getValues={getValues}
                 />

@@ -5,7 +5,7 @@ import { useAppDispatch } from '../../app/hooks';
 import { updateStretchPayed } from '../../strechCeining/features/stretchCeilingOrder/stretchOrderApi';
 
 interface ConfirmationButtonProps {
-    payed?: boolean; // Optional prop
+    payed?: boolean; 
 }
 
 const ConfirmationButton: React.FC<ConfirmationButtonProps> = ({ payed = false }) => {

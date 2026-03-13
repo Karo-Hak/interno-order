@@ -1,4 +1,3 @@
-// src/strechCeining/coopStretch/pages/addCoopCeilinOrder/components/SimpleGroup.tsx
 import React from 'react';
 import {
   Control,

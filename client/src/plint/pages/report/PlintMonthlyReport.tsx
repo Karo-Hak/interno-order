@@ -22,7 +22,6 @@ const PlintMonthlyReport: React.FC = () => {
   const dispatch = useAppDispatch();
   const [cookies] = useCookies(['access_token']);
 
-  // общий фильтр месяца — применяется к обеим таблицам
   const [month, setMonth] = React.useState<string>(toMonthStr());
 
   // Retail
@@ -69,7 +68,6 @@ const PlintMonthlyReport: React.FC = () => {
     <div>
       <PlintMenu />
 
-      {/* Общий фильтр (работает сразу для обеих таблиц) */}
       <div
         style={{
           display: 'flex',
@@ -102,7 +100,6 @@ const PlintMonthlyReport: React.FC = () => {
         </div>
       </div>
 
-      {/* Сверху: Retail */}
       <PlintReportSection
         title="Մանրածախ պատվերներ (Retail)"
         rows={rowsRetail}
@@ -113,7 +110,6 @@ const PlintMonthlyReport: React.FC = () => {
         height={33}
       />
 
-      {/* Снизу: Wholesale */}
       <PlintReportSection
         title="Մեծածախ պատվերներ (Wholesale)"
         rows={rowsWholesale}

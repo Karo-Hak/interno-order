@@ -6,7 +6,7 @@ import { CoopStretchMenu } from '../../../../component/menu/CoopStretchMenu';
 import { fetchCoopOrderById, deleteCoopOrderById } from '../../features/coopCeilingOrder/coopCeilingOrderApi';
 import AddCoopPayment from '../../../../component/confirmButten/AddCoopPayment';
 
-// ⬇️ для PDF
+// ⬇️  PDF
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
@@ -15,7 +15,7 @@ type TextureRow = {
   height?: number;  // м
   width?: number;   // м
   sq?: number;      // м²
-  qty?: number;     // исторически sq могло лежать тут
+  qty?: number;     
   price?: number;   // AMD
   sum?: number;     // AMD
   h?: number; haight?: number;
@@ -117,7 +117,6 @@ const CoopOrderDetails: React.FC = () => {
   const [error, setError] = React.useState<string | null>(null);
   const [deleting, setDeleting] = React.useState(false);
 
-  // ⬇️ ref для области, которую сохраняем в PDF
   const pdfRef = React.useRef<HTMLDivElement | null>(null);
 
   const load = React.useCallback(async () => {
@@ -160,17 +159,14 @@ const CoopOrderDetails: React.FC = () => {
     navigate(`/coopStretchceiling/orders/${id}/edit`);
   };
 
-  // ⬇️ экспорт в PDF
   const handleExportPdf = async () => {
     if (!pdfRef.current) return;
-    // раскрываем все <details>, чтобы контент попал в PDF
     const opened: HTMLDetailsElement[] = [];
     pdfRef.current.querySelectorAll('details').forEach((d) => {
       const det = d as HTMLDetailsElement;
       if (!det.open) { det.open = true; opened.push(det); }
     });
 
-    // небольшая задержка на рендер
     await new Promise(r => setTimeout(r, 50));
 
     const canvas = await html2canvas(pdfRef.current, {
@@ -187,7 +183,6 @@ const CoopOrderDetails: React.FC = () => {
     const imgWidth = pageWidth;
     const imgHeight = canvas.height * imgWidth / canvas.width;
 
-    // разрезание на страницы
     let heightLeft = imgHeight;
     let position = 0;
 
@@ -203,7 +198,6 @@ const CoopOrderDetails: React.FC = () => {
 
     pdf.save(`order_${id}.pdf`);
 
-    // вернуть исходное состояние details
     opened.forEach(d => (d.open = false));
   };
 
@@ -211,7 +205,6 @@ const CoopOrderDetails: React.FC = () => {
     <div>
       <CoopStretchMenu />
 
-      {/* Sticky top bar */}
       <div style={{
         position: 'sticky', top: 0, background: '#fff', zIndex: 2,
         padding: 6, borderBottom: '1px solid #eee',
@@ -264,13 +257,11 @@ const CoopOrderDetails: React.FC = () => {
         </div>
       </div>
 
-      {/* ⬇️ всё, что попадёт в PDF — оборачиваем в ref */}
       <div ref={pdfRef} style={{ padding: 8 }}>
         {loading && <div style={{ fontSize: 13 }}>Բեռնվում է…</div>}
         {error && <div style={{ color: 'crimson', fontSize: 13 }}>{error}</div>}
         {!loading && !error && order && (
           <>
-            {/* Общая информация */}
             <MiniSection title="Ընդհանուր տվյալներ" defaultOpen>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0,1fr))', gap: 6, fontSize: 13 }}>
                 <div><b>Ամսաթիվ:</b> {fmtDate(order.date)}</div>

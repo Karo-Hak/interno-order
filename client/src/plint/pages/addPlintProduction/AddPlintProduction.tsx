@@ -12,7 +12,7 @@ import { PlintMenu } from '../../../component/menu/PlintMenu';
 import {
   newPlintProduction,
   getPlintProductions,
-  removePlintProduction,   // ✅ импорт удаления
+  removePlintProduction,   
 } from '../../features/plintProduction/plintProductionApi';
 
 import './addPlintProduction.css';
@@ -26,7 +26,7 @@ export const AddPlintProduction = (): JSX.Element => {
   const { items: productions, total } = useAppSelector((state) => state.plintProduction);
 
   const [userId, setUserId] = useState<string>('');
-  const [deletingId, setDeletingId] = useState<string>(''); // ✅ локальное состояние удаления
+  const [deletingId, setDeletingId] = useState<string>(''); 
 
   const { register, handleSubmit, reset, setValue } = useForm<any>({
     defaultValues: {
@@ -100,7 +100,6 @@ export const AddPlintProduction = (): JSX.Element => {
     });
   };
 
-  // ✅ Удаление записи
   const onDelete = async (id: string) => {
     const ok = window.confirm('Ջնջե՞լ այս արտադրանքը։');
     if (!ok) return;
@@ -155,7 +154,7 @@ export const AddPlintProduction = (): JSX.Element => {
               <th>Ամսաթիվ</th>
               <th>Անվանում</th>
               <th>Քանակ</th>
-              <th style={{ width: 120 }}>Գործողություններ</th> {/* ✅ колонка действий */}
+              <th style={{ width: 120 }}>Գործողություններ</th> 
             </tr>
           </thead>
           <tbody>

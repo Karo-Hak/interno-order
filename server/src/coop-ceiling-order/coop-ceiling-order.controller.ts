@@ -1,4 +1,3 @@
-// coop-ceiling-order.controller.ts
 import {
   Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Query, Res, UsePipes, ValidationPipe,
   Delete
@@ -32,7 +31,6 @@ export class CoopCeilingOrderController {
     return { message: 'updated', order };
   }
 
-  // Новый REST-метод удаления
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
   async delete(@Param('id') id: string) {
@@ -40,7 +38,6 @@ export class CoopCeilingOrderController {
     return { message: 'deleted', ...result };
   }
 
-  // Оставляем старую совместимость (POST /:id/delete) — вызывает тот же сервис
   @Post(':id/delete')
   async removeLegacy(@Param('id') id: string) {
     const result = await this.service.removeTx(id);
@@ -49,13 +46,26 @@ export class CoopCeilingOrderController {
 
   @Get('report/monthly')
   async monthlyReport(
-    @Query('month') month?: string,
+    @Query('startDate') startDate: string, // yyyy-mm-dd
+    @Query('endDate') endDate: string,     // yyyy-mm-dd
     @Query('tz') tz: string = 'Asia/Yerevan',
     @Res() res?: ExpressResponse,
   ) {
-    const data = await this.service.getMonthlyReport(month, tz);
+    const data = await this.service.getMonthlyReport(startDate, endDate, tz);
     return res!.status(HttpStatus.OK).json(data);
   }
+
+  @Get('report/by-status')
+  async reportByStatus(
+    @Query('status') status: string,
+    @Query('tz') tz: string = 'Asia/Yerevan',
+    @Res() res?: ExpressResponse,
+  ) {
+    const data = await this.service.getReportByStatus(status, tz);
+    return res!.status(HttpStatus.OK).json(data);
+  }
+
+
 
   @Get('findCoopStretchOrder/:id')
   async findOne(@Param('id') id: string) {

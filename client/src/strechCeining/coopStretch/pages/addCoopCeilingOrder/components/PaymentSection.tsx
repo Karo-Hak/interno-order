@@ -4,7 +4,7 @@ import { FormValues } from '../AddCoopCeilinOrder';
 
 
 type Props = {
-  total: number; // вычисленный total приходит сверху
+  total: number; 
   register: UseFormRegister<FormValues>;
   setValue: UseFormSetValue<FormValues>;
 };
@@ -13,7 +13,6 @@ const round2 = (n: number) =>
   Number.isFinite(n) ? Math.round((n + Number.EPSILON) * 100) / 100 : 0;
 
 const PaymentSection: React.FC<Props> = ({ total, register, setValue }) => {
-  // Синхронизируем balance с total при каждом изменении total
   React.useEffect(() => {
     const v = round2(total);
     setValue('balance', v, { shouldValidate: true, shouldDirty: true });
